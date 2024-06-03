@@ -1,31 +1,51 @@
 // src/components/LoginPage.js
 import React, { useState } from 'react';
-import { Box, Button, Input, FormControl, FormLabel, Heading, Image, Center } from '@chakra-ui/react';
-import ProfileImage from '../img/login-register/ProfileImage.png';
+import { Box, Button, Input, FormControl, FormLabel, Heading, useToast, Image } from '@chakra-ui/react';
+import { loginUser } from '../services/apiService';
+import usericon from '../img/login-register/usericon.svg'
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const toast = useToast();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Aquí podrías agregar la lógica para manejar el inicio de sesión,
-    // como hacer una solicitud a tu API de Spring Boot
+    try {
+      const user = await loginUser(email, password);
+      console.log('User logged in:', user);
+      // Aquí puedes manejar el almacenamiento del usuario o redirigir a otra página
+      toast({
+        title: 'Login successful',
+        description: `Welcome ${user.firstname}!`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Invalid login credentials.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
-    <Box display={'flex'} flexDirection={"column"} textAlign={"center"} maxW="sm" mx="auto" mt="10" p="5" borderWidth="1px" borderRadius="lg">
-        <Box display={"flex"} border={"1px solid black"}>
-            <Image marginLeft={"35%"} width={"100px"} src={ProfileImage} alt='Profile Image' />
+    <Box display={'flex'} flexDirection={"column"} textAlign={"center"} maxW="sm" mx="auto" mt="10" p="3" borderWidth="1px" borderRadius="lg">
+      <Box display={"flex"} justifyContent={"center"} >
+            <Image src={usericon} width={"30%"} alt='Profile Image' />
         </Box>
-      <Heading mb="6">Login</Heading>
+      <Heading mt={"3"} mb="1">Login</Heading>
       <form onSubmit={handleSubmit}>
-        <FormControl id="username" mb="4">
-          <FormLabel>Username</FormLabel>
+        <FormControl id="email" mb="4">
+          <FormLabel>Email</FormLabel>
           <Input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
         <FormControl id="password" mb="4">
