@@ -1,13 +1,12 @@
 import { Route, Routes } from "react-router-dom"
-import Auth from "./components/autorizacion/Auth"
-import App from "./App"
-import SignUpForm from "./components/autorizacion/SignUpForm"
+import SignUpForm from "../components/autorizacion/SignUpForm"
+import Welcome from "../components/Welcome"
 
 const AppRouter = () => {
     return(
         <Routes>
-            <Route path="/"><App /></Route> {/*Cada route sera una ruta de acceso a la pagina */}
-            <Route path="Register"><SignUpForm /></Route>
+            <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
+            <Route path="Register" element={<SignUpForm/>} />
         </Routes>
     )
 }
