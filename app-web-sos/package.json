@@ -13,7 +13,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@supabase/supabase-js": "^2.43.5",
+    "@supabase/supabase-js": "^2.44.3",
     "framer-motion": "^11.3.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.6.6",

@@ -1,0 +1,20 @@
+Host
+aws-0-us-west-1.pooler.supabase.com
+
+Copy
+Database name
+postgres
+
+Copy
+Port
+6543
+
+Copy
+User
+postgres.wqnijqzncsbuhwvvdwfm
+
+Copy
+Password
+
+API: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxbmlqcXpuY3NidWh3dnZkd2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTkxNjkyNjIsImV4cCI6MjAzNDc0NTI2Mn0.f31oD7pF3wrfCwGC4_VzcTvwFYtX0efCjHTjALSLMeA
+URL PROJECT: https://wqnijqzncsbuhwvvdwfm.supabase.co

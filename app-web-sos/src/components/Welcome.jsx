@@ -1,7 +1,9 @@
+import LoginForm from "./autorizacion/LoginForm";
+
 const Welcome = () => {
     return(
         <>
-            <h1>Componente de Bienvenida</h1>
+            <LoginForm />
         </>
     )
 }

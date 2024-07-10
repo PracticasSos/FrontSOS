@@ -1,10 +1,72 @@
-    // Este componente es para mostrar los componentes 
-    const LoginForm = () =>{
-        return(
-            <>
-                <h1>Componente de LoginForm</h1>
-            </>
-        )
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { supabase } from '../../api/supabase';
+import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
+//import '../../Styles/LoginFormStyles.css';
+
+const LoginForm = () => {
+  const [formData, setFormData] = useState({
+    correo: '',
+    contraseña: ''
+  });
+  const history = useHistory();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { correo, contraseña } = formData;
+
+    // Authenticate with Supabase
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, rol')
+      .eq('correo', correo)
+      .eq('contraseña', contraseña)
+      .single();
+
+    if (error) {
+      console.error('Error:', error);
+    } else {
+      // Store user info in localStorage
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Redirect based on role
+      switch (user.rol) {
+        case 1:
+          history.push('/admin');
+          break;
+        case 2:
+          history.push('/optometra');
+          break;
+        case 3:
+          history.push('/vendedor');
+          break;
+        default:
+          history.push('/');
+          break;
+      }
     }
-    
-    export default LoginForm;
+  };
+
+  return (
+    <Box className="login-form">
+      <form onSubmit={handleSubmit}>
+        <FormControl id="correo" isRequired>
+          <FormLabel>Correo</FormLabel>
+          <Input type="email" name="correo" value={formData.correo} onChange={handleChange} />
+        </FormControl>
+        <FormControl id="contraseña" isRequired>
+          <FormLabel>Contraseña</FormLabel>
+          <Input type="password" name="contraseña" value={formData.contraseña} onChange={handleChange} />
+        </FormControl>
+        <Button type="submit" mt={4}>Iniciar Sesión</Button>
+      </form>
+    </Box>
+  );
+};
+
+export default LoginForm;
