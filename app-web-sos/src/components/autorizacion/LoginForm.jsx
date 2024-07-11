@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 //import '../../Styles/LoginFormStyles.css';
@@ -9,7 +9,7 @@ const LoginForm = () => {
     correo: '',
     contraseña: ''
   });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,16 +37,16 @@ const LoginForm = () => {
       // Redirect based on role
       switch (user.rol) {
         case 1:
-          history.push('/admin');
+          navigate('/admin');
           break;
         case 2:
-          history.push('/optometra');
+          navigate('/optometra');
           break;
         case 3:
-          history.push('/vendedor');
+          navigate('/vendedor');
           break;
         default:
-          history.push('/');
+          navigate('/');
           break;
       }
     }

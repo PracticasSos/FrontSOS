@@ -1,9 +1,9 @@
-import LoginForm from "./autorizacion/LoginForm";
+import LoginForm from "./autorizacion/LoginForm";//
 
 const Welcome = () => {
     return(
         <>
-            <LoginForm />
+            {<LoginForm />}
         </>
     )
 }
