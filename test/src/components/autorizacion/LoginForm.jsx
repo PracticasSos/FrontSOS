@@ -20,43 +20,52 @@ const LoginForm = () => {
     const { email, password } = formData;
 
     // Authenticate with Supabase
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('id, role_id')
-      .eq('email', email)
-      .eq('password', password)
-      .single();
+    const { user, error } = await supabase.auth.signIn({
+      email,
+      password
+    });
 
     if (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.message);
     } else {
-      // Store user info in localStorage
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // Fetch role name based on role_id
-      const { data: roleData, error: roleError } = await supabase
-        .from('role')
-        .select('role_name')
-        .eq('id', user.role_id)
+      // Fetch user info
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, role_id')
+        .eq('email', email)
         .single();
 
-      if (roleError) {
-        console.error('Error fetching role:', roleError);
+      if (userError) {
+        console.error('Error fetching user data:', userError);
       } else {
-        // Redirect based on role name
-        switch (roleData.role_name) {
-          case 'Admin':
-            navigate('/admin');
-            break;
-          case 'Optometra':
-            navigate('/optometra');
-            break;
-          case 'Vendedor':
-            navigate('/vendedor');
-            break;
-          default:
-            navigate('/');
-            break;
+        // Store user info in localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Fetch role name based on role_id
+        const { data: roleData, error: roleError } = await supabase
+          .from('role')
+          .select('role_name')
+          .eq('id', userData.role_id)
+          .single();
+
+        if (roleError) {
+          console.error('Error fetching role:', roleError);
+        } else {
+          // Redirect based on role name
+          switch (roleData.role_name) {
+            case 'Admin':
+              navigate('/admin');
+              break;
+            case 'Optometra':
+              navigate('/optometra');
+              break;
+            case 'Vendedor':
+              navigate('/vendedor');
+              break;
+            default:
+              navigate('/');
+              break;
+          }
         }
       }
     }

@@ -60,16 +60,43 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase
-      .from('users')
-      .insert([formData]);
+
+    // Sign up user with Supabase
+    const { user, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password
+    });
 
     if (error) {
-      console.error('Error:', error);
+      console.error('Error signing up:', error.message);
     } else {
-      console.log('User registered:', data);
+      // Insert user data into `users` table
+      const { error: insertError } = await supabase
+        .from('users')
+        .insert([{
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          username: formData.username,
+          age: formData.age,
+          role_id: formData.role_id,
+          birthdate: formData.birthdate,
+          check_in_date: formData.check_in_date,
+          email: formData.email,
+          phone_number: formData.phone_number,
+          password: formData.password,
+          ci: formData.ci,
+          branch_id: formData.branch_id
+        }]);
+
+      if (insertError) {
+        console.error('Error inserting user data:', insertError.message);
+      } else {
+        console.log('User registered successfully');
+        navigate('/ListUsers');
+      }
     }
   };
+
   const handleNavigate = (route) => {
     navigate(route);
   };
