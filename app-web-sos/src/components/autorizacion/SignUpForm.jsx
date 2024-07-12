@@ -70,10 +70,6 @@ const SignUpForm = () => {
       console.log('User registered:', data);
     }
   };
-
-  /*const handleListUsers = () => {
-    navigate('/ListUsers');
-  };*/
   const handleNavigate = (route) => {
     navigate(route);
   };
