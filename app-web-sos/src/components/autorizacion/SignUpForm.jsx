@@ -80,9 +80,14 @@ const SignUpForm = () => {
 
   return (
     <Box className="signup-form">
-      <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>
-        Listar Usuarios
-      </Button>
+      <Box width={"100%"} border={"solid 1px black"} display={"flex"} justifyContent={"space-around"} paddingBottom={"15px"}>
+        <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>
+          Listar Usuarios
+        </Button>
+        <Button onClick={() => handleNavigate('/Admin')} mt={4}>
+          Volver a Opciones
+        </Button>
+      </Box>
       <form onSubmit={handleSubmit}>
         <FormControl id="firstname" isRequired>
           <FormLabel>Nombre</FormLabel>

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
-//import '../../Styles/LoginFormStyles.css';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    correo: '',
-    contraseña: ''
+    email: '',
+    password: ''
   });
   const navigate = useNavigate();
 
@@ -18,14 +17,14 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { correo, contraseña } = formData;
+    const { email, password } = formData;
 
     // Authenticate with Supabase
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, rol')
-      .eq('correo', correo)
-      .eq('contraseña', contraseña)
+      .select('id, role_id')
+      .eq('email', email)
+      .eq('password', password)
       .single();
 
     if (error) {
@@ -34,20 +33,31 @@ const LoginForm = () => {
       // Store user info in localStorage
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redirect based on role
-      switch (user.rol) {
-        case 1:
-          navigate('/admin');
-          break;
-        case 2:
-          navigate('/optometra');
-          break;
-        case 3:
-          navigate('/vendedor');
-          break;
-        default:
-          navigate('/');
-          break;
+      // Fetch role name based on role_id
+      const { data: roleData, error: roleError } = await supabase
+        .from('role')
+        .select('role_name')
+        .eq('id', user.role_id)
+        .single();
+
+      if (roleError) {
+        console.error('Error fetching role:', roleError);
+      } else {
+        // Redirect based on role name
+        switch (roleData.role_name) {
+          case 'Admin':
+            navigate('/admin');
+            break;
+          case 'Optometra':
+            navigate('/optometra');
+            break;
+          case 'Vendedor':
+            navigate('/vendedor');
+            break;
+          default:
+            navigate('/');
+            break;
+        }
       }
     }
   };
@@ -55,13 +65,13 @@ const LoginForm = () => {
   return (
     <Box className="login-form">
       <form onSubmit={handleSubmit}>
-        <FormControl id="correo" isRequired>
+        <FormControl id="email" isRequired>
           <FormLabel>Correo</FormLabel>
-          <Input type="email" name="correo" value={formData.correo} onChange={handleChange} />
+          <Input type="email" name="email" value={formData.email} onChange={handleChange} />
         </FormControl>
-        <FormControl id="contraseña" isRequired>
+        <FormControl id="password" isRequired>
           <FormLabel>Contraseña</FormLabel>
-          <Input type="password" name="contraseña" value={formData.contraseña} onChange={handleChange} />
+          <Input type="password" name="password" value={formData.password} onChange={handleChange} />
         </FormControl>
         <Button type="submit" mt={4}>Iniciar Sesión</Button>
       </form>

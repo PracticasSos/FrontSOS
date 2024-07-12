@@ -32,7 +32,7 @@ const AdminDashBoard = () => {
     }
     // añadir más condiciones para otras opciones si es necesario
     if (label === "REGISTRAR PACIENTE") {
-      navigate('/Register');
+      navigate('/RegisterPatient');
     }
   };
 
