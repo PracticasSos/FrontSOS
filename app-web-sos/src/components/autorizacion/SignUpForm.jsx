@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input, Select } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
