@@ -34,6 +34,10 @@ const AdminDashBoard = () => {
     if (label === "REGISTRAR PACIENTE") {
       navigate('/RegisterPatient');
     }
+
+    if (label === "INVENTARIO") {
+      navigate('/Inventory');
+    }
   };
 
   const handleNavigate = (route) => {
