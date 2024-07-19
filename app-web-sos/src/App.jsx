@@ -9,8 +9,8 @@ function App() {
 
   return (
     <>
-    <h1>Componente App</h1>
-    <Container border={"1px solid red"} padding={"10px"} maxW='100%'>
+    {/*<h1>Componente App</h1>border={"1px solid red"}*/}
+    <Container  padding={"10px"} maxW='100%'>
       <AppRouter/>
     </Container>
     </>

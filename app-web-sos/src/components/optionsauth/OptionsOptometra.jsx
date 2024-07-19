@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import { Box, SimpleGrid, Text, Icon } from '@chakra-ui/react';
 import { FaClipboard } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';

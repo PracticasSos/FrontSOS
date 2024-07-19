@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input, Textarea, Select } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,7 @@ const RegisterPatientForm = () => {
       <Button onClick={() => handleNavigate('/ListPatients')} mt={4}>
         Listar Pacientes
       </Button>
-      <Button onClick={() => handleNavigate('/Optometra')} mt={4}>
+      <Button onClick={() => handleNavigate('/Admin')} mt={4}>
           Volver a Opciones
       </Button>
       <form onSubmit={handleSubmit}>

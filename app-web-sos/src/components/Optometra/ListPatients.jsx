@@ -44,9 +44,12 @@ const ListPatients = () => {
       <Button onClick={() => handleNavigate('/RegisterPatient')} mt={4}>
         Registrar Pacientes
       </Button>
-      <Button onClick={() => handleNavigate('/Optometra')} mt={4}>
+      <Button onClick={() => handleNavigate('/Admin')} mt={4}>
         Volver a Opciones
       </Button>
+      <Button onClick={() => handleNavigate('/Login')} mt={4}>
+          Cerrar Sesión
+        </Button>
       <Input 
         placeholder="Buscar por nombre, apellido o teléfono" 
         value={search} 

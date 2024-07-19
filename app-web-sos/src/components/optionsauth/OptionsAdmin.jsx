@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, SimpleGrid, Text, Icon } from '@chakra-ui/react';
+//import React from 'react';
+import { Button, Box, SimpleGrid, Text, Icon } from '@chakra-ui/react';
 import { FaClipboard } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,8 +36,16 @@ const AdminDashBoard = () => {
     }
   };
 
+  const handleNavigate = (route) => {
+    navigate(route);
+  };
+
   return (
-    <SimpleGrid columns={[2, null, 4]} spacing={5}>
+    <>
+    <Button onClick={() => handleNavigate('/Login')} mt={4}>
+          Cerrar Sesión
+        </Button>
+      <SimpleGrid columns={[2, null, 4]} spacing={5}>
       {options.map((option, index) => (
         <Box
           key={index}
@@ -53,6 +61,7 @@ const AdminDashBoard = () => {
         </Box>
       ))}
     </SimpleGrid>
+    </>
   );
 };
 

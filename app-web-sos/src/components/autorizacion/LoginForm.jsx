@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Alert, AlertIcon, Icon } from '@chakra-ui/react';
+import { FaUser } from 'react-icons/fa';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -29,6 +31,7 @@ const LoginForm = () => {
 
     if (error) {
       console.error('Error:', error);
+      setErrorMessage('Error: credenciales incorrectas');
     } else {
       // Store user info in localStorage
       localStorage.setItem('user', JSON.stringify(user));
@@ -42,6 +45,7 @@ const LoginForm = () => {
 
       if (roleError) {
         console.error('Error fetching role:', roleError);
+        setErrorMessage('Error: no se pudo obtener el rol del usuario');
       } else {
         // Redirect based on role name
         switch (roleData.role_name) {
@@ -63,18 +67,29 @@ const LoginForm = () => {
   };
 
   return (
-    <Box className="login-form">
-      <form onSubmit={handleSubmit}>
-        <FormControl id="email" isRequired>
-          <FormLabel>Correo</FormLabel>
-          <Input type="email" name="email" value={formData.email} onChange={handleChange} />
-        </FormControl>
-        <FormControl id="password" isRequired>
-          <FormLabel>Contraseña</FormLabel>
-          <Input type="password" name="password" value={formData.password} onChange={handleChange} />
-        </FormControl>
-        <Button type="submit" mt={4}>Iniciar Sesión</Button>
-      </form>
+    <Box className="login-form" display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box width="100%" maxWidth="400px">
+        {errorMessage && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            {errorMessage}
+          </Alert>
+        )}
+        <Box display="flex" justifyContent="center" mb={4}>
+          <Icon as={FaUser} boxSize={8} />
+        </Box>
+        <form onSubmit={handleSubmit}>
+          <FormControl id="email" isRequired>
+            <FormLabel>Correo</FormLabel>
+            <Input type="email" name="email" value={formData.email} onChange={handleChange} />
+          </FormControl>
+          <FormControl id="password" isRequired mt={4}>
+            <FormLabel>Contraseña</FormLabel>
+            <Input type="password" name="password" value={formData.password} onChange={handleChange} />
+          </FormControl>
+          <Button type="submit" mt={4} width="100%">Iniciar Sesión</Button>
+        </form>
+      </Box>
     </Box>
   );
 };
