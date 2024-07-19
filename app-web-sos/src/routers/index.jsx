@@ -9,6 +9,10 @@ import OptometraDashBoard from "../components/optionsauth/OptionsOptometra"
 import ListPatients from "../components/Optometra/ListPatients"
 import Inventario from "../components/Admin/Inventario.jsx";
 import InventarioList from "../components/Admin/InventarioList.jsx";
+import Branch from "../components/Admin/Branch.jsx";
+import ListBranch from "../components/Admin/ListBranch.jsx";
+import Lab from "../components/Admin/Labs.jsx";
+import ListLab from "../components/Admin/ListLab.jsx";
 
 const AppRouter = () => {
     return(
@@ -23,6 +27,10 @@ const AppRouter = () => {
             <Route path="Optometra" element={<OptometraDashBoard />} />{/*Ruta de las opciones del optometra*/}
             <Route path="ListPatients" element={<ListPatients />} />{/*Ruta para listar pacientes registrados*/}
             <Route path={"ListInventory"} element={<InventarioList/>}></Route>
+            <Route path={"Branch"} element={<Branch/>}></Route>
+            <Route path={"ListBranch"} element={<ListBranch/>}></Route>
+            <Route path={"Labs"} element={<Lab/>}></Route>
+            <Route path={"ListLabs"} element={<ListLab/>}></Route>
         </Routes>
     )
 }

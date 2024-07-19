@@ -38,6 +38,14 @@ const AdminDashBoard = () => {
     if (label === "INVENTARIO") {
       navigate('/Inventory');
     }
+
+    if (label === 'SUCURSAL'){
+      navigate('/Branch')
+    }
+
+    if (label === 'LABORATORIOS'){
+      navigate('/Labs')
+    }
   };
 
   const handleNavigate = (route) => {
