@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input, Textarea, Select } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Textarea, Select, Text, Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterPatientForm = () => {
@@ -20,6 +20,7 @@ const RegisterPatientForm = () => {
   });
 
   const [users, setUsers] = useState([]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,16 +61,33 @@ const RegisterPatientForm = () => {
     navigate(route);
   };
 
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      setIsLoggingOut(false);
+      navigate('/Login');
+    }, 2000); // Mostrar la pantalla de cierre de sesión por 2 segundos
+  };
+
+  if (isLoggingOut) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Text fontSize="2xl" mr={4}>Cerrando sesión...</Text>
+        <Spinner size="xl" />
+      </Box>
+    );
+  }
+
   return (
     <Box className="register-patient-form">
       <Button onClick={() => handleNavigate('/ListPatients')} mt={4}>
         Listar Pacientes
       </Button>
       <Button onClick={() => handleNavigate('/Admin')} mt={4}>
-          Volver a Opciones
+        Volver a Opciones
       </Button>
-      <Button onClick={() => handleNavigate('/Login')} mt={4}>
-          Cerrar Sesión
+      <Button onClick={handleLogout} mt={4}>
+        Cerrar Sesión
       </Button>
       <form onSubmit={handleSubmit}>
         <FormControl id="user_id" isRequired>

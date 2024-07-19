@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Text, Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const ListUsers = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +39,23 @@ const ListUsers = () => {
     navigate(route);
   };
 
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      setIsLoggingOut(false);
+      navigate('/Login');
+    }, 2000); // Mostrar la pantalla de cierre de sesión por 2 segundos
+  };
+
+  if (isLoggingOut) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Text fontSize="2xl" mr={4}>Cerrando sesión...</Text>
+        <Spinner size="xl" />
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Heading as="h2" size="lg" mb={4}>Lista de Usuarios</Heading>
@@ -46,6 +64,9 @@ const ListUsers = () => {
       </Button>
       <Button onClick={() => handleNavigate('/Admin')} mt={4}>
         Volver a Opciones
+      </Button>
+      <Button onClick={handleLogout} mt={4}>
+        Cerrar Sesión
       </Button>
       <Input
         placeholder="Buscar por nombre, apellido o username"
@@ -57,7 +78,6 @@ const ListUsers = () => {
         <Table variant="simple" minWidth="800px">
           <Thead>
             <Tr>
-              
               <Th>Nombre</Th>
               <Th>Apellido</Th>
               <Th>Username</Th>
@@ -72,7 +92,6 @@ const ListUsers = () => {
           <Tbody>
             {filteredUsers.map(user => (
               <Tr key={user.id}>
-                
                 <Td>{user.firstname}</Td>
                 <Td>{user.lastname}</Td>
                 <Td>{user.username}</Td>
