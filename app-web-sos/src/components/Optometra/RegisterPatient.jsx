@@ -68,6 +68,9 @@ const RegisterPatientForm = () => {
       <Button onClick={() => handleNavigate('/Admin')} mt={4}>
           Volver a Opciones
       </Button>
+      <Button onClick={() => handleNavigate('/Login')} mt={4}>
+          Cerrar Sesión
+      </Button>
       <form onSubmit={handleSubmit}>
         <FormControl id="user_id" isRequired>
           <FormLabel>Usuario</FormLabel>

@@ -57,7 +57,7 @@ const ListUsers = () => {
         <Table variant="simple" minWidth="800px">
           <Thead>
             <Tr>
-              <Th>ID</Th>
+              
               <Th>Nombre</Th>
               <Th>Apellido</Th>
               <Th>Username</Th>
@@ -72,7 +72,7 @@ const ListUsers = () => {
           <Tbody>
             {filteredUsers.map(user => (
               <Tr key={user.id}>
-                <Td>{user.id}</Td>
+                
                 <Td>{user.firstname}</Td>
                 <Td>{user.lastname}</Td>
                 <Td>{user.username}</Td>

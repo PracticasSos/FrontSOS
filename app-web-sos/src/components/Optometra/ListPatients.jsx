@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Text, Spinner } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const ListPatients = () => {
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState('');
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // Estado para el cierre de sesión
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +39,23 @@ const ListPatients = () => {
     navigate(route);
   };
 
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      setIsLoggingOut(false);
+      navigate('/Login');
+    }, 2000); // Mostrar la pantalla de cierre de sesión por 2 segundos
+  };
+
+  if (isLoggingOut) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Text fontSize="2xl" mr={4}>Cerrando sesión...</Text>
+        <Spinner size="xl" />
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Heading as="h2" size="lg" mb={4}>Lista de Pacientes</Heading>
@@ -47,9 +65,9 @@ const ListPatients = () => {
       <Button onClick={() => handleNavigate('/Admin')} mt={4}>
         Volver a Opciones
       </Button>
-      <Button onClick={() => handleNavigate('/Login')} mt={4}>
-          Cerrar Sesión
-        </Button>
+      <Button onClick={handleLogout} mt={4}>
+        Cerrar Sesión
+      </Button>
       <Input 
         placeholder="Buscar por nombre, apellido o teléfono" 
         value={search} 
@@ -60,7 +78,7 @@ const ListPatients = () => {
         <Table variant="simple" minWidth="800px">
           <Thead>
             <Tr>
-              <Th>ID</Th>
+              
               <Th>Nombre</Th>
               <Th>Apellido</Th>
               <Th>Ocupación</Th>
@@ -77,7 +95,7 @@ const ListPatients = () => {
           <Tbody>
             {filteredPatients.map(patient => (
               <Tr key={patient.id}>
-                <Td>{patient.id}</Td>
+                
                 <Td>{patient.pt_firstname}</Td>
                 <Td>{patient.pt_lastname}</Td>
                 <Td>{patient.pt_occupation}</Td>

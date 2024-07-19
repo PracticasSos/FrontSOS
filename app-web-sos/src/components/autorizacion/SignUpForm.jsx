@@ -78,7 +78,7 @@ const SignUpForm = () => {
   return (
     <Box className="signup-form" display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
       <Box width="100%" maxWidth="400px">
-        <Box width="100%" border="solid 1px black" display="flex" justifyContent="space-around" paddingBottom="15px">
+        <Box width="100%" display="flex" justifyContent="space-around" paddingBottom="15px"> {/*border="solid 1px black" */}
           <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>
             Listar Usuarios
           </Button>
