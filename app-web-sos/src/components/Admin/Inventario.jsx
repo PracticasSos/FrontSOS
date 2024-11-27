@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import {Form, useNavigate} from "react-router-dom";
 import {Box, Button, FormControl, FormLabel, Input} from "@chakra-ui/react";
 import {useState} from "react";
 import {supabase} from "../../api/supabase.js";
@@ -6,11 +6,14 @@ import {supabase} from "../../api/supabase.js";
 const Inventario = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
+        brand: '',
+        reference: '',
+        size:0,
         bridge: 0,
-        model: '',
-        price: 0,
-        stock: 0,
-        lunes: ''
+        rod: 0,
+        color: '',
+        quantity: 0,
+        price: 0
     });
 
     const handleChange = (e) => {
@@ -50,25 +53,37 @@ const Inventario = () => {
                     </Box>
                 </Box>
                 <Box>
+                    <FormControl id="text" isRequired mt={4}>
+                        <FormLabel>Marca</FormLabel>
+                        <Input type= "text" name="brand" value={formData.brand} onChange={handleChange} />
+                    </FormControl>
+                    <FormControl id="text" isRequired mt={4}>
+                        <FormLabel>Referencia</FormLabel>
+                        <Input type="text" name="reference" value={formData.reference} onChange={handleChange}/>
+                    </FormControl>
+                    <FormControl id="number" isRequired mt={4}>
+                        <FormLabel>Tamaño</FormLabel>
+                            <Input type="number" name="size" value={formData.size} onChange={handleChange}/>
+                    </FormControl>
                     <FormControl id="age" isRequired mt={4}>
                         <FormLabel>Puente</FormLabel>
                         <Input type="number" name="bridge" value={formData.bridge} onChange={handleChange} />
                     </FormControl>
-                    <FormControl id="age" isRequired mt={4}>
-                        <FormLabel>Modelo</FormLabel>
-                        <Input type="text" name="model" value={formData.model} onChange={handleChange} />
+                    <FormControl id="number" isRequired mt={4}>
+                        <FormLabel>Varilla</FormLabel>
+                        <Input type="number" name="rod" value={formData.rod} onChange={handleChange}/>
+                    </FormControl>
+                    <FormControl id="text" isRequired mt={4}>
+                        <FormLabel>Color</FormLabel>
+                        <Input type="text" name="color" value={formData.color} onChange={handleChange}/>
+                    </FormControl>
+                    <FormControl id="number" isRequired mt={4}>
+                        <FormLabel>Cantidad</FormLabel>
+                        <Input type="number" name="cantidad" value={formData.quantity}/>
                     </FormControl>
                     <FormControl id="age" isRequired mt={4}>
                         <FormLabel>Precio</FormLabel>
                         <Input type="number" name="price" value={formData.price} onChange={handleChange} />
-                    </FormControl>
-                    <FormControl id="age" isRequired mt={4}>
-                        <FormLabel>Stock</FormLabel>
-                        <Input type="number" name="stock" value={formData.stock} onChange={handleChange} />
-                    </FormControl>
-                    <FormControl id="age" isRequired mt={4}>
-                        <FormLabel>Lunas</FormLabel>
-                        <Input type="text" name="lunes" value={formData.lunes} onChange={handleChange} />
                     </FormControl>
                     <Button type="submit" mt={4} width="100%" onClick={handleSubmit}>Registrar</Button>
                 </Box>
