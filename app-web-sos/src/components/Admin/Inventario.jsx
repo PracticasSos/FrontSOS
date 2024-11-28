@@ -88,7 +88,7 @@ const Inventario = () => {
                     <Button type="submit" mt={4} width="100%" onClick={handleSubmit}>Registrar</Button>
                 </Box>
             </Box>
-
+,co
     )
 }
 
