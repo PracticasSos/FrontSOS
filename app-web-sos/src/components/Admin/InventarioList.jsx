@@ -17,7 +17,7 @@ const InvetarioList = () => {
     const fetchPatients = async () => {
         const { data, error } = await supabase
             .from('inventario')
-            .select('id, bridge, model, price, stock, lunes');
+            .select('id, quantity, brand, reference, color, size, bridge, rod, c_unit, status');
 
         if (error) {
             console.error('Error fetching patients:', error);
@@ -48,21 +48,31 @@ const InvetarioList = () => {
                 <Table variant="simple" minWidth="800px">
                     <Thead>
                         <Tr>
-                            <Th>Bridge</Th>
-                            <Th>Lunes</Th>
-                            <Th>Model</Th>
-                            <Th>Price</Th>
-                            <Th>Stock</Th>
+                            <Th>ID</Th>
+                            <Th>Cantidad</Th>
+                            <Th>Marca</Th>
+                            <Th>Referecia</Th>
+                            <Th>Color</Th>
+                            <Th>Tamaño</Th>
+                            <Th>Puente</Th>
+                            <Th>Varilla</Th>
+                            <Th>C.Unit</Th>
+                            <Th>Estado</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {invetoryList.map(user => (
                             <Tr key={user.id}>
+                                <Td>{user.quantity}</Td>
+                                <Td>{user.brand}</Td>
+                                <Td>{user.refernce}</Td>
+                                <Td>{user.color}</Td>
+                                <Td>{user.size}</Td>
                                 <Td>{user.bridge}</Td>
-                                <Td>{user.lunes}</Td>
-                                <Td>{user.model}</Td>
-                                <Td>{user.price}</Td>
-                                <Td>{user.stock}</Td>
+                                <Td>{user.rod}</Td>
+                                <Td>{user.c_unit}</Td>
+                                <Td>{user.status}</Td>
+
                             </Tr>
                         ))}
                     </Tbody>

@@ -13,6 +13,7 @@ import Branch from "../components/Admin/Branch.jsx";
 import ListBranch from "../components/Admin/ListBranch.jsx";
 import Lab from "../components/Admin/Labs.jsx";
 import ListLab from "../components/Admin/ListLab.jsx";
+import CashClousure from "../components/Admin/cashClousure.jsx"
 
 const AppRouter = () => {
     return(
@@ -31,6 +32,7 @@ const AppRouter = () => {
             <Route path={"ListBranch"} element={<ListBranch/>}></Route>
             <Route path={"Labs"} element={<Lab/>}></Route>
             <Route path={"ListLabs"} element={<ListLab/>}></Route>
+            <Route path={"Consultar Cierre"} element={<CashClousure/>}></Route>
         </Routes>
     )
 }

@@ -15,7 +15,7 @@ const ListBranch = () => {
     const fetchUsers = async () => {
         const { data, error } = await supabase
             .from('branchs')
-            .select('id, name, address, cell, ruc');
+            .select('id, name, address, email, cell, ruc');
 
         if (error) {
             console.error('Error:', error);
@@ -56,6 +56,7 @@ const ListBranch = () => {
 
                             <Th>Nombre</Th>
                             <Th>Direccion</Th>
+                            <Th>Correo</Th>
                             <Th>Telefono</Th>
                             <Th>Ruc</Th>
                         </Tr>
@@ -66,6 +67,7 @@ const ListBranch = () => {
 
                                 <Td>{user.name}</Td>
                                 <Td>{user.address}</Td>
+                                <Td>{user.email}</Td>
                                 <Td>{user.cell}</Td>
                                 <Td>{user.ruc}</Td>
                             </Tr>

@@ -8,6 +8,7 @@ const Branch = () => {
     const [formData, setFormData] = useState({
         name: '',
         address: '',
+        email:'',
         cell: '',
         ruc: ''
     });
@@ -57,6 +58,10 @@ const Branch = () => {
                 <FormControl id="age" isRequired mt={4}>
                     <FormLabel>Direccion</FormLabel>
                     <Input type="text" name="address" value={formData.address} onChange={handleChange} />
+                </FormControl>
+                <FormControl id="age" isRequired mt={4}>
+                    <FormLabel>Correo</FormLabel>
+                    <Input type="text" name="email" value={formData.email} onChange={handleChange} />
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
                     <FormLabel>Telefono</FormLabel>

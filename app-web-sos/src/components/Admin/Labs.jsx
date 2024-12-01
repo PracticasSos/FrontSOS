@@ -9,6 +9,7 @@ const Lab = () => {
         name: '',
         address: '',
         cell: '',
+        email:'',
         ruc: ''
     });
 
@@ -55,11 +56,15 @@ const Lab = () => {
                     <Input type="text" name="name" value={formData.name} onChange={handleChange} />
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
-                    <FormLabel>Direccion</FormLabel>
+                    <FormLabel>Dirección</FormLabel>
                     <Input type="text" name="address" value={formData.address} onChange={handleChange} />
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
-                    <FormLabel>Telefono</FormLabel>
+                    <FormLabel>Correo</FormLabel>
+                    <Input type="text" name="address" value={formData.correo} onChange={handleChange} />
+                </FormControl>
+                <FormControl id="age" isRequired mt={4}>
+                    <FormLabel>Teléfono</FormLabel>
                     <Input type="text" name="cell" value={formData.cell} onChange={handleChange} />
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
