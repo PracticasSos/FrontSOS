@@ -56,53 +56,53 @@ const CashClousure = () => {
                 </Box>
             </Box>
             <Box>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="branch" isRequired mt={4}>
                     <FormLabel>Optica</FormLabel>
                     <Input type="text" name="branch" value={formData.branch} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="since" isRequired mt={4}>
                     <FormLabel>Desde</FormLabel>
-                    <Input type="text" name="since" value={formData.since} onChange={handleChange} />
+                    <Input type="date" name="since" value={formData.since} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="till" isRequired mt={4}>
                     <FormLabel>Hasta</FormLabel>
-                    <Input type="text" name="till" value={formData.till} onChange={handleChange} />
+                    <Input type="date" name="till" value={formData.till} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="month" isRequired mt={4}>
                     <FormLabel>Mes</FormLabel>
-                    <Input type="text" name="month" value={formData.month} onChange={handleChange} />
+                    <Input type="date" name="month" value={formData.month} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="responsible" isRequired mt={4}>
                     <FormLabel>Encargado</FormLabel>
-                    <Input type="text" name="responsible" value={formData.responsible} onChange={handleChange} />
+                    <Input type="varchar" name="responsible" value={formData.responsible} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="cash_value" isRequired mt={4}>
                     <FormLabel>Valor EFECT</FormLabel>
-                    <Input type="text" name="cash_value" value={formData.cash_value} onChange={handleChange} />
+                    <Input type="number" name="cash_value" value={formData.cash_value} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="transferred_value" isRequired mt={4}>
                     <FormLabel>Valor TRANS</FormLabel>
-                    <Input type="text" name="transferred_value" value={formData.transferred_value} onChange={handleChange} />
+                    <Input type="number" name="transferred_value" value={formData.transferred_value} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="data_value" isRequired mt={4}>
                     <FormLabel>Valor DATA</FormLabel>
-                    <Input type="text" name="data_value" value={formData.data_value} onChange={handleChange} />
+                    <Input type="number" name="data_value" value={formData.data_value} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="cash" isRequired mt={4}>
                     <FormLabel>EFECT</FormLabel>
-                    <Input type="text" name="cash" value={formData.cash} onChange={handleChange} />
+                    <Input type="number" name="cash" value={formData.cash} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="transfer" isRequired mt={4}>
                     <FormLabel>TRANS</FormLabel>
-                    <Input type="text" name="transfer" value={formData.transfer} onChange={handleChange} />
+                    <Input type="number" name="transfer" value={formData.transfer} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="data_fast" isRequired mt={4}>
                     <FormLabel>DATAFAST</FormLabel>
-                    <Input type="text" name="data_fast" value={formData.data_fast} onChange={handleChange} />
+                    <Input type="number" name="data_fast" value={formData.data_fast} onChange={handleChange} />
                 </FormControl>
-                <FormControl id="age" isRequired mt={4}>
+                <FormControl id="total" isRequired mt={4}>
                     <FormLabel>TOTAL</FormLabel>
-                    <Input type="text" name="total" value={formData.total} onChange={handleChange} />
+                    <Input type="number" name="total" value={formData.total} onChange={handleChange} />
                 </FormControl>
                 <Button type="submit" mt={4} width="100%" onClick={handleSubmit}>Registrar</Button>
             </Box>
