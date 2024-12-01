@@ -32,7 +32,8 @@ const AppRouter = () => {
             <Route path={"ListBranch"} element={<ListBranch/>}></Route>
             <Route path={"Labs"} element={<Lab/>}></Route>
             <Route path={"ListLabs"} element={<ListLab/>}></Route>
-            <Route path={"Consultar Cierre"} element={<CashClousure/>}></Route>
+            <Route path="CashClousure" element={<CashClousure />} ></Route>
+
         </Routes>
     )
 }

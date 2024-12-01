@@ -30,13 +30,13 @@ const CashClousure = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { data, error } = await supabase
-            .form('cashClousure')
+            .from('cash_clousure')
             .insert([formData]);
 
         if (error) {
             console.error('Error:', error);
         } else {
-            console.log('Cash inventario registrado:', data);
+            console.log('Cierre de caja registrado:', data);
         }
     };
 
@@ -44,8 +44,8 @@ const CashClousure = () => {
         <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh">
             <Box width="100%" maxWidth="400px">
                 <Box width="100%" border="solid 1px black" display="flex" justifyContent="space-around" paddingBottom="15px">
-                    <Button onClick={() => handleNavigate('/ListLabs')} mt={4}>
-                        Listar Inventario
+                    <Button onClick={() => handleNavigate('/CashClousure')} mt={4}>
+                        Consultar Cierre
                     </Button>
                     <Button onClick={() => handleNavigate('/Admin')} mt={4}>
                         Volver a Opciones
@@ -78,7 +78,7 @@ const CashClousure = () => {
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
                     <FormLabel>Valor EFECT</FormLabel>
-                    <Input type="text" name="vash_value" value={formData.cash_value} onChange={handleChange} />
+                    <Input type="text" name="cash_value" value={formData.cash_value} onChange={handleChange} />
                 </FormControl>
                 <FormControl id="age" isRequired mt={4}>
                     <FormLabel>Valor TRANS</FormLabel>
