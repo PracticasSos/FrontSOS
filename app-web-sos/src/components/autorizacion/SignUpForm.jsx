@@ -60,6 +60,12 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.firstname || !formData.lastname || !formData.username || !formData.age || !formData.birthdate || !formData.check_in_date || !formData.email || !formData.phone_number  || !formData.password || !formData.ci) {
+      alert("Por favor, completa todos los campos obligatorios.");
+      return;
+    }
+    console.log("Datos a enviar:", formData);
     const { data, error } = await supabase
       .from('users')
       .insert([formData]);
