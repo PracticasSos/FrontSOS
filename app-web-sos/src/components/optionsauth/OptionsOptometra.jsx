@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const options = [
   { label: "REGISTRAR PACIENTE" },
+  {label: "REGISTAR CIERRE"}, 
   { label: "HISTORIAL PACIENTE" }
 ];
 
@@ -18,6 +19,10 @@ const OptometraDashBoard = () => {
     // añadir más condiciones para otras opciones si es necesario
     if (label === "HISTORIAL PACIENTE") {
       navigate('');
+    }
+
+    if(label === "Consultar Cierra") {
+      navigate('/CashClousure')
     }
   };
 

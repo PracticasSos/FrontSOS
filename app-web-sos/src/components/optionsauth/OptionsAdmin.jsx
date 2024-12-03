@@ -46,6 +46,10 @@ const AdminDashBoard = () => {
     if (label === 'LABORATORIOS'){
       navigate('/Labs')
     }
+
+    if (label === "CONSULTAR CIERRE"){
+      navigate('/CashClousure')
+    }
   };
 
   const handleNavigate = (route) => {
