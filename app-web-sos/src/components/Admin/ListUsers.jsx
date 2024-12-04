@@ -7,6 +7,7 @@ const ListUsers = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,7 +45,38 @@ const ListUsers = () => {
     setTimeout(() => {
       setIsLoggingOut(false);
       navigate('/Login');
-    }, 2000); // Mostrar la pantalla de cierre de sesión por 2 segundos
+    }, 2000);
+  };
+
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleUpdate = () => {
+    if (selectedUser) {
+      navigate(`/UpdateUser/${selectedUser.id}`);
+    } else {
+      alert('Por favor selecciona un usuario para actualizar.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (selectedUser) {
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', selectedUser.id);
+
+      if (error) {
+        console.error('Error al eliminar:', error);
+      } else {
+        alert(`Usuario ${selectedUser.firstname} eliminado con éxito.`);
+        setUsers(users.filter(user => user.id !== selectedUser.id));
+        setSelectedUser(null);
+      }
+    } else {
+      alert('Por favor selecciona un usuario para eliminar.');
+    }
   };
 
   if (isLoggingOut) {
@@ -87,11 +119,19 @@ const ListUsers = () => {
               <Th>Celular</Th>
               <Th>C.I.</Th>
               <Th>Sucursal</Th>
+              <Th>Acciones</Th>
             </Tr>
           </Thead>
           <Tbody>
             {filteredUsers.map(user => (
-              <Tr key={user.id}>
+              <Tr
+                key={user.id}
+                onClick={() => handleSelectUser(user)}
+                style={{
+                  backgroundColor: selectedUser?.id === user.id ? '#e0f7fa' : 'transparent',
+                  cursor: 'pointer',
+                }}
+              >
                 <Td>{user.firstname}</Td>
                 <Td>{user.lastname}</Td>
                 <Td>{user.username}</Td>
@@ -101,10 +141,19 @@ const ListUsers = () => {
                 <Td>{user.phone_number}</Td>
                 <Td>{user.ci}</Td>
                 <Td>{user.branch.name_branch}</Td>
+                <Td>
+                  <Button colorScheme="blue" size="sm" onClick={() => handleSelectUser(user)}>
+                    Seleccionar
+                  </Button>
+                </Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
+      </Box>
+      <Box display="flex" justifyContent="space-around" mt={6}>
+        <Button onClick={handleUpdate} colorScheme="blue">Actualizar</Button>
+        <Button onClick={handleDelete} colorScheme="red">Eliminar</Button>
       </Box>
     </Box>
   );

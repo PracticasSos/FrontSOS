@@ -47,23 +47,6 @@ const SignUpForm = () => {
     else console.log('Usuario creado:', data);
   };
 
-  const handleUpdate = async () => {
-    const { data, error } = await supabase
-      .from('users')
-      .update(formData)
-      .eq('id', formData.id);
-    if (error) console.error('Error al actualizar:', error);
-    else console.log('Usuario actualizado:', data);
-  };
-
-  const handleDelete = async () => {
-    const { data, error } = await supabase
-      .from('users')
-      .delete()
-      .eq('id', formData.id);
-    if (error) console.error('Error al eliminar:', error);
-    else console.log('Usuario eliminado:', data);
-  };
 
   const handleReset = () => {
     setFormData({
@@ -88,17 +71,10 @@ const SignUpForm = () => {
     <Box className="signup-form" display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
       <Box width="100%" maxWidth="600px">
         <Box display="flex" justifyContent="space-around" paddingBottom="15px">
-          <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>
-            Listar Usuarios
-          </Button>
-          <Button onClick={() => handleNavigate('/Admin')} mt={4}>
-            Volver a Opciones
-          </Button>
-          <Button onClick={() => handleNavigate('/LoginForm')} mt={4}>
-            Cerrar Sesión
-          </Button>
+          <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>Listar Usuarios</Button>
+          <Button onClick={() => handleNavigate('/Admin')} mt={4}>Volver a Opciones</Button>
+          <Button onClick={() => handleNavigate('/LoginForm')} mt={4}>Cerrar Sesión</Button>
         </Box>
-
         <form>
           <SimpleGrid columns={2} spacing={4}>
             {renderInputField('Nombre', 'firstname', 'text', true)}
@@ -117,8 +93,6 @@ const SignUpForm = () => {
 
           <Box display="flex" justifyContent="space-around" mt={6}>
             <Button onClick={handleCreate} colorScheme="teal">Crear</Button>
-            <Button onClick={handleUpdate} colorScheme="blue">Actualizar</Button>
-            <Button onClick={handleDelete} colorScheme="red">Eliminar</Button>
             <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
           </Box>
         </form>
