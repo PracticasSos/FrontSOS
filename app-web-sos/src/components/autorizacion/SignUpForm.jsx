@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input, Select, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, SimpleGrid } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import '../../Styles/SignUpFormStyles.css';
+
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -68,15 +68,15 @@ const SignUpForm = () => {
   const handleNavigate = (route) => navigate(route);
 
   return (
-    <Box className="signup-form" display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-      <Box width="100%" maxWidth="600px">
-        <Box display="flex" justifyContent="space-around" paddingBottom="15px">
-          <Button onClick={() => handleNavigate('/ListUsers')} mt={4}>Listar Usuarios</Button>
-          <Button onClick={() => handleNavigate('/Admin')} mt={4}>Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate('/LoginForm')} mt={4}>Cerrar Sesión</Button>
+    <Box className="signup-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
+      <Heading mb={4}>Registrar Usuarios</Heading>
+        <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
+          <Button onClick={() => handleNavigate('/ListUsers')} colorScheme="teal">Listar Usuarios</Button>
+          <Button onClick={() => handleNavigate('/Admin')} colorScheme="blue">Volver a Opciones</Button>
+          <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
         </Box>
-        <form>
-          <SimpleGrid columns={2} spacing={4}>
+        <Box as='form' onSubmit={(e) => {e.preventDefault(); handleSubmit(); }} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
+          <SimpleGrid columns={[1, 2]} spacing={4}>
             {renderInputField('Nombre', 'firstname', 'text', true)}
             {renderInputField('Apellido', 'lastname', 'text', true)}
             {renderInputField('Username', 'username', 'text', true)}
@@ -95,8 +95,7 @@ const SignUpForm = () => {
             <Button onClick={handleCreate} colorScheme="teal">Crear</Button>
             <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
           </Box>
-        </form>
-      </Box>
+        </Box>
     </Box>
   );
 
