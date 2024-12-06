@@ -8,7 +8,9 @@ const ListUsers = () => {
   const [search, setSearch] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchUsers();
@@ -50,6 +52,7 @@ const ListUsers = () => {
 
   const handleSelectUser = (user) => {
     setSelectedUser(user);
+    setIsEditing(true);
   };
 
   const handleUpdate = () => {
@@ -62,6 +65,7 @@ const ListUsers = () => {
 
   const handleDelete = async () => {
     if (selectedUser) {
+      
       const { error } = await supabase
         .from('users')
         .delete()
@@ -77,7 +81,26 @@ const ListUsers = () => {
     } else {
       alert('Por favor selecciona un usuario para eliminar.');
     }
+
+    if (error) {
+      console.error('Error al actualizar:', error);
+      alert('Error al actualizar al usuario.');
+    }else {
+      alert('Usuario actualizado con éxito.')
+      setIsEditing(false);
+
+      setUsers((prevUsets) => 
+        prevUsets.map((user) => 
+          user.id === selectedUser.id ? {...user, ...selectedUser}: user  
+        )
+      );
+    }
   };
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    setSelectedUser(null);
+  }
 
   if (isLoggingOut) {
     return (
@@ -100,6 +123,7 @@ const ListUsers = () => {
       <Button onClick={handleLogout} mt={4}>
         Cerrar Sesión
       </Button>
+     
       <Input
         placeholder="Buscar por nombre, apellido o username"
         value={search}
@@ -132,6 +156,7 @@ const ListUsers = () => {
                   cursor: 'pointer',
                 }}
               >
+      
                 <Td>{user.firstname}</Td>
                 <Td>{user.lastname}</Td>
                 <Td>{user.username}</Td>
@@ -148,8 +173,10 @@ const ListUsers = () => {
                 </Td>
               </Tr>
             ))}
+ 
           </Tbody>
         </Table>
+        
       </Box>
       <Box display="flex" justifyContent="space-around" mt={6}>
         <Button onClick={handleUpdate} colorScheme="blue">Actualizar</Button>
