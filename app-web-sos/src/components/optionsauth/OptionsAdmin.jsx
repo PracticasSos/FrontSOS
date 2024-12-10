@@ -50,6 +50,10 @@ const AdminDashBoard = () => {
     if (label === "CONSULTAR CIERRE"){
       navigate('/CashClousure')
     }
+
+    if (label === "VENTA/ CONTRATO DE SERVICIO") {
+      navigate('/SalesForm')
+    }
   };
 
   const handleNavigate = (route) => {
