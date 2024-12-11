@@ -13,8 +13,9 @@ import Branch from "../components/Admin/Branch.jsx";
 import ListBranch from "../components/Admin/ListBranch.jsx";
 import Lab from "../components/Admin/Labs.jsx";
 import ListLab from "../components/Admin/ListLab.jsx";
-import CashClousure from "../components/Admin/CashClousure.jsx"
-import SalesForm from "../components/Admin/SalesForm.jsx"
+import CashClousure from "../components/Admin/CashClousure.jsx";
+import SalesForm from "../components/Admin/SalesForm.jsx";
+import RegisterLens from "../components/Admin/RegisterLens.jsx";
 
 const AppRouter = () => {
     return(
@@ -35,6 +36,7 @@ const AppRouter = () => {
             <Route path={"ListLabs"} element={<ListLab/>}></Route>
             <Route path="CashClousure" element={<CashClousure />} ></Route>
             <Route path="SalesForm" element= {<SalesForm/>}></Route>
+            <Route path="RegisterLens" element={<RegisterLens/>}></Route>
 
         </Routes>
     )

@@ -20,7 +20,8 @@ const options = [
   { label: "LABORATORIOS" },
   { label: "SUCURSAL" },
   { label: "CONSULTAR CIERRE" },
-  { label: "IMPRIMIR CERTIFICADO" }
+  { label: "IMPRIMIR CERTIFICADO" },
+  { label: "REGISTRAR LUNAS" }
 ];
 
 const AdminDashBoard = () => {
@@ -51,8 +52,12 @@ const AdminDashBoard = () => {
       navigate('/CashClousure')
     }
 
-    if (label === "VENTA/ CONTRATO DE SERVICIO") {
+    if (label === 'VENTA/ CONTRATO DE SERVICIO') {
       navigate('/SalesForm')
+    }
+
+    if (label === "REGISTRAR LUNAS") {
+      navigate('/RegisterLens')
     }
   };
 

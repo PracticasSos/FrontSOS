@@ -11,7 +11,7 @@ const SalesForm = () => {
     branch_id: "",
     date: "",
     frame: "",
-    lens: "",
+    lens_id: "",
     delivery_time: "",
     p_frame: 0,
     p_lens: 0,
@@ -25,7 +25,10 @@ const SalesForm = () => {
   const [branches, setBranches] = useState([]);
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTermPatients, setSearchTermPatients] = useState("");
+  const [searchTermLens, setSearchTermLens] = useState("");
+  const [lenss, setLenss] = useState([]);
+  const [filteredLens, setFilteredLens] = useState([]);
   const [error, setError] = useState(null); 
 
 
@@ -35,6 +38,10 @@ const SalesForm = () => {
       setPatients(data);
       setFilteredPatients(data);
     });
+    fetchData('lens', (data) => {
+      setLenss(data);
+      setFilteredLens(data);
+    })
   }, []);
 
   const fetchData = async (table, setter) => {
@@ -54,9 +61,9 @@ const SalesForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSearch = (e) => {
+  const handleSearchPatients = (e) => {
     const terms = e.target.value.toLowerCase().split(" ");
-    setSearchTerm(e.target.value);
+    setSearchTermPatients(e.target.value);
   
     setFilteredPatients(
       patients.filter((patient) => {
@@ -67,16 +74,36 @@ const SalesForm = () => {
       })
     );
   };
-  
-  
-  
+    
+    const handleSearchLens = (e) => {
+      const terms = e.target.value.toLowerCase().split(" ");
+      setSearchTermLens(e.target.value);
+    
+      setFilteredLens(
+        lenss.filter((lenss) => {
+          const name = `${lenss.lens_type}`.toLowerCase();
+          return terms.every((term) => 
+            name.includes(term)
+          );
+        })
+      );
+    };
+ 
+
 
   const handlePatientSelect = (patient) => {
     const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
     setFormData({ ...formData, patient_id: patient.id })
-    setSearchTerm(fullName);
+    setSearchTermPatients(fullName);
     setFilteredPatients([]);
   };
+
+  const handleLensSelect = (lenss) => {
+    const name = `${lenss.lens_type}`;
+    setFormData({ ...formData, lens_id: lenss.id})
+    setSearchTermLens(name);
+    setFilteredLens([]);
+  }
 
   const handleSubmit = async () => {
     if (!formData.patient_id || !formData.branch_id || !formData.date) {
@@ -126,15 +153,6 @@ const SalesForm = () => {
           {error}
         </Alert>
       )}
-      <Box
-      key={patients.id}
-      padding={2}
-      _hover={{ bg: "teal.100", cursor: "pointer" }}
-      onClick={() => handlePatientSelect(patients)}
-      >
-    <strong>{patients.pt_firstname}</strong> {patients.pt_lastname} - {patients.pt_ci}
-    </Box>
-
   
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
         <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
@@ -149,50 +167,27 @@ const SalesForm = () => {
       </Box>
       
   
-      <Box
-        as="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        width="100%"
-        maxWidth="800px"
-        padding={6}
-        boxShadow="lg"
-        borderRadius="md"
-      >
+      <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={[1, 2]} spacing={4}>
+
           <FormControl id="patient-search">
             <FormLabel>Buscar Paciente</FormLabel>
-            <Input
-              type="text"
-              placeholder="Buscar por nombre..."
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-            {searchTerm && (
+            <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients}/>
+            {searchTermPatients && (
               <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
                 {filteredPatients.map((patient) => (
-                  <Box
-                    key={patient.id}
-                    padding={2}
-                    _hover={{ bg: "teal.100", cursor: "pointer" }}
-                    onClick={() => handlePatientSelect(patient)}
-                  >
+                  <Box key={patient.id} padding={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handlePatientSelect(patient)}>
                     {patient.pt_firstname || patient.full_name}
                   </Box>
                 ))}
               </Box>
             )}
+
           </FormControl>
-  
+
           <FormControl id="branch_id" isRequired>
             <FormLabel>Sucursal</FormLabel>
-            <Select
-              name="branch_id"
-              value={formData.branch_id}
-              onChange={handleChange}
-            >
+            <Select name="branch_id" value={formData.branch_id} onChange={handleChange}>
               <option value="">Seleccione una sucursal</option>
               {branches.map((branch) => (
                 <option key={branch.id} value={branch.id}>
@@ -201,10 +196,34 @@ const SalesForm = () => {
               ))}
             </Select>
           </FormControl>
+
+          <FormControl id="lens-search">
+  <FormLabel>Buscar Lunas</FormLabel>
+  <Input
+    type="text"
+    placeholder="Buscar por tipo..."
+    value={searchTermLens}
+    onChange={handleSearchLens}
+  />
+  {searchTermLens && (
+    <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
+      {filteredLens.map((lenss) => (
+        <Box
+          key={lenss.id}
+          padding={2}
+          _hover={{ bg: "teal.100", cursor: "pointer" }}
+          onClick={() => handleLensSelect(lenss)}
+        >
+          {lenss.lens_type}
+        </Box>
+      ))}
+    </Box>
+  )}
+</FormControl>
+
   
           {renderInputField("Fecha", "date", "date", true)}
           {renderInputField("Armazón", "frame", "text")}
-          {renderInputField("Lunas", "lens", "text")}
           {renderSelectField("Tiempo de Entrega", "delivery_time", [
             { id: "1 día", name_branch: "1 día" },
             { id: "2 días", name_branch: "2 días" },

@@ -3,7 +3,6 @@ import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
-
 const RegisterPatientForm = () => {
   const navigate = useNavigate();
 
@@ -29,9 +28,13 @@ const RegisterPatientForm = () => {
   }, []);
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase.from('users').select('id, username');
-    if (error) console.error('Error fetching users:', error);
-    else setUsers(data);
+    try {
+      const { data, error } = await supabase.from('users').select('id, username');
+      if (error) throw error;
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   const handleChange = (e) => {
@@ -39,10 +42,30 @@ const RegisterPatientForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    const { data, error } = await supabase.from('patients').insert([formData]);
-    if (error) console.error('Error al registrar paciente:', error);
-    else console.log('Paciente registrado:', data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.user_id || !formData.pt_firstname || !formData.pt_lastname) {
+      alert("Por favor, completa todos los campos obligatorios.");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('patients')
+        .insert([formData]);
+
+      if (error) {
+        console.error('Error:', error.message);
+        alert("Ocurrió un error: " + error.message);
+      } else {
+        console.log('Paciente registrado:', data);
+        alert("¡Registrado con éxito!");
+      }
+    } catch (err) {
+      console.error('Error desconocido:', err);
+      alert("Error inesperado. Intenta nuevamente.");
+    }
   };
 
   const handleReset = () => {
@@ -73,7 +96,7 @@ const RegisterPatientForm = () => {
         <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
       </Box>
 
-      <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
+      <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={[1, 2]} spacing={4}>
           {renderSelectField('Usuario', 'user_id', users)}
           {renderInputField('Nombre', 'pt_firstname', 'text', true)}

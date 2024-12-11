@@ -72,6 +72,7 @@ const CashClousure = () => {
                         <FormControl isRequired>
                             <FormLabel>Óptica</FormLabel>
                             <Select name="branch" value={formData.branch} onChange={handleChange}>
+                            <option value="SELECCIONE">Selecione una sucursal</option>
                                 <option value="VEOPTICS">VEOPTICS</option>
                                 <option value="SOS">SOS</option>
                             </Select>
@@ -80,6 +81,7 @@ const CashClousure = () => {
                         <FormControl id="month" isRequired mt={4}>
                             <FormLabel>Mes</FormLabel>
                             <Select name="month" value={formData.month} onChange={handleChange}>
+                                <option value="Seleccione">Seleccione un mes</option>
                                 <option value="Diciembre">Diciembre</option>
                                 <option value="Enero">Enero</option>
                                 <option value="Febrero">Febrero</option>
