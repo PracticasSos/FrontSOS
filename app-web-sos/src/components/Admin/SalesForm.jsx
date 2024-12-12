@@ -3,6 +3,7 @@ import { supabase } from "../../api/supabase";
 import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, Alert, AlertIcon } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+
 const SalesForm = () => {
   const navigate = useNavigate();
 
@@ -122,6 +123,13 @@ const SalesForm = () => {
     }
   };
 
+  const handleWhatsApp = () => {
+    const phoneNumber = "593939731833";
+    const message = encodeURIComponent("!Hola¡ Quiero saber sobre mi orden");
+    const whatsAppUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsAppUrl, "_blank");
+  }
+
   const handleReset = () => {
     setFormData({
       patient_id: "",
@@ -155,17 +163,10 @@ const SalesForm = () => {
       )}
   
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-        <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
-          Consultas de Cierre
-        </Button>
-        <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">
-          Volver a Opciones
-        </Button>
-        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
-          Cerrar Sesión
-        </Button>
+        <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">Consultas de Cierre</Button>
+        <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
+        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
       </Box>
-      
   
       <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={[1, 2]} spacing={4}>
@@ -177,7 +178,7 @@ const SalesForm = () => {
               <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
                 {filteredPatients.map((patient) => (
                   <Box key={patient.id} padding={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handlePatientSelect(patient)}>
-                    {patient.pt_firstname || patient.full_name}
+                    {patient.pt_firstname} {patient.pt_lastname}
                   </Box>
                 ))}
               </Box>
@@ -220,7 +221,6 @@ const SalesForm = () => {
     </Box>
   )}
 </FormControl>
-
   
           {renderInputField("Fecha", "date", "date", true)}
           {renderInputField("Armazón", "frame", "text")}
@@ -241,12 +241,11 @@ const SalesForm = () => {
         </SimpleGrid>
   
         <Box display="flex" justifyContent="space-around" mt={6}>
-          <Button type="submit" colorScheme="teal">
-            Guardar
-          </Button>
-          <Button onClick={handleReset} colorScheme="gray">
-            Limpiar
-          </Button>
+          <Button type="submit" colorScheme="teal">Guardar</Button>
+          <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
+          <Button onClick={handleWhatsApp} colorScheme="teal">WhatsApp</Button>
+          <Button type="submit" colorScheme="teal">PDF</Button>
+          <Button type="submit" colorScheme="teal">Orden de laboratorio</Button>
         </Box>
       </Box>
     </Box>

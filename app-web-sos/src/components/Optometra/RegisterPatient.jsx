@@ -98,7 +98,7 @@ const RegisterPatientForm = () => {
 
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={[1, 2]} spacing={4}>
-          {renderSelectField('Usuario', 'user_id', users)}
+          {renderSelectField('Encargado', 'user_id', users)}
           {renderInputField('Nombre', 'pt_firstname', 'text', true)}
           {renderInputField('Apellido', 'pt_lastname', 'text', true)}
           {renderInputField('Ocupación', 'pt_occupation', 'text')}

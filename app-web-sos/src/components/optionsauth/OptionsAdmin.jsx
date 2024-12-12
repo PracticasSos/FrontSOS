@@ -21,7 +21,8 @@ const options = [
   { label: "SUCURSAL" },
   { label: "CONSULTAR CIERRE" },
   { label: "IMPRIMIR CERTIFICADO" },
-  { label: "REGISTRAR LUNAS" }
+  { label: "REGISTRAR LUNAS" },
+  {label: "REGISTRAR MEDIDAS"}
 ];
 
 const AdminDashBoard = () => {
@@ -58,6 +59,10 @@ const AdminDashBoard = () => {
 
     if (label === "REGISTRAR LUNAS") {
       navigate('/RegisterLens')
+    }
+
+    if (label === "REGISTRAR MEDIDAS") {
+      navigate('/RegisterMeasures')
     }
   };
 

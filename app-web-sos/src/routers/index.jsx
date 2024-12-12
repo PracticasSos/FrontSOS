@@ -16,6 +16,7 @@ import ListLab from "../components/Admin/ListLab.jsx";
 import CashClousure from "../components/Admin/CashClousure.jsx";
 import SalesForm from "../components/Admin/SalesForm.jsx";
 import RegisterLens from "../components/Admin/RegisterLens.jsx";
+import RegisterMeasures from "../components/Admin/RegisterMeasures.jsx"
 
 const AppRouter = () => {
     return(
@@ -37,7 +38,7 @@ const AppRouter = () => {
             <Route path="CashClousure" element={<CashClousure />} ></Route>
             <Route path="SalesForm" element= {<SalesForm/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
-
+            <Route path="RegisterMeasures" element={<RegisterMeasures/>}></Route>
         </Routes>
     )
 }
