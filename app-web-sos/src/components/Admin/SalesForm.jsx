@@ -140,6 +140,7 @@ const SalesForm = () => {
       delivery_time: "",
       p_frame: 0,
       p_lens: 0,
+      price:0,
       total: 0,
       credit: 0,
       balance: 0,
@@ -230,6 +231,7 @@ const SalesForm = () => {
           ])}
           {renderInputField("P. Armazón", "p_frame", "number")}
           {renderInputField("P. Lunas", "p_lens", "number")}
+          {renderInputField("Precio", "price", "number")}
           {renderInputField("Total", "total", "number")}
           {renderInputField("Abono", "credit", "number")}
           {renderInputField("Saldo", "balance", "number")}

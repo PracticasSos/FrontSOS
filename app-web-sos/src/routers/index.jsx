@@ -17,6 +17,8 @@ import CashClousure from "../components/Admin/CashClousure.jsx";
 import SalesForm from "../components/Admin/SalesForm.jsx";
 import RegisterLens from "../components/Admin/RegisterLens.jsx";
 import RegisterMeasures from "../components/Admin/RegisterMeasures.jsx"
+import MeasuresUse from "../components/Admin/MeasuresUse.jsx"
+import MeasuresFinal from "../components/Admin/MeasuresFinal.jsx"
 
 const AppRouter = () => {
     return(
@@ -27,9 +29,9 @@ const AppRouter = () => {
             <Route path="Login" element={<LoginForm/>} />
             <Route path="Admin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
-            <Route path="RegisterPatient" element={<RegisterPatientForm />} />{/*Ruta para registrar pacientes (esto lo hacen los tres roles: Admin, Optometra y Vendedor)*/}
-            <Route path="Optometra" element={<OptometraDashBoard />} />{/*Ruta de las opciones del optometra*/}
-            <Route path="ListPatients" element={<ListPatients />} />{/*Ruta para listar pacientes registrados*/}
+            <Route path="RegisterPatient" element={<RegisterPatientForm />} />
+            <Route path="Optometra" element={<OptometraDashBoard />} />
+            <Route path="ListPatients" element={<ListPatients />} />
             <Route path={"ListInventory"} element={<InventarioList/>}></Route>
             <Route path={"Branch"} element={<Branch/>}></Route>
             <Route path={"ListBranch"} element={<ListBranch/>}></Route>
@@ -38,7 +40,10 @@ const AppRouter = () => {
             <Route path="CashClousure" element={<CashClousure />} ></Route>
             <Route path="SalesForm" element= {<SalesForm/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
-            <Route path="RegisterMeasures" element={<RegisterMeasures/>}></Route>
+            <Route path="RegisterMeasures" element={<RegisterMeasures />}>
+                <Route path="MeasuresUse" element={<MeasuresUse />} />
+                <Route path="MeasuresFinal" element={<MeasuresFinal />} />
+            </Route>
         </Routes>
     )
 }
