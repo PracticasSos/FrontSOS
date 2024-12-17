@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, Alert, AlertIcon } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, Alert, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -30,6 +30,8 @@ const SalesForm = () => {
   const [searchTermLens, setSearchTermLens] = useState("");
   const [lenss, setLenss] = useState([]);
   const [filteredLens, setFilteredLens] = useState([]);
+  const [patientMeasures, setPatientMeausres] = useState([]);
+  const [filteredMeasures, setFilteredMeasures] = useState([]);
   const [error, setError] = useState(null); 
 
 
@@ -42,7 +44,8 @@ const SalesForm = () => {
     fetchData('lens', (data) => {
       setLenss(data);
       setFilteredLens(data);
-    })
+    });
+    fetchData('rx_uso', setPatientMeausres);
   }, []);
 
   const fetchData = async (table, setter) => {
@@ -97,8 +100,13 @@ const SalesForm = () => {
     setFormData({ ...formData, patient_id: patient.id })
     setSearchTermPatients(fullName);
     setFilteredPatients([]);
-  };
 
+    const measures = patientMeasures.filter(
+      (measure) => measure.patient_id === patient.id
+    );
+    setFilteredMeasures(measures);
+  };
+  
   const handleLensSelect = (lenss) => {
     const name = `${lenss.lens_type}`;
     setFormData({ ...formData, lens_id: lenss.id})
@@ -152,8 +160,7 @@ const SalesForm = () => {
   const handleNavigate = (route) => navigate(route);
 
   return (
-    <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-
+    <Box className="sales-form" display="flex" flexDirection="column" alignItems="center"  minHeight="100vh">
       <Heading mb={4}>Registrar Venta</Heading>
   
       {error && (
@@ -169,8 +176,9 @@ const SalesForm = () => {
         <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
       </Box>
   
-      <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
-        <SimpleGrid columns={[1, 2]} spacing={4}>
+      <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
+        
+        <SimpleGrid columns={[1, 3]} spacing={4}>
 
           <FormControl id="patient-search">
             <FormLabel>Buscar Paciente</FormLabel>
@@ -198,33 +206,87 @@ const SalesForm = () => {
               ))}
             </Select>
           </FormControl>
-
-          <FormControl id="lens-search">
-  <FormLabel>Buscar Lunas</FormLabel>
-  <Input
-    type="text"
-    placeholder="Buscar por tipo..."
-    value={searchTermLens}
-    onChange={handleSearchLens}
-  />
-  {searchTermLens && (
-    <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
-      {filteredLens.map((lenss) => (
-        <Box
-          key={lenss.id}
-          padding={2}
-          _hover={{ bg: "teal.100", cursor: "pointer" }}
-          onClick={() => handleLensSelect(lenss)}
-        >
-          {lenss.lens_type}
-        </Box>
-      ))}
-    </Box>
-  )}
-</FormControl>
-  
           {renderInputField("Fecha", "date", "date", true)}
+        </SimpleGrid>
+        <Box mt = {4} mb={4}>
+          <Table variant="simple" mb={4}>
+                <Thead>
+                  <Tr>
+                    <Th>Rx Final</Th>
+                    <Th>Esfera</Th>
+                    <Th>Cilindro</Th>
+                    <Th>Eje</Th>
+                    <Th>Prisma</Th>
+                    <Th>ADD</Th>
+                    <Th>AV VL</Th>
+                    <Th>AV VP</Th>
+                    <Th>DNP</Th>
+                    <Th>ALT</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+  
+  {[
+    { side: "OD", prefix: "right" },
+    { side: "OI", prefix: "left" },
+  ].map(({ side, prefix }) => (
+    <Tr key={prefix}>
+      <Td>{side}</Td>
+      {[
+        "sphere",
+        "cylinder",
+        "axis",
+        "prism",
+        "add",
+        "av_vl",
+        "av_vp",
+        "dnp",
+        "alt",
+      ].map((field) => (
+        <Td key={field}>
+          <Input
+            name={`${field}_${prefix}`}
+            value={
+              filteredMeasures.length > 0
+                ? filteredMeasures[0][`${field}_${prefix}`] || ""
+                : ""
+            }
+            onChange={handleChange}
+          />
+        </Td>
+      ))}
+    </Tr>
+  ))}
+</Tbody>
+
+
+           </Table>
+          </Box>
+        <SimpleGrid columns={[1, 2]} spacing={4}>
           {renderInputField("Armazón", "frame", "text")}
+            <FormControl id="lens-search">
+                <FormLabel>Buscar Lunas</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Buscar por tipo..."
+                    value={searchTermLens}
+                    onChange={handleSearchLens}
+                  />
+                  {searchTermLens && (
+                  <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
+                    {filteredLens.map((lenss) => (
+                        <Box
+                          key={lenss.id}
+                          padding={2}
+                          _hover={{ bg: "teal.100", cursor: "pointer" }}
+                          onClick={() => handleLensSelect(lenss)}
+                        >
+                        {lenss.lens_type}
+                      </Box>
+                    ))}
+                </Box>
+                )}
+            </FormControl>
           {renderSelectField("Tiempo de Entrega", "delivery_time", [
             { id: "1 día", name_branch: "1 día" },
             { id: "2 días", name_branch: "2 días" },

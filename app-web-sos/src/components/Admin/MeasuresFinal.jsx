@@ -13,8 +13,8 @@ const MeasuresFinal = () => {
     axis_right: 0,
     prism_right: 0,
     add_right: 0,
-    av_vl_right: 0,
-    av_vp_right: 0,
+    av_vl_right: "",
+    av_vp_right: "",
     dnp_right: 0,
     alt_right: 0,
     sphere_left: 0,
@@ -22,10 +22,17 @@ const MeasuresFinal = () => {
     axis_left: 0,
     prism_left: 0,
     add_left: 0,
-    av_vl_left: 0,
-    av_vp_left: 0,
+    av_vl_left: "",
+    av_vp_left: "",
     dnp_left: 0,
     alt_left: 0,
+    diagnosis: "",
+    near_vision: "",
+    needs_lenses_near: false,
+    far_vision: "",
+    needs_lenses_far: false,
+    color_perception: false,
+    color_issues: "",
   });
 
   const [patients, setPatients] = useState([]);
@@ -42,39 +49,27 @@ const MeasuresFinal = () => {
   const [colorIssues, setColorIssues] = useState("");
 
   useEffect(() => {
-    fetchPatients();
+    fetchData('patients', data => {
+        setPatients(data);
+        setFilteredPatients(data);
+    });
   }, []);
 
-  const fetchPatients = async () => {
-    try {
-      const { data, error } = await supabase.from("patients").select("*");
-      if (error) throw error;
-      setPatients(data);
-      setFilteredPatients(data);
-    } catch (err) {
-      console.error("Error fetching patients:", err);
-      setError("Error al obtener los datos de pacientes");
-    }
-  };
-
-  const handleSave = () => {
-    const data = {
-      diagnosis,
-      nearVision,
-      needsLensesNear,
-      farVision,
-      needsLensesFar,
-      colorPerception,
-      colorIssues,
+    const fetchData = async (table, setter) => {
+      try {
+          const { data, error } = await supabase.from(table).select("*");
+          if (error) throw error;
+          setter(data);
+      } catch (err) {
+          console.error(`Error fetching ${table}:`, err);
+          setError(`Error al obtener los datos de ${table}`);
+      }
     };
-    console.log("Datos guardados:", data);
-    alert("Datos guardados exitosamente");
-  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value });
+    };
 
   const handleSearchPatients = (e) => {
     const searchTerm = e.target.value.toLowerCase();
@@ -99,19 +94,21 @@ const MeasuresFinal = () => {
 
   const handleSubmit = async () => {
     if (!formData.patient_id) {
-      alert("Por favor completa los campos obligatorios.");
+      alert ("Por favor completa los campos obligatorios.");
       return;
-    }
-    try {
-      const { data, error } = await supabase.from("rx_uso").insert([formData]);
+  }
+  try {
+      const { data, error } = await supabase.from("rx_final").insert([formData]);
       if (error) throw error;
       console.log("Medidas registradas:", data);
       alert("Medidas registradas exitosamente.");
-    } catch (error) {
+  } catch (error) {
       console.error("Error al registrar medidas:", error.message);
-      alert("Hubo un error al registrar las medidas.");
-    }
+      alert("Hubo un error al registar la venta.");
+  }
   };
+  
+  
 
   const handleNavigate = (route) => navigate(route);
 
@@ -165,35 +162,34 @@ const MeasuresFinal = () => {
               <Th>ALT</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {[
-              { side: "OD", prefix: "right" },
-              { side: "OI", prefix: "left" },
-            ].map(({ side, prefix }) => (
-              <Tr key={prefix}>
-                <Td>{side}</Td>
-                {[
-                  "sphere",
-                  "cylinder",
-                  "axis",
-                  "prism",
-                  "add",
-                  "av_vl",
-                  "av_vp",
-                  "dnp",
-                  "alt",
-                ].map((field) => (
-                  <Td key={field}>
-                    <Input
-                      name={`${field}_${prefix}`}
-                      value={formData[`${field}_${prefix}`]}
-                      onChange={handleChange}
-                    />
-                  </Td>
-                ))}
-              </Tr>
-            ))}
-          </Tbody>
+                <Tbody>
+                <Tr>
+                        <Td>OD</Td>
+                        <Td><Input name="sphere_right" value={formData.sphere_right} onChange={handleChange} /></Td>
+                        <Td><Input name="cylinder_right" value={formData.cylinder_right} onChange={handleChange} /></Td>
+                        <Td><Input name="axis_right" value={formData.axis_right} onChange={handleChange} /></Td>
+                        <Td><Input name="prism_right" value={formData.prism_right} onChange={handleChange} /></Td>
+                        <Td><Input name="add_right" value={formData.add_right} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vl_right" value={formData.av_vl_right} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vp_right" value={formData.av_vp_right} onChange={handleChange} /></Td>
+                        <Td><Input name="dnp_right" value={formData.dnp_right} onChange={handleChange} /></Td>
+                        <Td><Input name="alt_right" value={formData.alt_right} onChange={handleChange} /></Td>
+                        </Tr>
+                    </Tbody>
+                    <Tbody>
+                        <Tr>
+                        <Td>OI</Td>
+                        <Td><Input name="sphere_left" value={formData.sphere_left} onChange={handleChange} /></Td>
+                        <Td><Input name="cylinder_left" value={formData.cylinder_left} onChange={handleChange} /></Td>
+                        <Td><Input name="axis_left" value={formData.axis_left} onChange={handleChange} /></Td>
+                        <Td><Input name="prism_left" value={formData.prism_left} onChange={handleChange} /></Td>
+                        <Td><Input name="add_left" value={formData.add_left} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vl_left" value={formData.av_vl_left} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vp_left" value={formData.av_vp_left} onChange={handleChange} /></Td>
+                        <Td><Input name="dnp_left" value={formData.dnp_left} onChange={handleChange} /></Td>
+                        <Td><Input name="alt_left" value={formData.alt_left} onChange={handleChange} /></Td>
+                        </Tr>
+                </Tbody>
         </Table>
         <Box p={6} maxWidth="1000px" margin="0 auto" border="1px solid #ccc" borderRadius="8px">
             <Heading size="md" mb={4}>
@@ -275,7 +271,7 @@ const MeasuresFinal = () => {
             </Box>
 
             <Stack direction="row" spacing={4}>
-                <Button colorScheme="teal" onClick={handleSave}>GUARDAR</Button>
+                <Button colorScheme="teal" onClick={handleSubmit}>GUARDAR</Button>
                 <Button colorScheme="red">ELIMINAR</Button>
             </Stack>
         </Box>
