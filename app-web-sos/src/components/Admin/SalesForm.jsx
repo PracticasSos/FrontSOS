@@ -45,7 +45,7 @@ const SalesForm = () => {
       setLenss(data);
       setFilteredLens(data);
     });
-    fetchData('rx_uso', setPatientMeausres);
+    fetchData('rx_final', setPatientMeausres);
   }, []);
 
   const fetchData = async (table, setter) => {
