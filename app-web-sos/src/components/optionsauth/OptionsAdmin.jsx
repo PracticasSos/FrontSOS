@@ -64,6 +64,10 @@ const AdminDashBoard = () => {
     if (label === "REGISTRAR MEDIDAS") {
       navigate('/RegisterMeasures')
     }
+
+    if (label === "CIERRE") {
+      navigate('/PatientRecords')
+    }
   };
 
   const handleNavigate = (route) => {

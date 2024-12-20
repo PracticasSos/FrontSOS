@@ -300,6 +300,7 @@ const SalesForm = () => {
           {renderSelectField("Pago en", "payment_in", [
             { id: "efectivo", name: "Efectivo" },
             { id: "datafast", name: "Datafast" },
+            { id: "transferencia", name: "Transferencia"}
           ])}
           {renderTextareaField("Mensaje", "message")}
         </SimpleGrid>
