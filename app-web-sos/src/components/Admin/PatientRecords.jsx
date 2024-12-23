@@ -89,22 +89,53 @@ const PatientRecords = ({ branch }) => {
 
     const saveClosingData = async (data) => {
         try {
-            const { error } = await supabase
+            // Primero verificamos si ya existe un registro para esta fecha y sucursal
+            const { data: existingData, error: fetchError } = await supabase
                 .from("closing")
-                .upsert([
-                    {
+                .select("*")
+                .eq("day", data.day)
+                .eq("branch", data.branch)
+                .single();
+    
+            if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 es el código cuando no se encuentra ningún registro
+                throw fetchError;
+            }
+    
+            let upsertError;
+            
+            if (existingData) {
+                // Si existe, actualizamos
+                const { error } = await supabase
+                    .from("closing")
+                    .update({
+                        grand_total: data.grand_total,
+                        effective: data.effective,
+                        transference: data.transference,
+                        datafast: data.datafast
+                    })
+                    .eq("day", data.day)
+                    .eq("branch", data.branch);
+                
+                upsertError = error;
+            } else {
+                // Si no existe, insertamos
+                const { error } = await supabase
+                    .from("closing")
+                    .insert([{
                         day: data.day,
                         grand_total: data.grand_total,
                         effective: data.effective,
                         transference: data.transference,
                         datafast: data.datafast,
-                        branch: data.branch 
-                    },
-                ], { onConflict: ["day", "branch"] });
-
-            if (error) throw error;
-
-            console.log("Datos de cierre guardados o actualizados automáticamente:", data);
+                        branch: data.branch
+                    }]);
+                
+                upsertError = error;
+            }
+    
+            if (upsertError) throw upsertError;
+    
+            console.log("Datos de cierre guardados o actualizados correctamente:", data);
         } catch (err) {
             console.error("Error al guardar datos de cierre:", err);
         }
