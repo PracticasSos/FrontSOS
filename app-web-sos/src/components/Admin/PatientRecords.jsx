@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button } from "@chakra-ui/react";
 
 const PatientRecords = ({ branch }) => {
     const [records, setRecords] = useState([]);
     const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
-    const [formData, setFormData] = useState({
-        day: "",
-        grand_total: 0,
-        effective: 0,
-        transference: 0,
-        datafast: 0,
-    });
-
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchDailyRecords(branch);
+        // Resetear los estados cuando cambia la sucursal
+        setRecords([]);
+        setTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
+        setGrandTotal(0);
+        
+        if (branch) {
+            fetchDailyRecords(branch);
+        }
     }, [branch]);
 
     const fetchDailyRecords = async (branch) => {
@@ -29,7 +28,7 @@ const PatientRecords = ({ branch }) => {
                 .select(`
                     id, 
                     date,
-                    branch (VEOPTICS, SOS),
+                    branch:branch_id (name_branch),  
                     frame, 
                     lens (lens_type), 
                     total, 
@@ -39,11 +38,16 @@ const PatientRecords = ({ branch }) => {
                     patients (pt_firstname, pt_lastname)
                 `)
                 .eq("date", today)
-                .eq("branch", branch); 
+                .eq("branch_id.name_branch", branch);
 
             if (error) throw error;
 
-            const formattedRecords = data.map((record) => ({
+            // Filtrar los registros para asegurarnos de que solo obtenemos los de la sucursal actual
+            const filteredRecords = data.filter(record => 
+                record.branch?.name_branch === branch
+            );
+
+            const formattedRecords = filteredRecords.map((record) => ({
                 ...record,
                 firstName: record.patients?.pt_firstname || "Sin nombre",
                 lastName: record.patients?.pt_lastname || "Sin apellido",
@@ -71,27 +75,17 @@ const PatientRecords = ({ branch }) => {
 
         setTotals({ EFEC: totalEFEC, TRANS: totalTRANS, DATAF: totalDATAF });
         setGrandTotal(totalEFEC + totalTRANS + totalDATAF);
+
+        
+        saveClosingData({
+            day: new Date().toISOString().split("T")[0],
+            grand_total: totalEFEC + totalTRANS + totalDATAF,
+            effective: totalEFEC,
+            transference: totalTRANS,
+            datafast: totalDATAF,
+            branch: branch 
+        });
     };
-
-    useEffect(() => {
-        const today = new Date().toISOString().split("T")[0];
-        const now = new Date();
-        const currentHour = now.getHours();
-
-        const updatedFormData = {
-            day: today,
-            grand_total: grandTotal,
-            effective: totals.EFEC,
-            transference: totals.TRANS,
-            datafast: totals.DATAF,
-        };
-
-        setFormData(updatedFormData);
-
-        if (currentHour >= 7 && currentHour < 24) {
-            saveClosingData(updatedFormData);
-        }
-    }, [totals, grandTotal]);
 
     const saveClosingData = async (data) => {
         try {
@@ -104,8 +98,9 @@ const PatientRecords = ({ branch }) => {
                         effective: data.effective,
                         transference: data.transference,
                         datafast: data.datafast,
+                        branch: data.branch 
                     },
-                ], { onConflict: ["day"] });
+                ], { onConflict: ["day", "branch"] });
 
             if (error) throw error;
 
@@ -149,7 +144,7 @@ const PatientRecords = ({ branch }) => {
                         <Tr key={record.id}>
                             <Td>{record.id}</Td>
                             <Td>{record.date}</Td>
-                            <Td>{record.branch}</Td>
+                            <Td>{record.branch?.name_branch}</Td>
                             <Td>{record.firstName}</Td>
                             <Td>{record.lastName}</Td>
                             <Td>{record.frame}</Td>
