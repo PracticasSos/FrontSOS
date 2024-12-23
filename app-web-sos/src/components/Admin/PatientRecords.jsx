@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button } from "@chakra-ui/react";
 
-const PatientRecords = () => {
+const PatientRecords = ({ branch }) => {
     const [records, setRecords] = useState([]);
     const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
@@ -18,18 +18,18 @@ const PatientRecords = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchDailyRecords();
-    }, []);
+        fetchDailyRecords(branch);
+    }, [branch]);
 
-    // Obtener los registros del día con unión a la tabla de pacientes
-    const fetchDailyRecords = async () => {
+    const fetchDailyRecords = async (branch) => {
         const today = new Date().toISOString().split("T")[0];
         try {
             const { data, error } = await supabase
                 .from("sales")
                 .select(`
                     id, 
-                    date, 
+                    date,
+                    branch (VEOPTICS, SOS),
                     frame, 
                     lens (lens_type), 
                     total, 
@@ -38,7 +38,8 @@ const PatientRecords = () => {
                     payment_in,
                     patients (pt_firstname, pt_lastname)
                 `)
-                .eq("date", today);
+                .eq("date", today)
+                .eq("branch", branch); 
 
             if (error) throw error;
 
@@ -47,6 +48,7 @@ const PatientRecords = () => {
                 firstName: record.patients?.pt_firstname || "Sin nombre",
                 lastName: record.patients?.pt_lastname || "Sin apellido",
                 lens: record.lens?.lens_type || "Sin tipo",
+                branch: record?.branch || "Sin sucursal",
             }));
 
             setRecords(formattedRecords);
@@ -56,7 +58,6 @@ const PatientRecords = () => {
         }
     };
 
-    
     const calculateTotals = (data) => {
         let totalEFEC = 0,
             totalTRANS = 0,
@@ -72,13 +73,11 @@ const PatientRecords = () => {
         setGrandTotal(totalEFEC + totalTRANS + totalDATAF);
     };
 
-    // Actualizar formData y guardar en la base de datos automáticamente
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
         const now = new Date();
         const currentHour = now.getHours();
 
-        
         const updatedFormData = {
             day: today,
             grand_total: grandTotal,
@@ -89,42 +88,39 @@ const PatientRecords = () => {
 
         setFormData(updatedFormData);
 
-        
         if (currentHour >= 7 && currentHour < 24) {
             saveClosingData(updatedFormData);
         }
     }, [totals, grandTotal]);
 
-    
     const saveClosingData = async (data) => {
         try {
-            // Usamos upsert para insertar o actualizar el registro automáticamente si ya existe
             const { error } = await supabase
                 .from("closing")
-                .upsert([{
-                    day: data.day,
-                    grand_total: data.grand_total,
-                    effective: data.effective,
-                    transference: data.transference,
-                    datafast: data.datafast
-                }], { onConflict: ['day'] }); 
-    
+                .upsert([
+                    {
+                        day: data.day,
+                        grand_total: data.grand_total,
+                        effective: data.effective,
+                        transference: data.transference,
+                        datafast: data.datafast,
+                    },
+                ], { onConflict: ["day"] });
+
             if (error) throw error;
-    
+
             console.log("Datos de cierre guardados o actualizados automáticamente:", data);
         } catch (err) {
             console.error("Error al guardar datos de cierre:", err);
         }
     };
-    
-    
 
     const handleNavigate = (route) => navigate(route);
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
-                Cierre Diario
+                Cierre Diario - {branch}
             </Heading>
             <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
                 <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">Consultas de Cierre</Button>
@@ -137,6 +133,7 @@ const PatientRecords = () => {
                     <Tr>
                         <Th>Orden</Th>
                         <Th>Fecha</Th>
+                        <Th>Sucursal</Th>
                         <Th>Nombre</Th>
                         <Th>Apellido</Th>
                         <Th>Armazón</Th>
@@ -152,6 +149,7 @@ const PatientRecords = () => {
                         <Tr key={record.id}>
                             <Td>{record.id}</Td>
                             <Td>{record.date}</Td>
+                            <Td>{record.branch}</Td>
                             <Td>{record.firstName}</Td>
                             <Td>{record.lastName}</Td>
                             <Td>{record.frame}</Td>
@@ -173,7 +171,6 @@ const PatientRecords = () => {
                 </Tbody>
             </Table>
 
-            {/* Totales */}
             <Divider my={6} />
             <HStack justifyContent="space-around" spacing={6}>
                 <VStack>
