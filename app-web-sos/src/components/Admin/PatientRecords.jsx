@@ -5,35 +5,37 @@ import {
     Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select 
 } from "@chakra-ui/react";
 
-const PatientRecords = ({ branch }) => {
+const PatientRecords = () => {
     const [records, setRecords] = useState([]);
-    const [branchs, setBranchs] = useState([]);
+    const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState("");
     const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchBranchs();
+        fetchBranches();
     }, []);
 
-    const fetchBranchs = async () => {
-        const { data, error } = await supabase.from("branchs").select("id, name"); // Asegúrate de obtener 'id' y 'name'
+    const fetchBranches = async () => {
+        const { data, error } = await supabase
+            .from("branchs")
+            .select("id, name");
 
         if (error) {
-            console.error("Error al obtener sucursales:", error);
+            console.error("Error fetching branches:", error);
             return;
         }
 
-        setBranchs(data || []);
+        setBranches(data || []);
     };
 
-    const handleBranchChange = (event) => {
+    const handleBranchChange = async (event) => {
         const branchId = event.target.value;
         setSelectedBranch(branchId);
-
+        
         if (branchId) {
-            fetchDailyRecords(branchId);
+            await fetchDailyRecords(branchId);
         } else {
             resetData();
         }
@@ -47,14 +49,15 @@ const PatientRecords = ({ branch }) => {
 
     const fetchDailyRecords = async (branchId) => {
         const today = new Date().toISOString().split("T")[0];
-
+    
         try {
             const { data, error } = await supabase
                 .from("sales")
                 .select(`
                     id, 
                     date,
-                    branchs:branchs_id (id, name),  
+                    branchs_id,
+                    branchs:branchs_id (id, name),
                     frame, 
                     lens (lens_type), 
                     total, 
@@ -64,134 +67,129 @@ const PatientRecords = ({ branch }) => {
                     patients (pt_firstname, pt_lastname)
                 `)
                 .eq("date", today)
-                .eq("branchs_id", branchId);  // Filtrar por el id de la sucursal seleccionada
-
+                .eq("branchs_id", branchId);
+    
             if (error) throw error;
-
-            const formattedRecords = data.map((record) => ({
-                ...record,
-                firstName: record.patients?.pt_firstname || "Sin nombre",
-                lastName: record.patients?.pt_lastname || "Sin apellido",
-                lens: record.lens?.lens_type || "Sin tipo",
-                branchs: record.branchs?.name || "Sin sucursal",
-            }));
-
-            setRecords(formattedRecords);
-            calculateTotals(formattedRecords);
+    
+            if (data && data.length > 0) {
+                const formattedRecords = data.map((record) => ({
+                    ...record,
+                    firstName: record.patients?.pt_firstname || "Sin nombre",
+                    lastName: record.patients?.pt_lastname || "Sin apellido",
+                    lens: record.lens?.lens_type || "Sin tipo",
+                    branchName: record.branchs?.name || "Sin sucursal",
+                }));
+    
+                setRecords(formattedRecords);
+                const calculatedTotals = calculateTotals(formattedRecords);
+                
+                // Only save closing data if we have valid records
+                await saveClosingData({
+                    day: today,
+                    grand_total: calculatedTotals.total,
+                    effective: calculatedTotals.EFEC,
+                    transference: calculatedTotals.TRANS,
+                    datafast: calculatedTotals.DATAF,
+                    branchs_id: branchId,  // Use branchs_id instead of branchs
+                });
+            } else {
+                resetData();
+                console.log("No sales found for selected branch on current date");
+            }
         } catch (err) {
-            console.error("Error al obtener los registros:", err);
+            console.error("Error fetching daily records:", err);
+            resetData();
         }
     };
 
     const calculateTotals = (data) => {
-        let totalEFEC = 0,
-            totalTRANS = 0,
-            totalDATAF = 0;
+        const newTotals = {
+            EFEC: 0,
+            TRANS: 0,
+            DATAF: 0
+        };
 
         data.forEach((record) => {
-            if (record.payment_in === "efectivo") totalEFEC += record.total;
-            if (record.payment_in === "transferencia") totalTRANS += record.total;
-            if (record.payment_in === "datafast") totalDATAF += record.total;
+            if (record.payment_in === "efectivo") newTotals.EFEC += record.total;
+            if (record.payment_in === "transferencia") newTotals.TRANS += record.total;
+            if (record.payment_in === "datafast") newTotals.DATAF += record.total;
         });
 
-        setTotals({ EFEC: totalEFEC, TRANS: totalTRANS, DATAF: totalDATAF });
-        setGrandTotal(totalEFEC + totalTRANS + totalDATAF);
+        const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
+        
+        setTotals(newTotals);
+        setGrandTotal(total);
 
-        saveClosingData({
-            day: new Date().toISOString().split("T")[0],
-            grand_total: totalEFEC + totalTRANS + totalDATAF,
-            effective: totalEFEC,
-            transference: totalTRANS,
-            datafast: totalDATAF,
-            branchs: selectedBranch,
-        });
+        return { ...newTotals, total };
     };
 
     const saveClosingData = async (data) => {
-        // Verificar si 'branchs' y 'grand_total' tienen valores válidos
-        if (!data.branchs || isNaN(data.grand_total) || data.grand_total === 0) {
-            console.log("No hay ventas para el día o la sucursal no está seleccionada.");
-            return;  // No guardar si no hay ventas o si la sucursal no es válida
+        if (!data.branchs_id || data.grand_total === 0) {
+            return;
         }
-    
-        // Asegurar que todos los valores numéricos sean 0 si están vacíos
-        const totalEffective = data.effective || 0;
-        const totalTransference = data.transference || 0;
-        const totalDatafast = data.datafast || 0;
-    
+
         try {
             const { data: existingData, error: fetchError } = await supabase
                 .from("closing")
                 .select("*")
                 .eq("day", data.day)
-                .eq("branchs_id", data.branchs)
+                .eq("branchs_id", data.branchs_id)
                 .single();
-    
+
             if (fetchError && fetchError.code !== "PGRST116") {
                 throw fetchError;
             }
-    
-            let upsertError;
-    
+
+            const closingData = {
+                day: data.day,
+                grand_total: data.grand_total,
+                effective: data.effective || 0,
+                transference: data.transference || 0,
+                datafast: data.datafast || 0,
+                branchs_id: data.branchs_id
+            };
+
             if (existingData) {
                 const { error } = await supabase
                     .from("closing")
-                    .update({
-                        grand_total: data.grand_total,
-                        effective: totalEffective,
-                        transference: totalTransference,
-                        datafast: totalDatafast,
-                    })
+                    .update(closingData)
                     .eq("day", data.day)
-                    .eq("branchs_id", data.branchs);
-    
-                upsertError = error;
+                    .eq("branchs_id", data.branchs_id);
+
+                if (error) throw error;
             } else {
-                const { error } = await supabase.from("closing").insert([
-                    {
-                        day: data.day,
-                        grand_total: data.grand_total,
-                        effective: totalEffective,
-                        transference: totalTransference,
-                        datafast: totalDatafast,
-                        branchs_id: data.branchs,
-                    },
-                ]);
-    
-                upsertError = error;
+                const { error } = await supabase
+                    .from("closing")
+                    .insert([closingData]);
+
+                if (error) throw error;
             }
-    
-            if (upsertError) throw upsertError;
-    
-            console.log("Datos de cierre guardados o actualizados correctamente:", data);
         } catch (err) {
-            console.error("Error al guardar datos de cierre:", err);
+            console.error("Error saving closing data:", err);
         }
     };
-    
-    
 
     const handleNavigate = (route) => navigate(route);
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
-                Cierre Diario - {selectedBranch || "Seleccione una Sucursal"}
+                Cierre Diario - {branches.find(b => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
             <Box mb={6}>
-            <Select
-                placeholder="Seleccione una sucursal"
-                value={selectedBranch}
-                onChange={handleBranchChange}
-            >
-                {branchs.map((branch) => (
-                    <option key={branch.id} value={branch.id}>
-                        {branch.name}
-                    </option>
-                ))}
-            </Select>
-
+                <Select
+                    placeholder="Seleccione una sucursal"
+                    value={selectedBranch}
+                    onChange={handleBranchChange}
+                >
+                    {branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                            {branch.name}
+                        </option>
+                    ))}
+                </Select>
             </Box>
+
             <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
                 <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
                     Consultas de Cierre
@@ -225,7 +223,7 @@ const PatientRecords = ({ branch }) => {
                         <Tr key={record.id}>
                             <Td>{record.id}</Td>
                             <Td>{record.date}</Td>
-                            <Td>{record.branchs}</Td>
+                            <Td>{record.branchName}</Td>
                             <Td>{record.firstName}</Td>
                             <Td>{record.lastName}</Td>
                             <Td>{record.frame}</Td>
