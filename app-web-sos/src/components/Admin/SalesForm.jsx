@@ -9,12 +9,13 @@ const SalesForm = () => {
 
   const [formData, setFormData] = useState({
     patient_id: "",
-    branch_id: "",
+    branchs_id: "",
     date: "",
     frame: "",
     lens_id: "",
     delivery_time: "",
     p_frame: 0,
+    price: 0,
     p_lens: 0,
     total: 0,
     credit: 0,
@@ -36,7 +37,7 @@ const SalesForm = () => {
 
 
   useEffect(() => {
-    fetchData('branch', setBranches);
+    fetchData('branchs', setBranches);
     fetchData('patients', (data) =>  {
       setPatients(data);
       setFilteredPatients(data);
@@ -115,21 +116,32 @@ const SalesForm = () => {
   }
 
   const handleSubmit = async () => {
-    if (!formData.patient_id || !formData.branch_id || !formData.date) {
+    // Validar los campos obligatorios
+    if (!formData.patient_id || !formData.branchs_id || !formData.date) {
+      console.error("Campos obligatorios faltantes:", {
+        patient_id: formData.patient_id,
+        branchs_id: formData.branchs_id,
+        date: formData.date,
+      });
       alert("Por favor completa los campos obligatorios.");
       return;
     }
-
+  
     try {
       const { data, error } = await supabase.from("sales").insert([formData]);
-      if (error) throw error;
-      console.log("Venta registrada:", data);
+      if (error) {
+        console.error("Error de Supabase al insertar venta:", error);
+        throw error;
+      }
+      console.log("Venta registrada exitosamente:", data);
       alert("Venta registrada exitosamente.");
+      handleReset(); // Limpiar formulario después de registrar la venta
     } catch (error) {
       console.error("Error al registrar venta:", error.message);
       alert("Hubo un error al registrar la venta.");
     }
   };
+  
 
   const handleWhatsApp = () => {
     const phoneNumber = "593939731833";
@@ -141,7 +153,7 @@ const SalesForm = () => {
   const handleReset = () => {
     setFormData({
       patient_id: "",
-      branch_id: "",
+      branchs_id: "",
       date: "",
       frame: "",
       lens: "",
@@ -195,13 +207,13 @@ const SalesForm = () => {
 
           </FormControl>
 
-          <FormControl id="branch_id" isRequired>
+          <FormControl id="branchs_id" isRequired>
             <FormLabel>Sucursal</FormLabel>
-            <Select name="branch_id" value={formData.branch_id} onChange={handleChange}>
+            <Select name="branchs_id" value={formData.branchs_id} onChange={handleChange}>
               <option value="">Seleccione una sucursal</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name_branch || branch.id}
+              {branches.map((branchs) => (
+                <option key={branchs.id} value={branchs.id}>
+                  {branchs.name || branchs.id}
                 </option>
               ))}
             </Select>
@@ -288,8 +300,8 @@ const SalesForm = () => {
                 )}
             </FormControl>
           {renderSelectField("Tiempo de Entrega", "delivery_time", [
-            { id: "1 día", name_branch: "1 día" },
-            { id: "2 días", name_branch: "2 días" },
+            { id: "1 día", name: "1 día" },
+            { id: "2 días", name: "2 días" },
           ])}
           {renderInputField("P. Armazón", "p_frame", "number")}
           {renderInputField("P. Lunas", "p_lens", "number")}
@@ -343,7 +355,7 @@ const SalesForm = () => {
           <option value="">Seleccione {label.toLowerCase()}</option>
           {options.map((option) => (
             <option key={option.id} value={option.id}>
-              {option.name_branch || option.id}
+              {option.name || option.id}
             </option>
           ))}
         </Select>

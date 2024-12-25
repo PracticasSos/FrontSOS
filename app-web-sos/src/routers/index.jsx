@@ -20,7 +20,7 @@ import RegisterMeasures from "../components/Admin/RegisterMeasures.jsx"
 import MeasuresUse from "../components/Admin/MeasuresUse.jsx"
 import MeasuresFinal from "../components/Admin/MeasuresFinal.jsx"
 import PatientRecords from "../components/Admin/PatientRecords.jsx"
-import Closing from "../components/Admin/Closing.jsx"
+
 
 const AppRouter = () => {
     return(
@@ -42,9 +42,7 @@ const AppRouter = () => {
             <Route path="CashClousure" element={<CashClousure />} ></Route>
             <Route path="SalesForm" element= {<SalesForm/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
-            <Route path="Closing" element={<Closing />}> 
-                <Route path="PatientRecords" element={<PatientRecords />} />
-            </Route>
+            <Route path="PatientRecords" element={<PatientRecords />}> </Route>
             <Route path="RegisterMeasures" element={<RegisterMeasures />}>
                 <Route path="MeasuresUse" element={<MeasuresUse />} />
                 <Route path="MeasuresFinal" element={<MeasuresFinal />} />

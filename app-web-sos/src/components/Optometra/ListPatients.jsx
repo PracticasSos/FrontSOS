@@ -44,7 +44,7 @@ const ListPatients = () => {
     setTimeout(() => {
       setIsLoggingOut(false);
       navigate('/Login');
-    }, 2000); // Mostrar la pantalla de cierre de sesión por 2 segundos
+    }, 2000); 
   };
 
   if (isLoggingOut) {

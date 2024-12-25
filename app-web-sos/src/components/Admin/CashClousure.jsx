@@ -1,11 +1,12 @@
 import { Box, Button, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase.js";
 
 
 const CashClousure = () => {
     const navigate = useNavigate();
+    const [branchs, setBranchs] = useState([]);
     const [formData, setFormData] = useState({
         branch: '',
         since: '',
@@ -21,6 +22,21 @@ const CashClousure = () => {
         data_fast: 0,
         total: 0,
     });
+    useEffect(()=> {
+        fetchBranchs();
+    }, []);
+
+    const fetchBranchs = async () => {
+        const { data, error } = await supabase
+        .from ('branchs')
+        .select('name');
+
+        if (error) {
+            console.error('Error fetching branchs:', error);
+            return;
+        }
+        setBranchs(data || []);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -69,14 +85,17 @@ const CashClousure = () => {
 
                 <Box as="form" onSubmit={handleSubmit}>
                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={4} marginBottom={4}>
-                        <FormControl isRequired>
-                            <FormLabel>Óptica</FormLabel>
-                            <Select name="branch" value={formData.branch} onChange={handleChange}>
-                            <option value="SELECCIONE">Selecione una sucursal</option>
-                                <option value="VEOPTICS">VEOPTICS</option>
-                                <option value="SOS">SOS</option>
-                            </Select>
-                        </FormControl>
+                    <FormControl isRequired>
+                    <FormLabel>Óptica</FormLabel>
+                    <Select name="branch" value={formData.branch} onChange={handleChange}>
+                        <option value="SELECCIONE">Seleccione una sucursal</option>
+                        {branchs.map(branch => (
+                            <option key={branch.name} value={branch.name}>
+                                {branch.name}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
 
                         <FormControl id="month" isRequired mt={4}>
                             <FormLabel>Mes</FormLabel>

@@ -66,7 +66,7 @@ const AdminDashBoard = () => {
     }
 
     if (label === "CIERRE") {
-      navigate('/Closing')
+      navigate('/PatientRecords')
     }
   };
 

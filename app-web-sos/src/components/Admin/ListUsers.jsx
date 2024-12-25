@@ -19,7 +19,7 @@ const ListUsers = () => {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('users')
-      .select('id, firstname, lastname, username, age, role:role_id(role_name), email, phone_number, ci, branch:branch_id(name_branch)');
+      .select('id, firstname, lastname, username, age, role:role_id(role_name), email, phone_number, ci, branchs:branchs_id(name)');
 
     if (error) {
       console.error('Error:', error);
@@ -165,7 +165,7 @@ const ListUsers = () => {
                 <Td>{user.email}</Td>
                 <Td>{user.phone_number}</Td>
                 <Td>{user.ci}</Td>
-                <Td>{user.branch.name_branch}</Td>
+                <Td>{user.branch.name}</Td>
                 <Td>
                   <Button colorScheme="blue" size="sm" onClick={() => handleSelectUser(user)}>
                     Seleccionar

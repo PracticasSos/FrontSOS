@@ -23,11 +23,11 @@ const SignUpForm = () => {
   });
 
   const [roles, setRoles] = useState([]);
-  const [branches, setBranches] = useState([]);
+  const [branchs, setBranchs] = useState([]);
 
   useEffect(() => {
     fetchData('role', setRoles);
-    fetchData('branch', setBranches);
+    fetchData('branchs', setBranchs);
   }, []);
 
   const fetchData = async (table, setter) => {
@@ -88,7 +88,7 @@ const SignUpForm = () => {
             {renderInputField('Celular', 'phone_number', 'text', true)}
             {renderInputField('Contraseña', 'password', 'password', true)}
             {renderInputField('C.I.', 'ci', 'text', true)}
-            {renderSelectField('Sucursal', 'branch_id', branches, true)}
+            {renderSelectField('Sucursal', 'branch_id', branchs, true)}
           </SimpleGrid>
 
           <Box display="flex" justifyContent="space-around" mt={6}>
@@ -116,7 +116,7 @@ const SignUpForm = () => {
           <option value="">Seleccione {label.toLowerCase()}</option>
           {options.map(option => (
             <option key={option.id} value={option.id}>
-              {option.name_branch || option.role_name}
+              {option.name || option.role_name}
             </option>
           ))}
         </Select>
