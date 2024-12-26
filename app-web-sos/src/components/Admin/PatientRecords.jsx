@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate } from "react-router-dom";
-import { 
-    Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select 
-} from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select } from "@chakra-ui/react";
 
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
@@ -270,10 +268,17 @@ const PatientRecords = () => {
                     </Text>
                 </VStack>
             </HStack>
-            <Divider my={6} />
-            <Heading size="md" textAlign="center" color="teal.600">
+            <Divider my={5} />
+            <Heading size="md" textAlign="center" color="green.300">
                 Total General: {grandTotal}
             </Heading>
+            <Box>
+                <Divider my={10} />
+                <Heading size="md" textAlign="center" color="cyan.900">
+                    Egresos
+                </Heading>
+
+            </Box>
         </Box>
     );
 };

@@ -20,6 +20,7 @@ import RegisterMeasures from "../components/Admin/RegisterMeasures.jsx"
 import MeasuresUse from "../components/Admin/MeasuresUse.jsx"
 import MeasuresFinal from "../components/Admin/MeasuresFinal.jsx"
 import PatientRecords from "../components/Admin/PatientRecords.jsx"
+import Egresos from "../components/Admin/Egresos.jsx"
 
 
 const AppRouter = () => {
@@ -47,6 +48,7 @@ const AppRouter = () => {
                 <Route path="MeasuresUse" element={<MeasuresUse />} />
                 <Route path="MeasuresFinal" element={<MeasuresFinal />} />
             </Route>
+            <Route path="Egresos" element={<Egresos />}> </Route>
         </Routes>
     )
 }

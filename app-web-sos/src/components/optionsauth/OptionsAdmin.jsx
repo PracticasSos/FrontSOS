@@ -68,6 +68,10 @@ const AdminDashBoard = () => {
     if (label === "CIERRE") {
       navigate('/PatientRecords')
     }
+
+    if (label === "EGRESOS") {
+      navigate ('/Egresos')
+    }
   };
 
   const handleNavigate = (route) => {
