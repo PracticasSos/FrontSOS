@@ -1,20 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
-import {
-  Box,
-  Heading,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Select,
-  Button,
-  Badge,
-  SimpleGrid,
-  Input,
-} from "@chakra-ui/react";
+import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input} from "@chakra-ui/react";
 
 const Egresos = () => {
   const [records, setRecords] = useState([]);
