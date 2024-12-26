@@ -83,14 +83,14 @@ const PatientRecords = () => {
                 setRecords(formattedRecords);
                 const calculatedTotals = calculateTotals(formattedRecords);
                 
-                // Only save closing data if we have valid records
+              
                 await saveClosingData({
                     day: today,
                     grand_total: calculatedTotals.total,
                     effective: calculatedTotals.EFEC,
                     transference: calculatedTotals.TRANS,
                     datafast: calculatedTotals.DATAF,
-                    branchs_id: branchId,  // Use branchs_id instead of branchs
+                    branchs_id: branchId,  
                 });
             } else {
                 resetData();

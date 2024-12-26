@@ -135,7 +135,7 @@ const SalesForm = () => {
       }
       console.log("Venta registrada exitosamente:", data);
       alert("Venta registrada exitosamente.");
-      handleReset(); // Limpiar formulario después de registrar la venta
+      handleReset(); 
     } catch (error) {
       console.error("Error al registrar venta:", error.message);
       alert("Hubo un error al registrar la venta.");
@@ -313,7 +313,7 @@ const SalesForm = () => {
             { id: "efectivo", name: "Efectivo" },
             { id: "datafast", name: "Datafast" },
             { id: "transferencia", name: "Transferencia"}
-          ])}
+          ], { required: true})}
           {renderTextareaField("Mensaje", "message")}
         </SimpleGrid>
   
