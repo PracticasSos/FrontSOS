@@ -277,6 +277,46 @@ const PatientRecords = () => {
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Egresos
                 </Heading>
+                <Table variant="striped" colorScheme="teal" mb={6}>
+                        <Thead>
+                          <Tr>
+                            <Th>Orden</Th>
+                            <Th>Fecha</Th>
+                            <Th>Encargado</Th>
+                            <Th>Laboratorio</Th>
+                            <Th>Valor</Th>
+                            <Th>Especificación</Th>
+                            <Th>Sucursal</Th>
+                            <Th>Pago</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {records.map((record) => (
+                            <Tr key={record.id}>
+                              <Td>{record.id}</Td>
+                              <Td>{record.date}</Td>
+                              <Td>{record.users?.firstname || "Sin encargado"}</Td>
+                              <Td>{record.labs?.name || "Sin laboratorio"}</Td>
+                              <Td>{record.value}</Td>
+                              <Td>{record.specification}</Td>
+                              <Td>{record.branchs?.name || "Sin Sucursal"}</Td>
+                              <Td>
+                                <Badge
+                                  colorScheme={
+                                    record.payment_in === "efectivo"
+                                      ? "green"
+                                      : record.payment_in === "transferencia"
+                                      ? "blue"
+                                      : "orange"
+                                  }
+                                >
+                                  {record.payment_in}
+                                </Badge>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
 
             </Box>
         </Box>
