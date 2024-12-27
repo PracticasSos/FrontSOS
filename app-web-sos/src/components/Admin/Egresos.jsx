@@ -76,10 +76,6 @@ const Egresos = () => {
     setNewEgreso((prev) => ({ ...prev, [field]: value }));
   };
 
-  const filterBranches = () => {
-    const filtered = branches.filter((branch) => branch.id === selectedBranch);
-    setFilteredBranches(filtered);
-  };
 
   const handleSaveEgreso = async () => {
     console.log("Selected Branch for newEgreso:", newEgreso.branchs_id);
