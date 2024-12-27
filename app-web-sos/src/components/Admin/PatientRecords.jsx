@@ -6,6 +6,7 @@ import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Di
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
     const [branches, setBranches] = useState([]);
+    const [egresos, setEgresos] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState("");
     const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
@@ -32,8 +33,10 @@ const PatientRecords = () => {
         const branchId = event.target.value;
         setSelectedBranch(branchId);
         
+        
         if (branchId) {
             await fetchDailyRecords(branchId);
+            await fetchExpenses(branchId);
         } else {
             resetData();
         }
@@ -41,6 +44,7 @@ const PatientRecords = () => {
 
     const resetData = () => {
         setRecords([]);
+        setEgresos([]);
         setTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
         setGrandTotal(0);
     };
@@ -97,6 +101,39 @@ const PatientRecords = () => {
         } catch (err) {
             console.error("Error fetching daily records:", err);
             resetData();
+        }
+    };
+
+    const fetchExpenses = async (branchId) => {
+        const today = new Date().toISOString().split("T")[0];
+    
+        try {
+            const { data, error } = await supabase
+                .from("egresos") 
+                .select(`
+                    id,
+                    date,
+                    value,
+                    specification,
+                    users (firstname),
+                    labs (name),
+                    branchs (name),
+                    payment_in
+                `)
+                .eq("date", today)
+                .eq("branchs_id", branchId);
+    
+            if (error) throw error;
+    
+            if (data && data.length > 0) {
+                setEgresos(data); 
+            } else {
+                setEgresos([]); 
+                console.log("No expenses found for selected branch on current date");
+            }
+        } catch (err) {
+            console.error("Error fetching expenses:", err);
+            setEgresos([]);
         }
     };
 
@@ -291,33 +328,57 @@ const PatientRecords = () => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {records.map((record) => (
-                            <Tr key={record.id}>
-                              <Td>{record.id}</Td>
-                              <Td>{record.date}</Td>
-                              <Td>{record.users?.firstname || "Sin encargado"}</Td>
-                              <Td>{record.labs?.name || "Sin laboratorio"}</Td>
-                              <Td>{record.value}</Td>
-                              <Td>{record.specification}</Td>
-                              <Td>{record.branchs?.name || "Sin Sucursal"}</Td>
+                          {egresos.map((egresos) => (
+                            <Tr key={egresos.id}>
+                              <Td>{egresos.id}</Td>
+                              <Td>{egresos.date}</Td>
+                              <Td>{egresos.users?.firstname || "Sin encargado"}</Td>
+                              <Td>{egresos.labs?.name || "Sin laboratorio"}</Td>
+                              <Td>{egresos.value}</Td>
+                              <Td>{egresos.specification}</Td>
+                              <Td>{egresos.branchs?.name || "Sin Sucursal"}</Td>
                               <Td>
                                 <Badge
                                   colorScheme={
-                                    record.payment_in === "efectivo"
+                                    egresos.payment_in === "efectivo"
                                       ? "green"
-                                      : record.payment_in === "transferencia"
+                                      : egresos.payment_in === "transferencia"
                                       ? "blue"
                                       : "orange"
                                   }
                                 >
-                                  {record.payment_in}
+                                  {egresos.payment_in}
                                 </Badge>
                               </Td>
                             </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-
+                        ))}
+                    </Tbody>
+                </Table>
+                <Divider my={6} />
+                    <HStack justifyContent="space-around" spacing={6}>
+                        <VStack>
+                            <Text fontWeight="bold">EFEC</Text>
+                            <Text fontSize="lg" color="green.500">
+                                {totals.EFEC || 0}
+                            </Text>
+                        </VStack>
+                        <VStack>
+                            <Text fontWeight="bold">TRANS</Text>
+                            <Text fontSize="lg" color="blue.500">
+                                {totals.TRANS || 0}
+                            </Text>
+                        </VStack>
+                        <VStack>
+                            <Text fontWeight="bold">DATAF</Text>
+                            <Text fontSize="lg" color="orange.500">
+                                {totals.DATAF || 0}
+                            </Text>
+                        </VStack>
+                    </HStack>
+                <Divider my={5} />
+                <Heading size="md" textAlign="center" color="green.300">
+                    Total General: {grandTotal}
+                </Heading>
             </Box>
         </Box>
     );
