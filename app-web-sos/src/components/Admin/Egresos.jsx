@@ -6,14 +6,17 @@ const Egresos = () => {
   const [records, setRecords] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [filteredBranches, setFilteredBranches] = useState([]);
   const [users, setUsers] = useState([]);
   const [labs, setLabs] = useState([]);
   const [newEgreso, setNewEgreso] = useState({
     user_id: "",
+    records: "",
     lab_id: "",
-    value: "",
+    value: 0,
     payment_in: "",
     specification: "",
+    branchs_id: ""
   });
 
   useEffect(() => {
@@ -53,11 +56,12 @@ const Egresos = () => {
     setLabs(data || []);
   };
 
+
   const fetchEgresos = async () => {
     const today = new Date().toISOString().split("T")[0];
     const { data, error } = await supabase
       .from("egresos")
-      .select(`id, date, value, specification, payment_in, users (firstname), labs (name)`)
+      .select(`id, records,  date, value, specification, payment_in, users (firstname), labs (name), branchs (name)`)
       .eq("date", today)
       .eq("branchs_id", selectedBranch);
 
@@ -72,21 +76,46 @@ const Egresos = () => {
     setNewEgreso((prev) => ({ ...prev, [field]: value }));
   };
 
+  const filterBranches = () => {
+    const filtered = branches.filter((branch) => branch.id === selectedBranch);
+    setFilteredBranches(filtered);
+  };
+
   const handleSaveEgreso = async () => {
-    const { error } = await supabase.from("egresos").insert({
+    console.log("Selected Branch for newEgreso:", newEgreso.branchs_id);
+  
+    if (!newEgreso.branchs_id) {
+      alert("Por favor, seleccione una sucursal para guardar el egreso.");
+      return;
+    }
+  
+    const { data, error } = await supabase.from("egresos").insert({
       ...newEgreso,
       date: new Date().toISOString().split("T")[0],
-      branchs_id: selectedBranch,
     });
-
+  
     if (error) {
       console.error("Error saving egreso:", error);
       return;
+    } else {
+      console.log('Egresos registrados:', data);
+      alert("¡Egresos registrado con éxito!");
     }
-
-    setNewEgreso({ user_id: "", lab_id: "", value: "", payment_in: "", specification: "" });
+  
+    setNewEgreso({
+      user_id: "",
+      records: "",
+      lab_id: "",
+      branchs_id: "", 
+      value: 0,
+      payment_in: "",
+      specification: "",
+    });
     fetchEgresos();
   };
+  
+  
+  
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
@@ -117,6 +146,7 @@ const Egresos = () => {
             <Th>Laboratorio</Th>
             <Th>Valor</Th>
             <Th>Especificación</Th>
+            <Th>Sucursal</Th>
             <Th>Pago</Th>
           </Tr>
         </Thead>
@@ -129,6 +159,7 @@ const Egresos = () => {
               <Td>{record.labs?.name || "Sin laboratorio"}</Td>
               <Td>{record.value}</Td>
               <Td>{record.specification}</Td>
+              <Td>{record.branchs?.name || "Sin Sucursal"}</Td>
               <Td>
                 <Badge
                   colorScheme={
@@ -175,6 +206,19 @@ const Egresos = () => {
             </option>
           ))}
         </Select>
+
+        <Select
+          placeholder="Seleccione una sucursal"
+          value={newEgreso.branchs_id}
+          onChange={(e) => handleInputChange("branchs_id", e.target.value)}
+        >
+          {branches.map((branch) => (
+            <option key={branch.id} value={branch.id}>
+              {branch.name}
+            </option>
+          ))}
+        </Select>
+
 
         <Input
           placeholder="Valor"
