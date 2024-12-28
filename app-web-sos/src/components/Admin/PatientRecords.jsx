@@ -9,7 +9,9 @@ const PatientRecords = () => {
     const [egresos, setEgresos] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState("");
     const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
+    const [egresosTotals, setEgresosTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
+    const [egresosGrandTotal, setEgresosGrandTotal] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,7 +35,6 @@ const PatientRecords = () => {
         const branchId = event.target.value;
         setSelectedBranch(branchId);
         
-        
         if (branchId) {
             await fetchDailyRecords(branchId);
             await fetchExpenses(branchId);
@@ -46,7 +47,9 @@ const PatientRecords = () => {
         setRecords([]);
         setEgresos([]);
         setTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
+        setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
         setGrandTotal(0);
+        setEgresosGrandTotal(0);
     };
 
     const fetchDailyRecords = async (branchId) => {
@@ -85,7 +88,6 @@ const PatientRecords = () => {
                 setRecords(formattedRecords);
                 const calculatedTotals = calculateTotals(formattedRecords);
                 
-              
                 await saveClosingData({
                     day: today,
                     grand_total: calculatedTotals.total,
@@ -126,14 +128,18 @@ const PatientRecords = () => {
             if (error) throw error;
     
             if (data && data.length > 0) {
-                setEgresos(data); 
+                setEgresos(data);
+                calculateEgresosTotals(data);
             } else {
-                setEgresos([]); 
-                console.log("No expenses found for selected branch on current date");
+                setEgresos([]);
+                setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
+                setEgresosGrandTotal(0);
             }
         } catch (err) {
             console.error("Error fetching expenses:", err);
             setEgresos([]);
+            setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
+            setEgresosGrandTotal(0);
         }
     };
 
@@ -145,15 +151,36 @@ const PatientRecords = () => {
         };
 
         data.forEach((record) => {
-            if (record.payment_in === "efectivo") newTotals.EFEC += record.total;
-            if (record.payment_in === "transferencia") newTotals.TRANS += record.total;
-            if (record.payment_in === "datafast") newTotals.DATAF += record.total;
+            if (record.payment_in === "efectivo") newTotals.EFEC += Number(record.total);
+            if (record.payment_in === "transferencia") newTotals.TRANS += Number(record.total);
+            if (record.payment_in === "datafast") newTotals.DATAF += Number(record.total);
         });
 
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
         
         setTotals(newTotals);
         setGrandTotal(total);
+
+        return { ...newTotals, total };
+    };
+
+    const calculateEgresosTotals = (data) => {
+        const newTotals = {
+            EFEC: 0,
+            TRANS: 0,
+            DATAF: 0
+        };
+
+        data.forEach((egreso) => {
+            if (egreso.payment_in === "efectivo") newTotals.EFEC += Number(egreso.value);
+            if (egreso.payment_in === "transferencia") newTotals.TRANS += Number(egreso.value);
+            if (egreso.payment_in === "datafast") newTotals.DATAF += Number(egreso.value);
+        });
+
+        const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
+        
+        setEgresosTotals(newTotals);
+        setEgresosGrandTotal(total);
 
         return { ...newTotals, total };
     };
@@ -359,25 +386,25 @@ const PatientRecords = () => {
                         <VStack>
                             <Text fontWeight="bold">EFEC</Text>
                             <Text fontSize="lg" color="green.500">
-                                {totals.EFEC || 0}
+                                {egresosTotals.EFEC || 0}
                             </Text>
                         </VStack>
                         <VStack>
                             <Text fontWeight="bold">TRANS</Text>
                             <Text fontSize="lg" color="blue.500">
-                                {totals.TRANS || 0}
+                                {egresosTotals.TRANS || 0}
                             </Text>
                         </VStack>
                         <VStack>
                             <Text fontWeight="bold">DATAF</Text>
                             <Text fontSize="lg" color="orange.500">
-                                {totals.DATAF || 0}
+                                {egresosTotals.DATAF || 0}
                             </Text>
                         </VStack>
                     </HStack>
                 <Divider my={5} />
                 <Heading size="md" textAlign="center" color="green.300">
-                    Total General: {grandTotal}
+                    Total General: {egresosGrandTotal}
                 </Heading>
             </Box>
         </Box>
