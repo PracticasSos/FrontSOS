@@ -60,10 +60,21 @@ const CashClosure = () => {
         if (since && till) {
             query = query.gte("date", since).lte("date", till);
         } else if (month) {
-            
-            const monthNumber = new Date(Date.parse(month + " 1, 2000")).getMonth() + 1;
-            const monthString = monthNumber.toString().padStart(2, '0');
-            query = query.ilike("date", `%-${monthString}-%`);
+            const monthMapping = {
+                'Enero': '01', 'Febrero': '02', 'Marzo': '03', 'Abril': '04',
+                'Mayo': '05', 'Junio': '06', 'Julio': '07', 'Agosto': '08',
+                'Septiembre': '09', 'Octubre': '10', 'Noviembre': '11', 'Diciembre': '12'
+            };
+
+            const currentYear = new Date().getFullYear();
+            const monthNumber = monthMapping[month];
+            if (monthNumber) {
+                const startDate = `${currentYear}-${monthNumber}-01`;
+                const lastDay = new Date(currentYear, parseInt(monthNumber), 0).getDate();
+                const endDate = `${currentYear}-${monthNumber}-${lastDay}`;
+                
+                query = query.gte("date", startDate).lte("date", endDate);
+            }
         }
 
         try {
@@ -128,40 +139,14 @@ const CashClosure = () => {
         return { ...newTotals, total };
     };
 
-    const saveClosingData = async () => {
-        if (!selectedBranch) {
-            alert("Por favor seleccione una sucursal");
-            return;
-        }
-
-        const closingData = {
-            day: new Date().toISOString().split("T")[0],
-            grand_total: formData.total,
-            effective: formData.cash,
-            transference: formData.transfer,
-            datafast: formData.data_fast,
-            branchs_id: selectedBranch
-        };
-
-        try {
-            const { error } = await supabase.from("cash_closures").insert([closingData]);
-            if (error) throw error;
-            alert("Cierre guardado exitosamente");
-            resetData();
-        } catch (err) {
-            console.error("Error saving closing data:", err);
-            alert("Error al guardar el cierre");
-        }
-    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData(prev => ({
             ...prev,
             [name]: value,
-            // Si se selecciona un mes, limpiar las fechas desde/hasta
+            
             ...(name === 'month' ? { since: '', till: '' } : {}),
-            // Si se selecciona una fecha, limpiar el mes
             ...(name === 'since' || name === 'till' ? { month: '' } : {})
         }));
     };
@@ -365,7 +350,7 @@ const CashClosure = () => {
                         maxWidth="200px"
                         isDisabled={!selectedBranch || records.length === 0}
                     >
-                        Registrar Cierre
+                        Enviar
                     </Button>
                 </Box>
             </Box>
