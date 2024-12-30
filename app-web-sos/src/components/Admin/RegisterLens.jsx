@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, FormLabel, Input, Select, Heading, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Heading, SimpleGrid } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 
 const RegisterLens = () => {
