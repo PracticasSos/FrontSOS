@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, Alert, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Select, List, ListItem, Textarea, SimpleGrid, Heading, Alert, Divider, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -24,6 +24,8 @@ const SalesForm = () => {
     message: "",
   });
 
+
+
   const [branches, setBranches] = useState([]);
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
@@ -33,6 +35,10 @@ const SalesForm = () => {
   const [filteredLens, setFilteredLens] = useState([]);
   const [patientMeasures, setPatientMeausres] = useState([]);
   const [filteredMeasures, setFilteredMeasures] = useState([]);
+  const [inventario, setInventario] = useState([]);
+  const [filteredInventario, setFilteredInventario] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState(null); 
 
 
@@ -47,7 +53,17 @@ const SalesForm = () => {
       setFilteredLens(data);
     });
     fetchData('rx_final', setPatientMeausres);
+    fetchData('inventario', (data) => {
+      setInventario(data);
+      setFilteredInventario(data);
+    });
   }, []);
+
+  useEffect(() => {
+    const total = formData.p_frame + formData.p_lens;
+    setFormData({ ...formData, total });
+  }, [formData.p_frame, formData.p_lens]);
+  
 
   const fetchData = async (table, setter) => {
     try {
@@ -66,20 +82,19 @@ const SalesForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSearchPatients = (e) => {
-    const terms = e.target.value.toLowerCase().split(" ");
-    setSearchTermPatients(e.target.value);
-  
-    setFilteredPatients(
-      patients.filter((patient) => {
-        const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
-        return terms.every((term) => 
-          fullName.includes(term) || patient.pt_ci?.toLowerCase().includes(term)
-        );
-      })
-    );
-  };
+    const handleSearchPatients = (e) => {
+      const terms = e.target.value.toLowerCase().split(" ");
+      setSearchTermPatients(e.target.value);
     
+      setFilteredPatients(
+        patients.filter((patient) => {
+          const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+          return terms.every((term) => 
+            fullName.includes(term) || patient.pt_ci?.toLowerCase().includes(term)
+          );
+        })
+      );
+    };
     const handleSearchLens = (e) => {
       const terms = e.target.value.toLowerCase().split(" ");
       setSearchTermLens(e.target.value);
@@ -93,8 +108,43 @@ const SalesForm = () => {
         })
       );
     };
- 
 
+    const handleFrameInputChange = async (e) => {
+      const value = e.target.value;
+      setInputValue(value);
+  
+      const [brand, color, reference] = value.split(",").map((v) => v.trim());
+  
+      if (brand && color && reference) {
+        try {
+          const { data, error } = await supabase
+            .from("inventario")
+            .select("brand, color, reference, price")
+            .ilike("brand", `%${brand}%`)
+            .ilike("color", `%${color}%`)
+            .ilike("reference", `%${reference}%`);
+  
+          if (error || !data || data.length === 0) {
+            setSuggestions([]);
+            return;
+          }
+  
+          setSuggestions(data); 
+          setFormData({ ...formData, frame: `${data[0].brand}, ${data[0].color}, ${data[0].reference}`, p_frame: data[0].price });
+
+        } catch (err) {
+          console.error("Error al obtener sugerencias:", err);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    };
+  
+    const handleSuggestionClick = (suggestion) => {
+      setInputValue(`${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}, `);
+      setSuggestions([]);
+      setFormData({ ...formData, frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}` });
+    };
 
   const handlePatientSelect = (patient) => {
     const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
@@ -113,10 +163,10 @@ const SalesForm = () => {
     setFormData({ ...formData, lens_id: lenss.id})
     setSearchTermLens(name);
     setFilteredLens([]);
+    setFormData({ ...formData, p_lens: lenss.lens_price });
   }
 
   const handleSubmit = async () => {
-    // Validar los campos obligatorios
     if (!formData.patient_id || !formData.branchs_id || !formData.date) {
       console.error("Campos obligatorios faltantes:", {
         patient_id: formData.patient_id,
@@ -182,7 +232,7 @@ const SalesForm = () => {
         </Alert>
       )}
   
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
+      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
         <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">Consultas de Cierre</Button>
         <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
         <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
@@ -191,7 +241,6 @@ const SalesForm = () => {
       <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
         
         <SimpleGrid columns={[1, 3]} spacing={4}>
-
           <FormControl id="patient-search">
             <FormLabel>Buscar Paciente</FormLabel>
             <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients}/>
@@ -237,98 +286,172 @@ const SalesForm = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-  
-  {[
-    { side: "OD", prefix: "right" },
-    { side: "OI", prefix: "left" },
-  ].map(({ side, prefix }) => (
-    <Tr key={prefix}>
-      <Td>{side}</Td>
-      {[
-        "sphere",
-        "cylinder",
-        "axis",
-        "prism",
-        "add",
-        "av_vl",
-        "av_vp",
-        "dnp",
-        "alt",
-      ].map((field) => (
-        <Td key={field}>
-          <Input
-            name={`${field}_${prefix}`}
-            value={
-              filteredMeasures.length > 0
-                ? filteredMeasures[0][`${field}_${prefix}`] || ""
-                : ""
-            }
-            onChange={handleChange}
-          />
-        </Td>
-      ))}
-    </Tr>
-  ))}
-</Tbody>
-
-
+                  {[
+                    { side: "OD", prefix: "right" },
+                    { side: "OI", prefix: "left" },
+                  ].map(({ side, prefix }) => (
+                    <Tr key={prefix}>
+                      <Td>{side}</Td>
+                      {[
+                        "sphere",
+                        "cylinder",
+                        "axis",
+                        "prism",
+                        "add",
+                        "av_vl",
+                        "av_vp",
+                        "dnp",
+                        "alt",
+                      ].map((field) => (
+                        <Td key={field}>
+                          <Input
+                            name={`${field}_${prefix}`}
+                            value={
+                              filteredMeasures.length > 0
+                                ? filteredMeasures[0][`${field}_${prefix}`] || ""
+                                : ""
+                            }
+                            onChange={handleChange}
+                          />
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>
            </Table>
           </Box>
-        <SimpleGrid columns={[1, 2]} spacing={4}>
-          {renderInputField("Armazón", "frame", "text")}
-            <FormControl id="lens-search">
-                <FormLabel>Buscar Lunas</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Buscar por tipo..."
-                    value={searchTermLens}
-                    onChange={handleSearchLens}
-                  />
-                  {searchTermLens && (
+          <Box p={5} maxWidth="800px" mx="auto">
+            <SimpleGrid columns={[1, 2]} spacing={4}>
+            <FormControl>
+        <FormLabel>Armazón</FormLabel>
+        <Input
+          type="text"
+          name="frame"
+          placeholder="Ej. GUESS, rojo, 778, 1"
+          value={inputValue} 
+          onChange={handleFrameInputChange} 
+          onBlur={() => {}} 
+        />
+
+        {suggestions.length > 0 && (
+          <List border="1px solid #ddd" borderRadius="5px" maxHeight="200px" overflowY="auto" mt={2}>
+            {suggestions.map((item, index) => (
+              <ListItem
+                key={index}
+                padding="8px"
+                cursor="pointer"
+                onClick={() => handleSuggestionClick(item)} // Manejar la selección de una opción
+              >
+                {item.brand} - {item.color} - {item.reference}
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </FormControl>
+              <FormControl>
+                <FormLabel>Entrega</FormLabel>
+                <Select name="delivery_time" placeholder="Selecciona un tiempo">
+                  <option value="1 día">1 día</option>
+                  <option value="2 días">2 días</option>
+                </Select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Lunas</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Buscar por tipo..."
+                  value={searchTermLens}
+                  onChange={handleSearchLens}
+                />
+                {searchTermLens && (
                   <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
-                    {filteredLens.map((lenss) => (
-                        <Box
-                          key={lenss.id}
-                          padding={2}
-                          _hover={{ bg: "teal.100", cursor: "pointer" }}
-                          onClick={() => handleLensSelect(lenss)}
-                        >
-                        {lenss.lens_type}
+                    {filteredLens.map((lens) => (
+                      <Box
+                        key={lens.id}
+                        p={2}
+                        _hover={{ bg: 'teal.100', cursor: 'pointer' }}
+                        onClick={() => handleLensSelect(lens)}
+                      >
+                        {lens.lens_type}
                       </Box>
                     ))}
-                </Box>
+                  </Box>
                 )}
-            </FormControl>
-          {renderSelectField("Tiempo de Entrega", "delivery_time", [
-            { id: "1 día", name: "1 día" },
-            { id: "2 días", name: "2 días" },
-          ])}
-          {renderInputField("P. Armazón", "p_frame", "number")}
-          {renderInputField("P. Lunas", "p_lens", "number")}
-          {renderInputField("Precio", "price", "number")}
-          {renderInputField("Total", "total", "number")}
-          {renderInputField("Abono", "credit", "number")}
-          {renderInputField("Saldo", "balance", "number")}
-          {renderSelectField("Pago en", "payment_in", [
-            { id: "efectivo", name: "Efectivo" },
-            { id: "datafast", name: "Datafast" },
-            { id: "transferencia", name: "Transferencia"}
-          ], { required: true})}
-          {renderTextareaField("Mensaje", "message")}
-        </SimpleGrid>
-  
-        <Box display="flex" justifyContent="space-around" mt={6}>
-          <Button type="submit" colorScheme="teal">Guardar</Button>
-          <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
-          <Button onClick={handleWhatsApp} colorScheme="teal">WhatsApp</Button>
-          <Button type="submit" colorScheme="teal">PDF</Button>
-          <Button type="submit" colorScheme="teal">Orden de laboratorio</Button>
+              </FormControl>
+            </SimpleGrid>
+            <Divider my={5} />
+            <SimpleGrid columns={[1,2]}>
+              <Box padding={4} maxWidth="500px"  textAlign="left"> 
+              <SimpleGrid columns={[1, 2]}>
+                  <FormControl>
+                    <FormLabel>P. Armazón</FormLabel>
+                    <Input type="number" name="p_frame" placeholder="$100"  width="auto" maxWidth="100px"  value={formData.p_frame} isReadOnly />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>% Descuento</FormLabel>
+                    <Input type="number" name="p_frame" placeholder="-5$"  width="auto" maxWidth="100px"/>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>P. Lunas</FormLabel>
+                    <Input type="number" name="p_lens" placeholder="$80" width="auto" maxWidth="100px" value={formData.p_lens} isReadOnly />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>% Descuento </FormLabel>
+                    <Input type="number" name="p_lens" placeholder="-5%" width="auto" maxWidth="100px" />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Precio</FormLabel>
+                    <Input type="number" name="price" placeholder="$100"  width="auto" maxWidth="100px" />
+                  </FormControl>
+                </SimpleGrid>
+              </Box>
+              <Box textAlign="right"  width="400px" padding="4">
+                <FormControl>
+                  <FormLabel>Mensaje</FormLabel>
+                  <Textarea name="message" placeholder="Escribe un mensaje personalizado..."  height="150px" minHeight="120px" />
+                </FormControl>
+                </Box>
+            </SimpleGrid>
+            <SimpleGrid columns={2} spacing={4}>
+            <Box padding={4} maxWidth="400px" margin="0 auto" ml={170} >
+              <SimpleGrid columns={1} spacing={4}>
+                <FormControl>
+                  <FormLabel>Total</FormLabel>
+                  <Input type="number" name="total" placeholder="$150" width="auto" maxWidth="200px" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Abono</FormLabel>
+                  <Input type="number" name="credit" placeholder="$130" width="auto" maxWidth="200px" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Saldo</FormLabel>
+                  <Input type="number" name="balance" placeholder="$20" width="auto" maxWidth="200px" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Pago en</FormLabel>
+                  <Select name="payment_in" placeholder="Selecciona pago en" width="auto" maxWidth="200px">
+                    <option value="efectivo">Efectivo</option>
+                    <option value="datafast">Datafast</option>
+                    <option value="transferencia">Transferencia</option>
+                  </Select>
+                </FormControl>
+              </SimpleGrid>
+            </Box>
+            <Box textAlign="right" width="100%" padding={4} ml={150}>
+              <SimpleGrid columns={1} spacing={4}>
+                <Button type="submit" colorScheme="teal" width="60%">Guardar</Button>
+                <Button onClick={handleReset} colorScheme="gray" width="60%">Limpiar</Button>
+                <Button onClick={handleWhatsApp} colorScheme="teal" width="60%">WhatsApp</Button>
+                <Button type="submit" colorScheme="teal" width="60%">PDF</Button>
+                <Button type="submit" colorScheme="teal" width="60%">Orden de laboratorio</Button>
+              </SimpleGrid>
+            </Box>
+          </SimpleGrid>
+
         </Box>
       </Box>
     </Box>
   );
-  
-
   function renderInputField(label, name, type, isRequired = false) {
     return (
       <FormControl id={name} isRequired={isRequired}>
