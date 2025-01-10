@@ -68,7 +68,7 @@ const SalesForm = () => {
       price, 
     }));
   }, [formData.p_frame, formData.p_lens]);
-
+  
   useEffect(() => {
     const total_p_frame = formData.p_frame - (formData.p_frame * formData.discount_frame) / 100;
     const total_p_lens = formData.p_lens - (formData.p_lens * formData.discount_lens) / 100;
@@ -81,6 +81,14 @@ const SalesForm = () => {
       total,
     }));
   }, [formData.p_frame, formData.p_lens, formData.discount_frame, formData.discount_lens]);
+
+  useEffect(() => {
+    const balance = formData.total - formData.credit;
+    setFormData((prevState) => ({
+      ...prevState,
+      balance: balance,
+    }));
+  }, [formData.total, formData.credit]);
   
   const handleDiscountChange = (e) => {
     const { name, value } = e.target;
@@ -95,6 +103,14 @@ const SalesForm = () => {
       console.error(`Error fetching ${table}:`, err);
       setError(`Error al obtener los datos de ${table}`);
     }
+  };
+  
+  const handleCreditChange = (e) => {
+    const value = parseFloat(e.target.value) || 0;  
+    setFormData((prevState) => ({
+      ...prevState,
+      credit: value, 
+    }));
   };
   
 
@@ -417,7 +433,7 @@ const SalesForm = () => {
               <SimpleGrid columns={[1, 2]}>
                   <FormControl>
                     <FormLabel>P. Armazón</FormLabel>
-                    <Input type="number" name="p_frame" placeholder="$100"  width="auto" maxWidth="100px"  value={formData.p_frame} isReadOnly />
+                    <Input type="number" name="p_frame" placeholder="$100"  width="auto" maxWidth="100px"  value={formData.p_frame.toFixed(2)} isReadOnly />
                   </FormControl>
                   <FormControl>
                     <FormLabel>% Descuento</FormLabel>
@@ -425,7 +441,7 @@ const SalesForm = () => {
                   </FormControl>
                   <FormControl>
                     <FormLabel>P. Lunas</FormLabel>
-                    <Input type="number" name="p_lens" placeholder="$80" width="auto" maxWidth="100px" value={formData.p_lens} isReadOnly />
+                    <Input type="number" name="p_lens" placeholder="$80" width="auto" maxWidth="100px" value={formData.p_lens.toFixed(2)} isReadOnly />
                   </FormControl>
                   <FormControl>
                     <FormLabel>% Descuento</FormLabel>
@@ -452,7 +468,7 @@ const SalesForm = () => {
               </SimpleGrid>
               </Box>
 
-              <Box textAlign="right"  width="400px" padding="4">
+              <Box textAlign="right"  width="350px" padding="4">
                 <FormControl>
                   <FormLabel>Mensaje</FormLabel>
                   <Textarea name="message" placeholder="Escribe un mensaje personalizado..."  height="150px" minHeight="100px" />
@@ -468,11 +484,11 @@ const SalesForm = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Abono</FormLabel>
-                  <Input type="number" name="credit" placeholder="$130" width="auto" maxWidth="200px" />
+                  <Input type="number" name="credit" placeholder="$130" width="auto" maxWidth="200px" value={formData.credit} onChange={handleCreditChange}/>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Saldo</FormLabel>
-                  <Input type="number" name="balance" placeholder="$20" width="auto" maxWidth="200px" />
+                  <Input type="number" name="balance" placeholder="$20" width="auto" maxWidth="200px" value={formData.balance.toFixed(2)} isReadOnly />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Pago en</FormLabel>
