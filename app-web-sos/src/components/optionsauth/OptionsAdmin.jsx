@@ -84,6 +84,8 @@ const AdminDashBoard = () => {
       case "EGRESOS":
         navigate('/Egresos');
         break;
+        case "HISTORIAL PACIENTE":
+          navigate('/PatientHistory')
       default:
         break;
     }

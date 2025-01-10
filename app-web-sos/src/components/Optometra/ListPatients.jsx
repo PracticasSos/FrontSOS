@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const ListPatients = () => {
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState('');
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // Estado para el cierre de sesión
+  const [isLoggingOut, setIsLoggingOut] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {

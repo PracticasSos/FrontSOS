@@ -35,8 +35,8 @@ const SalesForm = () => {
   const [filteredLens, setFilteredLens] = useState([]);
   const [patientMeasures, setPatientMeausres] = useState([]);
   const [filteredMeasures, setFilteredMeasures] = useState([]);
-  const [inventario, setInventario] = useState([]);
-  const [filteredInventario, setFilteredInventario] = useState([]);
+  const [setInventario] = useState([]);
+  const [setFilteredInventario] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState(null); 

@@ -21,6 +21,7 @@ import MeasuresUse from "../components/Admin/MeasuresUse.jsx"
 import MeasuresFinal from "../components/Admin/MeasuresFinal.jsx"
 import PatientRecords from "../components/Admin/PatientRecords.jsx"
 import Egresos from "../components/Admin/Egresos.jsx"
+import PatientHistory from "../components/Admin/PatientHistory.jsx"
 
 
 const AppRouter = () => {
@@ -44,6 +45,7 @@ const AppRouter = () => {
             <Route path="SalesForm" element= {<SalesForm/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
             <Route path="PatientRecords" element={<PatientRecords />}> </Route>
+            <Route path="PatientHistory" element={<PatientHistory/>}> </Route>
             <Route path="RegisterMeasures" element={<RegisterMeasures />}>
                 <Route path="MeasuresUse" element={<MeasuresUse />} />
                 <Route path="MeasuresFinal" element={<MeasuresFinal />} />
