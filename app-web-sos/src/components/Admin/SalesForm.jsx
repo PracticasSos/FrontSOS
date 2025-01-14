@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
 import { Box, Button, FormControl, FormLabel, Input, Select, List, ListItem, Textarea, SimpleGrid, Heading, Alert, Divider, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 
 const SalesForm = () => {
@@ -112,12 +112,6 @@ const SalesForm = () => {
       credit: value, 
     }));
   };
-  
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
     const handleSearchPatients = (e) => {
       const terms = e.target.value.toLowerCase().split(" ");
@@ -132,6 +126,31 @@ const SalesForm = () => {
         })
       );
     };
+    const fetchPatients = async () => {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('id, pt_phone')
+      if ( error ) {
+        console.error('Error fetching patients:', error);
+      } else {
+      setPatients(data);
+      setFilteredPatients(data);
+      }
+    }
+
+    const handleSearchChange = (e) => {
+      const value = e.target.value;
+      setSearch(value);
+  
+      const filtered = patients.filter(patient =>
+        `${patient.pt_phone}`
+          .toLowerCase()
+          .includes(value.toLowerCase())
+      );
+  
+      setFilteredPatients(filtered);
+    };
+
     const handleSearchLens = (e) => {
       const terms = e.target.value.toLowerCase().split(" ");
       setSearchTermLens(e.target.value);
@@ -186,17 +205,21 @@ const SalesForm = () => {
       setFormData({ ...formData, frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}` });
     };
 
-  const handlePatientSelect = (patient) => {
-    const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
-    setFormData({ ...formData, patient_id: patient.id })
-    setSearchTermPatients(fullName);
-    setFilteredPatients([]);
-
-    const measures = patientMeasures.filter(
-      (measure) => measure.patient_id === patient.id
-    );
-    setFilteredMeasures(measures);
-  };
+    const handlePatientSelect = (patient) => {
+      const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
+      setFormData((prev) => ({
+        ...prev,
+        patient_id: patient.id,
+        pt_phone: patient.pt_phone || '', // Establecer número de teléfono inicial
+      }));
+      setSearchTermPatients(fullName);
+      setFilteredPatients([]);
+    
+      const measures = patientMeasures.filter(
+        (measure) => measure.patient_id === patient.id
+      );
+      setFilteredMeasures(measures);
+    };
   
   const handleLensSelect = (lenss) => {
     const name = `${lenss.lens_type}`;
@@ -209,40 +232,43 @@ const SalesForm = () => {
     setFilteredLens([]);
     setFormData({ ...formData, p_lens: lenss.lens_price });
   }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async () => {
     if (!formData.patient_id || !formData.branchs_id || !formData.date) {
-      console.error("Campos obligatorios faltantes:", {
-        patient_id: formData.patient_id,
-        branchs_id: formData.branchs_id,
-        date: formData.date,
-      });
       alert("Por favor completa los campos obligatorios.");
       return;
     }
   
     try {
-      const { data, error } = await supabase.from("sales").insert([formData]);
-      if (error) {
-        console.error("Error de Supabase al insertar venta:", error);
-        throw error;
-      }
-      console.log("Venta registrada exitosamente:", data);
-      alert("Venta registrada exitosamente.");
-      handleReset(); 
+      // Insertar en la tabla "sales"
+      const { data: salesData, error: salesError } = await supabase
+        .from("sales")
+        .insert([formData]);
+  
+      if (salesError) throw salesError;
+  
+      // Actualizar el número de teléfono en la tabla "patients"
+      const { data: patientData, error: patientError } = await supabase
+        .from("patients")
+        .update({ pt_phone: formData.pt_phone })
+        .eq("id", formData.patient_id);
+  
+      if (patientError) throw patientError;
+  
+      alert("Venta registrada y paciente actualizado exitosamente.");
+      handleReset();
     } catch (error) {
-      console.error("Error al registrar venta:", error.message);
-      alert("Hubo un error al registrar la venta.");
+      console.error("Error al procesar la operación:", error.message);
+      alert("Hubo un error al procesar la operación.");
     }
   };
-  
-
-  const handleWhatsApp = () => {
-    const phoneNumber = "593939731833";
-    const message = encodeURIComponent("!Hola¡ Quiero saber sobre mi orden");
-    const whatsAppUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-    window.open(whatsAppUrl, "_blank");
-  }
 
   const handleReset = () => {
     setFormData({
@@ -263,6 +289,7 @@ const SalesForm = () => {
       total_p_frame:0,
       total_p_lens:0,
       payment_in: "",
+      pt_phone: "",
       message: "",
     });
   };
@@ -288,7 +315,7 @@ const SalesForm = () => {
   
       <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit();}} width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
         
-        <SimpleGrid columns={[1, 3]} spacing={4}>
+        <SimpleGrid columns={[1, 4]} spacing={4}>
           <FormControl id="patient-search">
             <FormLabel>Buscar Paciente</FormLabel>
             <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients}/>
@@ -316,6 +343,15 @@ const SalesForm = () => {
             </Select>
           </FormControl>
           {renderInputField("Fecha", "date", "date", true)}
+          <FormControl>
+              <FormLabel>Teléfono</FormLabel>
+              <Input
+                type="number"
+                name="pt_phone"
+                value={formData.pt_phone}
+                onChange={(e) => handleChange(e)} 
+              />
+          </FormControl>
         </SimpleGrid>
         <Box mt = {4} mb={4}>
           <Table variant="simple" mb={4}>
@@ -375,7 +411,7 @@ const SalesForm = () => {
         <Input
           type="text"
           name="frame"
-          placeholder="Ej. GUESS, rojo, 778, 1"
+          placeholder="Ej. venetti, rojo, 778, 1"
           value={inputValue} 
           onChange={handleFrameInputChange} 
           onBlur={() => {}} 
@@ -504,7 +540,7 @@ const SalesForm = () => {
               <SimpleGrid columns={1} spacing={4}>
                 <Button type="submit" colorScheme="teal" width="60%">Guardar</Button>
                 <Button onClick={handleReset} colorScheme="gray" width="60%">Limpiar</Button>
-                <Button onClick={handleWhatsApp} colorScheme="teal" width="60%">WhatsApp</Button>
+                <Button type= "submit" colorScheme="teal" width="60%">WhatsApp</Button>
                 <Button type="submit" colorScheme="teal" width="60%">PDF</Button>
                 <Button type="submit" colorScheme="teal" width="60%">Orden de laboratorio</Button>
               </SimpleGrid>
