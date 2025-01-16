@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
 import { Box, Button, FormControl, FormLabel, Input, Select, List, ListItem, Textarea, SimpleGrid, Heading, Alert, Divider, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
 
 
 const SalesForm = () => {
@@ -12,7 +13,7 @@ const SalesForm = () => {
     branchs_id: "",
     date: "",
     frame: "",
-    lens_id: "",
+    lens_id: 0,
     delivery_time: "",
     p_frame: 0,
     price: 0,
@@ -26,6 +27,7 @@ const SalesForm = () => {
     total_p_lens:0,
     payment_in: "",
     message: "",
+    pt_phone:"",
   });
 
   const [branches, setBranches] = useState([]);
@@ -62,18 +64,18 @@ const SalesForm = () => {
   }, []);
 
   useEffect(() => {
-    const price = formData.p_frame + formData.p_lens;
+    const price = (formData.p_frame || 0) + (formData.p_lens || 0);
     setFormData((prevState) => ({
       ...prevState,
-      price, 
+      price,
     }));
   }, [formData.p_frame, formData.p_lens]);
   
   useEffect(() => {
-    const total_p_frame = formData.p_frame - (formData.p_frame * formData.discount_frame) / 100;
-    const total_p_lens = formData.p_lens - (formData.p_lens * formData.discount_lens) / 100;
+    const total_p_frame = (formData.p_frame || 0) - ((formData.p_frame || 0) * (formData.discount_frame || 0)) / 100;
+    const total_p_lens = (formData.p_lens || 0) - ((formData.p_lens || 0) * (formData.discount_lens || 0)) / 100;
     const total = total_p_frame + total_p_lens;
-    
+  
     setFormData((prevState) => ({
       ...prevState,
       total_p_frame,
@@ -81,14 +83,15 @@ const SalesForm = () => {
       total,
     }));
   }, [formData.p_frame, formData.p_lens, formData.discount_frame, formData.discount_lens]);
-
+  
   useEffect(() => {
-    const balance = formData.total - formData.credit;
+    const balance = (formData.total || 0) - (formData.credit || 0);
     setFormData((prevState) => ({
       ...prevState,
       balance: balance,
     }));
   }, [formData.total, formData.credit]);
+  
   
   const handleDiscountChange = (e) => {
     const { name, value } = e.target;
@@ -168,41 +171,51 @@ const SalesForm = () => {
     const handleFrameInputChange = async (e) => {
       const value = e.target.value;
       setInputValue(value);
-  
+    
       const [brand, color, reference] = value.split(",").map((v) => v.trim());
-  
-      if (brand && color && reference) {
-        try {
-          const { data, error } = await supabase
-            .from("inventario")
-            .select("brand, color, reference, price")
+    
+      try {
+        let query = supabase.from("inventario").select("brand, color, reference, price");
+    
+        if (brand && !color && !reference) {
+          query = query.ilike("brand", `%${brand}%`);
+        } 
+        else if (brand && color && reference) {
+          query = query
             .ilike("brand", `%${brand}%`)
             .ilike("color", `%${color}%`)
             .ilike("reference", `%${reference}%`);
-  
-          if (error || !data || data.length === 0) {
-            setSuggestions([]);
-            return;
-          }
-  
-          setSuggestions(data); 
-          setFormData((prevState) => ({
-            ...prevState,
-            frame: `${data[0].brand}, ${data[0].color}, ${data[0].reference}`,
-            p_frame: data[0].price,
-          }));
-        } catch (err) {
-          console.error("Error al obtener sugerencias:", err);
+        } 
+    
+        const { data, error } = await query;
+    
+        if (error || !data || data.length === 0) {
+          setSuggestions([]); 
+          return;
         }
-      } else {
+    
+   
+        setSuggestions((prevSuggestions) => {
+          if (JSON.stringify(prevSuggestions) !== JSON.stringify(data)) {
+            return data;
+          }
+          return prevSuggestions;
+        });
+    
+      } catch (err) {
+        console.error("Error al obtener sugerencias:", err);
         setSuggestions([]);
       }
     };
-  
+    
     const handleSuggestionClick = (suggestion) => {
-      setInputValue(`${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}, `);
-      setSuggestions([]);
-      setFormData({ ...formData, frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}` });
+      setInputValue(`${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}`);
+      setSuggestions([]);  
+      setFormData({
+        ...formData,
+        frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}`,
+        p_frame: suggestion.price,
+      });
     };
 
     const handlePatientSelect = (patient) => {
@@ -210,7 +223,7 @@ const SalesForm = () => {
       setFormData((prev) => ({
         ...prev,
         patient_id: patient.id,
-        pt_phone: patient.pt_phone || '', // Establecer número de teléfono inicial
+        pt_phone: patient.pt_phone ? patient.pt_phone.toString() : '',
       }));
       setSearchTermPatients(fullName);
       setFilteredPatients([]);
@@ -221,46 +234,74 @@ const SalesForm = () => {
       setFilteredMeasures(measures);
     };
   
-  const handleLensSelect = (lenss) => {
-    const name = `${lenss.lens_type}`;
-    setFormData((prevState) => ({
-      ...prevState,
-      lens_id: lenss.id,
-      p_lens: lenss.lens_price,
-    }));
-    setSearchTermLens(name);
-    setFilteredLens([]);
-    setFormData({ ...formData, p_lens: lenss.lens_price });
-  }
+    const handleLensSelect = (lens) => {
+      const name = `${lens.lens_type}`;
+      setFormData((prevState) => ({
+        ...prevState,
+        lens_id: lens.id, 
+        p_lens: lens.lens_price, 
+      }));
+      setSearchTermLens(name); 
+      setFilteredLens([]);
+    };
+    
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  
+    if (name === "pt_phone") {
+      const numericValue = value.replace(/[^0-9]/g, ''); 
+      setFormData((prev) => ({
+        ...prev,
+        [name]: numericValue || null,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
-
+  
   const handleSubmit = async () => {
     if (!formData.patient_id || !formData.branchs_id || !formData.date) {
       alert("Por favor completa los campos obligatorios.");
       return;
     }
   
+    const formDataWithDefaults = {
+      ...formData,
+      discount_frame: formData.discount_frame || 0,
+      discount_lens: formData.discount_lens || 0,
+      total_p_frame: formData.total_p_frame || 0,
+      total_p_lens: formData.total_p_lens || 0,
+      p_frame: formData.p_frame || 0,
+      p_lens: formData.p_lens || 0,
+      total: formData.total || 0,
+      credit: formData.credit || 0,
+      balance: formData.balance || 0,
+    };
+
+    console.log("Datos de formulario antes de enviar:", formDataWithDefaults);
+  
     try {
-      // Insertar en la tabla "sales"
+      const { pt_phone, ...salesDataWithoutPhone } = formDataWithDefaults;
+      console.log("Datos sin teléfono para ventas:", salesDataWithoutPhone);
       const { data: salesData, error: salesError } = await supabase
         .from("sales")
-        .insert([formData]);
+        .insert([salesDataWithoutPhone]);
   
       if (salesError) throw salesError;
   
-      // Actualizar el número de teléfono en la tabla "patients"
-      const { data: patientData, error: patientError } = await supabase
-        .from("patients")
-        .update({ pt_phone: formData.pt_phone })
-        .eq("id", formData.patient_id);
+      if (pt_phone) {
+        console.log("Actualizando teléfono del paciente:", pt_phone);
+        const { data: patientData, error: patientError } = await supabase
+          .from("patients")
+          .update({ pt_phone })
+          .eq("id", formDataWithDefaults.patient_id);
   
-      if (patientError) throw patientError;
+        if (patientError) throw patientError;
+      }
   
       alert("Venta registrada y paciente actualizado exitosamente.");
       handleReset();
@@ -269,14 +310,15 @@ const SalesForm = () => {
       alert("Hubo un error al procesar la operación.");
     }
   };
-
+  
   const handleReset = () => {
+    const currentPhone = formData.pt_phone;
     setFormData({
       patient_id: "",
       branchs_id: "",
       date: "",
       frame: "",
-      lens: "",
+      lens_id: 0,
       delivery_time: "",
       p_frame: 0,
       p_lens: 0,
@@ -289,10 +331,72 @@ const SalesForm = () => {
       total_p_frame:0,
       total_p_lens:0,
       payment_in: "",
-      pt_phone: "",
       message: "",
+      pt_phone: currentPhone,
     });
   };
+
+  const generateAndUploadPDF = async (formData) => {
+    const pdf = new jsPDF();
+
+    pdf.text(`Paciente: ${formData.patient_id}`, 10, 10);
+    pdf.text(`Fecha: ${formData.date}`, 10, 20);
+    pdf.text(`Mensaje: ${formData.message}`, 10, 30);
+    
+    const pdfBlob = pdf.output("blob");
+    const fileName = `sales-${formData.patient_id}-${Date.now()}.pdf`;
+    const { data, error } = await supabase.storage
+      .from("sales") 
+      .upload(fileName, pdfBlob, {
+        contentType: "application/pdf",
+      });
+  
+    if (error) {
+      console.error("Error uploading PDF:", error);
+      throw error;
+    }
+
+    const { publicURL, error: urlError } = supabase.storage.from("sales").getPublicUrl(fileName);
+    
+    if (urlError) {
+      console.error("Error generating public URL:", urlError);
+      throw urlError;
+    }
+  
+    return publicURL;
+  };
+  
+  const sendWhatsAppMessage = (phoneNumber, pdfUrl, message) => {
+    const baseUrl = "https://wa.me/";
+    const fullMessage = `${message}\n\nPuedes descargar tu documento aquí: ${pdfUrl}`;
+    const whatsappUrl = `${baseUrl}${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
+    window.open(whatsappUrl, "_blank");
+  };
+  
+  const handlePDFClick = async () => {
+    try {
+      const pdfUrl = await generateAndUploadPDF(formData);
+      alert(`PDF generado: ${pdfUrl}`);
+    } catch (err) {
+      console.error("Error generando el PDF:", err);
+      alert("Hubo un problema al generar el PDF.");
+    }
+  };
+  
+  const handleWhatsAppClick = async () => {
+    try {
+      const pdfUrl = await generateAndUploadPDF(formData);
+      const message = formData.message || "Aquí tienes el documento solicitado.";
+      const phoneNumber = formData.pt_phone;
+
+      sendWhatsAppMessage(phoneNumber, pdfUrl, message);
+    } catch (err) {
+      console.error("Error enviando mensaje por WhatsApp:", err);
+      alert("Hubo un problema al enviar el mensaje.");
+    }
+  };
+  
+  
 
   const handleNavigate = (route) => navigate(route);
 
@@ -346,9 +450,12 @@ const SalesForm = () => {
           <FormControl>
               <FormLabel>Teléfono</FormLabel>
               <Input
-                type="number"
+                type="text"
                 name="pt_phone"
                 value={formData.pt_phone}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, ''); // Filtra caracteres
+                }}
                 onChange={(e) => handleChange(e)} 
               />
           </FormControl>
@@ -407,34 +514,33 @@ const SalesForm = () => {
           <Box p={5} maxWidth="800px" mx="auto">
             <SimpleGrid columns={[1, 2]} spacing={4}>
             <FormControl>
-        <FormLabel>Armazón</FormLabel>
-        <Input
-          type="text"
-          name="frame"
-          placeholder="Ej. venetti, rojo, 778, 1"
-          value={inputValue} 
-          onChange={handleFrameInputChange} 
-          onBlur={() => {}} 
-        />
+              <FormLabel>Armazón</FormLabel>
+              <Input
+                type="text"
+                name="frame"
+                placeholder="Ej. venetti, rojo, 778, 1"
+                value={inputValue}
+                onChange={handleFrameInputChange}
+              />
 
-        {suggestions.length > 0 && (
-          <List border="1px solid #ddd" borderRadius="5px" maxHeight="200px" overflowY="auto" mt={2}>
-            {suggestions.map((item, index) => (
-              <ListItem
-                key={index}
-                padding="8px"
-                cursor="pointer"
-                onClick={() => handleSuggestionClick(item)} 
-              >
-                {item.brand} - {item.color} - {item.reference}
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </FormControl>
+              {suggestions.length > 0 && (
+                <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
+                  {suggestions.map((item, index) => (
+                    <Box
+                      key={index}
+                      p={2}
+                      _hover={{ bg: 'teal.100', cursor: 'pointer' }}
+                      onClick={() => handleSuggestionClick(item)}
+                    >
+                      {item.brand} - {item.color} - {item.reference}
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </FormControl>
               <FormControl>
                 <FormLabel>Entrega</FormLabel>
-                <Select name="delivery_time" placeholder="Selecciona un tiempo">
+                <Select name="delivery_time" placeholder="Selecciona un tiempo" onChange={handleChange} value={formData.delivery_time}>
                   <option value="1 día">1 día</option>
                   <option value="2 días">2 días</option>
                 </Select>
@@ -507,7 +613,7 @@ const SalesForm = () => {
               <Box textAlign="right"  width="350px" padding="4">
                 <FormControl>
                   <FormLabel>Mensaje</FormLabel>
-                  <Textarea name="message" placeholder="Escribe un mensaje personalizado..."  height="150px" minHeight="100px" />
+                  <Textarea name="message" value={formData.message} onChange={handleChange} placeholder="Escribe un mensaje personalizado..."  height="150px" minHeight="100px" />
                 </FormControl>
                 </Box>
             </SimpleGrid>
@@ -528,7 +634,7 @@ const SalesForm = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Pago en</FormLabel>
-                  <Select name="payment_in" placeholder="Selecciona pago en" width="auto" maxWidth="200px">
+                  <Select name="payment_in"  value={formData.payment_in}  onChange={handleChange} placeholder="Selecciona pago en" width="auto" maxWidth="200px">
                     <option value="efectivo">Efectivo</option>
                     <option value="datafast">Datafast</option>
                     <option value="transferencia">Transferencia</option>
@@ -540,8 +646,8 @@ const SalesForm = () => {
               <SimpleGrid columns={1} spacing={4}>
                 <Button type="submit" colorScheme="teal" width="60%">Guardar</Button>
                 <Button onClick={handleReset} colorScheme="gray" width="60%">Limpiar</Button>
-                <Button type= "submit" colorScheme="teal" width="60%">WhatsApp</Button>
-                <Button type="submit" colorScheme="teal" width="60%">PDF</Button>
+                <Button onClick={handleWhatsAppClick} colorScheme="teal" width="60%">WhatsApp</Button>
+                <Button onClick={handlePDFClick}colorScheme="teal" width="60%">PDF</Button>
                 <Button type="submit" colorScheme="teal" width="60%">Orden de laboratorio</Button>
               </SimpleGrid>
             </Box>

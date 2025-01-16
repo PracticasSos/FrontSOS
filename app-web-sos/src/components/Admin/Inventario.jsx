@@ -113,7 +113,7 @@ const Inventario = () => {
               placeholder="Ingrese la marca"
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl>
             <FormLabel>Referencia</FormLabel>
             <Input
               type="text"
@@ -123,7 +123,7 @@ const Inventario = () => {
               placeholder="Ingrese la referencia"
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>Tamaño</FormLabel>
             <Input
               type="number"
@@ -133,7 +133,7 @@ const Inventario = () => {
               placeholder="Ingrese el tamaño"
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl>
             <FormLabel>Puente</FormLabel>
             <Input
               type="number"
@@ -143,7 +143,7 @@ const Inventario = () => {
               placeholder="Ingrese el tamaño del puente"
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl >
             <FormLabel>Varilla</FormLabel>
             <Input
               type="number"
@@ -153,7 +153,7 @@ const Inventario = () => {
               placeholder="Ingrese el tamaño de la varilla"
             />
           </FormControl>
-          <FormControl isRequired>
+          <FormControl>
             <FormLabel>Color</FormLabel>
             <Input
               type="text"

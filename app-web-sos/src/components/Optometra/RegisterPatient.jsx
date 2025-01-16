@@ -82,6 +82,7 @@ const RegisterPatientForm = () => {
       pt_email: '',
       pt_consultation_reason: '',
       pt_recommendations: '',
+      
     });
   };
 
@@ -97,25 +98,32 @@ const RegisterPatientForm = () => {
       </Box>
 
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
-        <SimpleGrid columns={[1, 2]} spacing={4}>
-          {renderSelectField('Encargado', 'user_id', users)}
+      <SimpleGrid columns={[1, 2]} spacing={4}>
+        <Box>
+          {renderSelectField('Responsable', 'user_id', users)}
           {renderInputField('Nombre', 'pt_firstname', 'text', true)}
           {renderInputField('Apellido', 'pt_lastname', 'text', true)}
           {renderInputField('Ocupación', 'pt_occupation', 'text')}
           {renderInputField('Dirección', 'pt_address', 'text')}
           {renderInputField('Teléfono', 'pt_phone', 'text')}
+          {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
+          {renderTextareaField('Recomendaciones', 'pt_recommendations')}
+          <Box display="flex" justifyContent="space-around" mt={6}>
+            <Button onClick={handleReset} colorScheme="gray">USO</Button>
+            <Button onClick={handleReset} colorScheme="gray">FINAL</Button>
+          </Box>
+        </Box>
+        <Box>
           {renderInputField('Edad', 'pt_age', 'number')}
           {renderInputField('C.I.', 'pt_ci', 'text')}
           {renderInputField('Ciudad', 'pt_city', 'text')}
           {renderInputField('Correo', 'pt_email', 'email')}
-          {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
-          {renderTextareaField('Recomendaciones', 'pt_recommendations')}
-        </SimpleGrid>
-
-        <Box display="flex" justifyContent="space-around" mt={6}>
-          <Button type="submit" colorScheme="teal">Guardar</Button>
-          <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
+          <Box display="flex" justifyContent="space-around" mt={6}>
+            <Button type="submit" colorScheme="teal">Guardar</Button>
+            <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
+          </Box>
         </Box>
+      </SimpleGrid>
       </Box>
     </Box>
   );

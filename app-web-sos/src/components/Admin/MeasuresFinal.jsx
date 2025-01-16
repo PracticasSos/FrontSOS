@@ -8,7 +8,7 @@ const MeasuresFinal = () => {
 
   const [formData, setFormData] = useState({
     patient_id: "",
-    sphere_right: 0,
+    sphere_right: "",
     cylinder_right: 0,
     axis_right: 0,
     prism_right: 0,
@@ -17,7 +17,7 @@ const MeasuresFinal = () => {
     av_vp_right: "",
     dnp_right: 0,
     alt_right: 0,
-    sphere_left: 0,
+    sphere_left: "",
     cylinder_left: 0,
     axis_left: 0,
     prism_left: 0,
@@ -33,6 +33,7 @@ const MeasuresFinal = () => {
     needs_lenses_far: false,
     color_perception: false,
     color_issues: "",
+    created_at: ""
   });
 
   const [patients, setPatients] = useState([]);
@@ -97,8 +98,13 @@ const MeasuresFinal = () => {
       alert ("Por favor completa los campos obligatorios.");
       return;
   }
+
+  const newFormData = {
+    ...formData,
+    created_at: new Date().toISOString(), 
+  };
   try {
-      const { data, error } = await supabase.from("rx_final").insert([formData]);
+      const { data, error } = await supabase.from("rx_final").insert([newFormData]);
       if (error) throw error;
       console.log("Medidas registradas:", data);
       alert("Medidas registradas exitosamente.");
