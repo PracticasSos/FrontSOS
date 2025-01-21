@@ -687,7 +687,6 @@ const SalesForm = () => {
               </SimpleGrid>
             </Box>
           </SimpleGrid>
-
         </Box>
       </Box>
     </Box>
