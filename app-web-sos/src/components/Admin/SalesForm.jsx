@@ -12,7 +12,7 @@ const SalesForm = () => {
     patient_id: "",
     branchs_id: "",
     date: "",
-    frame: "",
+    inventario_id: "",
     lens_id: 0,
     delivery_time: "",
     p_frame: 0,
@@ -37,7 +37,7 @@ const SalesForm = () => {
   const [searchTermLens, setSearchTermLens] = useState("");
   const [lenss, setLenss] = useState([]);
   const [filteredLens, setFilteredLens] = useState([]);
-  const [patientMeasures, setPatientMeausres] = useState([]);
+  const [patientMeasures, setPatientMeasures] = useState([]);
   const [filteredMeasures, setFilteredMeasures] = useState([]);
   const [inventario, setInventario] = useState([]);
   const [filteredInventario, setFilteredInventario] = useState([]);
@@ -56,7 +56,7 @@ const SalesForm = () => {
       setLenss(data);
       setFilteredLens(data);
     });
-    fetchData('rx_final', setPatientMeausres);
+    fetchLatestRxFinal();
     fetchData('inventario', (data) => {
       setInventario(data);
       setFilteredInventario(data);
@@ -175,7 +175,7 @@ const SalesForm = () => {
       const [brand, color, reference] = value.split(",").map((v) => v.trim());
     
       try {
-        let query = supabase.from("inventario").select("brand, color, reference, price");
+        let query = supabase.from("inventario").select("id, brand, color, reference, price");
     
         if (brand && !color && !reference) {
           query = query.ilike("brand", `%${brand}%`);
@@ -194,7 +194,6 @@ const SalesForm = () => {
           return;
         }
     
-   
         setSuggestions((prevSuggestions) => {
           if (JSON.stringify(prevSuggestions) !== JSON.stringify(data)) {
             return data;
@@ -213,27 +212,63 @@ const SalesForm = () => {
       setSuggestions([]);  
       setFormData({
         ...formData,
+        inventario_id: suggestion.id, 
         frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}`,
         p_frame: suggestion.price,
       });
     };
 
+    const fetchLatestRxFinal = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("rx_final")
+          .select("*")
+          .order("created_at", { ascending: false });
+  
+        if (error) throw error;
+  
+        const latestMeasuresByPatient = {};
+        data.forEach((measure) => {
+          if (
+            !latestMeasuresByPatient[measure.patient_id] ||
+            new Date(measure.created_at) >
+              new Date(latestMeasuresByPatient[measure.patient_id].created_at)
+          ) {
+            latestMeasuresByPatient[measure.patient_id] = measure;
+          }
+        });
+  
+        const latestMeasuresArray = Object.values(latestMeasuresByPatient);
+  
+        setPatientMeasures(latestMeasuresArray || []);
+        setFilteredMeasures([]);
+      } catch (err) {
+        console.error("Error fetching latest rx_final:", err);
+        setError("Error al obtener los últimos datos de rx_final");
+      }
+    };
+  
     const handlePatientSelect = (patient) => {
       const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
+  
       setFormData((prev) => ({
         ...prev,
         patient_id: patient.id,
-        pt_phone: patient.pt_phone ? patient.pt_phone.toString() : '',
+        pt_phone: patient.pt_phone ? patient.pt_phone.toString() : "",
       }));
+  
       setSearchTermPatients(fullName);
       setFilteredPatients([]);
-    
-      const measures = patientMeasures.filter(
+  
+      const patientLatestMeasures = patientMeasures.filter(
         (measure) => measure.patient_id === patient.id
       );
-      setFilteredMeasures(measures);
-    };
   
+      setFilteredMeasures(patientLatestMeasures);
+  
+      console.log("Medidas encontradas para el paciente:", patientLatestMeasures);
+    };
+
     const handleLensSelect = (lens) => {
       const name = `${lens.lens_type}`;
       setFormData((prevState) => ({
@@ -317,7 +352,7 @@ const SalesForm = () => {
       patient_id: "",
       branchs_id: "",
       date: "",
-      frame: "",
+      inventario_id: "",
       lens_id: 0,
       delivery_time: "",
       p_frame: 0,
@@ -461,55 +496,55 @@ const SalesForm = () => {
           </FormControl>
         </SimpleGrid>
         <Box mt = {4} mb={4}>
-          <Table variant="simple" mb={4}>
-                <Thead>
-                  <Tr>
-                    <Th>Rx Final</Th>
-                    <Th>Esfera</Th>
-                    <Th>Cilindro</Th>
-                    <Th>Eje</Th>
-                    <Th>Prisma</Th>
-                    <Th>ADD</Th>
-                    <Th>AV VL</Th>
-                    <Th>AV VP</Th>
-                    <Th>DNP</Th>
-                    <Th>ALT</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {[
-                    { side: "OD", prefix: "right" },
-                    { side: "OI", prefix: "left" },
-                  ].map(({ side, prefix }) => (
-                    <Tr key={prefix}>
-                      <Td>{side}</Td>
-                      {[
-                        "sphere",
-                        "cylinder",
-                        "axis",
-                        "prism",
-                        "add",
-                        "av_vl",
-                        "av_vp",
-                        "dnp",
-                        "alt",
-                      ].map((field) => (
-                        <Td key={field}>
-                          <Input
-                            name={`${field}_${prefix}`}
-                            value={
-                              filteredMeasures.length > 0
-                                ? filteredMeasures[0][`${field}_${prefix}`] || ""
-                                : ""
-                            }
-                            onChange={handleChange}
-                          />
-                        </Td>
-                      ))}
-                    </Tr>
-                  ))}
-                </Tbody>
-           </Table>
+        <Table variant="simple" mb={4}>
+        <Thead>
+          <Tr>
+            <Th>Rx Final</Th>
+            <Th>Esfera</Th>
+            <Th>Cilindro</Th>
+            <Th>Eje</Th>
+            <Th>Prisma</Th>
+            <Th>ADD</Th>
+            <Th>AV VL</Th>
+            <Th>AV VP</Th>
+            <Th>DNP</Th>
+            <Th>ALT</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {[
+            { side: "OD", prefix: "right" },
+            { side: "OI", prefix: "left" },
+          ].map(({ side, prefix }) => (
+            <Tr key={prefix}>
+              <Td>{side}</Td>
+              {[
+                "sphere",
+                "cylinder",
+                "axis",
+                "prism",
+                "add",
+                "av_vl",
+                "av_vp",
+                "dnp",
+                "alt",
+              ].map((field) => (
+                <Td key={field}>
+                  <Input
+                    name={`${field}_${prefix}`}
+                    value={
+                      filteredMeasures.length > 0
+                        ? filteredMeasures[0][`${field}_${prefix}`] || ""
+                        : ""
+                    }
+                    onChange={handleChange}
+                  />
+                </Td>
+              ))}
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
           </Box>
           <Box p={5} maxWidth="800px" mx="auto">
             <SimpleGrid columns={[1, 2]} spacing={4}>
@@ -517,7 +552,7 @@ const SalesForm = () => {
               <FormLabel>Armazón</FormLabel>
               <Input
                 type="text"
-                name="frame"
+                name="inventario_id"
                 placeholder="Ej. venetti, rojo, 778, 1"
                 value={inputValue}
                 onChange={handleFrameInputChange}
