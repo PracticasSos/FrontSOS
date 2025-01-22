@@ -683,7 +683,6 @@ const SalesForm = () => {
                 <Button onClick={handleReset} colorScheme="gray" width="60%">Limpiar</Button>
                 <Button onClick={handleWhatsAppClick} colorScheme="teal" width="60%">WhatsApp</Button>
                 <Button onClick={handlePDFClick}colorScheme="teal" width="60%">PDF</Button>
-                <Button type="submit" colorScheme="teal" width="60%">Orden de laboratorio</Button>
               </SimpleGrid>
             </Box>
           </SimpleGrid>

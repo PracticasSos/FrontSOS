@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
-import { useNavigate } from "react-router-dom";
-import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid } from "@chakra-ui/react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
 
 const LaboratoryOrder = () => {
-    const [salesList, setSalesList] = useState([]);
+    const { patientId } = useParams();
+    console.log(patientId);
+    const location = useLocation();
+    const [salesData, setSalesData] = useState(null);
+    const [patientData, setPatientData] = useState(location.state?.patientData || null);
     const [patientsList, setPatientsList] = useState([]);
     const [filteredMeasures, setFilteredMeasures] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -22,10 +26,42 @@ const LaboratoryOrder = () => {
     };
 
     useEffect(() => {
-        fetchLabs();
-        fetchPatients();
-        fetchLens();
-    }, []);
+        if (patientId) {
+            fetchPatientData();
+        } else {
+            console.error("patientId is undefined or invalid.");
+            alert("Error: El ID del paciente no está disponible.");
+        }
+    }, [patientId]);
+
+    useEffect(() => {
+        if (patientData?.id) {
+            fetchLabs();
+            fetchSalesData();
+            fetchMeasures();
+            fetchLens();
+        }
+    }, [patientData]);
+
+    const fetchPatientData = async () => {
+        if (!patientId) {
+            console.error("patientId is undefined or invalid.");
+            return; 
+        }
+        try {
+            const { data, error } = await supabase
+                .from("patients")
+                .select("*")
+                .eq("id", patientId)
+                .single();
+
+            if (error) throw error;
+            setPatientData(data);
+        } catch (error) {
+            console.error("Error fetching patient data:", error);
+            alert("Error al cargar los datos del paciente.");
+        }
+    };
 
     const fetchLabs = async () => {
         const { data, error } = await supabase
@@ -38,38 +74,6 @@ const LaboratoryOrder = () => {
         }
     };
 
-    const fetchPatients = async () => {
-        const { data, error } = await supabase
-            .from('patients')
-            .select('id, pt_firstname, pt_lastname, pt_ci');
-        if (error) {
-            console.error('Error fetching patients:', error);
-        } else {
-            setPatientsList(data);
-        }
-    };
-
-    const fetchSales = async (patientId) => {
-        const { data, error } = await supabase
-            .from('sales')
-            .select(`
-                id, 
-                date, 
-                frame, 
-                lens:lens_id(lens_type), 
-                branchs:branchs_id(name)
-            `)
-            .eq('patient_id', patientId)
-            .order('date', { ascending: false })
-            .limit(1);
-
-        if (error) {
-            console.error('Error fetching sales:', error);
-        } else {
-            setSalesList(data);
-            setSelectedSale(data[0]); 
-        }
-    };
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -82,7 +86,30 @@ const LaboratoryOrder = () => {
         } else {
           setLensTypes(data);
         }
-      };
+    };
+
+      const fetchSalesData = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("sales")
+                .select(`
+                    id,
+                    date,
+                    frame,
+                    lens:lens_id(lens_type),
+                    branchs:branchs_id(name)
+                `)
+                .eq("patient_id", patientData.id)
+                .order("date", { ascending: false })
+                .limit(1)
+                .single();
+
+            if (error) throw error;
+            setSalesData(data);
+        } catch (error) {
+            console.error("Error fetching sales data:", error);
+        }
+    };
       
       const updateLensType = async (saleId, lensType) => {
         const { error } = await supabase
@@ -136,22 +163,18 @@ const LaboratoryOrder = () => {
       };
       
 
-    const handlePatientSelect = async (patient) => {
-        setSelectedPatient(patient);
-        setSearchTerm(`${patient.pt_firstname} ${patient.pt_lastname}`);
+      const fetchMeasures = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("rx_final")
+                .select("*")
+                .eq("patient_id", patientId);
 
-        const { data: rxData, error: rxError } = await supabase
-            .from('rx_final')
-            .select('*')
-            .eq('patient_id', patient.id);
-
-        if (rxError) {
-            console.error('Error fetching measures:', rxError);
-        } else {
-            setFilteredMeasures(rxData);
+            if (error) throw error;
+            setFilteredMeasures(data);
+        } catch (error) {
+            console.error("Error fetching measures:", error);
         }
-
-        await fetchSales(patient.id);
     };
 
     const handlePDFClick = async () => {
@@ -182,7 +205,7 @@ const LaboratoryOrder = () => {
             return true; 
         }
         const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
-        return fullName.toLowerCase().includes(searchTerm.toLowerCase()); // Filtra por nombre y apellido
+        return fullName.toLowerCase().includes(searchTerm.toLowerCase()); 
     });
 
     return (
@@ -195,31 +218,19 @@ const LaboratoryOrder = () => {
         </Box>
         <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
            
-            <FormControl id="patient-search" mb={4}>
-                <FormLabel>Buscar Paciente</FormLabel>
-                <Input
-                    type="text"
-                    placeholder="Buscar por nombre, apellido o cédula..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-            </FormControl>
-
-            {searchTerm && !selectedPatient && (
-                <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
-                    {filteredPatients.map((patient) => (
-                        <Box
-                            key={patient.id}
-                            padding={2}
-                            _hover={{ bg: "teal.100", cursor: "pointer" }}
-                            onClick={() => handlePatientSelect(patient)} 
-                        >
-                            {patient.pt_firstname} {patient.pt_lastname}
-                        </Box>
-                    ))}
-                </Box>
-            )}
-
+        {patientData && (
+        <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
+          <Text fontSize="lg">
+            <strong>Nombre:</strong> {patientData.pt_firstname} {patientData.pt_lastname}
+          </Text>
+          <Text fontSize="lg">
+            <strong>Cédula:</strong> {patientData.pt_ci}
+          </Text>
+          <Text fontSize="lg">
+            <strong>Teléfono:</strong> {patientData.pt_phone || "No disponible"}
+          </Text>
+        </Box>
+      )}
             <Box mt={4}>
                 <Table variant="simple">
                     <Thead>
@@ -279,7 +290,7 @@ const LaboratoryOrder = () => {
                                 <FormLabel>Óptica</FormLabel>
                                 <Input 
                                     type="text" 
-                                    value={selectedSale?.branchs?.name || ""}
+                                    value={salesData?.branchs?.name || ""}
                                     isReadOnly
                                     width="auto" 
                                     maxWidth="300px"
@@ -299,7 +310,7 @@ const LaboratoryOrder = () => {
                                 <FormLabel>Fecha</FormLabel>
                                 <Input 
                                     type="text" 
-                                    value={selectedSale?.date || ""}
+                                    value={salesData?.date || ""}
                                     isReadOnly
                                     width="auto" 
                                     maxWidth="300px"
@@ -309,7 +320,7 @@ const LaboratoryOrder = () => {
                                 <FormLabel>Armazón</FormLabel>
                                 <Input 
                                     type="text" 
-                                    value={selectedSale?.frame || ""}
+                                    value={salesData?.frame || ""}
                                     isReadOnly
                                     width="auto" 
                                     maxWidth="300px"
@@ -319,12 +330,12 @@ const LaboratoryOrder = () => {
                             <FormLabel>Tipo de Lentes</FormLabel>
                             <Input
                                 type="text"
-                                value={selectedSale?.lens?.lens_type || ""}
+                                value={salesData?.lens?.lens_type || ""}
                                 onChange={handleLensChange}
                                 onFocus={handleInputFocus} 
                                 placeholder="Escribe para buscar..."
                             />
-                            {isTyping && selectedSale?.lens?.lens_type?.trim()?.length > 0 && (
+                            {isTyping && salesData?.lens?.lens_type?.trim()?.length > 0 && (
                                 <Box
                                 border="1px solid #ccc"
                                 borderRadius="md"
@@ -337,7 +348,7 @@ const LaboratoryOrder = () => {
                                 >
                                 {lensTypes
                                     .filter((lens) =>
-                                    lens.lens_type.toLowerCase().includes(selectedSale.lens.lens_type.toLowerCase())
+                                    lens.lens_type.toLowerCase().includes(salesData.lens.lens_type.toLowerCase())
                                     )
                                     .map((lens) => (
                                     <Box
