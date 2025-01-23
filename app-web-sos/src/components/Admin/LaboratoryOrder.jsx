@@ -212,7 +212,7 @@ const LaboratoryOrder = () => {
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
         <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-            <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">Consultas de Cierre</Button>
+            <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">Lista de Laboratorio</Button>
             <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
             <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
@@ -291,16 +291,6 @@ const LaboratoryOrder = () => {
                                 <Input 
                                     type="text" 
                                     value={salesData?.branchs?.name || ""}
-                                    isReadOnly
-                                    width="auto" 
-                                    maxWidth="300px"
-                                />
-                            </FormControl>
-                            <FormControl mb={4}>
-                                <FormLabel>Paciente</FormLabel>
-                                <Input 
-                                    type="text" 
-                                    value={selectedPatient ? `${selectedPatient.pt_firstname} ${selectedPatient.pt_lastname}` : ""}
                                     isReadOnly
                                     width="auto" 
                                     maxWidth="300px"

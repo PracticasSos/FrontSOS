@@ -39,7 +39,7 @@ const OrderLaboratoryList = () => {
       if (error) throw error;
 
       const formattedData = data.map(sale => ({
-        patient_id: sale.patient_id, // Cambiar 'id' por 'patient_id'
+        patient_id: sale.patient_id,
         pt_firstname: sale.patients.pt_firstname,
         pt_lastname: sale.patients.pt_lastname,
         pt_ci: sale.patients.pt_ci,
@@ -78,7 +78,7 @@ const OrderLaboratoryList = () => {
       if (error) throw error;
 
       const formattedData = data.map(sale => ({
-        patient_id: sale.patient_id, // Cambiar 'id' por 'patient_id'
+        patient_id: sale.patient_id, 
         pt_firstname: sale.patients.pt_firstname,
         pt_lastname: sale.patients.pt_lastname,
         pt_ci: sale.patients.pt_ci,
@@ -95,8 +95,8 @@ const OrderLaboratoryList = () => {
   };
 
   const handlePatientSelect = (patient) => {
-    if (patient && patient.patient_id) {  // Usar `patient.patient_id` en lugar de `patient.id`
-      console.log(patient.patient_id);  // Verifica que el patient_id se está pasando correctamente
+    if (patient && patient.patient_id) {  
+      console.log(patient.patient_id);  
       navigate(`/OrderLaboratoryList/LaboratoryOrder/${patient.patient_id}`, { state: { patientData: patient } });
     } else {
       console.error("ID del paciente no válido o no definido");
@@ -118,7 +118,7 @@ const OrderLaboratoryList = () => {
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
-      <Heading mb={4} textAlign="center">Órdenes de Laboratorio</Heading>
+      <Heading mb={4} textAlign="center">Lista Pendinente de Órdenes de Laboratorio</Heading>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
             <Button onClick={() => navigate("/ConsultarCierre")} colorScheme="teal" width="auto" maxWidth="200px">
                 Consultas de Cierre
@@ -149,9 +149,15 @@ const OrderLaboratoryList = () => {
               onChange={handleChange} 
             />
           </FormControl>
-          <Button type="submit" className="mt-6">
+          <Button 
+            type="submit" 
+            colorScheme="blue" 
+            mt={6} 
+            onClick={handleFilterSubmit}
+          >
             Filtrar
           </Button>
+
         </Grid>
 
       {loading ? (
@@ -170,8 +176,8 @@ const OrderLaboratoryList = () => {
             <Tbody>
               {filteredPatients.map((patient) => (
                 <Tr 
-                  key={patient.patient_id}  // Usar `patient.patient_id` aquí también
-                  onClick={() => handlePatientSelect(patient)} // Pasa el objeto completo
+                  key={patient.patient_id}  
+                  onClick={() => handlePatientSelect(patient)} 
                   className="cursor-pointer hover:bg-gray-100"
                 >
                   <Td>{patient.pt_firstname}</Td>
