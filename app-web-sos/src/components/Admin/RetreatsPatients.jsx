@@ -1,19 +1,63 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse } from "@chakra-ui/react";
+import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse, FormControl, FormLabel, Input } from "@chakra-ui/react";
 
-const Retreats = () => {
+const RetreatsPatients = () => {
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [message, setMessage] = useState("");
-    const [isFormOpen, setIsFormOpen] = useState(false); 
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [filteredSales, setFilteredSales] = useState([]);
+    const [patients, setPatients] = useState([]);
+    const [searchTermPatients, setSearchTermPatients] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchSales();
     }, []);
+
+    useEffect(() => {
+        const fetchPatients = async () => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from("patients")
+                    .select("id, pt_firstname, pt_lastname, pt_phone");
+
+                if (error) throw error;
+
+                setPatients(data);
+            } catch (error) {
+                console.error("Error fetching patients:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPatients();
+    }, []);
+
+    const handleSearch = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTermPatients(value);
+        updateFilteredSales(value);
+    };
+
+    const updateFilteredSales = (searchTerm) => {
+        if (!searchTerm) {
+            setFilteredSales(sales);
+            return;
+        }
+
+        const filtered = sales.filter((sale) => {
+            const fullName = `${sale.patient.pt_firstname} ${sale.patient.pt_lastname}`.toLowerCase();
+            return fullName.includes(searchTerm.toLowerCase());
+        });
+
+        setFilteredSales(filtered);
+    };
 
     const fetchSales = async () => {
         setLoading(true);
@@ -43,17 +87,21 @@ const Retreats = () => {
                 total: sale.total,
                 balance: sale.balance,
                 credit: sale.credit,
-                pt_firstname: sale.patients?.pt_firstname || "N/A",
-                pt_lastname: sale.patients?.pt_lastname || "N/A",
-                pt_phone: sale.patients?.pt_phone || "N/A"
+                patient: sale.patients || {}
             }));
 
             setSales(formattedSales);
+            setFilteredSales(formattedSales);
         } catch (error) {
             console.error("Error fetching sales:", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSaleClick = (saleId) => {
+        // Navegar a la ruta de detalles de venta con el ID específico
+        navigate(`/sale-details/${saleId}`);
     };
 
     const handleNavigate = (path) => {
@@ -66,8 +114,12 @@ const Retreats = () => {
 
     const handlePatientClick = (patient) => {
         setSelectedPatient(patient);
+        const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
+        setSearchTermPatients(fullName);
         setMessage(""); 
-        setIsFormOpen(true); 
+        setIsFormOpen(true);
+        
+        updateFilteredSales(fullName);
     };
 
     const handleSendMessage = () => {
@@ -79,7 +131,7 @@ const Retreats = () => {
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
-            <Heading mb={4} textAlign="center">Retiros Pendientes</Heading>
+            <Heading mb={4} textAlign="center">Retiros</Heading>
 
             <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
                 <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
@@ -87,13 +139,30 @@ const Retreats = () => {
                 <Button onClick={handleLogout} colorScheme="red">Cerrar Sesión</Button>
             </Box>
 
+            <FormControl id="patient-search">
+                <FormLabel>Buscar Paciente</FormLabel>
+                <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearch} />
+                {searchTermPatients && (
+                    <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
+                        {patients.filter((patient) => {
+                            const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+                            return fullName.includes(searchTermPatients.toLowerCase());
+                        }).map((patient) => (
+                            <Box key={patient.id} padding={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handlePatientClick(patient)}>
+                                {patient.pt_firstname} {patient.pt_lastname}
+                            </Box>
+                        ))}
+                    </Box>
+                )}
+            </FormControl>
+
             <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white">
                 {loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
                         <Spinner size="xl" />
                     </Box>
-                ) : sales.length === 0 ? (
-                    <Text textAlign="center" color="gray.500">No se encontraron registros de ventas con saldos pendientes.</Text>
+                ) : filteredSales.length === 0 ? (
+                    <Text textAlign="center" color="gray.500">No se encontraron retiros de ventas pendientes.</Text>
                 ) : (
                     <Table variant="simple">
                         <Thead>
@@ -107,23 +176,34 @@ const Retreats = () => {
                                 <Th>Abono</Th>
                                 <Th>Saldo</Th>
                                 <Th>TELF</Th>
-                                <Th>Acción</Th>
+                                <Th>Acciones</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {sales.map(sale => (
-                                <Tr key={sale.id}>
+                            {filteredSales.map(sale => (
+                                <Tr 
+                                    key={sale.id} 
+                                    _hover={{ bg: "gray.50", cursor: "pointer" }}
+                                    onClick={() => handleSaleClick(sale.id)}
+                                >
                                     <Td>{sale.date}</Td>
-                                    <Td>{sale.pt_firstname}</Td>
-                                    <Td>{sale.pt_lastname}</Td>
+                                    <Td>{sale.patient.pt_firstname}</Td>
+                                    <Td>{sale.patient.pt_lastname}</Td>
                                     <Td>{sale.frame}</Td>
                                     <Td>{sale.lens_type}</Td>
                                     <Td>{sale.total}</Td>
                                     <Td>{sale.credit}</Td>
                                     <Td>{sale.balance}</Td>
-                                    <Td>{sale.pt_phone}</Td>
+                                    <Td>{sale.patient.pt_phone}</Td>
                                     <Td>
-                                        <Button size="sm" colorScheme="green" onClick={() => handlePatientClick(sale)}>
+                                        <Button 
+                                            size="sm" 
+                                            colorScheme="green" 
+                                            onClick={(e) => {
+                                                e.stopPropagation(); 
+                                                handlePatientClick(sale.patient);
+                                            }}
+                                        >
                                             Enviar Mensaje
                                         </Button>
                                     </Td>
@@ -133,6 +213,7 @@ const Retreats = () => {
                     </Table>
                 )}
             </Box>
+
             <Collapse in={isFormOpen} animateOpacity>
                 <Box
                     mt={6}
@@ -142,7 +223,6 @@ const Retreats = () => {
                     bg="gray.50"
                     width="100%"
                     maxWidth="800px"
-                    transition="all 0.3s ease"
                 >
                     <VStack align="stretch" spacing={4}>
                         <Text fontSize="lg">
@@ -167,4 +247,4 @@ const Retreats = () => {
     );
 };
 
-export default Retreats;
+export default RetreatsPatients;
