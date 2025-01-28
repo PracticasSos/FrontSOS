@@ -90,7 +90,7 @@ const AdminDashBoard = () => {
       case "SALDOS":
         navigate('/BalancesPatient')
         break;
-        case "RETIROS":
+      case "RETIROS":
         navigate('/RetreatsPatients')
         break;
       case "HISTORIAL PACIENTE":

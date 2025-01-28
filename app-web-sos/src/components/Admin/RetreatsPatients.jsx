@@ -100,12 +100,13 @@ const RetreatsPatients = () => {
     };
 
     const handleSaleClick = (saleId) => {
-        // Navegar a la ruta de detalles de venta con el ID específico
-        navigate(`/sale-details/${saleId}`);
+        navigate(`/RetreatsPatients/Retreats/${patient.id}`);
     };
 
     const handleNavigate = (path) => {
-        navigate(path);
+        const handlePatientClick = (patient) => {
+            navigate(`/RetreatsPatients/Retreats/${patient.id}`);
+        };        
     };
 
     const handleLogout = () => {
