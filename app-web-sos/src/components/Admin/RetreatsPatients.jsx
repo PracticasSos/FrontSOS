@@ -99,29 +99,45 @@ const RetreatsPatients = () => {
         }
     };
 
-    const handleSaleClick = (saleId) => {
-        navigate(`/RetreatsPatients/Retreats/${patient.id}`);
+    const handleSaleClick = (sale) => {
+        if (sale.patient && sale.patient.patient_id) {
+            console.log("Paciente ID:", sale.patient.patient_id);
+            navigate(`/RetreatsPatients/Retreats/${sale.patient.patient_id}`, { state: { patientData: sale.patient } });
+        } else {
+            console.error("ID del paciente no válido o no definido");
+        }
     };
+    
 
     const handleNavigate = (path) => {
-        const handlePatientClick = (patient) => {
-            navigate(`/RetreatsPatients/Retreats/${patient.id}`);
-        };        
+        navigate(path);
     };
+
 
     const handleLogout = () => {
         navigate("/LoginForm");
     };
 
     const handlePatientClick = (patient) => {
-        setSelectedPatient(patient);
-        const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
-        setSearchTermPatients(fullName);
-        setMessage(""); 
-        setIsFormOpen(true);
-        
-        updateFilteredSales(fullName);
+        if (patient && patient.patient_id) { 
+            console.log("Paciente seleccionado:", patient);
+            
+            setSelectedPatient(patient); 
+            const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
+            setSearchTermPatients(fullName);
+            setMessage(""); 
+            setIsFormOpen(true);
+            
+
+            updateFilteredSales(fullName);
+            
+            navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { state: { patientData: patient } });
+        } else {
+            console.error("Paciente no válido o no definido");
+        }
     };
+    
+    
 
     const handleSendMessage = () => {
         if (!selectedPatient || !message.trim()) return;
@@ -185,7 +201,7 @@ const RetreatsPatients = () => {
                                 <Tr 
                                     key={sale.id} 
                                     _hover={{ bg: "gray.50", cursor: "pointer" }}
-                                    onClick={() => handleSaleClick(sale.id)}
+                                    onClick={() => handleSaleClick(sale)}
                                 >
                                     <Td>{sale.date}</Td>
                                     <Td>{sale.patient.pt_firstname}</Td>

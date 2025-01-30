@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { supabase } from "../../api/supabase";
-import { Box, Heading, Thead, Table, Tr, Text, Th, Tbody, Td, Input, SimpleGrid, FormControl, FormLabel } from "@chakra-ui/react";
+import { Box, Heading, Thead, Table, Tr, Text, Th, Tbody, Td, Input, SimpleGrid, FormControl, FormLabel, Button } from "@chakra-ui/react";
 
 const Retreats = () => {
-    const {patientId} = useParams();
+    const { patientId } = useParams();
     const location = useLocation();
     const [salesData, setSalesData] = useState(null);
     const [patientData, setPatientData] = useState(location.state?.patientData || null);
-    const [patientList, setPatientsList] = useState([]);
     const [filteredMeasures, setFilteredMeasures] = useState([]);
     const navigate = useNavigate();
 
@@ -17,18 +16,19 @@ const Retreats = () => {
     };
 
     useEffect(() => {
-        if (patientData?.id) {
+        if (patientData?.id || patientId) {
             fetchSalesData();
             fetchMeasures();
         }
-    }, [patientData]);
+    }, [patientData, patientId]);
 
     const fetchPatientData = async () => {
         if (!patientId) {
             console.error("patientId is undefined or invalid");
             return;
-        } try {
-            const { data,error } = await supabase
+        }
+        try {
+            const { data, error } = await supabase
                 .from("patients")
                 .select("*")
                 .eq("id", patientId)
@@ -60,7 +60,7 @@ const Retreats = () => {
                     credit,
                     payment_in
                 `)
-                .eq("patient_id", patientData.id)
+                .eq("patient_id", patientData?.id || patientId)  // Usamos patient_id correctamente
                 .limit(1)
                 .single();
             if (error) throw error;
@@ -75,7 +75,7 @@ const Retreats = () => {
             const { data, error } = await supabase
                 .from("rx_final")
                 .select("*")
-                .eq("patient_id", patientId);
+                .eq("patient_id", patientId); // También se usa el patientId aquí
             if (error) throw error;
             setFilteredMeasures(data);
         } catch (error) {
@@ -92,71 +92,70 @@ const Retreats = () => {
                 <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
             </Box>
             <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
-            {patientData && (
-                <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-                    <Text fontSize="lg">
-                        <strong>Nombre:</strong> {patientData.pt_firstname} {patientData.pt_lastname}
-                    </Text>
-                    <Text fontSize="lg">
-                        <strong>Cédula:</strong> {patientData.pt_ci}
-                    </Text>
-                    <Text fontSize="lg">
-                        <strong>Teléfono:</strong> {patientData.pt_phone || "No disponible"}
-                    </Text>
-                </Box>
-            )}
+                {patientData && (
+                    <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
+                        <Text fontSize="lg">
+                            <strong>Nombre:</strong> {patientData.pt_firstname} {patientData.pt_lastname}
+                        </Text>
+                        <Text fontSize="lg">
+                            <strong>Cédula:</strong> {patientData.pt_ci}
+                        </Text>
+                        <Text fontSize="lg">
+                            <strong>Teléfono:</strong> {patientData.pt_phone || "No disponible"}
+                        </Text>
+                    </Box>
+                )}
                 <Box mt={4}>
-                    <Table variant="simple">
-                        <Thead>
-                            <Tr>
-                                <Th>Rx Final</Th>
-                                <Th>Esfera</Th>
-                                <Th>Cilindro</Th>
-                                <Th>Eje</Th>
-                                <Th>Prisma</Th>
-                                <Th>ADD</Th>
-                                <Th>AV VL</Th>
-                                <Th>AV VP</Th>
-                                <Th>DNP</Th>
-                                <Th>ALT</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {[
-                                { side: "OD", prefix: "reight" }, 
-                                { side: "OI", prefix: "left" },
-                            ].map(({ side, prefix }) => (
-                                <Tr key={prefix}>
-                                    <Td>{side}</Td>
-                                    {[
-                                        "sphere",
-                                        "cylinder",
-                                        "axis",
-                                        "prism",
-                                        "add",
-                                        "av_vl",
-                                        "av_vp",
-                                        "dnp",
-                                        "alt",
-                                    ].map((field) => (
-                                        <Td key={field}>
-                                            <Input
-                                                name={`${field}_${prefix}`}
-                                                value= {
-                                                    filteredMeasures.length > 0
+                <Table variant="simple">
+                    <Thead>
+                        <Tr>
+                            <Th>Rx Final</Th>
+                            <Th>Esfera</Th>
+                            <Th>Cilindro</Th>
+                            <Th>Eje</Th>
+                            <Th>Prisma</Th>
+                            <Th>ADD</Th>
+                            <Th>AV VL</Th>
+                            <Th>AV VP</Th>
+                            <Th>DNP</Th>
+                            <Th>ALT</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {[
+                            { side: "OD", prefix: "right" },
+                            { side: "OI", prefix: "left" },
+                        ].map(({ side, prefix }) => (
+                            <Tr key={prefix}>
+                                <Td>{side}</Td>
+                                {[
+                                    "sphere",
+                                    "cylinder",
+                                    "axis",
+                                    "prism",
+                                    "add",
+                                    "av_vl",
+                                    "av_vp",
+                                    "dnp",
+                                    "alt",
+                                ].map((field) => (
+                                    <Td key={field}>
+                                        <Input
+                                            name={`${field}_${prefix}`}
+                                            value={
+                                                filteredMeasures.length > 0
                                                     ? filteredMeasures[0][`${field}_${prefix}`] || ""
                                                     : ""
-                                                }
-                                                isReadOnly
-                                            />
-                                        </Td>
-                                    ))}
-                                </Tr>
-                            )) 
-                            }
-                        </Tbody>
-                    </Table>
-                </Box>
+                                            }
+                                            isReadOnly
+                                        />
+                                    </Td>
+                                ))}
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
+            </Box>
                 <Box p={5} maxWidth="800px" mx="auto">
                     <SimpleGrid columns={[1, 2]} spacing={4}>
                         <SimpleGrid columns={[1, 1]}>
