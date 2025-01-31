@@ -100,7 +100,6 @@ const RegisterPatientForm = () => {
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
       <SimpleGrid columns={[1, 2]} spacing={4}>
         <Box>
-          {renderSelectField('Responsable', 'user_id', users)}
           {renderInputField('Nombre', 'pt_firstname', 'text', true)}
           {renderInputField('Apellido', 'pt_lastname', 'text', true)}
           {renderInputField('Ocupación', 'pt_occupation', 'text')}
@@ -118,6 +117,7 @@ const RegisterPatientForm = () => {
           {renderInputField('C.I.', 'pt_ci', 'text')}
           {renderInputField('Ciudad', 'pt_city', 'text')}
           {renderInputField('Correo', 'pt_email', 'email')}
+          {renderSelectField('Responsable', 'user_id', users)}
           <Box display="flex" justifyContent="space-around" mt={6}>
             <Button type="submit" colorScheme="teal">Guardar</Button>
             <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>

@@ -113,8 +113,7 @@ const BalancesPatient = () => {
             setSearchTermPatients(fullName);
             setMessage(""); 
             setIsFormOpen(true);
-            
-            // Update filtered sales based on the full name
+
             updateFilteredSales(fullName);
         };
     

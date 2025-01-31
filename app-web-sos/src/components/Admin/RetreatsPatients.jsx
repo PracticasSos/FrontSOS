@@ -1,267 +1,261 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { useState, useEffect } from 'react';
+import { supabase } from '../../api/supabase';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Spinner, Grid, FormControl, FormLabel, Collapse, Input, VStack, Textarea, Text} from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 const RetreatsPatients = () => {
-    const [sales, setSales] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    const [message, setMessage] = useState("");
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [filteredSales, setFilteredSales] = useState([]);
-    const [patients, setPatients] = useState([]);
-    const [searchTermPatients, setSearchTermPatients] = useState("");
-    const navigate = useNavigate();
+  const [allPatients, setAllPatients] = useState([]); // Lista completa de pacientes
+  const [filteredPatients, setFilteredPatients] = useState([]); // Lista filtrada para mostrar
+  const [loading, setLoading] = useState(true);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [searchTermPatients, setSearchTermPatients] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(true);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchSales();
-    }, []);
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
-    useEffect(() => {
-        const fetchPatients = async () => {
-            setLoading(true);
-            try {
-                const { data, error } = await supabase
-                    .from("patients")
-                    .select("id, pt_firstname, pt_lastname, pt_phone");
+  const fetchPatients = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('sales')
+        .select(`
+          id,
+          patient_id,
+          date,
+          patients (
+            id,
+            pt_firstname,
+            pt_lastname,
+            pt_ci,
+            pt_phone
+          ),
+          frame,
+          lens:lens_id(lens_type),
+          total,
+          balance,
+          credit
+        `);
 
-                if (error) throw error;
+      if (error) throw error;
 
-                setPatients(data);
-            } catch (error) {
-                console.error("Error fetching patients:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+      const formattedData = data.map(sale => ({
+        sale_id: sale.id, 
+        patient_id: sale.patient_id,
+        pt_firstname: sale.patients.pt_firstname,
+        pt_lastname: sale.patients.pt_lastname,
+        pt_ci: sale.patients.pt_ci,
+        pt_phone: sale.patients.pt_phone,
+        date: sale.date,
+        frame: sale.frame,
+        lens_type: sale.lens?.lens_type || "N/A",
+        total: sale.total,
+        balance: sale.balance,
+        credit: sale.credit
+      }));
 
-        fetchPatients();
-    }, []);
+      setAllPatients(formattedData);
+      setFilteredPatients(formattedData);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSearch = (e) => {
-        const value = e.target.value.toLowerCase();
-        setSearchTermPatients(value);
-        updateFilteredSales(value);
-    };
+  const handlePatientSelect = (patient) => {
+    if (patient && patient.patient_id) {  
+      navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { state: { patientData: patient } });
+    }
+  };
 
-    const updateFilteredSales = (searchTerm) => {
-        if (!searchTerm) {
-            setFilteredSales(sales);
-            return;
-        }
-
-        const filtered = sales.filter((sale) => {
-            const fullName = `${sale.patient.pt_firstname} ${sale.patient.pt_lastname}`.toLowerCase();
-            return fullName.includes(searchTerm.toLowerCase());
-        });
-
-        setFilteredSales(filtered);
-    };
-
-    const fetchSales = async () => {
-        setLoading(true);
-        try {
-            const { data, error } = await supabase
-                .from('sales')
-                .select(`
-                    id,
-                    date,
-                    frame,
-                    lens:lens_id(lens_type),
-                    total,
-                    balance,
-                    credit,
-                    patients:patient_id(pt_firstname, pt_lastname, pt_phone)
-                `);
-
-            if (error) throw error;
-
-            const filteredSales = data.filter(sale => sale.balance > 0);
-
-            const formattedSales = filteredSales.map(sale => ({
-                id: sale.id,
-                date: new Date(sale.date).toLocaleDateString(),
-                frame: sale.frame,
-                lens_type: sale.lens?.lens_type || "N/A",
-                total: sale.total,
-                balance: sale.balance,
-                credit: sale.credit,
-                patient: sale.patients || {}
-            }));
-
-            setSales(formattedSales);
-            setFilteredSales(formattedSales);
-        } catch (error) {
-            console.error("Error fetching sales:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSaleClick = (sale) => {
-        if (sale.patient && sale.patient.patient_id) {
-            console.log("Paciente ID:", sale.patient.patient_id);
-            navigate(`/RetreatsPatients/Retreats/${sale.patient.patient_id}`, { state: { patientData: sale.patient } });
-        } else {
-            console.error("ID del paciente no válido o no definido");
-        }
-    };
+  const handleSearch = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    setSearchTermPatients(searchValue);
+    setShowSearchSuggestions(true);
     
+    if (searchValue.trim() === '') {
+      setFilteredPatients(allPatients);
+    } else {
+      const filtered = allPatients.filter(patient => {
+        const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+        return fullName.includes(searchValue);
+      });
+      setFilteredPatients(filtered);
+    }
+  };
 
-    const handleNavigate = (path) => {
-        navigate(path);
-    };
-
-
-    const handleLogout = () => {
-        navigate("/LoginForm");
-    };
-
-    const handlePatientClick = (patient) => {
-        if (patient && patient.patient_id) { 
-            console.log("Paciente seleccionado:", patient);
-            
-            setSelectedPatient(patient); 
-            const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
-            setSearchTermPatients(fullName);
-            setMessage(""); 
-            setIsFormOpen(true);
-            
-
-            updateFilteredSales(fullName);
-            
-            navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { state: { patientData: patient } });
-        } else {
-            console.error("Paciente no válido o no definido");
-        }
-    };
+  const handlePatientClick = (selectedPatient) => {
+    setSelectedPatient(selectedPatient);
+    setSearchTermPatients(`${selectedPatient.pt_firstname} ${selectedPatient.pt_lastname}`);
+    setShowSearchSuggestions(false);
     
-    
-
-    const handleSendMessage = () => {
-        if (!selectedPatient || !message.trim()) return;
-
-        const whatsappUrl = `https://wa.me/${selectedPatient.pt_phone}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, "_blank");
-    };
-
-    return (
-        <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
-            <Heading mb={4} textAlign="center">Retiros</Heading>
-
-            <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-                <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-                <Button onClick={() => handleNavigate('/Admin')} colorScheme="blue">Volver a Opciones</Button>
-                <Button onClick={handleLogout} colorScheme="red">Cerrar Sesión</Button>
-            </Box>
-
-            <FormControl id="patient-search">
-                <FormLabel>Buscar Paciente</FormLabel>
-                <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearch} />
-                {searchTermPatients && (
-                    <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
-                        {patients.filter((patient) => {
-                            const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
-                            return fullName.includes(searchTermPatients.toLowerCase());
-                        }).map((patient) => (
-                            <Box key={patient.id} padding={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handlePatientClick(patient)}>
-                                {patient.pt_firstname} {patient.pt_lastname}
-                            </Box>
-                        ))}
-                    </Box>
-                )}
-            </FormControl>
-
-            <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white">
-                {loading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                        <Spinner size="xl" />
-                    </Box>
-                ) : filteredSales.length === 0 ? (
-                    <Text textAlign="center" color="gray.500">No se encontraron retiros de ventas pendientes.</Text>
-                ) : (
-                    <Table variant="simple">
-                        <Thead>
-                            <Tr>
-                                <Th>Fecha</Th>
-                                <Th>Nombre</Th>
-                                <Th>Apellido</Th>
-                                <Th>Armazón</Th>
-                                <Th>Luna</Th>
-                                <Th>Total</Th>
-                                <Th>Abono</Th>
-                                <Th>Saldo</Th>
-                                <Th>TELF</Th>
-                                <Th>Acciones</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {filteredSales.map(sale => (
-                                <Tr 
-                                    key={sale.id} 
-                                    _hover={{ bg: "gray.50", cursor: "pointer" }}
-                                    onClick={() => handleSaleClick(sale)}
-                                >
-                                    <Td>{sale.date}</Td>
-                                    <Td>{sale.patient.pt_firstname}</Td>
-                                    <Td>{sale.patient.pt_lastname}</Td>
-                                    <Td>{sale.frame}</Td>
-                                    <Td>{sale.lens_type}</Td>
-                                    <Td>{sale.total}</Td>
-                                    <Td>{sale.credit}</Td>
-                                    <Td>{sale.balance}</Td>
-                                    <Td>{sale.patient.pt_phone}</Td>
-                                    <Td>
-                                        <Button 
-                                            size="sm" 
-                                            colorScheme="green" 
-                                            onClick={(e) => {
-                                                e.stopPropagation(); 
-                                                handlePatientClick(sale.patient);
-                                            }}
-                                        >
-                                            Enviar Mensaje
-                                        </Button>
-                                    </Td>
-                                </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
-                )}
-            </Box>
-
-            <Collapse in={isFormOpen} animateOpacity>
-                <Box
-                    mt={6}
-                    p={4}
-                    boxShadow="lg"
-                    borderRadius="md"
-                    bg="gray.50"
-                    width="100%"
-                    maxWidth="800px"
-                >
-                    <VStack align="stretch" spacing={4}>
-                        <Text fontSize="lg">
-                            Enviar mensaje a <strong>{selectedPatient?.pt_firstname} {selectedPatient?.pt_lastname}</strong> ({selectedPatient?.pt_phone})
-                        </Text>
-                        <Textarea
-                            placeholder="Escribe tu mensaje aquí..."
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                        />
-                        <Button
-                            colorScheme="green"
-                            onClick={handleSendMessage}
-                            isDisabled={!message.trim()}
-                        >
-                            Enviar Mensaje por WhatsApp
-                        </Button>
-                    </VStack>
-                </Box>
-            </Collapse>
-        </Box>
+    const patientRetiros = allPatients.filter(patient => 
+      patient.pt_firstname === selectedPatient.pt_firstname && 
+      patient.pt_lastname === selectedPatient.pt_lastname
     );
+    setFilteredPatients(patientRetiros);
+  };
+
+  const handleMessageClick = (e, patient) => {
+    e.stopPropagation();
+    setSelectedPatient(patient);
+    setIsFormOpen(true);
+    setMessage("");
+  };
+
+  const handleSendMessage = () => {
+    if (!selectedPatient || !message.trim()) return;
+    const whatsappUrl = `https://wa.me/${selectedPatient.pt_phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const searchSuggestions = searchTermPatients ? allPatients
+    .filter((patient, index, self) => {
+      const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+      return fullName.includes(searchTermPatients.toLowerCase()) &&
+        index === self.findIndex(p => 
+          p.pt_firstname === patient.pt_firstname && 
+          p.pt_lastname === patient.pt_lastname
+        );
+    }) : [];
+
+  return (
+    <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+      <Heading mb={4} textAlign="center">Retiros</Heading>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
+        <Button onClick={() => navigate("/ConsultarCierre")} colorScheme="teal" width="auto" maxWidth="200px">
+          Consultas de Cierre
+        </Button>
+        <Button onClick={() => navigate("/Admin")} colorScheme="blue" width="auto" maxWidth="200px">
+          Volver a Opciones
+        </Button>
+        <Button onClick={() => navigate("/LoginForm")} colorScheme="red" width="auto" maxWidth="200px">
+          Cerrar Sesión
+        </Button>
+      </Grid>
+      
+      <FormControl id="patient-search" position="relative" mb={6}>
+        <FormLabel>Buscar Paciente</FormLabel>
+        <Input 
+          type="text" 
+          placeholder="Buscar por nombre..." 
+          value={searchTermPatients} 
+          onChange={handleSearch}
+          onClick={() => setShowSearchSuggestions(true)}
+        />
+        {showSearchSuggestions && searchSuggestions.length > 0 && (
+          <Box 
+            position="absolute" 
+            zIndex="1"
+            width="100%"
+            bg="white"
+            border="1px solid #ccc" 
+            borderRadius="md" 
+            mt={2} 
+            maxHeight="150px" 
+            overflowY="auto"
+          >
+            {searchSuggestions.map((patient) => (
+              <Box 
+                key={`${patient.pt_firstname}-${patient.pt_lastname}-${patient.patient_id}`}
+                padding={2}
+                _hover={{ bg: "teal.100", cursor: "pointer" }}
+                onClick={() => handlePatientClick(patient)}
+              >
+                {patient.pt_firstname} {patient.pt_lastname}
+              </Box>
+            ))}
+          </Box>
+        )}
+      </FormControl>
+
+      {loading ? (
+        <Spinner size="xl" />
+      ) : (
+        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white">
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Fecha</Th>
+                <Th>Nombre</Th>
+                <Th>Apellido</Th>
+                <Th>Armazón</Th>
+                <Th>Luna</Th>
+                <Th>Total</Th>
+                <Th>Abono</Th>
+                <Th>Saldo</Th>
+                <Th>TELF</Th>
+                <Th>Acción</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredPatients.map((patient) => (
+                <Tr 
+                  key={`${patient.sale_id}`}
+                  onClick={() => handlePatientSelect(patient)} 
+                  className="cursor-pointer hover:bg-gray-100"
+                >
+                  <Td>{patient.date}</Td>
+                  <Td>{patient.pt_firstname}</Td>
+                  <Td>{patient.pt_lastname}</Td>
+                  <Td>{patient.frame}</Td>
+                  <Td>{patient.lens_type}</Td>
+                  <Td>{patient.total}</Td>
+                  <Td>{patient.credit}</Td>
+                  <Td>{patient.balance}</Td>
+                  <Td>{patient.pt_phone}</Td>
+                  <Td>
+                    <Button 
+                      size="sm" 
+                      colorScheme="green" 
+                      onClick={(e) => handleMessageClick(e, patient)}
+                    >
+                      Enviar Mensaje
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      )}
+
+      <Collapse in={isFormOpen} animateOpacity>
+        <Box
+          mt={6}
+          p={4}
+          boxShadow="lg"
+          borderRadius="md"
+          bg="gray.50"
+          width="100%"
+          maxWidth="800px"
+        >
+          <VStack align="stretch" spacing={4}>
+            <Text fontSize="lg">
+              Enviar mensaje a <strong>{selectedPatient?.pt_firstname} {selectedPatient?.pt_lastname}</strong> ({selectedPatient?.pt_phone})
+            </Text>
+            <Textarea
+              placeholder="Escribe tu mensaje aquí..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <Button
+              colorScheme="green"
+              onClick={handleSendMessage}
+              isDisabled={!message.trim()}
+            >
+              Enviar Mensaje por WhatsApp
+            </Button>
+          </VStack>
+        </Box>
+      </Collapse>
+    </Box>
+  );
 };
 
 export default RetreatsPatients;
