@@ -79,6 +79,7 @@ const LaboratoryOrder = () => {
                 .single();
 
             if (error) throw error;
+            console.log("Sales Data:", data);
             setSalesData(data);
         } catch (error) {
             console.error("Error fetching sales data:", error);
@@ -146,7 +147,7 @@ const LaboratoryOrder = () => {
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
         <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-            <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">Lista de Laboratorio</Button>
+            <Button onClick={() => handleNavigate("/RetreatsPatients")} colorScheme="teal">Lista de Retiros</Button>
             <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
             <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
@@ -291,17 +292,16 @@ const LaboratoryOrder = () => {
                                 />
                             </FormControl>
                             <FormControl mb={4}>
-                                <FormLabel>Precio Sugerido.A</FormLabel>
-                                <Input
-                                    type="number"
-                                    value={salesData?.discount_frame || ""}
-                                    isReadOnly
-                                    width="auto"
-                                    maxWidth="300px"
-                                />
+                                <FormLabel>Descuento Armazón</FormLabel>
+                                <Input 
+                                    type="number" 
+                                    value={salesData?.discount_frame ?? ""} 
+                                    isReadOnly 
+                                    width="auto" 
+                                    maxWidth="300px" />
                             </FormControl>
                             <FormControl mb={4}>
-                                <FormLabel>Precio Sugerido.L</FormLabel>
+                                <FormLabel>Descuento.L</FormLabel>
                                 <Input
                                     type="number"
                                     value={salesData?.discount_lens || ""}

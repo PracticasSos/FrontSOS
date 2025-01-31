@@ -44,7 +44,7 @@ const RetreatsPatients = () => {
       if (error) throw error;
 
       const formattedData = data.map(sale => ({
-        sale_id: sale.id, 
+        sale_id: sale.id, // Añadido para key única
         patient_id: sale.patient_id,
         pt_firstname: sale.patients.pt_firstname,
         pt_lastname: sale.patients.pt_lastname,
@@ -81,6 +81,7 @@ const RetreatsPatients = () => {
     if (searchValue.trim() === '') {
       setFilteredPatients(allPatients);
     } else {
+      // Filtramos los pacientes que coincidan con la búsqueda
       const filtered = allPatients.filter(patient => {
         const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
         return fullName.includes(searchValue);
@@ -90,10 +91,12 @@ const RetreatsPatients = () => {
   };
 
   const handlePatientClick = (selectedPatient) => {
+    // Cuando se selecciona un paciente del dropdown
     setSelectedPatient(selectedPatient);
     setSearchTermPatients(`${selectedPatient.pt_firstname} ${selectedPatient.pt_lastname}`);
     setShowSearchSuggestions(false);
     
+    // Filtrar solo los retiros del paciente seleccionado
     const patientRetiros = allPatients.filter(patient => 
       patient.pt_firstname === selectedPatient.pt_firstname && 
       patient.pt_lastname === selectedPatient.pt_lastname
@@ -114,9 +117,11 @@ const RetreatsPatients = () => {
     window.open(whatsappUrl, "_blank");
   };
 
+  // Sugerencias para el dropdown de búsqueda
   const searchSuggestions = searchTermPatients ? allPatients
     .filter((patient, index, self) => {
       const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+      // Eliminar duplicados basados en nombre
       return fullName.includes(searchTermPatients.toLowerCase()) &&
         index === self.findIndex(p => 
           p.pt_firstname === patient.pt_firstname && 
