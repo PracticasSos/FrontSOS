@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
-import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input} from "@chakra-ui/react";
+import { useNavigate} from "react-router-dom";
+import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input, Grid} from "@chakra-ui/react";
 
 const Egresos = () => {
   const [records, setRecords] = useState([]);
@@ -9,6 +10,7 @@ const Egresos = () => {
   const [filteredBranches, setFilteredBranches] = useState([]);
   const [users, setUsers] = useState([]);
   const [labs, setLabs] = useState([]);
+   const navigate = useNavigate();
   const [newEgreso, setNewEgreso] = useState({
     user_id: "",
     records: "",
@@ -110,15 +112,22 @@ const Egresos = () => {
     fetchEgresos();
   };
   
-  
-  
+  const handleNavigate = (route) => {
+    navigate(route);
+  };
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center" size="lg" color="teal.500">
         Egresos - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione Sucursal"}
       </Heading>
-
+      <Box mb={6} display="flex" justifyContent="center" >
+      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
+        <Button onClick={() => handleNavigate("/PatientRecords")} colorScheme="teal">Cierre Diario</Button>
+        <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
+        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
+      </Box>
+      </Box>
       <Box mb={6}>
         <Select
           placeholder="Seleccione una sucursal"

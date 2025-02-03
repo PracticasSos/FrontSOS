@@ -150,7 +150,7 @@ const RetreatsPatients = () => {
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center">Retiros</Heading>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
-        <Button onClick={() => navigate("/ConsultarCierre")} colorScheme="teal" width="auto" maxWidth="200px">
+        <Button onClick={() => navigate("/CashClousure")} colorScheme="teal" width="auto" maxWidth="200px">
           Consultas de Cierre
         </Button>
         <Button onClick={() => navigate("/Admin")} colorScheme="blue" width="auto" maxWidth="200px">
