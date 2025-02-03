@@ -19,29 +19,21 @@ const RetreatsPatients = () => {
     fetchPatients();
   }, []);
 
-      useEffect(() => {
-        const updatedSales = location.state?.updatedPendingSales;
-        if (updatedSales) {
-            setPendingSales(updatedSales);
-        } else {
-            fetchPendingSales();
-        }
-    }, [location.state]);
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
-  const fetchPendingSales = async () => {
-      try {
-          const { data, error } = await supabase
-              .from('sales')
-              .select('*')
-              .eq('is_completed', false); 
+  useEffect(() => {
 
-          if (error) throw error;
-          setPendingSales(data);
-      } catch (error) {
-          console.error('Error cargando ventas pendientes:', error);
+      const updatedSales = location.state?.updatedPendingSales;
+    
+      if (updatedSales) {
+          setPendingSales(updatedSales);
       }
-  };
-
+      if (location.state) {
+          navigate(location.pathname, { replace: true, state: null });
+      }
+  }, [location.state, navigate]);
 
   const fetchPatients = async () => {
     setLoading(true);
@@ -64,7 +56,8 @@ const RetreatsPatients = () => {
           total,
           balance,
           credit
-        `);
+        `)
+        .eq('is_completed', false);
 
       if (error) throw error;
 
@@ -83,6 +76,7 @@ const RetreatsPatients = () => {
         credit: sale.credit
       }));
 
+      setPendingSales(formattedData);
       setAllPatients(formattedData);
       setFilteredPatients(formattedData);
     } catch (error) {
@@ -234,8 +228,8 @@ const RetreatsPatients = () => {
                   <Td>{patient.frame}</Td>
                   <Td>{patient.lens_type}</Td>
                   <Td>{patient.total}</Td>
-                  <Td>{patient.credit}</Td>
                   <Td>{patient.balance}</Td>
+                  <Td>{patient.credit}</Td>
                   <Td>{patient.pt_phone}</Td>
                   <Td>
                     <Button 

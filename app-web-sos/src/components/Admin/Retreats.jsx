@@ -141,25 +141,42 @@ const LaboratoryOrder = () => {
         try {
             const phoneNumber = patientData.pt_phone;
             const formattedMessage = message || "Pedido listo para retiro.";
-            sendWhatsAppMessage(phoneNumber, formattedMessage);
-            const { error: updateError } = await supabase
+            const updatedBalance = 0;
+            const { error: updateSalesError } = await supabase
                 .from('sales')
-                .update({ is_completed: true })
+                .update({ 
+                    is_completed: true,
+                    balance: updatedBalance  
+                })
                 .eq('id', salesData.id);
     
-            if (updateError) {
-                console.error('Error actualizando la venta:', updateError);
+            if (updateSalesError) {
+                console.error('Error actualizando la venta:', updateSalesError);
+                throw updateSalesError;
             }
+            const { error: updatePatientError } = await supabase
+                .from('sales')
+                .update({ balance: 0 })  
+                .eq('id', patientData.id);
+    
+            if (updatePatientError) {
+                console.error('Error actualizando el saldo del paciente:', updatePatientError);
+                throw updatePatientError;
+            }
+    
+            sendWhatsAppMessage(phoneNumber, formattedMessage);
+            
             setPendingSales(prevSales => 
                 prevSales.filter(sale => sale.id !== salesData.id)
             );
+            
             navigate("/RetreatsPatients", { 
                 state: { 
                     updatedPendingSales: pendingSales.filter(sale => sale.id !== salesData.id) 
                 } 
             });
     
-            alert("Mensaje enviado y retiro marcado como completado en la interfaz.");
+            alert("Mensaje enviado, retiro marcado como completado y saldo actualizado.");
         } catch (err) {
             console.error("Error al procesar la venta:", err);
             alert("Hubo un problema al completar la operación.");
@@ -170,7 +187,7 @@ const LaboratoryOrder = () => {
         const { data, error } = await supabase
             .from('sales')
             .select('*')
-            .neq('status', 'processed');  // This will fetch only non-processed sales
+            .neq('is_completed', false);  
         
         if (error) {
             console.error('Error fetching sales:', error);
