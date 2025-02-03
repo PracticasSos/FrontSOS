@@ -69,9 +69,12 @@ const RetreatsPatients = () => {
 
   const handlePatientSelect = (patient) => {
     if (patient && patient.patient_id) {  
-      navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { state: { patientData: patient } });
+      navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { 
+        state: { patientData: patient, selectedDate: patient.date } 
+      });
     }
   };
+  
 
   const handleSearch = (e) => {
     const searchValue = e.target.value.toLowerCase();

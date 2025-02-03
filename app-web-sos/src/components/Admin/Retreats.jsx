@@ -54,12 +54,13 @@ const LaboratoryOrder = () => {
         }
     };
 
-      const fetchSalesData = async () => {
+    const fetchSalesData = async () => {
         try {
             const { data, error } = await supabase
                 .from("sales")
                 .select(`
                     id,
+                    date,
                     frame,
                     lens:lens_id(lens_type),
                     branchs:branchs_id(name), 
@@ -74,18 +75,22 @@ const LaboratoryOrder = () => {
                     credit,
                     payment_in
                 `)
-                .eq("patient_id", patientData.id)
-                .limit(1)
-                .single();
-
+                .eq("patient_id", patientData.id); 
+    
             if (error) throw error;
-            console.log("Sales Data:", data);
-            setSalesData(data);
+    
+            console.log("Sales Data:", data); 
+    
+            if (!Array.isArray(data)) {
+                throw new Error("Supabase did not return an array");
+            }
+            const correctSale = data.find(sale => sale.date === location.state?.selectedDate);
+    
+            setSalesData(correctSale || null); 
         } catch (error) {
             console.error("Error fetching sales data:", error);
         }
     };
-      
     
       const handleInputFocus = () => {
         setIsTyping(true);
@@ -230,6 +235,7 @@ const LaboratoryOrder = () => {
                                     maxWidth="300px"
                                 />
                             </FormControl>
+                            
                             <FormControl mb={4}>
                                 <FormLabel>Lunas</FormLabel>
                                 <Input
