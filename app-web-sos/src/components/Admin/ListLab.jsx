@@ -9,10 +9,10 @@ const ListLab = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchUsers();
+        fetchLabs();
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchLabs = async () => {
         const { data, error } = await supabase
             .from('labs')
             .select('id, name, address, email, cell, ruc');
@@ -28,52 +28,73 @@ const ListLab = () => {
         setSearch(e.target.value);
     };
 
-
-
     const handleNavigate = (route) => {
         navigate(route);
     };
 
     return (
-        <Box>
-            <Heading as="h2" size="lg" mb={4}>Lista de Usuarios</Heading>
-            <Button onClick={() => handleNavigate('/Register')} mt={4}>
-                Registrar Usuarios
-            </Button>
-            <Button onClick={() => handleNavigate('/Admin')} mt={4}>
-                Volver a Opciones
-            </Button>
-            <Input
-                placeholder="Buscar por nombre, apellido o username"
-                value={search}
-                onChange={handleSearchChange}
-                mb={4}
-            />
-            <Box overflowX="auto">
-                <Table variant="simple" minWidth="800px">
-                    <Thead>
-                        <Tr>
+        <Box bgColor="#f0f0f0" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
+            <Box width="100%" maxWidth="1200px" bgColor="#ffffff" borderRadius="8px" boxShadow="md" padding="20px">
+                <Heading as="h2" size="lg" textAlign="center" mb={4} color="#000000">
+                    Lista de Laboratorios
+                </Heading>
 
-                            <Th>Nombre</Th>
-                            <Th>Dirección</Th>
-                            <Td>Correo</Td>
-                            <Th>Teléfono</Th>
-                            <Th>Ruc</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {branch.map(user => (
-                            <Tr key={user.id}>
+                <Box display="flex" justifyContent="space-between" mb={4}>
+                    <Button 
+                        onClick={() => handleNavigate('/Register')} 
+                        bgColor="#00A8C8" 
+                        color="white" 
+                        _hover={{ bgColor: "#008B94" }}
+                    >
+                        Registrar Laboratorio
+                    </Button>
+                    <Button 
+                        onClick={() => handleNavigate('/Admin')} 
+                        bgColor="#00A8C8" 
+                        color="white" 
+                        _hover={{ bgColor: "#008B94" }}
+                    >
+                        Volver a Opciones
+                    </Button>
+                </Box>
 
-                                <Td>{user.name}</Td>
-                                <Td>{user.address}</Td>
-                                <Td>{user.email}</Td>
-                                <Td>{user.cell}</Td>
-                                <Td>{user.ruc}</Td>
+                <Input
+                    placeholder="Buscar por nombre, dirección o correo"
+                    value={search}
+                    onChange={handleSearchChange}
+                    mb={4}
+                    borderColor="#00A8C8"
+                    _focus={{ borderColor: "#008B94" }}
+                />
+
+                <Box overflowX="auto">
+                    <Table variant="simple" minWidth="800px">
+                        <Thead>
+                            <Tr>
+                                <Th color="#000000">Nombre</Th>
+                                <Th color="#000000">Dirección</Th>
+                                <Th color="#000000">Correo</Th>
+                                <Th color="#000000">Teléfono</Th>
+                                <Th color="#000000">Ruc</Th>
                             </Tr>
-                        ))}
-                    </Tbody>
-                </Table>
+                        </Thead>
+                        <Tbody>
+                            {branch.filter(lab => {
+                                return lab.name.toLowerCase().includes(search.toLowerCase()) ||
+                                    lab.address.toLowerCase().includes(search.toLowerCase()) ||
+                                    lab.email.toLowerCase().includes(search.toLowerCase());
+                            }).map(lab => (
+                                <Tr key={lab.id}>
+                                    <Td>{lab.name}</Td>
+                                    <Td>{lab.address}</Td>
+                                    <Td>{lab.email}</Td>
+                                    <Td>{lab.cell}</Td>
+                                    <Td>{lab.ruc}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </Box>
             </Box>
         </Box>
     );
