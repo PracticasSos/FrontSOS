@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const RetreatsPatients = () => {
   const [allPatients, setAllPatients] = useState([]); 
+  const [pendingSales, setPendingSales] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -17,6 +18,30 @@ const RetreatsPatients = () => {
   useEffect(() => {
     fetchPatients();
   }, []);
+
+      useEffect(() => {
+        const updatedSales = location.state?.updatedPendingSales;
+        if (updatedSales) {
+            setPendingSales(updatedSales);
+        } else {
+            fetchPendingSales();
+        }
+    }, [location.state]);
+
+  const fetchPendingSales = async () => {
+      try {
+          const { data, error } = await supabase
+              .from('sales')
+              .select('*')
+              .eq('is_completed', false); 
+
+          if (error) throw error;
+          setPendingSales(data);
+      } catch (error) {
+          console.error('Error cargando ventas pendientes:', error);
+      }
+  };
+
 
   const fetchPatients = async () => {
     setLoading(true);
@@ -44,7 +69,7 @@ const RetreatsPatients = () => {
       if (error) throw error;
 
       const formattedData = data.map(sale => ({
-        sale_id: sale.id, // Añadido para key única
+        sale_id: sale.id, 
         patient_id: sale.patient_id,
         pt_firstname: sale.patients.pt_firstname,
         pt_lastname: sale.patients.pt_lastname,

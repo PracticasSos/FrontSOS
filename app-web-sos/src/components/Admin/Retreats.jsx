@@ -12,6 +12,8 @@ const LaboratoryOrder = () => {
     const [patientsList, setPatientsList] = useState([]);
     const [filteredMeasures, setFilteredMeasures] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
+    const [pendingSales, setPendingSales] = useState([]);
+    const [message, setMessage] = useState("");
     const navigate = useNavigate();
 
     const handleNavigate = (route) => {
@@ -87,6 +89,7 @@ const LaboratoryOrder = () => {
             const correctSale = data.find(sale => sale.date === location.state?.selectedDate);
     
             setSalesData(correctSale || null); 
+            setPendingSales(data);
         } catch (error) {
             console.error("Error fetching sales data:", error);
         }
@@ -117,6 +120,8 @@ const LaboratoryOrder = () => {
         }
     };
 
+   
+
     const handlePDFClick = async () => {
         try {
           const pdfUrl = await generateAndUploadPDF(formData);
@@ -125,7 +130,67 @@ const LaboratoryOrder = () => {
           console.error("Error generando el PDF:", err);
           alert("Hubo un problema al generar el PDF.");
         }
-      };
+    };
+
+    const handleSendWhatsApp = async () => {
+        if (!salesData || !patientData) {
+            alert("Faltan datos para completar la operación.");
+            return;
+        }
+    
+        try {
+            const phoneNumber = patientData.pt_phone;
+            const formattedMessage = message || "Pedido listo para retiro.";
+            sendWhatsAppMessage(phoneNumber, formattedMessage);
+            const { error: updateError } = await supabase
+                .from('sales')
+                .update({ is_completed: true })
+                .eq('id', salesData.id);
+    
+            if (updateError) {
+                console.error('Error actualizando la venta:', updateError);
+            }
+            setPendingSales(prevSales => 
+                prevSales.filter(sale => sale.id !== salesData.id)
+            );
+            navigate("/RetreatsPatients", { 
+                state: { 
+                    updatedPendingSales: pendingSales.filter(sale => sale.id !== salesData.id) 
+                } 
+            });
+    
+            alert("Mensaje enviado y retiro marcado como completado en la interfaz.");
+        } catch (err) {
+            console.error("Error al procesar la venta:", err);
+            alert("Hubo un problema al completar la operación.");
+        }
+    };
+    
+    const fetchPendingSales = async () => {
+        const { data, error } = await supabase
+            .from('sales')
+            .select('*')
+            .neq('status', 'processed');  // This will fetch only non-processed sales
+        
+        if (error) {
+            console.error('Error fetching sales:', error);
+        } else {
+            setPendingSales(data);
+        }
+    };
+    
+    const sendWhatsAppMessage = (phoneNumber, message) => {
+        if (!phoneNumber) {
+            alert("El número de teléfono no está disponible.");
+            return;
+        }
+    
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+        window.open(whatsappUrl, "_blank");
+    };
+    
 
     const handleWhatsAppClick = async () => {
         try {
@@ -260,11 +325,15 @@ const LaboratoryOrder = () => {
                                 <FormLabel>Mensaje</FormLabel>
                                 <Input 
                                     type="text"
-                                    isReadOnly
-                                   width="auto"
-                                    maxWidth="300px"
+                                    width="50%" 
+                                    maxWidth="100px"  
+                                    minWidth="250px"  
+                                    height="100px"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)} 
                                 />
                             </FormControl>
+                            <Button colorScheme="teal" minWidth="250px" width="50%" maxWidth="100px" mt={4} onClick={handleSendWhatsApp}>Enviar</Button>
                         </SimpleGrid>
                         <SimpleGrid columns={[1, 1]} >
                             <FormControl mb={4}>
