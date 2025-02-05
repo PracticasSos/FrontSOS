@@ -7,7 +7,6 @@ const Egresos = () => {
   const [records, setRecords] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("");
-  const [filteredBranches, setFilteredBranches] = useState([]);
   const [users, setUsers] = useState([]);
   const [labs, setLabs] = useState([]);
    const navigate = useNavigate();

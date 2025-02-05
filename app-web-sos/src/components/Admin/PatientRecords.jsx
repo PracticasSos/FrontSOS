@@ -18,18 +18,26 @@ const PatientRecords = () => {
         fetchBranches();
     }, []);
 
-    const fetchBranches = async () => {
-        const { data, error } = await supabase
-            .from("branchs")
-            .select("id, name");
-
-        if (error) {
-            console.error("Error fetching branches:", error);
-            return;
+    useEffect(() => {
+        if (selectedBranch) {
+            fetchDailyRecords(selectedBranch);
+            fetchExpenses(selectedBranch);
         }
+    }, [selectedBranch]);
 
-        setBranches(data || []);
+    const fetchBranches = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("branchs")
+                .select("id, name");
+
+            if (error) throw error;
+            setBranches(data || []);
+        } catch (error) {
+            console.error("Error al obtener sucursales:", error);
+        }
     };
+
 
     const handleBranchChange = async (event) => {
         const branchId = event.target.value;
@@ -53,8 +61,9 @@ const PatientRecords = () => {
     };
 
     const fetchDailyRecords = async (branchId) => {
-        const today = new Date().toISOString().split("T")[0];
-    
+        const today = new Date().toISOString().split("T")[0];  // Solo la fecha sin hora
+        console.log("Fecha de hoy:", today); // Agrega un log para verificar la fecha que se está usando
+        
         try {
             const { data, error } = await supabase
                 .from("sales")
@@ -71,10 +80,12 @@ const PatientRecords = () => {
                     payment_in,
                     patients (pt_firstname, pt_lastname)
                 `)
-                .eq("date", today)
+                .eq("date", today)  // Compara solo la fecha sin hora
                 .eq("branchs_id", branchId);
     
             if (error) throw error;
+    
+            console.log("Datos de ventas obtenidos:", data);
     
             if (data && data.length > 0) {
                 const formattedRecords = data.map((record) => ({
@@ -87,7 +98,7 @@ const PatientRecords = () => {
     
                 setRecords(formattedRecords);
                 const calculatedTotals = calculateTotals(formattedRecords);
-                
+    
                 await saveClosingData({
                     day: today,
                     grand_total: calculatedTotals.total,
@@ -105,6 +116,7 @@ const PatientRecords = () => {
             resetData();
         }
     };
+    
 
     const fetchExpenses = async (branchId) => {
         const today = new Date().toISOString().split("T")[0];
