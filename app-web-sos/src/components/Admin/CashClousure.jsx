@@ -134,17 +134,19 @@ const CashClosure = () => {
             TRANS: 0,
             DATAF: 0
         };
-
+    
         data.forEach((record) => {
-            const amount = Number(record.total) || 0;
-            if (record.payment_in === "efectivo") newTotals.EFEC += amount;
-            if (record.payment_in === "transferencia") newTotals.TRANS += amount;
-            if (record.payment_in === "datafast") newTotals.DATAF += amount;
+            const abono = Number(record.credit) || 0;
+    
+            if (record.payment_in === "efectivo") newTotals.EFEC += abono;
+            if (record.payment_in === "transferencia") newTotals.TRANS += abono;
+            if (record.payment_in === "datafast") newTotals.DATAF += abono;
         });
-
+    
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
         return { ...newTotals, total };
     };
+    
 
     const handleChange = (event) => {
         const { name, value } = event.target;

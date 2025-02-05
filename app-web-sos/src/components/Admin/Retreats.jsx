@@ -3,7 +3,7 @@ import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
 
-const LaboratoryOrder = () => {
+const Retreats = () => {
     const { patientId } = useParams();
     console.log(patientId);
     const location = useLocation();
@@ -141,12 +141,12 @@ const LaboratoryOrder = () => {
         try {
             const phoneNumber = patientData.pt_phone;
             const formattedMessage = message || "Pedido listo para retiro.";
-            const updatedBalance = 0;
+            const updatedCredit = 0;
             const { error: updateSalesError } = await supabase
                 .from('sales')
                 .update({ 
                     is_completed: true,
-                    balance: updatedBalance  
+                    credit: updatedCredit  
                 })
                 .eq('id', salesData.id);
     
@@ -156,7 +156,7 @@ const LaboratoryOrder = () => {
             }
             const { error: updatePatientError } = await supabase
                 .from('sales')
-                .update({ balance: 0 })  
+                .update({ credit: 0 })  
                 .eq('id', patientData.id);
     
             if (updatePatientError) {
@@ -450,4 +450,4 @@ const LaboratoryOrder = () => {
     );
 };
 
-export default LaboratoryOrder;
+export default Retreats;

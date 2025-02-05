@@ -9,7 +9,7 @@ const Egresos = () => {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [users, setUsers] = useState([]);
   const [labs, setLabs] = useState([]);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [newEgreso, setNewEgreso] = useState({
     user_id: "",
     records: "",

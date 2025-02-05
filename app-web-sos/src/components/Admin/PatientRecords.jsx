@@ -61,8 +61,8 @@ const PatientRecords = () => {
     };
 
     const fetchDailyRecords = async (branchId) => {
-        const today = new Date().toISOString().split("T")[0];  // Solo la fecha sin hora
-        console.log("Fecha de hoy:", today); // Agrega un log para verificar la fecha que se está usando
+        const today = new Date().toLocaleDateString("en-CA");  
+        console.log("Fecha de hoy:", today);
         
         try {
             const { data, error } = await supabase
@@ -80,7 +80,7 @@ const PatientRecords = () => {
                     payment_in,
                     patients (pt_firstname, pt_lastname)
                 `)
-                .eq("date", today)  // Compara solo la fecha sin hora
+                .eq("date", today)  
                 .eq("branchs_id", branchId);
     
             if (error) throw error;
@@ -119,7 +119,7 @@ const PatientRecords = () => {
     
 
     const fetchExpenses = async (branchId) => {
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toLocaleDateString("en-CA"); 
     
         try {
             const { data, error } = await supabase
@@ -161,20 +161,22 @@ const PatientRecords = () => {
             TRANS: 0,
             DATAF: 0
         };
-
+    
         data.forEach((record) => {
-            if (record.payment_in === "efectivo") newTotals.EFEC += Number(record.total);
-            if (record.payment_in === "transferencia") newTotals.TRANS += Number(record.total);
-            if (record.payment_in === "datafast") newTotals.DATAF += Number(record.total);
+            const abono = Number(record.credit); 
+    
+            if (record.payment_in === "efectivo") newTotals.EFEC += abono;
+            if (record.payment_in === "transferencia") newTotals.TRANS += abono;
+            if (record.payment_in === "datafast") newTotals.DATAF += abono;
         });
-
+    
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
         
         setTotals(newTotals);
         setGrandTotal(total);
-
         return { ...newTotals, total };
     };
+    
 
     const calculateEgresosTotals = (data) => {
         const newTotals = {
@@ -250,6 +252,17 @@ const PatientRecords = () => {
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
                 Cierre Diario - {branches.find(b => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
+            <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
+                <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
+                    Consultas de Cierre
+                </Button>
+                <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">
+                    Volver a Opciones
+                </Button>
+                <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
+                    Cerrar Sesión
+                </Button>
+            </Box>
             <Box mb={6}>
                 <Select
                     placeholder="Seleccione una sucursal"
@@ -262,18 +275,6 @@ const PatientRecords = () => {
                         </option>
                     ))}
                 </Select>
-            </Box>
-
-            <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
-                <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
-                    Consultas de Cierre
-                </Button>
-                <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">
-                    Volver a Opciones
-                </Button>
-                <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
-                    Cerrar Sesión
-                </Button>
             </Box>
 
             <Table variant="striped" colorScheme="teal">

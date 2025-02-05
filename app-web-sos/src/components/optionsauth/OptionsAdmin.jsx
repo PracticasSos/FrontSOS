@@ -93,6 +93,9 @@ const AdminDashBoard = () => {
       case "RETIROS":
         navigate('/RetreatsPatients')
         break;
+      case "GARANTIA":
+        navigate('/Balance')
+        break;
       case "HISTORIAL PACIENTE":
           navigate('/PatientHistory')
       default:
