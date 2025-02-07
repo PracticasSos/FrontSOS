@@ -5,12 +5,14 @@ import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Di
 
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
+    const [salesRecords, setSalesRecords] = useState([]);
+    const [withdrawalsRecords, setWithdrawalsRecords] = useState([]);
     const [branches, setBranches] = useState([]);
-    const [egresos, setEgresos] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState("");
-    const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
-    const [egresosTotals, setEgresosTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
+    const [totals, setTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0, abonosDelDia: 0 });
     const [grandTotal, setGrandTotal] = useState(0);
+    const [egresos, setEgresos] = useState([]);
+    const [egresosTotals, setEgresosTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [egresosGrandTotal, setEgresosGrandTotal] = useState(0);
     const navigate = useNavigate();
 
@@ -21,6 +23,7 @@ const PatientRecords = () => {
     useEffect(() => {
         if (selectedBranch) {
             fetchDailyRecords(selectedBranch);
+            fetchDailyWithdrawals(selectedBranch);
             fetchExpenses(selectedBranch);
         }
     }, [selectedBranch]);
@@ -38,13 +41,14 @@ const PatientRecords = () => {
         }
     };
 
-
     const handleBranchChange = async (event) => {
         const branchId = event.target.value;
         setSelectedBranch(branchId);
-        
+
         if (branchId) {
             await fetchDailyRecords(branchId);
+            await fetchDailyWithdrawals(branchId);
+
             await fetchExpenses(branchId);
         } else {
             resetData();
@@ -52,11 +56,12 @@ const PatientRecords = () => {
     };
 
     const resetData = () => {
-        setRecords([]);
+        setSalesRecords([]);
+        setWithdrawalsRecords([]);
         setEgresos([]);
-        setTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
-        setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
+        setTotals({ EFEC: 0, DATAF: 0, TRANS: 0, abonosDelDia: 0 });
         setGrandTotal(0);
+        setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
         setEgresosGrandTotal(0);
     };
 
@@ -116,14 +121,77 @@ const PatientRecords = () => {
             resetData();
         }
     };
-    
+
+    const fetchDailyWithdrawals = async (branchId) => {
+        const today = new Date().toLocaleDateString("en-CA");
+        console.log("Fecha de hoy:", today);
+
+        try {
+            const { data: salesToday, error: salesError } = await supabase
+                .from("sales")
+                .select(`
+                    id,
+                    branchs_id,
+                    patients (pt_firstname, pt_lastname),
+                    total
+                `)
+                .eq("branchs_id", branchId);
+
+            if (salesError) throw salesError;
+
+            const saleIds = salesToday.map(sale => sale.id);
+            const { data: withdrawalsToday, error: withdrawalsError } = await supabase
+                .from("withdrawals")
+                .select(`
+                    id,
+                    sale_id,
+                    previous_balance, 
+                    new_balance, 
+                    difference, 
+                    date
+                `)
+                .eq("date", today)
+                .in("sale_id", saleIds);
+
+            if (withdrawalsError) throw withdrawalsError;
+
+            console.log("Abonos del día:", withdrawalsToday);
+            
+            let totalAbonosDelDia = 0;
+            const formattedWithdrawals = withdrawalsToday.map((withdrawal) => {
+                const relatedSale = salesToday.find(sale => sale.id === withdrawal.sale_id);
+                const abonoDelDia = withdrawal.new_balance ? Number(withdrawal.new_balance) : 0;
+                totalAbonosDelDia += abonoDelDia;
+                return {
+                    ...withdrawal,
+                    firstName: relatedSale?.patients?.pt_firstname || "Sin nombre",
+                    lastName: relatedSale?.patients?.pt_lastname || "Sin apellido",
+                    total: relatedSale?.total || 0,
+                    saldoAnterior: Number(withdrawal.previous_balance || 0),
+                    abonoDelDia: Number(withdrawal.difference || 0),
+                    saldo: Number(withdrawal.new_balance || 0),
+                };
+            });
+
+            setWithdrawalsRecords(formattedWithdrawals);
+            setTotals((prevTotals) => ({
+                ...prevTotals,
+                abonosDelDia: totalAbonosDelDia,
+            }));
+
+        } catch (err) {
+            console.error("Error fetching daily withdrawals:", err);
+            setWithdrawalsRecords([]); 
+        }
+    };
+
 
     const fetchExpenses = async (branchId) => {
-        const today = new Date().toLocaleDateString("en-CA"); 
-    
+        const today = new Date().toLocaleDateString("en-CA");
+
         try {
             const { data, error } = await supabase
-                .from("egresos") 
+                .from("egresos")
                 .select(`
                     id,
                     date,
@@ -136,9 +204,9 @@ const PatientRecords = () => {
                 `)
                 .eq("date", today)
                 .eq("branchs_id", branchId);
-    
+
             if (error) throw error;
-    
+
             if (data && data.length > 0) {
                 setEgresos(data);
                 calculateEgresosTotals(data);
@@ -159,24 +227,30 @@ const PatientRecords = () => {
         const newTotals = {
             EFEC: 0,
             TRANS: 0,
-            DATAF: 0
+            DATAF: 0,
+            abonosDelDia: 0
         };
-    
+
         data.forEach((record) => {
-            const abono = Number(record.credit); 
-    
+            const abono = Number(record.credit);
+
             if (record.payment_in === "efectivo") newTotals.EFEC += abono;
             if (record.payment_in === "transferencia") newTotals.TRANS += abono;
             if (record.payment_in === "datafast") newTotals.DATAF += abono;
+
+            if (record.withdrawals && Array.isArray(record.withdrawals)) {
+                record.withdrawals.forEach((w) => {
+                    newTotals.abonosDelDia += Number(w.difference);
+                });
+            }
         });
-    
+
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
-        
+
         setTotals(newTotals);
         setGrandTotal(total);
         return { ...newTotals, total };
     };
-    
 
     const calculateEgresosTotals = (data) => {
         const newTotals = {
@@ -192,7 +266,7 @@ const PatientRecords = () => {
         });
 
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
-        
+
         setEgresosTotals(newTotals);
         setEgresosGrandTotal(total);
 
@@ -276,7 +350,7 @@ const PatientRecords = () => {
                     ))}
                 </Select>
             </Box>
-
+            <Heading size="md" textAlign="center" color="cyan.900">Ingresos</Heading>
             <Table variant="striped" colorScheme="teal">
                 <Thead>
                     <Tr>
@@ -304,16 +378,16 @@ const PatientRecords = () => {
                             <Td>{record.frame}</Td>
                             <Td>{record.lens}</Td>
                             <Td isNumeric>{record.total}</Td>
-                            <Td>{record.credit}</Td>
                             <Td>{record.balance}</Td>
+                            <Td>{record.credit}</Td>
                             <Td>
                                 <Badge
                                     colorScheme={
                                         record.payment_in === "efectivo"
                                             ? "green"
                                             : record.payment_in === "transferencia"
-                                            ? "blue"
-                                            : "orange"
+                                                ? "blue"
+                                                : "orange"
                                     }
                                 >
                                     {record.payment_in}
@@ -323,7 +397,6 @@ const PatientRecords = () => {
                     ))}
                 </Tbody>
             </Table>
-
             <Divider my={6} />
             <HStack justifyContent="space-around" spacing={6}>
                 <VStack>
@@ -350,13 +423,47 @@ const PatientRecords = () => {
                 Total General: {grandTotal}
             </Heading>
             <Box>
+                <Divider my={6} />
+                <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
+                <Table variant="striped" colorScheme="teal">
+                    <Thead>
+                        <Tr>
+                            <Th>Fecha</Th>
+                            <Th>Nombre</Th>
+                            <Th>Apellido</Th>
+                            <Th>Total</Th>
+                            <Th>Abono Anterior</Th>
+                            <Th>Abono del Día</Th>
+                            <Th>Saldo</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {withdrawalsRecords.map((record) => (
+                            <Tr key={record.id}>
+                                <Td>{record.date}</Td>
+                                <Td>{record.firstName}</Td>
+                                <Td>{record.lastName}</Td>
+                                <Td>{record.total}</Td>
+                                <Td>{record.saldoAnterior}</Td>
+                                <Td>{record.abonoDelDia}</Td>
+                                <Td>{record.saldo}</Td>
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
+                <Divider my={10} />
+                <Heading size="md" textAlign="center" color="green.300">
+                    Total Abonos del Día: {totals.abonosDelDia || 0}
+                </Heading>
+            </Box>
+            <Box>
                 <Divider my={10} />
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Egresos
                 </Heading>
                 <Table variant="striped" colorScheme="teal" mb={6}>
-                        <Thead>
-                          <Tr>
+                    <Thead>
+                        <Tr>
                             <Th>Orden</Th>
                             <Th>Fecha</Th>
                             <Th>Encargado</Th>
@@ -365,56 +472,56 @@ const PatientRecords = () => {
                             <Th>Especificación</Th>
                             <Th>Sucursal</Th>
                             <Th>Pago</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {egresos.map((egresos) => (
-                            <Tr key={egresos.id}>
-                              <Td>{egresos.id}</Td>
-                              <Td>{egresos.date}</Td>
-                              <Td>{egresos.users?.firstname || "Sin encargado"}</Td>
-                              <Td>{egresos.labs?.name || "Sin laboratorio"}</Td>
-                              <Td>{egresos.value}</Td>
-                              <Td>{egresos.specification}</Td>
-                              <Td>{egresos.branchs?.name || "Sin Sucursal"}</Td>
-                              <Td>
-                                <Badge
-                                  colorScheme={
-                                    egresos.payment_in === "efectivo"
-                                      ? "green"
-                                      : egresos.payment_in === "transferencia"
-                                      ? "blue"
-                                      : "orange"
-                                  }
-                                >
-                                  {egresos.payment_in}
-                                </Badge>
-                              </Td>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {egresos.map((egreso) => (
+                            <Tr key={egreso.id}>
+                                <Td>{egreso.id}</Td>
+                                <Td>{egreso.date}</Td>
+                                <Td>{egreso.users?.firstname || "Sin encargado"}</Td>
+                                <Td>{egreso.labs?.name || "Sin laboratorio"}</Td>
+                                <Td>{egreso.value}</Td>
+                                <Td>{egreso.specification}</Td>
+                                <Td>{egreso.branchs?.name || "Sin Sucursal"}</Td>
+                                <Td>
+                                    <Badge
+                                        colorScheme={
+                                            egreso.payment_in === "efectivo"
+                                                ? "green"
+                                                : egreso.payment_in === "transferencia"
+                                                    ? "blue"
+                                                    : "orange"
+                                        }
+                                    >
+                                        {egreso.payment_in}
+                                    </Badge>
+                                </Td>
                             </Tr>
                         ))}
                     </Tbody>
                 </Table>
                 <Divider my={6} />
-                    <HStack justifyContent="space-around" spacing={6}>
-                        <VStack>
-                            <Text fontWeight="bold">EFEC</Text>
-                            <Text fontSize="lg" color="green.500">
-                                {egresosTotals.EFEC || 0}
-                            </Text>
-                        </VStack>
-                        <VStack>
-                            <Text fontWeight="bold">TRANS</Text>
-                            <Text fontSize="lg" color="blue.500">
-                                {egresosTotals.TRANS || 0}
-                            </Text>
-                        </VStack>
-                        <VStack>
-                            <Text fontWeight="bold">DATAF</Text>
-                            <Text fontSize="lg" color="orange.500">
-                                {egresosTotals.DATAF || 0}
-                            </Text>
-                        </VStack>
-                    </HStack>
+                <HStack justifyContent="space-around" spacing={6}>
+                    <VStack>
+                        <Text fontWeight="bold">EFEC</Text>
+                        <Text fontSize="lg" color="green.500">
+                            {egresosTotals.EFEC || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">TRANS</Text>
+                        <Text fontSize="lg" color="blue.500">
+                            {egresosTotals.TRANS || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">DATAF</Text>
+                        <Text fontSize="lg" color="orange.500">
+                            {egresosTotals.DATAF || 0}
+                        </Text>
+                    </VStack>
+                </HStack>
                 <Divider my={5} />
                 <Heading size="md" textAlign="center" color="green.300">
                     Total General: {egresosGrandTotal}

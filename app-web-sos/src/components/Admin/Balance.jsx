@@ -44,30 +44,35 @@ const Balance = () => {
 
     const handleAbonoSubmit = async (record) => {
         const abono = parseFloat(newAbonos[record.id]) || 0;
-        if (abono <= 0 || abono > record.balance) {
+    
+        if (abono <= 0 || abono > record.credit) {
             alert("Abono inválido");
             return;
         }
-
-        const nuevoSaldo = record.balance - abono;
-        const nuevoCredito = record.credit + abono;
-
+    
+        const nuevoBalance = record.balance + abono; // Se suma el nuevo abono al balance existente
+        const nuevoCredito = record.credit - abono; // Se resta el abono del saldo pendiente
+    
         try {
             const { error } = await supabase
                 .from("sales")
-                .update({ balance: nuevoSaldo, credit: nuevoCredito })
+                .update({ 
+                    balance: nuevoBalance, // Se actualiza el balance (abono total)
+                    credit: nuevoCredito   // Se actualiza el saldo pendiente
+                })
                 .eq("id", record.id);
-
+    
             if (error) throw error;
-
-            console.log(`Abono de ${abono} registrado correctamente para el paciente ${record.patients.pt_firstname}`);
-
+    
+            console.log(`Abono de ${abono} registrado correctamente para ${record.patients.pt_firstname}`);
+    
             fetchAbonos(selectedBranch); 
-            setNewAbonos((prevState) => ({ ...prevState, [record.id]: "" })); // Limpiar el input
+            setNewAbonos((prevState) => ({ ...prevState, [record.id]: "" }));
         } catch (error) {
             console.error("Error al actualizar el abono:", error);
         }
     };
+    
 
     const handleNavigate = (route) => {
         navigate(route);

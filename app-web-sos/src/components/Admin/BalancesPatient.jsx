@@ -183,8 +183,8 @@ const BalancesPatient = () => {
                                         <Td>{sale.frame}</Td>
                                         <Td>{sale.lens_type}</Td>
                                         <Td>{sale.total}</Td>
-                                        <Td>{sale.credit}</Td>
                                         <Td>{sale.balance}</Td>
+                                        <Td>{sale.credit}</Td>
                                         <Td>{sale.patient.pt_phone}</Td>
                                         <Td>
                                             <Button size="sm" colorScheme="green" onClick={() => handlePatientClick(sale.patient)}>

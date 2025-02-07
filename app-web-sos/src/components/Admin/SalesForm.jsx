@@ -85,12 +85,12 @@ const SalesForm = () => {
   }, [formData.p_frame, formData.p_lens, formData.discount_frame, formData.discount_lens]);
   
   useEffect(() => {
-    const balance = (formData.total || 0) - (formData.credit || 0);
+    const credit = (formData.total || 0) - (formData.balance || 0);
     setFormData((prevState) => ({
       ...prevState,
-      balance: balance,
+      credit: credit,
     }));
-  }, [formData.total, formData.credit]);
+  }, [formData.total, formData.balance]);
   
   
   const handleDiscountChange = (e) => {
@@ -109,10 +109,10 @@ const SalesForm = () => {
   };
   
   const handleCreditChange = (e) => {
-    const value = parseFloat(e.target.value) || 0;  
+    const value = parseFloat(e.target.value) || '';  
     setFormData((prevState) => ({
       ...prevState,
-      credit: value, 
+      balance: value, 
     }));
   };
 
@@ -661,11 +661,11 @@ const SalesForm = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Abono</FormLabel>
-                  <Input type="number" name="credit" placeholder="$130" width="auto" maxWidth="200px" value={formData.credit} onChange={handleCreditChange}/>
+                  <Input type="number" name="balance" placeholder="$130" width="auto" maxWidth="200px" value={formData.balance} onChange={handleCreditChange}/>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Saldo</FormLabel>
-                  <Input type="number" name="balance" placeholder="$20" width="auto" maxWidth="200px" value={formData.balance.toFixed(2)} isReadOnly />
+                  <Input type="number" name="credir" placeholder="$20" width="auto" maxWidth="200px" value={formData.credit.toFixed(2)} isReadOnly  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Pago en</FormLabel>
