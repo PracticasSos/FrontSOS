@@ -484,60 +484,59 @@ const CashClosure = () => {
                                 Total General: {egresosGrandTotal}
                             </Heading>
                             <Divider my={6} />
-                    <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mt={6}>
-                    <FormControl display="flex" justifyContent="center">
-                        <FormLabel>EFEC</FormLabel>
-                        <Input
-                            type="number"
-                            name="cash"
-                            value={finalBalance.EFEC}
-                            onChange={handleChange}
-                            width="auto"
-                            maxWidth="150px"
-                            readOnly
-                        />
-                    </FormControl>
+                            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mt={6}>
+                            <FormControl display="flex" justifyContent="center">
+                                <FormLabel>EFEC</FormLabel>
+                                <Input
+                                    type="number"
+                                    name="cash"
+                                    value={finalBalance.EFEC}
+                                    onChange={handleChange}
+                                    width="auto"
+                                    maxWidth="150px"
+                                    readOnly
+                                />
+                            </FormControl>
 
-                    <FormControl display="flex" justifyContent="center">
-                        <FormLabel>TRANS</FormLabel>
-                        <Input
-                            type="number"
-                            name="transfer"
-                            value={finalBalance.TRANS}
-                            onChange={handleChange}
-                            width="auto"
-                            maxWidth="150px"
-                            readOnly
-                        />
-                    </FormControl>
+                            <FormControl display="flex" justifyContent="center">
+                                <FormLabel>TRANS</FormLabel>
+                                <Input
+                                    type="number"
+                                    name="transfer"
+                                    value={finalBalance.TRANS}
+                                    onChange={handleChange}
+                                    width="auto"
+                                    maxWidth="150px"
+                                    readOnly
+                                />
+                            </FormControl>
 
-                    <FormControl display="flex" justifyContent="center">
-                        <FormLabel>DATAFAST</FormLabel>
-                        <Input
-                            type="number"
-                            name="data_fast"
-                            value={finalBalance.DATAF}
-                            onChange={handleChange}
-                            width="auto"
-                            maxWidth="150px"
-                            readOnly
-                        />
-                    </FormControl>
-                </Grid>
+                            <FormControl display="flex" justifyContent="center">
+                                <FormLabel>DATAFAST</FormLabel>
+                                <Input
+                                    type="number"
+                                    name="data_fast"
+                                    value={finalBalance.DATAF}
+                                    onChange={handleChange}
+                                    width="auto"
+                                    maxWidth="150px"
+                                    readOnly
+                                />
+                            </FormControl>
+                        </Grid>
 
-                <FormControl mt={6} display="flex" justifyContent="center">
-                    <FormLabel>Total</FormLabel>
-                    <Input
-                        type="number"
-                        name="total"
-                        value={finalBalance.total}
-                        onChange={handleChange}
-                        width="auto"
-                        maxWidth="150px"
-                        readOnly
-                    />
-                </FormControl>
-
+                        <FormControl mt={6} display="flex" justifyContent="center">
+                            <FormLabel>Total</FormLabel>
+                            <Input
+                                type="number"
+                                name="total"
+                                value={finalBalance.total}
+                                onChange={handleChange}
+                                width="auto"
+                                maxWidth="150px"
+                                readOnly
+                            />
+                        </FormControl>
                 <Box display="flex" justifyContent="center" mt={6}>
                     <Button 
                         type="submit" 

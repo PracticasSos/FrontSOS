@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate } from "react-router-dom";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select } from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select,Grid, FormControl, FormLabel, Input } from "@chakra-ui/react";
 
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
@@ -14,6 +14,7 @@ const PatientRecords = () => {
     const [egresos, setEgresos] = useState([]);
     const [egresosTotals, setEgresosTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [egresosGrandTotal, setEgresosGrandTotal] = useState(0);
+    const [finalBalance, setFinalBalance] = useState({ EFEC: 0, DATAF: 0, TRANS: 0, total: 0 });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,6 +28,25 @@ const PatientRecords = () => {
             fetchExpenses(selectedBranch);
         }
     }, [selectedBranch]);
+
+    useEffect(() => {
+        calculateFinalBalance();
+    }, [totals, egresosGrandTotal, withdrawalsRecords]);
+    
+    const calculateFinalBalance = () => {
+        // Sumar ventas (totales de sales), egresos y abonos
+        const balance = {
+            EFEC: totals.EFEC + egresosTotals.EFEC - withdrawalsRecords.filter(record => record.payment_in === 'efectivo').reduce((sum, record) => sum + record.abonoDelDia, 0),
+            DATAF: totals.DATAF + egresosTotals.DATAF - withdrawalsRecords.filter(record => record.payment_in === 'datafast').reduce((sum, record) => sum + record.abonoDelDia, 0),
+            TRANS: totals.TRANS + egresosTotals.TRANS - withdrawalsRecords.filter(record => record.payment_in === 'transferencia').reduce((sum, record) => sum + record.abonoDelDia, 0),
+            total: totals.total + egresosGrandTotal - withdrawalsRecords.reduce((sum, record) => sum + record.abonoDelDia, 0)
+        };
+    
+        // Actualizar el estado del balance
+        setFinalBalance(balance);
+    };
+    
+    
 
     const fetchBranches = async () => {
         try {
@@ -133,7 +153,8 @@ const PatientRecords = () => {
                     id,
                     branchs_id,
                     patients (pt_firstname, pt_lastname),
-                    total
+                    total,
+                    payment_balance
                 `)
                 .eq("branchs_id", branchId);
 
@@ -435,6 +456,7 @@ const PatientRecords = () => {
                             <Th>Abono Anterior</Th>
                             <Th>Abono del Día</Th>
                             <Th>Saldo</Th>
+                            <Th>Pago en</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -447,6 +469,7 @@ const PatientRecords = () => {
                                 <Td>{record.saldoAnterior}</Td>
                                 <Td>{record.abonoDelDia}</Td>
                                 <Td>{record.saldo}</Td>
+                                <Td>{record.payment_balance}</Td>
                             </Tr>
                         ))}
                     </Tbody>
@@ -526,6 +549,53 @@ const PatientRecords = () => {
                 <Heading size="md" textAlign="center" color="green.300">
                     Total General: {egresosGrandTotal}
                 </Heading>
+                <Divider my={6} />
+                <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mt={6}>
+                <FormControl display="flex" justifyContent="center">
+                    <FormLabel>EFEC</FormLabel>
+                    <Input
+                    type="number"
+                    name="cash"
+                    value={finalBalance.EFEC}
+                    width="auto"
+                    maxWidth="150px"
+                    readOnly
+                    />
+                </FormControl>
+                <FormControl display="flex" justifyContent="center">
+                    <FormLabel>TRANS</FormLabel>
+                    <Input
+                    type="number"
+                    name="transfer"
+                    value={finalBalance.TRANS}
+                    width="auto"
+                    maxWidth="150px"
+                    readOnly
+                    />
+                </FormControl>
+                <FormControl display="flex" justifyContent="center">
+                <FormLabel>DATAFAST</FormLabel>
+                <Input
+                    type="number"
+                    name="data_fast"
+                    value={finalBalance.DATAF}
+                    width="auto"
+                    maxWidth="150px"
+                    readOnly
+                    />
+                </FormControl>
+                </Grid>
+                <FormControl mt={6} display="flex" justifyContent="center">
+                    <FormLabel>Total</FormLabel>
+                        <Input
+                        type="number"
+                        name="total"
+                        value={finalBalance.total}
+                        width="auto"
+                        maxWidth="150px"
+                        readOnly
+                    />
+                </FormControl> 
             </Box>
         </Box>
     );
