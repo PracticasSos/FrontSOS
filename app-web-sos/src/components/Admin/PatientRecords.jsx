@@ -15,6 +15,7 @@ const PatientRecords = () => {
     const [egresosTotals, setEgresosTotals] = useState({ EFEC: 0, DATAF: 0, TRANS: 0 });
     const [egresosGrandTotal, setEgresosGrandTotal] = useState(0);
     const [finalBalance, setFinalBalance] = useState({ EFEC: 0, DATAF: 0, TRANS: 0, total: 0 });
+    const [totalAbonosDelDia, setTotalAbonosDelDia] = useState({ EFEC: 0, TRANS: 0, DATAF: 0 });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,18 +35,29 @@ const PatientRecords = () => {
     }, [totals, egresosGrandTotal, withdrawalsRecords]);
     
     const calculateFinalBalance = () => {
-        // Sumar ventas (totales de sales), egresos y abonos
+        console.log("Total Withdrawals:", withdrawalsRecords);
+        const totalWithdrawals = withdrawalsRecords.reduce(
+            (sum, record) => sum + Number(record.abonoDelDia || 0), 
+            0
+        );
+        
+        console.log("Total Withdrawals (after calculation):", totalWithdrawals);
+        console.log("Totals:", totals);  // Verifica los valores de los totales
+        console.log("Egresos Totals:", egresosTotals);  // Verifica los valores de egresos
+    
         const balance = {
-            EFEC: totals.EFEC + egresosTotals.EFEC - withdrawalsRecords.filter(record => record.payment_in === 'efectivo').reduce((sum, record) => sum + record.abonoDelDia, 0),
-            DATAF: totals.DATAF + egresosTotals.DATAF - withdrawalsRecords.filter(record => record.payment_in === 'datafast').reduce((sum, record) => sum + record.abonoDelDia, 0),
-            TRANS: totals.TRANS + egresosTotals.TRANS - withdrawalsRecords.filter(record => record.payment_in === 'transferencia').reduce((sum, record) => sum + record.abonoDelDia, 0),
-            total: totals.total + egresosGrandTotal - withdrawalsRecords.reduce((sum, record) => sum + record.abonoDelDia, 0)
+            EFEC: Math.max(0, (totals.EFEC || 0) - (egresosTotals.EFEC || 0) - (totalAbonosDelDia.EFEC || 0)),
+            DATAF: Math.max(0, (totals.DATAF || 0) - (egresosTotals.DATAF || 0) - (totalAbonosDelDia.DATAF || 0)),
+            TRANS: Math.max(0, (totals.TRANS || 0) - (egresosTotals.TRANS || 0) - (totalAbonosDelDia.TRANS || 0)),
+            total: Math.max(0, (totals.EFEC || 0) + (totals.DATAF || 0) + (totals.TRANS || 0) 
+                           - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
+                           - totalWithdrawals)
         };
     
-        // Actualizar el estado del balance
-        setFinalBalance(balance);
+        console.log("Final Balance Calculation:", balance);  // Verifica el resultado final
+        
+        setFinalBalance(balance);  // Actualiza el estado del balance final
     };
-    
     
 
     const fetchBranches = async () => {
@@ -145,7 +157,7 @@ const PatientRecords = () => {
     const fetchDailyWithdrawals = async (branchId) => {
         const today = new Date().toLocaleDateString("en-CA");
         console.log("Fecha de hoy:", today);
-
+    
         try {
             const { data: salesToday, error: salesError } = await supabase
                 .from("sales")
@@ -154,12 +166,13 @@ const PatientRecords = () => {
                     branchs_id,
                     patients (pt_firstname, pt_lastname),
                     total,
-                    payment_balance
+                    payment_balance,
+                    credit
                 `)
                 .eq("branchs_id", branchId);
-
+    
             if (salesError) throw salesError;
-
+    
             const saleIds = salesToday.map(sale => sale.id);
             const { data: withdrawalsToday, error: withdrawalsError } = await supabase
                 .from("withdrawals")
@@ -173,40 +186,53 @@ const PatientRecords = () => {
                 `)
                 .eq("date", today)
                 .in("sale_id", saleIds);
-
+    
             if (withdrawalsError) throw withdrawalsError;
-
+    
             console.log("Abonos del día:", withdrawalsToday);
             
-            let totalAbonosDelDia = 0;
+            let totalAbonosDelDia = { EFEC: 0, TRANS: 0, DATAF: 0 };
             const formattedWithdrawals = withdrawalsToday.map((withdrawal) => {
                 const relatedSale = salesToday.find(sale => sale.id === withdrawal.sale_id);
-                const abonoDelDia = withdrawal.new_balance ? Number(withdrawal.new_balance) : 0;
-                totalAbonosDelDia += abonoDelDia;
+                const abonoDelDia = withdrawal.difference ? Number(withdrawal.difference) : 0;
+                const paymentMethod = relatedSale?.payment_balance || "Sin método";
+    
+                if (paymentMethod === "efectivo") {
+                    totalAbonosDelDia.EFEC += abonoDelDia;
+                } else if (paymentMethod === "transferencia") {
+                    totalAbonosDelDia.TRANS += abonoDelDia;
+                } else if (paymentMethod === "datafast") {
+                    totalAbonosDelDia.DATAF += abonoDelDia;
+                }
+                
                 return {
                     ...withdrawal,
                     firstName: relatedSale?.patients?.pt_firstname || "Sin nombre",
                     lastName: relatedSale?.patients?.pt_lastname || "Sin apellido",
                     total: relatedSale?.total || 0,
+                    credit: relatedSale?.credit || 0,
                     saldoAnterior: Number(withdrawal.previous_balance || 0),
-                    abonoDelDia: Number(withdrawal.difference || 0),
+                    abonoDelDia: abonoDelDia,
                     saldo: Number(withdrawal.new_balance || 0),
+                    payment_balance: paymentMethod,
                 };
             });
-
+    
             setWithdrawalsRecords(formattedWithdrawals);
-            setTotals((prevTotals) => ({
+            setTotalAbonosDelDia((prevTotals) => ({
                 ...prevTotals,
-                abonosDelDia: totalAbonosDelDia,
+                abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
+                EFEC: totalAbonosDelDia.EFEC,
+                TRANS: totalAbonosDelDia.TRANS,
+                DATAF: totalAbonosDelDia.DATAF,
+                abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
             }));
-
         } catch (err) {
             console.error("Error fetching daily withdrawals:", err);
             setWithdrawalsRecords([]); 
         }
     };
-
-
+ 
     const fetchExpenses = async (branchId) => {
         const today = new Date().toLocaleDateString("en-CA");
 
@@ -455,6 +481,7 @@ const PatientRecords = () => {
                             <Th>Total</Th>
                             <Th>Abono Anterior</Th>
                             <Th>Abono del Día</Th>
+                            <Th>Abono Total</Th>
                             <Th>Saldo</Th>
                             <Th>Pago en</Th>
                         </Tr>
@@ -469,14 +496,47 @@ const PatientRecords = () => {
                                 <Td>{record.saldoAnterior}</Td>
                                 <Td>{record.abonoDelDia}</Td>
                                 <Td>{record.saldo}</Td>
-                                <Td>{record.payment_balance}</Td>
+                                <Td>{record.credit}</Td>
+                                <Td>
+                                    <Badge
+                                        colorScheme={
+                                            record.payment_balance ==="efectivo"
+                                            ? "green"
+                                            : record.payment_balance == "transferencia"
+                                            ? "blue"
+                                            : "orange"
+                                        }
+                                    >
+                                        {record.payment_balance}
+                                    </Badge>
+                                </Td>
                             </Tr>
                         ))}
                     </Tbody>
                 </Table>
                 <Divider my={10} />
+                <HStack justifyContent="space-around" spacing={6}>
+                    <VStack>
+                        <Text fontWeight="bold">EFEC</Text>
+                        <Text fontSize="lg" color="green.500">
+                            {totalAbonosDelDia.EFEC || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">TRANS</Text>
+                        <Text fontSize="lg" color="blue.500">
+                            {totalAbonosDelDia.TRANS || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">DATAF</Text>
+                        <Text fontSize="lg" color="orange.500">
+                            {totalAbonosDelDia.DATAF || 0}
+                        </Text>
+                    </VStack>
+                </HStack>
                 <Heading size="md" textAlign="center" color="green.300">
-                    Total Abonos del Día: {totals.abonosDelDia || 0}
+                    Total Abonos del Día: {totalAbonosDelDia.abonosDelDia || 0}
                 </Heading>
             </Box>
             <Box>
