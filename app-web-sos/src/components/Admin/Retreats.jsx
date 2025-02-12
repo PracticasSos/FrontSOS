@@ -14,6 +14,7 @@ const Retreats = () => {
     const [isTyping, setIsTyping] = useState(false);
     const [pendingSales, setPendingSales] = useState([]);
     const [message, setMessage] = useState("");
+    const [paymentBalance, setPaymentBalance] = useState("");
     const navigate = useNavigate();
 
     const handleNavigate = (route) => {
@@ -75,7 +76,8 @@ const Retreats = () => {
                     total,
                     balance,
                     credit,
-                    payment_in
+                    payment_in,
+                    payment_balance
                 `)
                 .eq("patient_id", patientData.id); 
     
@@ -95,18 +97,17 @@ const Retreats = () => {
         }
     };
     
-      const handleInputFocus = () => {
+    const handleInputFocus = () => {
         setIsTyping(true);
-      };
-      
-      const handleInputBlur = () => {
+    };
+    
+    const handleInputBlur = () => {
         setTimeout(() => {
-          setIsTyping(false); 
+            setIsTyping(false); 
         }, 200); 
-      };
-      
-
-      const fetchMeasures = async () => {
+    };
+    
+    const fetchMeasures = async () => {
         try {
             const { data, error } = await supabase
                 .from("rx_final")
@@ -120,15 +121,13 @@ const Retreats = () => {
         }
     };
 
-   
-
     const handlePDFClick = async () => {
         try {
-          const pdfUrl = await generateAndUploadPDF(formData);
-          alert(`PDF generado: ${pdfUrl}`);
+            const pdfUrl = await generateAndUploadPDF(formData);
+            alert(`PDF generado: ${pdfUrl}`);
         } catch (err) {
-          console.error("Error generando el PDF:", err);
-          alert("Hubo un problema al generar el PDF.");
+            console.error("Error generando el PDF:", err);
+            alert("Hubo un problema al generar el PDF.");
         }
     };
 
@@ -141,12 +140,20 @@ const Retreats = () => {
         try {
             const phoneNumber = patientData.pt_phone;
             const formattedMessage = message || "Pedido listo para retiro.";
-            const updatedCredit = 0;
+    
+            // Obtener el crédito actual
+            const currentCredit = salesData.credit || 0;
+            const updatedBalance = (salesData.balance || 0) + currentCredit;
+            const updatedCredit = 0; // Siempre debe pasar a 0
+    
+            // Actualizar la venta con el nuevo balance y credit en 0
             const { error: updateSalesError } = await supabase
                 .from('sales')
                 .update({ 
                     is_completed: true,
-                    credit: updatedCredit  
+                    credit: updatedCredit,  // Se pone en 0
+                    balance: updatedBalance, // Se suma el crédito al balance (abono)
+                    payment_balance: paymentBalance // Actualiza el valor de payment_balance
                 })
                 .eq('id', salesData.id);
     
@@ -154,22 +161,13 @@ const Retreats = () => {
                 console.error('Error actualizando la venta:', updateSalesError);
                 throw updateSalesError;
             }
-            const { error: updatePatientError } = await supabase
-                .from('sales')
-                .update({ credit: 0 })  
-                .eq('id', patientData.id);
-    
-            if (updatePatientError) {
-                console.error('Error actualizando el saldo del paciente:', updatePatientError);
-                throw updatePatientError;
-            }
     
             sendWhatsAppMessage(phoneNumber, formattedMessage);
             
             setPendingSales(prevSales => 
                 prevSales.filter(sale => sale.id !== salesData.id)
             );
-            
+    
             navigate("/RetreatsPatients", { 
                 state: { 
                     updatedPendingSales: pendingSales.filter(sale => sale.id !== salesData.id) 
@@ -208,19 +206,18 @@ const Retreats = () => {
         window.open(whatsappUrl, "_blank");
     };
     
-
     const handleWhatsAppClick = async () => {
         try {
-          const pdfUrl = await generateAndUploadPDF(formData);
-          const message = formData.message || "Aquí tienes el documento solicitado.";
-          const phoneNumber = formData.pt_phone;
+            const pdfUrl = await generateAndUploadPDF(formData);
+            const message = formData.message || "Aquí tienes el documento solicitado.";
+            const phoneNumber = formData.pt_phone;
     
-          sendWhatsAppMessage(phoneNumber, pdfUrl, message);
+            sendWhatsAppMessage(phoneNumber, pdfUrl, message);
         } catch (err) {
-          console.error("Error enviando mensaje por WhatsApp:", err);
-          alert("Hubo un problema al enviar el mensaje.");
+            console.error("Error enviando mensaje por WhatsApp:", err);
+            alert("Hubo un problema al enviar el mensaje.");
         }
-      };
+    };
 
     const filteredPatients = patientsList.filter(patient => {
         if (searchTerm === '') {
@@ -441,6 +438,20 @@ const Retreats = () => {
                                     width="auto"
                                     maxWidth="300px"
                                 />
+                            </FormControl>
+                            <FormControl mb={4}>
+                                <FormLabel>Pago en</FormLabel>
+                                <Select
+                                    value={paymentBalance}
+                                    onChange={(e) => setPaymentBalance(e.target.value)}
+                                    width="auto"
+                                    maxWidth="300px"
+                                >
+                                    <option value="">Seleccione</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="datafast">Datafast</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </Select>
                             </FormControl>
                         </SimpleGrid>
                     </SimpleGrid>
