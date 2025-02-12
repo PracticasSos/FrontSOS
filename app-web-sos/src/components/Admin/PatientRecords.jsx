@@ -46,12 +46,12 @@ const PatientRecords = () => {
         console.log("Egresos Totals:", egresosTotals);  // Verifica los valores de egresos
     
         const balance = {
-            EFEC:  (totalAbonosDelDia.EFEC || 0) - (totals.EFEC || 0) - (egresosTotals.EFEC || 0),
-            DATAF: (totalAbonosDelDia.DATAF || 0) - (totals.DATAF || 0) - (egresosTotals.DATAF || 0),
-            TRANS: (totalAbonosDelDia.TRANS || 0) - (totals.TRANS || 0) - (egresosTotals.TRANS || 0),
-            total: (totalAbonosDelDia.EFEC || 0) + (totalAbonosDelDia.DATAF || 0) + (totalAbonosDelDia.TRANS || 0) 
+            EFEC: (totals.EFEC || 0) - (egresosTotals.EFEC || 0) + (totalAbonosDelDia.EFEC || 0),
+            DATAF: (totals.DATAF || 0) - (egresosTotals.DATAF || 0) + (totalAbonosDelDia.DATAF || 0),
+            TRANS: (totals.TRANS || 0) - (egresosTotals.TRANS || 0) + (totalAbonosDelDia.TRANS || 0),
+            total: (totals.EFEC || 0) + (totals.DATAF || 0) + (totals.TRANS || 0) 
                    - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
-                   - (totals.EFEC || 0) - (totals.TRANS || 0) - (totals.DATAF || 0)
+                   + (totalAbonosDelDia.EFEC || 0) + (totalAbonosDelDia.TRANS || 0) + (totalAbonosDelDia.DATAF || 0)
         };
     
         console.log("Final Balance Calculation:", balance);  // Verifica el resultado final
@@ -221,7 +221,6 @@ const PatientRecords = () => {
             setWithdrawalsRecords(formattedWithdrawals);
             setTotalAbonosDelDia((prevTotals) => ({
                 ...prevTotals,
-                abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
                 EFEC: totalAbonosDelDia.EFEC,
                 TRANS: totalAbonosDelDia.TRANS,
                 DATAF: totalAbonosDelDia.DATAF,
@@ -279,7 +278,7 @@ const PatientRecords = () => {
         };
 
         data.forEach((record) => {
-            const abono = Number(record.credit);
+            const abono = Number(record.balance);
 
             if (record.payment_in === "efectivo") newTotals.EFEC += abono;
             if (record.payment_in === "transferencia") newTotals.TRANS += abono;
