@@ -41,17 +41,17 @@ const PatientRecords = () => {
             0
         );
         
-        console.log("Total Withdrawals (after calculation):", totalWithdrawals);
+        console.log("Total Withdrawals (after calculation):", totalWithdrawals); 
         console.log("Totals:", totals);  // Verifica los valores de los totales
         console.log("Egresos Totals:", egresosTotals);  // Verifica los valores de egresos
     
         const balance = {
-            EFEC: Math.max(0, (totals.EFEC || 0) - (egresosTotals.EFEC || 0) - (totalAbonosDelDia.EFEC || 0)),
-            DATAF: Math.max(0, (totals.DATAF || 0) - (egresosTotals.DATAF || 0) - (totalAbonosDelDia.DATAF || 0)),
-            TRANS: Math.max(0, (totals.TRANS || 0) - (egresosTotals.TRANS || 0) - (totalAbonosDelDia.TRANS || 0)),
-            total: Math.max(0, (totals.EFEC || 0) + (totals.DATAF || 0) + (totals.TRANS || 0) 
-                           - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
-                           - totalWithdrawals)
+            EFEC:  (totalAbonosDelDia.EFEC || 0) - (totals.EFEC || 0) - (egresosTotals.EFEC || 0),
+            DATAF: (totalAbonosDelDia.DATAF || 0) - (totals.DATAF || 0) - (egresosTotals.DATAF || 0),
+            TRANS: (totalAbonosDelDia.TRANS || 0) - (totals.TRANS || 0) - (egresosTotals.TRANS || 0),
+            total: (totalAbonosDelDia.EFEC || 0) + (totalAbonosDelDia.DATAF || 0) + (totalAbonosDelDia.TRANS || 0) 
+                   - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
+                   - (totals.EFEC || 0) - (totals.TRANS || 0) - (totals.DATAF || 0)
         };
     
         console.log("Final Balance Calculation:", balance);  // Verifica el resultado final
