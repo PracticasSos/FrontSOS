@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, FormLabel, Input, Select, List, ListItem, Textarea, SimpleGrid, Heading, Alert, Divider, AlertIcon, Table, Thead, Th, Tr, Tbody, Td } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Select,  Textarea, SimpleGrid, Heading, Alert, Divider, AlertIcon, Table, Thead, Th, Tr, Tbody, Td, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 
@@ -430,7 +430,22 @@ const SalesForm = () => {
       alert("Hubo un problema al enviar el mensaje.");
     }
   };
+
+  const handleDateChange = (e) => {
+    const selectedDate = new Date(e.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
   
+    const differenceInTime = selectedDate.getTime() - today.getTime();
+    let differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+  
+    // Contar desde mañana
+    if (differenceInDays > 0) {
+      differenceInDays += 1;
+    }
+  
+    setFormData({ ...formData, delivery_time: differenceInDays });
+  };
   
 
   const handleNavigate = (route) => navigate(route);
@@ -573,13 +588,34 @@ const SalesForm = () => {
                 </Box>
               )}
             </FormControl>
-              <FormControl>
-                <FormLabel>Entrega</FormLabel>
-                <Select name="delivery_time" placeholder="Selecciona un tiempo" onChange={handleChange} value={formData.delivery_time}>
-                  <option value="1 día">1 día</option>
-                  <option value="2 días">2 días</option>
-                </Select>
-              </FormControl>
+            <FormControl>
+              <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">Entrega</FormLabel>
+              <Input 
+                type="date" 
+                name="delivery_date" 
+                onChange={handleDateChange} 
+                borderColor="teal.400" 
+                focusBorderColor="teal.600"
+                borderRadius="md"
+                p={2}
+              />
+              <Box 
+                mt={3} 
+                p={3} 
+                borderWidth="1px" 
+                borderRadius="md" 
+                borderColor="gray.300" 
+                backgroundColor="gray.50"
+                textAlign="center"
+              >
+                <Text fontSize="md" fontWeight="medium" color="gray.700">
+                  {formData.delivery_time 
+                    ? `📅 Entrega en ${formData.delivery_time} días` 
+                    : 'Seleccione una fecha para ver el tiempo de entrega'}
+                </Text>
+              </Box>
+            </FormControl>
+
               <FormControl>
                 <FormLabel>Lunas</FormLabel>
                 <Input

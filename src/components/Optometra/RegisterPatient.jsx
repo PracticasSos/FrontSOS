@@ -82,7 +82,6 @@ const RegisterPatientForm = () => {
       pt_email: '',
       pt_consultation_reason: '',
       pt_recommendations: '',
-      
     });
   };
 
@@ -98,32 +97,32 @@ const RegisterPatientForm = () => {
       </Box>
 
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
-      <SimpleGrid columns={[1, 2]} spacing={4}>
-        <Box>
-          {renderInputField('Nombre', 'pt_firstname', 'text', true)}
-          {renderInputField('Apellido', 'pt_lastname', 'text', true)}
-          {renderInputField('Ocupación', 'pt_occupation', 'text')}
-          {renderInputField('Dirección', 'pt_address', 'text')}
-          {renderInputField('Teléfono', 'pt_phone', 'text')}
-          {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
-          {renderTextareaField('Recomendaciones', 'pt_recommendations')}
-          <Box display="flex" justifyContent="space-around" mt={6}>
-            <Button onClick={handleReset} colorScheme="gray">USO</Button>
-            <Button onClick={handleReset} colorScheme="gray">FINAL</Button>
+        <SimpleGrid columns={[1, 2]} spacing={4}>
+          <Box>
+            {renderInputField('Nombre', 'pt_firstname', 'text', true)}
+            {renderInputField('Apellido', 'pt_lastname', 'text', true)}
+            {renderInputField('Ocupación', 'pt_occupation', 'text')}
+            {renderInputField('Dirección', 'pt_address', 'text')}
+            {renderInputField('Teléfono', 'pt_phone', 'text')}
+            {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
+            {renderTextareaField('Recomendaciones', 'pt_recommendations')}
+            <Box display="flex" justifyContent="space-around" mt={6}>
+              <Button onClick={() => handleNavigate('/RegisterMeasures/MeasuresUse')} colorScheme="gray">USO</Button>
+              <Button onClick={() => handleNavigate('/RegisterMeasures/MeasuresFinal')} colorScheme="gray">FINAL</Button>
+            </Box>
           </Box>
-        </Box>
-        <Box>
-          {renderInputField('Edad', 'pt_age', 'number')}
-          {renderInputField('C.I.', 'pt_ci', 'text')}
-          {renderInputField('Ciudad', 'pt_city', 'text')}
-          {renderInputField('Correo', 'pt_email', 'email')}
-          {renderSelectField('Responsable', 'user_id', users)}
-          <Box display="flex" justifyContent="space-around" mt={6}>
-            <Button type="submit" colorScheme="teal">Guardar</Button>
-            <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
+          <Box>
+            {renderInputField('Edad', 'pt_age', 'number')}
+            {renderInputField('C.I.', 'pt_ci', 'text')}
+            {renderInputField('Ciudad', 'pt_city', 'text')}
+            {renderInputField('Correo', 'pt_email', 'email')}
+            {renderSelectField('Responsable', 'user_id', users)}
+            <Box display="flex" justifyContent="space-around" mt={6}>
+              <Button type="submit" colorScheme="teal">Guardar</Button>
+              <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
+            </Box>
           </Box>
-        </Box>
-      </SimpleGrid>
+        </SimpleGrid>
       </Box>
     </Box>
   );
