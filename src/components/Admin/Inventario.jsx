@@ -1,31 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Heading,
-  VStack,
-  HStack,
-  useToast,
-} from "@chakra-ui/react";
-import { useState } from "react";
+import {Box, Button, FormControl, FormLabel, Input, Heading, VStack, HStack, useToast, Select} from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase.js";
 
 const Inventario = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const [branches, setBranches] = useState([]);
   const [formData, setFormData] = useState({
     brand: "",
-    reference: "",
-    size: 0,
-    bridge: 0,
-    rod: 0,
-    color: "",
     quantity: 0,
     price: 0,
+    branchs_id: "",
   });
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      const { data, error } = await supabase.from("branchs").select("id, name");
+      if (error) {
+        console.error("Error fetching branches:", error);
+      } else {
+        setBranches(data);
+      }
+    };
+    fetchBranches();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,16 +56,11 @@ const Inventario = () => {
         duration: 3000,
         isClosable: true,
       });
-      console.log("Inventario registrado:", data);
       setFormData({
         brand: "",
-        reference: "",
-        size: 0,
-        bridge: 0,
-        rod: 0,
-        color: "",
         quantity: 0,
         price: 0,
+        branchs_id: "",
       });
     }
   };
@@ -113,56 +107,6 @@ const Inventario = () => {
               placeholder="Ingrese la marca"
             />
           </FormControl>
-          <FormControl>
-            <FormLabel>Referencia</FormLabel>
-            <Input
-              type="text"
-              name="reference"
-              value={formData.reference}
-              onChange={handleChange}
-              placeholder="Ingrese la referencia"
-            />
-          </FormControl>
-          <FormControl >
-            <FormLabel>Tamaño</FormLabel>
-            <Input
-              type="number"
-              name="size"
-              value={formData.size}
-              onChange={handleChange}
-              placeholder="Ingrese el tamaño"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Puente</FormLabel>
-            <Input
-              type="number"
-              name="bridge"
-              value={formData.bridge}
-              onChange={handleChange}
-              placeholder="Ingrese el tamaño del puente"
-            />
-          </FormControl>
-          <FormControl >
-            <FormLabel>Varilla</FormLabel>
-            <Input
-              type="number"
-              name="rod"
-              value={formData.rod}
-              onChange={handleChange}
-              placeholder="Ingrese el tamaño de la varilla"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Color</FormLabel>
-            <Input
-              type="text"
-              name="color"
-              value={formData.color}
-              onChange={handleChange}
-              placeholder="Ingrese el color"
-            />
-          </FormControl>
           <FormControl isRequired>
             <FormLabel>Cantidad</FormLabel>
             <Input
@@ -183,6 +127,21 @@ const Inventario = () => {
               placeholder="Ingrese el precio"
             />
           </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Sucursal</FormLabel>
+            <Select
+              name="branchs_id"
+              value={formData.branchs_id}
+              onChange={handleChange}
+              placeholder="Seleccione una sucursal"
+            >
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
           <Button type="submit" colorScheme="teal" width="full">
             Registrar
           </Button>
@@ -191,5 +150,5 @@ const Inventario = () => {
     </Box>
   );
 };
-
 export default Inventario;
+

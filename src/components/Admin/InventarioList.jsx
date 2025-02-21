@@ -1,89 +1,203 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase.js";
-import { Box, Button, Heading, Input, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Button, Heading, Input, Table, Tbody, Td, Th, Thead, Tr, Select, useToast} from "@chakra-ui/react";
 
-const InvetarioList = () => {
-    const [inventoryList, setInventoryList] = useState([]);
-    const [search, setSearch] = useState('');
-    const navigate = useNavigate();
+const InventarioList = () => {
+  const [inventoryList, setInventoryList] = useState([]);
+  const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editableData, setEditableData] = useState({});
+  const [branches, setBranches] = useState([]);
+  const navigate = useNavigate();
+  const toast = useToast();
 
-    const handleNavigate = (route) => {
-        navigate(route);
-    };
+  useEffect(() => {
+    fetchInventory();
+    fetchBranches();
+  }, []);
 
-    useEffect(() => {
-        fetchInventory();
-    }, []);
+  const fetchInventory = async () => {
+    const { data, error } = await supabase
+      .from("inventario")
+      .select("id, price, brand, quantity, branchs_id, branchs(name)");
 
-    const fetchInventory = async () => {
-        const { data, error } = await supabase
-            .from('inventario')
-            .select('id, quantity, brand, reference, color, size, bridge, rod, c_unit, status');
+    if (error) {
+      console.error("Error fetching inventory:", error);
+    } else {
+      setInventoryList(data);
+    }
+  };
 
-        if (error) {
-            console.error('Error fetching inventory:', error);
-        } else {
-            console.log(data);
-            setInventoryList(data);
-        }
-    };
+  const fetchBranches = async () => {
+    const { data, error } = await supabase.from("branchs").select("id, name");
+    if (!error) {
+      setBranches(data);
+    }
+  };
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value);
-    };
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
 
-    return (
-        <Box>
-            <Heading as="h2" size="lg" mb={4}>Lista de Inventario</Heading>
-            <Button onClick={() => handleNavigate('/Register')} mt={4} mr={2}>
-                Registrar Inventario
-            </Button>
-            <Button onClick={() => handleNavigate('/Admin')} mt={4}>
-                Volver a Opciones
-            </Button>
-            <Input
-                placeholder="Buscar por marca, referencia o color"
-                value={search}
-                onChange={handleSearchChange}
-                mb={4}
-            />
-            <Box overflowX="auto">
-                <Table variant="simple" minWidth="800px">
-                    <Thead>
-                        <Tr>
-                            <Th>Cantidad</Th>
-                            <Th>Marca</Th>
-                            <Th>Referencia</Th>
-                            <Th>Color</Th>
-                            <Th>Tamaño</Th>
-                            <Th>Puente</Th>
-                            <Th>Varilla</Th>
-                            <Th>C. Unit</Th>
-                            <Th>Estado</Th>
-                            <Td>Tipo de moviemiento</Td>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {inventoryList.map(item => (
-                            <Tr key={item.id}>
-                                <Td>{item.quantity}</Td>
-                                <Td>{item.brand}</Td>
-                                <Td>{item.reference}</Td>
-                                <Td>{item.color}</Td>
-                                <Td>{item.size}</Td>
-                                <Td>{item.bridge}</Td>
-                                <Td>{item.rod}</Td>
-                                <Td>{item.c_unit}</Td>
-                                <Td>{item.status}</Td>
-                                <Td>{item.movement_type}</Td>
-                            </Tr>
+  const handleDelete = async (id) => {
+    const { error } = await supabase.from("inventario").delete().match({ id });
+    if (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el inventario.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Éxito",
+        description: "Inventario eliminado correctamente.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchInventory();
+    }
+  };
+
+  const handleEdit = (id, item) => {
+    setEditingId(id);
+    setEditableData(item);
+  };
+
+  const handleChange = (e, field) => {
+    setEditableData({ ...editableData, [field]: e.target.value });
+  };
+
+  const handleSave = async (id) => {
+    const { error } = await supabase
+      .from("inventario")
+      .update({
+        brand: editableData.brand,
+        quantity: editableData.quantity,
+        price: editableData.price,
+        branchs_id: editableData.branchs_id,
+      })
+      .match({ id });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el inventario.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Éxito",
+        description: "Inventario actualizado correctamente.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setEditingId(null);
+      fetchInventory();
+    }
+  };
+
+  return (
+    <Box  p={6} minHeight="100vh">
+      <Heading as="h2" size="lg" mb={4} color="black">
+        Lista de Inventario
+      </Heading>
+      <Button colorScheme="blue" onClick={() => navigate("/Register")} mr={2}>
+        Registrar Inventario
+      </Button>
+      <Button colorScheme="gray" onClick={() => navigate("/Admin")}>
+        Volver a Opciones
+      </Button>
+      <Input
+        placeholder="Buscar por marca"
+        value={search}
+        onChange={handleSearchChange}
+        mt={4}
+        mb={4}
+        bg="white"
+        color="black"
+      />
+      <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
+        <Table minWidth="800px" variant="striped" colorScheme="teal">
+          <Thead bg="blue.300">
+            <Tr>
+              <Th color="white">Marca</Th>
+              <Th color="white">Cantidad</Th>
+              <Th color="white">Precio</Th>
+              <Th color="white">Sucursal</Th>
+              <Th color="white">Acciones</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {inventoryList
+              .filter((item) => item.brand.toLowerCase().includes(search.toLowerCase()))
+              .map((item) => (
+                <Tr
+                  key={item.id}
+                  onClick={(e) => {
+                    if (editingId && editingId !== item.id) setEditingId(null);
+                    e.stopPropagation();
+                  }}
+                >
+                  <Td>
+                    {editingId === item.id ? (
+                      <Input value={editableData.brand} onChange={(e) => handleChange(e, "brand")} />
+                    ) : (
+                      item.brand
+                    )}
+                  </Td>
+                  <Td>
+                    {editingId === item.id ? (
+                      <Input type="number" value={editableData.quantity} onChange={(e) => handleChange(e, "quantity")} />
+                    ) : (
+                      item.quantity
+                    )}
+                  </Td>
+                  <Td>
+                    {editingId === item.id ? (
+                      <Input type="number" value={editableData.price} onChange={(e) => handleChange(e, "price")} />
+                    ) : (
+                      item.price
+                    )}
+                  </Td>
+                  <Td>
+                    {editingId === item.id ? (
+                      <Select value={editableData.branchs_id} onChange={(e) => handleChange(e, "branchs_id")}>
+                        {branches.map((branch) => (
+                          <option key={branch.id} value={branch.id}>{branch.name}</option>
                         ))}
-                    </Tbody>
-                </Table>
-            </Box>
-        </Box>
-    );
+                      </Select>
+                    ) : (
+                      item.branchs?.name || "N/A"
+                    )}
+                  </Td>
+                  <Td>
+                    {editingId === item.id ? (
+                      <Button colorScheme="green" size="sm" onClick={() => handleSave(item.id)}>
+                        Guardar
+                      </Button>
+                    ) : (
+                      <Button colorScheme="teal" size="sm" mr={2} onClick={() => handleEdit(item.id, item)}>
+                        Editar
+                      </Button>
+                    )}
+                    <Button colorScheme="red" size="sm" onClick={() => handleDelete(item.id)}>
+                      Eliminar
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+          </Tbody>
+        </Table>
+      </Box>
+    </Box>
+  );
 };
 
-export default InvetarioList;
+export default InventarioList;
