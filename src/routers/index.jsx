@@ -1,11 +1,12 @@
-import { Route, Routes } from "react-router-dom"
-import SignUpForm from "../components/autorizacion/SignUpForm"
-import Welcome from "../components/Welcome"
-import LoginForm from "../components/autorizacion/LoginForm"
-import AdminDashBoard from "../components/optionsauth/OptionsAdmin"
-import ListUsers from "../components/Admin/ListUsers"
-import RegisterPatientForm from "../components/Optometra/RegisterPatient"
-import OptometraDashBoard from "../components/optionsauth/OptionsOptometra"
+import { Route, Routes } from "react-router-dom";
+import SignUpForm from "../components/autorizacion/SignUpForm";
+import Welcome from "../components/Welcome";
+import LoginForm from "../components/autorizacion/LoginForm";
+import AdminDashBoard from "../components/optionsauth/OptionsAdmin";
+import ListUsers from "../components/Admin/ListUsers";
+import RegisterPatientForm from "../components/Optometra/RegisterPatient";
+import OptometraDashBoard from "../components/optionsauth/OptionsOptometra";
+import VendedorDashBoard from "../components/optionsauth/OptionsVendedor.jsx";
 import ListPatients from "../components/Optometra/ListPatients"
 import Inventario from "../components/Admin/Inventario.jsx";
 import InventarioList from "../components/Admin/InventarioList.jsx";
@@ -40,6 +41,7 @@ const AppRouter = () => {
             <Route path="Admin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
             <Route path="RegisterPatient" element={<RegisterPatientForm />} />
+            <Route path="Vendedor" element={<VendedorDashBoard />} />
             <Route path="Optometra" element={<OptometraDashBoard />} />
             <Route path="ListPatients" element={<ListPatients />} />
             <Route path={"ListInventory"} element={<InventarioList/>}></Route>

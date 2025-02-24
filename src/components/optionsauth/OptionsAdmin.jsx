@@ -21,9 +21,6 @@ import sucursalesIcon from "../../assets/sucursales.svg"
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg"
 import medidasIcon from "../../assets/medidas.svg"
 
-
-
-
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
   { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon }, 
@@ -34,7 +31,7 @@ const options = [
   { label: "CIERRE", icon: cierredeCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
-  { label: "GARANTIA", icon: garantiaIcon },
+  { label: "CREDITOS", icon: garantiaIcon },
   { label: "CONSUL GARANTIA", icon: registrarPacienteIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "USUARIOS", icon: usuariosIcon },
@@ -93,7 +90,7 @@ const AdminDashBoard = () => {
       case "RETIROS":
         navigate('/RetreatsPatients')
         break;
-      case "GARANTIA":
+      case "CREDITOS":
         navigate('/Balance')
         break;
       case "HISTORIAL PACIENTE":
