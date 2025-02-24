@@ -13,24 +13,39 @@ const Lab = () => {
         ruc: ''
     });
 
+    const [message, setMessage] = useState(null);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
     const handleNavigate = (route) => {
         navigate(route);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { data, error } = await supabase
-            .from('labs')
-            .insert([formData]);
-
+        
+        if (!formData.name || !formData.address || !formData.cell || !formData.email || !formData.ruc) {
+            setMessage({ type: 'error', text: 'Todos los campos son obligatorios' });
+            return;
+        }
+    
+        const { data, error } = await supabase.from('labs').insert([formData]);
+    
         if (error) {
-            console.error('Error:', error);
+            setMessage({ type: 'error', text: `Error al registrar el laboratorio: ${error.message}` });
+            console.error('Error al registrar el laboratorio:', error.message);
         } else {
-            console.log('User registered:', data);
+            setMessage({ type: 'success', text: 'Laboratorio registrado con éxito' });
+            setFormData({
+                name: '',
+                address: '',
+                cell: '',
+                email: '',
+                ruc: ''
+            });
         }
     };
 
@@ -38,8 +53,20 @@ const Lab = () => {
         <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh" bgColor="#f0f0f0">
             <Box width="100%" maxWidth="900px" bgColor="#ffffff" borderRadius="8px" boxShadow="md" padding="20px">
                 <Heading as="h2" size="lg" textAlign="center" mb={4} color="#000000">
-                    Registrar Laboratorio
+                    Laboratorio
                 </Heading>
+                {message && (
+                    <Box 
+                        bgColor={message.type === 'success' ? "green.200" : "red.200"} 
+                        color={message.type === 'success' ? "green.800" : "red.800"} 
+                        p={2} 
+                        mb={4} 
+                        borderRadius="md"
+                        textAlign="center"
+                    >
+                        {message.text}
+                    </Box>
+                )}
 
                 <Box display="flex" justifyContent="space-between" mb={4}>
                     <Button 

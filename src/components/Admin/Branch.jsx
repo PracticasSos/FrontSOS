@@ -13,6 +13,8 @@ const Branch = () => {
         ruc: ''
     });
 
+    const [message, setMessage] = useState(null);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -23,14 +25,27 @@ const Branch = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!formData.name || !formData.address || !formData.email || !formData.cell || !formData.ruc) {
+            console.error('Todos los campos son obligatorios');
+            return;
+        }
         const { data, error } = await supabase
             .from('branchs')
             .insert([formData]);
 
         if (error) {
-            console.error('Error:', error);
+            setMessage({ type: 'error', text: `Error al registrar el sucursal: ${error.message}` });
+            console.error('Error al registrar la sucursal:', error.message);
         } else {
-            console.log('User registered:', data);
+            setMessage({ type: 'success', text: 'Sucursal registrada con éxito' });
+            setFormData({
+                name: '',
+                address: '',
+                email: '',
+                cell: '',
+                ruc: ''
+            });
         }
     };
 
@@ -48,6 +63,18 @@ const Branch = () => {
                 <Heading as="h3" size="lg" textAlign="center" mb={6} color="black">
                     Sucursal
                 </Heading>
+                {message && (
+                    <Box
+                        bgColor={message.type === 'success' ? "green.200" : "red.200"}
+                        color={message.type === 'success' ? "green.800" : "red.800"}
+                        p={2}
+                        mb={4}
+                        borderRadius="md"
+                        textAlign="center"
+                    >
+                        {message.text}
+                    </Box>
+                )}
 
                 <Box display="flex" justifyContent="space-between" mb={6}>
                     <Button
@@ -56,7 +83,7 @@ const Branch = () => {
                         color="white"
                         _hover={{ bgColor: "#008B94" }}
                     >
-                        Listar Inventario
+                        Listar Sucursales
                     </Button>
                     <Button
                         onClick={() => handleNavigate('/Admin')}

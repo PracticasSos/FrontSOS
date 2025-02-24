@@ -141,29 +141,29 @@ const MeasuresUse = () => {
                     <Tbody>
                         <Tr>
                         <Td>OD</Td>
-                        <Td><Input name="sphere_right" value={formData.sphere_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="cylinder_right" value={formData.cylinder_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="axis_right" value={formData.axis_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="prism_right" value={formData.prism_right} onChange={handleChange} placeholder="0"  /></Td>
-                        <Td><Input name="add_right" value={formData.add_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="av_vl_right" value={formData.av_vl_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="av_vp_right" value={formData.av_vp_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="dnp_right" value={formData.dnp_right} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="alt_right" value={formData.alt_right} onChange={handleChange} placeholder="0" /></Td>
+                        <Td><Input name="sphere_right" value={formData.sphere_right} onChange={handleChange}  /></Td>
+                        <Td><Input name="cylinder_right" value={formData.cylinder_right} onChange={handleChange} /></Td>
+                        <Td><Input name="axis_right" value={formData.axis_right} onChange={handleChange}  /></Td>
+                        <Td><Input name="prism_right" value={formData.prism_right} onChange={handleChange}   /></Td>
+                        <Td><Input name="add_right" value={formData.add_right} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vl_right" value={formData.av_vl_right} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vp_right" value={formData.av_vp_right} onChange={handleChange} /></Td>
+                        <Td><Input name="dnp_right" value={formData.dnp_right} onChange={handleChange} /></Td>
+                        <Td><Input name="alt_right" value={formData.alt_right} onChange={handleChange} /></Td>
                         </Tr>
                     </Tbody>
                     <Tbody>
                         <Tr>
                         <Td>OI</Td>
-                        <Td><Input name="sphere_left" value={formData.sphere_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="cylinder_left" value={formData.cylinder_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="axis_left" value={formData.axis_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="prism_left" value={formData.prism_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="add_left" value={formData.add_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="av_vl_left" value={formData.av_vl_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="av_vp_left" value={formData.av_vp_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="dnp_left" value={formData.dnp_left} onChange={handleChange} placeholder="0" /></Td>
-                        <Td><Input name="alt_left" value={formData.alt_left} onChange={handleChange} placeholder="0" /></Td>
+                        <Td><Input name="sphere_left" value={formData.sphere_left} onChange={handleChange} /></Td>
+                        <Td><Input name="cylinder_left" value={formData.cylinder_left} onChange={handleChange} /></Td>
+                        <Td><Input name="axis_left" value={formData.axis_left} onChange={handleChange} /></Td>
+                        <Td><Input name="prism_left" value={formData.prism_left} onChange={handleChange}/></Td>
+                        <Td><Input name="add_left" value={formData.add_left} onChange={handleChange} /></Td>
+                        <Td><Input name="av_vl_left" value={formData.av_vl_left} onChange={handleChange}/></Td>
+                        <Td><Input name="av_vp_left" value={formData.av_vp_left} onChange={handleChange} /></Td>
+                        <Td><Input name="dnp_left" value={formData.dnp_left} onChange={handleChange}/></Td>
+                        <Td><Input name="alt_left" value={formData.alt_left} onChange={handleChange} /></Td>
                         </Tr>
                     </Tbody>
                 </Table>

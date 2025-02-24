@@ -1,55 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, List, ListItem } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
 
 const ListBranch = () => {
     const [branch, setBranch] = useState([]);
     const [search, setSearch] = useState('');
-    const [filteredBranches, setFilteredBranches] = useState([]);
+    const [editingId, setEditingId] = useState(null);
+    const [editableData, setEditableData] = useState({});
+    const toast = useToast();
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchUsers();
+        fetchBranch();
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchBranch = async () => {
         const { data, error } = await supabase
             .from('branchs')
-            .select('id, name, address, email, cell, ruc');
-
+            .select('*');
         if (error) {
-            console.error('Error:', error);
+            toast({ title: 'Error', description: 'Error al obtener las sucursales', status: 'error' });
         } else {
             setBranch(data);
-            setFilteredBranches(data); // Initialize with all branches
         }
     };
 
-    const handleSearchChange = (e) => {
-        const query = e.target.value;
-        setSearch(query);
+    const handleEdit = (id, branch) => {
+        setEditingId(id);
+        setEditableData(branch);
+    };
 
-        // Filter branches based on the search query
-        if (query) {
-            const filtered = branch.filter(
-                (user) =>
-                    user.name.toLowerCase().includes(query.toLowerCase()) ||
-                    user.address.toLowerCase().includes(query.toLowerCase()) ||
-                    user.email.toLowerCase().includes(query.toLowerCase()) ||
-                    user.cell.toLowerCase().includes(query.toLowerCase()) ||
-                    user.ruc.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredBranches(filtered);
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setEditableData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = async (id) => {
+        const { error } = await supabase.from('branchs').update(editableData).match({ id });
+        if (!error) {
+            toast({ title: 'Éxito', description: 'Sucursal actualizada correctamente.', status: 'success' });
+            setEditingId(null);
+            fetchBranch();
         } else {
-            setFilteredBranches(branch); // Show all branches if no search query
+            toast({ title: 'Error', description: 'No se pudo actualizar la sucursal.', status: 'error' });
+        }
+    };
+    
+    const handleDelete = async (id) => {
+        const { error } = await supabase.from('branchs').delete().match({ id });
+        if (!error) { 
+            toast({ title: 'Éxito', description: 'Sucursal eliminada correctamente.', status: 'success' });
+            fetchBranch(); 
+        } else { 
+            toast({ title: 'Error', description: 'No se pudo eliminar la sucursal.', status: 'error' }); 
         }
     };
 
-    const handleSearchSelect = (selected) => {
-        setSearch(selected.name); // Auto-complete with the selected name
-        setFilteredBranches([selected]); // Display only the selected branch
-    };
+    const filteredBranches = branch.filter((branch) =>
+        [branch.name].some((field) =>  
+            field.toLowerCase().includes(search.toLowerCase())
+        )
+    );
 
     const handleNavigate = (route) => {
         navigate(route);
@@ -58,77 +71,65 @@ const ListBranch = () => {
     return (
         <Box bgColor="#ffffff" minHeight="100vh" padding="20px">
             <Heading as="h2" size="lg" mb={6} color="#000000" textAlign="center">
-                Lista de Usuarios
+                Lista de Sucursales 
             </Heading>
             
-            <Box display="flex" justifyContent="space-between" mb={6}>
-                <Button
-                    onClick={() => handleNavigate('/Register')}
-                    bgColor="#00A8C8"
-                    color="white"
-                    _hover={{ bgColor: "#008B94" }}
-                    width="30%"
-                >
-                    Registrar Usuarios
+            <Flex mb={4} gap={3} justify="center">
+                <Button onClick={() => handleNavigate('/Branch')} colorScheme="blue">
+                    Registrar Sucursal
                 </Button>
                 <Button
                     onClick={() => handleNavigate('/Admin')}
                     bgColor="#00A8C8"
                     color="white"
-                    _hover={{ bgColor: "#008B94" }}
-                    width="30%"
                 >
                     Volver a Opciones
                 </Button>
-            </Box>
-
-            <Box mb={6}>
-                <Input
-                    placeholder="Buscar por nombre, dirección, correo, teléfono o ruc"
-                    value={search}
-                    onChange={handleSearchChange}
-                    bgColor="#ffffff"
-                    borderColor="#00A8C8"
-                    _focus={{ borderColor: "#008B94" }}
-                    width="100%"
-                    maxWidth="600px"
-                    margin="0 auto"
-                />
-                {search && (
-                    <List bgColor="#f0f0f0" border="1px solid #ccc" maxHeight="200px" overflowY="auto" mt={2} borderRadius="8px">
-                        {filteredBranches.map((user) => (
-                            <ListItem
-                                key={user.id}
-                                padding="8px"
-                                _hover={{ backgroundColor: "#00A8C8", color: "white", cursor: "pointer" }}
-                                onClick={() => handleSearchSelect(user)}
-                            >
-                                {user.name}
-                            </ListItem>
+            </Flex>
+            <Input placeholder='Buscar sucursal...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4} w="50%" mx="auto" display="block"  />
+            <Box overflowX="auto"  bg="white" p={4} borderRadius="lg" shadow="md">
+                <Table variant="striped" colorScheme="teal">
+                <Thead bgColor="#00A8C8">
+                    <Tr>
+                        {['Nombre', 'Dirección', 'Correo', 'Teléfono', 'RUC', 'Acciones'].map((header) => (
+                            <Th key={header} fontWeight="bold" color="white" textAlign="center">
+                                {header}
+                            </Th>
                         ))}
-                    </List>
-                )}
-            </Box>
-
-            <Box overflowX="auto">
-                <Table variant="simple" minWidth="800px">
-                    <Thead>
-                        <Tr>
-                            <Th color="#000000">Nombre</Th>
-                            <Th color="#000000">Dirección</Th>
-                            <Th color="#000000">Correo</Th>
-                            <Th color="#000000">Teléfono</Th>
-                            <Th color="#000000">RUC</Th>
-                        </Tr>
-                    </Thead>
+                    </Tr>
+                </Thead>
                     <Tbody>
-                        {filteredBranches.map(user => (
-                            <Tr key={user.id}>
-                                <Td>{user.name}</Td>
-                                <Td>{user.address}</Td>
-                                <Td>{user.email}</Td>
-                                <Td>{user.cell}</Td>
-                                <Td>{user.ruc}</Td>
+                        {filteredBranches.map((branch) => (
+                
+                            <Tr key={branch.id}>
+                                {[
+                                    'name', 'address', 'email', 'phone', 'ruc'
+                                ].map((field) => ( 
+                                    <Td key={field}>
+                                        {editingId === branch.id ? (
+                                            <Input
+                                                name={field}
+                                                value={editableData[field]}
+                                                onChange={handleChange}
+                                            />
+                                        ) : (
+                                            branch[field] || 'N/A'
+                                        )}
+                                    </Td>
+                                ))}
+                                <Td textAlign="center">
+                                    {editingId === branch.id ? (
+                                        <>
+                                            <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(branch.id)} mr={2} />
+                                            <IconButton icon={<BiX />} colorScheme="gray" onClick={() => setEditingId(null)} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(branch.id, branch)} mr={2} />
+                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(branch.id)} />
+                                        </>
+                                    )}
+                                </Td>
                             </Tr>
                         ))}
                     </Tbody>

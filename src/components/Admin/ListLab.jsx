@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Flex, useToast } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
 
 const ListLab = () => {
-    const [branch, setBranch] = useState([]);
+    const [labs, setLabs] = useState([]);
     const [search, setSearch] = useState('');
+    const [editingId, setEditingId] = useState(null);
+    const [editableData, setEditableData] = useState({});
+    const toast = useToast();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,37 +19,62 @@ const ListLab = () => {
     const fetchLabs = async () => {
         const { data, error } = await supabase
             .from('labs')
-            .select('id, name, address, email, cell, ruc');
+            .select('*');
 
         if (error) {
-            console.error('Error:', error);
+            toast({ title: 'Error', description: 'Error al obtener los Laboratorios', status: 'error' });
         } else {
-            setBranch(data);
+            setLabs(data);
         }
     };
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value);
+    const handleEdit = (id, lab) => {
+        setEditingId(id);       
+        setEditableData(lab);
     };
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setEditableData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = async (id) => {
+        const { error } = await supabase.from('labs').update(editableData).match({ id });
+        if (!error) {
+            toast({ title: 'Éxito', description: 'Laboratorio actualizado correctamente.', status: 'success' });
+            setEditingId(null);
+            fetchLabs();
+        } else {
+            toast({ title: 'Error', description: 'No se pudo actualizar el Laboratorio.', status: 'error' });
+        }
+    };
+
+    const handleDelete = async (id) => {
+        const { error } = await supabase.from('labs').delete().match({ id });       
+        if (!error) {
+            toast({ title: 'Éxito', description: 'Laboratorio eliminado correctamente.', status: 'success' });
+            fetchLabs();
+        } else {
+            toast({ title: 'Error', description: 'No se pudo eliminar el Laboratorio.', status: 'error' });
+        }
+    };
+
+    const filteredLabs = labs.filter((labs) => 
+            [labs.name].some((field) => field.toLowerCase().includes(search.toLowerCase())
+        )
+    );
 
     const handleNavigate = (route) => {
         navigate(route);
     };
 
     return (
-        <Box bgColor="#f0f0f0" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-            <Box width="100%" maxWidth="1200px" bgColor="#ffffff" borderRadius="8px" boxShadow="md" padding="20px">
+        <Box bgColor="#f0f0f0" minHeight="100vh" padding="20px">
                 <Heading as="h2" size="lg" textAlign="center" mb={4} color="#000000">
                     Lista de Laboratorios
                 </Heading>
-
-                <Box display="flex" justifyContent="space-between" mb={4}>
-                    <Button 
-                        onClick={() => handleNavigate('/Register')} 
-                        bgColor="#00A8C8" 
-                        color="white" 
-                        _hover={{ bgColor: "#008B94" }}
-                    >
+                <Flex mb={4} gap={3} justify="center">
+                    <Button colorScheme="blue" onClick={() => handleNavigate('/Labs')} >
                         Registrar Laboratorio
                     </Button>
                     <Button 
@@ -56,46 +85,53 @@ const ListLab = () => {
                     >
                         Volver a Opciones
                     </Button>
-                </Box>
-
-                <Input
-                    placeholder="Buscar por nombre, dirección o correo"
-                    value={search}
-                    onChange={handleSearchChange}
-                    mb={4}
-                    borderColor="#00A8C8"
-                    _focus={{ borderColor: "#008B94" }}
-                />
-
-                <Box overflowX="auto">
-                    <Table variant="simple" minWidth="800px">
-                        <Thead>
+                </Flex>
+                <Input placeholder='Busacar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" />
+                <Box overflowX="auto"  bg="white" p={4} borderRadius="lg" shadow="md">
+                    <Table variant="striped" colorScheme="teal">
+                        <Thead bgColor="#00A8C8">
                             <Tr>
-                                <Th color="#000000">Nombre</Th>
-                                <Th color="#000000">Dirección</Th>
-                                <Th color="#000000">Correo</Th>
-                                <Th color="#000000">Teléfono</Th>
-                                <Th color="#000000">Ruc</Th>
+                                {['Nombre', 'Dirección', 'Correo', 'Celular', 'RUC', 'Acciones'].map((header) => (
+                                    <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>     
+                                ))}
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {branch.filter(lab => {
-                                return lab.name.toLowerCase().includes(search.toLowerCase()) ||
-                                    lab.address.toLowerCase().includes(search.toLowerCase()) ||
-                                    lab.email.toLowerCase().includes(search.toLowerCase());
-                            }).map(lab => (
+                            {filteredLabs.map((lab) => (
                                 <Tr key={lab.id}>
-                                    <Td>{lab.name}</Td>
-                                    <Td>{lab.address}</Td>
-                                    <Td>{lab.email}</Td>
-                                    <Td>{lab.cell}</Td>
-                                    <Td>{lab.ruc}</Td>
+                                    {[
+                                        'name', 'address', 'email', 'phone', 'ruc'
+                                    ].map((field) => (
+                                        <Td key={field}>
+                                            {editingId === lab.id ? (
+                                                <Input
+                                                    name={field}
+                                                    value={editableData[field]}
+                                                    onChange={handleChange}
+                                                />
+                                            ) : (
+                                                lab[field] || 'N/A'
+                                            )}
+                                        </Td>
+                                    ))}
+                                    <Td>
+                                        {editingId === lab.id ? (
+                                            <>
+                                                <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(branch.id)} mr={2} />
+                                                <IconButton icon={<BiX />} colorScheme="gray" onClick={() => setEditingId(null)} />
+                                            </>
+                                        ) : (
+                                        <>
+                                            <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(branch.id, branch)} mr={2} />
+                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(branch.id)} />
+                                        </>
+                                        )}
+                                    </Td>
                                 </Tr>
                             ))}
                         </Tbody>
                     </Table>
                 </Box>
-            </Box>
         </Box>
     );
 };

@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { 
-  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, 
-  useToast, Flex, IconButton 
-} from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
 
@@ -67,27 +64,45 @@ const ListPatients = () => {
 
   return (
     <Box p={5}>
-      <Heading mb={4}>Lista de Pacientes</Heading>
-      <Flex mb={4} gap={3}>
+      <Heading mb={4} textAlign="center">Lista de Pacientes</Heading>
+
+      <Flex mb={4} gap={3} justify="center">
         <Button colorScheme="blue" onClick={() => navigate('/RegisterPatient')}>Registrar Paciente</Button>
-        <Button onClick={() => navigate('/Admin')}>Volver</Button>
-        <Button colorScheme="red" onClick={() => navigate('/Login')}>Cerrar Sesión</Button>
+        <Button bgColor="#00A8C8" color="white"  onClick={() => navigate('/Admin')}>Volver a Opciones</Button>
       </Flex>
-      <Input placeholder="Buscar paciente" value={search} onChange={(e) => setSearch(e.target.value)} mb={4} />
+
+      <Input 
+        placeholder="Buscar paciente..." 
+        value={search} 
+        onChange={(e) => setSearch(e.target.value)} 
+        mb={4} 
+        w="50%" 
+        mx="auto"
+        display="block"
+      />
+
       <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
         <Table variant="striped" colorScheme="teal">
-          <Thead bg="blue.300">
+          <Thead bgColor="#00A8C8">
             <Tr>
-              {['Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono', 'Edad', 'C.L.',  'Ciudad', 'Correo', 'Razón de Consulta', 'Recomendaciones', 'Acciones'].map((header) => (
-                <Th key={header}>{header}</Th>
+              {[
+                'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono', 
+                'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta', 
+                'Recomendaciones', 'Acciones'
+              ].map((header) => (
+                <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
               ))}
             </Tr>
           </Thead>
           <Tbody>
             {filteredPatients.map((patient) => (
               <Tr key={patient.id}>
-                {['pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone', 'pt_age', 'pt_ci', 'pt_city', 'pt_email',  'pt_consultation_reason', 'pt_recommendations'].map((field) => (
-                  <Td key={field}>
+                {[
+                  'pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone', 
+                  'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason', 
+                  'pt_recommendations'
+                ].map((field) => (
+                  <Td key={field} textAlign="center">
                     {editingId === patient.id ? (
                       <Input name={field} value={editableData[field] || ''} onChange={handleChange} />
                     ) : (
@@ -95,7 +110,7 @@ const ListPatients = () => {
                     )}
                   </Td>
                 ))}
-                <Td>
+                <Td textAlign="center">
                   {editingId === patient.id ? (
                     <>
                       <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(patient.id)} mr={2} />
