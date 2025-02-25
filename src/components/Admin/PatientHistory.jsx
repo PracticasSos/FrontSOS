@@ -60,8 +60,29 @@ const PatientHistory = () => {
     fetchSales(patient.id);
   };
 
-  const handleNavigate = (route) => {
-    navigate(route);
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+      navigate(route);
+      return;
+    }
+    if (!user || !user.role_id) {
+      navigate('/LoginForm');
+      return;
+    }
+    switch (user.role_id) {
+      case 1:
+        navigate('/Admin');
+        break;
+      case 2:
+        navigate('/Optometra');
+        break;
+      case 3:
+        navigate('/Vendedor');
+        break;
+      default:
+      navigate('/');
+    }
   };
 
   const handleLogout = () => {
@@ -87,7 +108,7 @@ const PatientHistory = () => {
 
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
         <Button onClick={() => handleNavigate('/RegisterPatient')} mr={2} colorScheme="teal">Registrar Pacientes</Button>
-        <Button onClick={() => handleNavigate('/Admin')} mr={2} colorScheme="blue">Volver a Opciones</Button>
+        <Button onClick={() => handleNavigate()} mr={2} colorScheme="blue">Volver a Opciones</Button>
         <Button onClick={() => handleLogout()} colorScheme="red">Cerrar Sesión</Button>
       </Box>
       <Box as="form"  width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md">

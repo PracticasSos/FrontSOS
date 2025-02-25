@@ -38,9 +38,6 @@ const ListUsers = () => {
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleNavigate = (route) => {
-    navigate(route);
-  };
 
   const handleLogout = () => {
     setIsLoggingOut(true);
@@ -111,13 +108,38 @@ const ListUsers = () => {
     );
   }
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+        navigate(route);
+        return;
+    }
+    if (!user || !user.role_id) {
+        navigate('/LoginForm');
+        return;
+    }
+    switch (user.role_id) {
+        case 1:
+            navigate('/Admin');
+            break;
+        case 2:
+            navigate('/Optometra');
+            break;
+        case 3:
+            navigate('/Vendedor');
+            break;
+        default:
+            navigate('/');
+    }
+};
+
   return (
     <Box>
       <Heading as="h2" size="lg" mb={4}>Lista de Usuarios</Heading>
       <Button onClick={() => handleNavigate('/Register')} mt={4}>
         Registrar Usuarios
       </Button>
-      <Button onClick={() => handleNavigate('/Admin')} mt={4}>
+      <Button onClick={() => handleNavigate()} mt={4}>
         Volver a Opciones
       </Button>
       <Button onClick={handleLogout} mt={4}>

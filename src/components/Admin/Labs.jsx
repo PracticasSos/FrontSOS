@@ -20,10 +20,6 @@ const Lab = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleNavigate = (route) => {
-        navigate(route);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -46,6 +42,31 @@ const Lab = () => {
                 email: '',
                 ruc: ''
             });
+        }
+    };
+
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
         }
     };
 
@@ -75,10 +96,10 @@ const Lab = () => {
                         color="white" 
                         _hover={{ bgColor: "#008B94" }}
                     >
-                        Listar Inventario
+                        Listar Laboratorios
                     </Button>
                     <Button 
-                        onClick={() => handleNavigate('/Admin')} 
+                        onClick={() => handleNavigate()} 
                         bgColor="#00A8C8" 
                         color="white" 
                         _hover={{ bgColor: "#008B94" }}

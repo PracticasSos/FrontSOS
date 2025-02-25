@@ -17,8 +17,29 @@ const Retreats = () => {
     const [paymentBalance, setPaymentBalance] = useState("");
     const navigate = useNavigate();
 
-    const handleNavigate = (route) => {
-        navigate(route);
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
     };
 
     useEffect(() => {
@@ -140,20 +161,17 @@ const Retreats = () => {
         try {
             const phoneNumber = patientData.pt_phone;
             const formattedMessage = message || "Pedido listo para retiro.";
-    
-            // Obtener el crédito actual
             const currentCredit = salesData.credit || 0;
             const updatedBalance = (salesData.balance || 0) + currentCredit;
-            const updatedCredit = 0; // Siempre debe pasar a 0
+            const updatedCredit = 0; 
     
-            // Actualizar la venta con el nuevo balance y credit en 0
             const { error: updateSalesError } = await supabase
                 .from('sales')
                 .update({ 
                     is_completed: true,
-                    credit: updatedCredit,  // Se pone en 0
-                    balance: updatedBalance, // Se suma el crédito al balance (abono)
-                    payment_balance: paymentBalance // Actualiza el valor de payment_balance
+                    credit: updatedCredit,  
+                    balance: updatedBalance, 
+                    payment_balance: paymentBalance 
                 })
                 .eq('id', salesData.id);
     
@@ -232,7 +250,7 @@ const Retreats = () => {
         <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
             <Button onClick={() => handleNavigate("/RetreatsPatients")} colorScheme="teal">Lista de Retiros</Button>
-            <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
+            <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
             <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
         <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">

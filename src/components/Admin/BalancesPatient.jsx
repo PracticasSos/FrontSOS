@@ -99,10 +99,6 @@ const BalancesPatient = () => {
             }
         };
     
-        const handleNavigate = (path) => {
-            navigate(path);
-        };
-    
         const handleLogout = () => {
             navigate("/LoginForm");
         };
@@ -123,6 +119,31 @@ const BalancesPatient = () => {
             const whatsappUrl = `https://wa.me/${selectedPatient.pt_phone}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, "_blank");
         };
+
+        const handleNavigate = (route = null) => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (route) {
+                navigate(route);
+                return;
+            }
+            if (!user || !user.role_id) {
+                navigate('/LoginForm');
+                return;
+            }
+            switch (user.role_id) {
+                case 1:
+                    navigate('/Admin');
+                    break;
+                case 2:
+                    navigate('/Optometra');
+                    break;
+                case 3:
+                    navigate('/Vendedor');
+                    break;
+                default:
+                    navigate('/');
+            }
+        };
     
         return (
             <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
@@ -130,7 +151,7 @@ const BalancesPatient = () => {
     
                 <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
                     <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-                    <Button onClick={() => handleNavigate('/Admin')} colorScheme="blue">Volver a Opciones</Button>
+                    <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
                     <Button onClick={handleLogout} colorScheme="red">Cerrar Sesión</Button>
                 </Box>
     

@@ -47,7 +47,6 @@ const LoginForm = () => {
         console.error('Error fetching role:', roleError);
         setErrorMessage('Error: no se pudo obtener el rol del usuario');
       } else {
-        // Redirect based on role name
         switch (roleData.role_name) {
           case 'Admin':
             navigate('/admin');

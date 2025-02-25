@@ -365,7 +365,30 @@ const PatientRecords = () => {
         }
     };
 
-    const handleNavigate = (route) => navigate(route);
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
+    };
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
@@ -373,10 +396,10 @@ const PatientRecords = () => {
                 Cierre Diario - {branches.find(b => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
             <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
-                <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal">
+                <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">
                     Consultas de Cierre
                 </Button>
-                <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">
+                <Button onClick={() => handleNavigate()} colorScheme="blue">
                     Volver a Opciones
                 </Button>
                 <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">

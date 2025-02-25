@@ -116,17 +116,42 @@ const OrderLaboratoryList = () => {
     fetchFilteredPatients();
   };
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+        navigate(route);
+        return;
+    }
+    if (!user || !user.role_id) {
+        navigate('/LoginForm');
+        return;
+    }
+    switch (user.role_id) {
+      case 1:
+        navigate('/Admin');
+        break;
+      case 2:
+        navigate('/Optometra');
+        break;
+      case 3:
+        navigate('/Vendedor');
+        break;
+      default:
+      navigate('/');
+    }
+};
+
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center">Lista Pendinente de Órdenes de Laboratorio</Heading>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
-            <Button onClick={() => navigate("/ConsultarCierre")} colorScheme="teal" width="auto" maxWidth="200px">
-                Consultas de Cierre
+            <Button onClick={() => handleNavigate("/Labs")} colorScheme="teal" width="auto" maxWidth="200px">
+                Crear Laboratorio
             </Button>
-            <Button onClick={() => navigate("/Admin")} colorScheme="blue" width="auto" maxWidth="200px">
+            <Button onClick={() => handleNavigate()} colorScheme="blue" width="auto" maxWidth="200px">
                 Volver a Opciones
             </Button>
-            <Button onClick={() => navigate("/LoginForm")} colorScheme="red" width="auto" maxWidth="200px">
+            <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red" width="auto" maxWidth="200px">
                 Cerrar Sesión
             </Button>
         </Grid>

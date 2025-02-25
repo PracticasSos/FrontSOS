@@ -21,10 +21,6 @@ const LaboratoryOrder = () => {
     const [isTyping, setIsTyping] = useState(false);
     const navigate = useNavigate();
 
-    const handleNavigate = (route) => {
-        navigate(route);
-    };
-
     useEffect(() => {
         if (patientId) {
             fetchPatientData();
@@ -208,12 +204,37 @@ const LaboratoryOrder = () => {
         return fullName.toLowerCase().includes(searchTerm.toLowerCase()); 
     });
 
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
+    };
+
     return (
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
         <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
             <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">Lista de Laboratorio</Button>
-            <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">Volver a Opciones</Button>
+            <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
             <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
         <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">

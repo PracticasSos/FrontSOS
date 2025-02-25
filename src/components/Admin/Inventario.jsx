@@ -31,10 +31,6 @@ const Inventario = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleNavigate = (route) => {
-    navigate(route);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { data, error } = await supabase.from("inventario").insert([formData]);
@@ -65,6 +61,31 @@ const Inventario = () => {
     }
   };
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+        navigate(route);
+        return;
+    }
+    if (!user || !user.role_id) {
+        navigate('/LoginForm');
+        return;
+    }
+    switch (user.role_id) {
+        case 1:
+            navigate('/Admin');
+            break;
+        case 2:
+            navigate('/Optometra');
+            break;
+        case 3:
+            navigate('/Vendedor');
+            break;
+        default:
+            navigate('/');
+    }
+  };
+
   return (
     <Box
       bg="gray.50"
@@ -89,7 +110,7 @@ const Inventario = () => {
           <Button colorScheme="blue" onClick={() => handleNavigate("/ListInventory")}>
             Listar Inventario
           </Button>
-          <Button colorScheme="gray" onClick={() => handleNavigate("/Admin")}>
+          <Button colorScheme="gray" onClick={() => handleNavigate()}>
             Opciones
           </Button>
           <Button colorScheme="red" onClick={() => handleNavigate("/LoginForm")}>

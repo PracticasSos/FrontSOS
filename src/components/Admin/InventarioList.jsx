@@ -103,15 +103,40 @@ const InventarioList = () => {
     }
   };
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+        navigate(route);
+        return;
+    }
+    if (!user || !user.role_id) {
+        navigate('/LoginForm');
+        return;
+    }
+    switch (user.role_id) {
+        case 1:
+            navigate('/Admin');
+            break;
+        case 2:
+            navigate('/Optometra');
+            break;
+        case 3:
+            navigate('/Vendedor');
+            break;
+        default:
+            navigate('/');
+    }
+};
+
   return (
     <Box  p={6} minHeight="100vh">
       <Heading as="h2" size="lg" mb={4} color="black">
         Lista de Inventario
       </Heading>
-      <Button colorScheme="blue" onClick={() => navigate("/Register")} mr={2}>
+      <Button colorScheme="blue" onClick={() => handleNavigate("/Inventory")} mr={2}>
         Registrar Inventario
       </Button>
-      <Button colorScheme="gray" onClick={() => navigate("/Admin")}>
+      <Button colorScheme="gray" onClick={() => handleNavigate()}>
         Volver a Opciones
       </Button>
       <Input

@@ -64,8 +64,29 @@ const ListLab = () => {
         )
     );
 
-    const handleNavigate = (route) => {
-        navigate(route);
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
     };
 
     return (
@@ -78,7 +99,7 @@ const ListLab = () => {
                         Registrar Laboratorio
                     </Button>
                     <Button 
-                        onClick={() => handleNavigate('/Admin')} 
+                        onClick={() => handleNavigate()} 
                         bgColor="#00A8C8" 
                         color="white" 
                         _hover={{ bgColor: "#008B94" }}

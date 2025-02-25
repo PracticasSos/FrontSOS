@@ -113,10 +113,31 @@ const MeasuresFinal = () => {
       alert("Hubo un error al registar la venta.");
   }
   };
-  
-  
 
-  const handleNavigate = (route) => navigate(route);
+  const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
+    };
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
@@ -128,10 +149,10 @@ const MeasuresFinal = () => {
             </Alert>
         )}
       <Box display="flex" justifyContent="space-between" gap={4} width="100%" maxWidth="800px" mb={4} >
-        <Button onClick={() => handleNavigate("/ConsultarCierre")} colorScheme="teal" >
+        <Button onClick={() => handleNavigate("/NoExiste")} colorScheme="teal" >
           Consultar Medidas
         </Button>
-        <Button onClick={() => handleNavigate("/Admin")} colorScheme="blue">
+        <Button onClick={() => handleNavigate()} colorScheme="blue">
           Volver a Opciones
         </Button>
         <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">

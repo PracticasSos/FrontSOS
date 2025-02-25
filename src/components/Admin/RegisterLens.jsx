@@ -16,10 +16,6 @@ const RegisterLens = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleNavigate = (route) => {
-        navigate(route);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { data, error } = await supabase
@@ -57,12 +53,37 @@ const RegisterLens = () => {
         );
     };
 
+    const handleNavigate = (route = null) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            default:
+                navigate('/');
+        }
+    };
+
     return (
         <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
             <Heading mb={4}>Registrar Lens</Heading>
             <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
                 <Button onClick={() => handleNavigate('/ListPatients')} colorScheme="teal">Listar Pacientes</Button>
-                <Button onClick={() => handleNavigate('/Admin')} colorScheme="blue">Volver a Opciones</Button>
+                <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
                 <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
             </Box>
 
