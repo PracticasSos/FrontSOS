@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase.js";
-import { Box, Button, Heading, Input, Table, Tbody, Td, Th, Thead, Tr, Select, useToast} from "@chakra-ui/react";
+import { Box, Button, Heading, Input, Table, Tbody, Text, Td, Th, Thead, Tr, Select, useToast} from "@chakra-ui/react";
 
 const InventarioList = () => {
   const [inventoryList, setInventoryList] = useState([]);
   const [search, setSearch] = useState("");
+  const [totalStock, setTotalStock] = useState(0);
+  const [branchFilter, setBranchFilter] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editableData, setEditableData] = useState({});
   const [branches, setBranches] = useState([]);
@@ -16,6 +18,10 @@ const InventarioList = () => {
     fetchInventory();
     fetchBranches();
   }, []);
+
+  useEffect(() => {
+    calculateTotalStock();
+  }, [inventoryList, branchFilter]);
 
   const fetchInventory = async () => {
     const { data, error } = await supabase
@@ -34,6 +40,16 @@ const InventarioList = () => {
     if (!error) {
       setBranches(data);
     }
+  };
+
+  const calculateTotalStock = () => {
+    if (!branchFilter) {
+      setTotalStock(0);
+      return;
+    }
+    const filteredInventory = inventoryList.filter((item) => item.branchs_id === Number(branchFilter));  
+    const total = filteredInventory.reduce((acc, item) => acc + item.quantity, 0);
+    setTotalStock(total);
   };
 
   const handleSearchChange = (e) => {
@@ -126,7 +142,7 @@ const InventarioList = () => {
         default:
             navigate('/');
     }
-};
+  };
 
   return (
     <Box  p={6} minHeight="100vh">
@@ -139,6 +155,16 @@ const InventarioList = () => {
       <Button colorScheme="gray" onClick={() => handleNavigate()}>
         Volver a Opciones
       </Button>
+      <Select placeholder="Filtrar por sucursal" onChange={(e) => setBranchFilter(parseInt(e.target.value))} mt={4} mb={4}>
+        {branches.map((branch) => (
+          <option key={branch.id} value={branch.id}>{branch.name}</option>
+        ))}
+      </Select>
+      {branchFilter &&  inventoryList.filter(item => item.branchs_id === Number(branchFilter)).length === 0 ? (
+        <Text textAlign="center" color="gray.500">No hay inventario para esta sucursal</Text>
+      ): (
+        branchFilter && (
+          <>
       <Input
         placeholder="Buscar por marca"
         value={search}
@@ -220,7 +246,13 @@ const InventarioList = () => {
               ))}
           </Tbody>
         </Table>
+        <Box mt={4} p={2} bg="gray.100" borderRadius="md" textAlign="right">
+        <Text fontSize="lg" fontWeight="bold">Stock total en esta sucursal: {totalStock}</Text>
+        </Box>
       </Box>
+      </>
+        )
+      )}
     </Box>
   );
 };
