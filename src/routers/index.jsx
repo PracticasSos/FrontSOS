@@ -29,6 +29,8 @@ import BalancesPatient from "../components/Admin/BalancesPatient.jsx"
 import RetreatsPatients from "../components/Admin/RetreatsPatients.jsx"
 import Retreats from "../components/Admin/Retreats.jsx"
 import Balance from "../components/Admin/Balance.jsx"
+import HistoryMeasureList from "../components/Admin/HistoryMeasureList.jsx";
+import HistoryMeasures from "../components/Admin/HistoryMeasures.jsx";
 
 
 const AppRouter = () => {
@@ -60,6 +62,8 @@ const AppRouter = () => {
             </Route>
             <Route path="/OrderLaboratoryList" element={<OrderLaboratoryList/>}> </Route>
             <Route path="/OrderLaboratoryList/LaboratoryOrder/:patientId" element={<LaboratoryOrder />}></Route>
+            <Route path="/HistoryMeasureList" element={<HistoryMeasureList/>}> </Route>
+            <Route path="/HistoryMeasureList/HistoryMeasures/:patientId" element={<HistoryMeasures/>}></Route>
             <Route path="Egresos" element={<Egresos />}> </Route>
             <Route path="BalancesPatient" element={<BalancesPatient/>}></Route>
             <Route path="/RetreatsPatients" element={<RetreatsPatients/>}></Route>

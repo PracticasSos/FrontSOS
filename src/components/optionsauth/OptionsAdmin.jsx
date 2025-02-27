@@ -32,7 +32,7 @@ const options = [
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
   { label: "CREDITOS", icon: garantiaIcon },
-  { label: "CONSUL GARANTIA", icon: registrarPacienteIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "USUARIOS", icon: usuariosIcon },
   { label: "LABORATORIOS", icon: laboratoriosIcon },
@@ -92,6 +92,9 @@ const AdminDashBoard = () => {
         break;
       case "CREDITOS":
         navigate('/Balance')
+        break;
+      case "HISTORIAL DE MEDIDAS":
+        navigate('/HistoryMeasureList')
         break;
       case "HISTORIAL PACIENTE":
           navigate('/PatientHistory')
