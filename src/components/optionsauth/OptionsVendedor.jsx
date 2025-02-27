@@ -14,7 +14,8 @@ import egresosIcon from "../../assets/egresos.svg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
-import garantiaIcon from "../../assets/garantia.svg"
+import garantiaIcon from "../../assets/garantia.svg";
+import inventarioIcon from "../../assets/inventario.svg";
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
@@ -29,6 +30,7 @@ const options = [
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: garantiaIcon },
+  { label: "INVENTARIO", icon: inventarioIcon }
 ];
 
 const VendedorDashBoard = () => {
@@ -62,6 +64,9 @@ const VendedorDashBoard = () => {
         break;
       case "CREDITOS":
         navigate('/Balance')
+        break;
+      case "INVENTARIO":
+        navigate('/Inventory');
         break;
       case "HISTORIAL PACIENTE":
           navigate('/PatientHistory')
