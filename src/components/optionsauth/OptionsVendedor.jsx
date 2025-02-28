@@ -17,6 +17,7 @@ import medidasIcon from "../../assets/medidas.svg";
 import garantiaIcon from "../../assets/garantia.svg";
 import inventarioIcon from "../../assets/inventario.svg";
 
+
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
   { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon }, 
@@ -30,7 +31,8 @@ const options = [
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: garantiaIcon },
-  { label: "INVENTARIO", icon: inventarioIcon }
+  { label: "INVENTARIO", icon: inventarioIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
 ];
 
 const VendedorDashBoard = () => {
@@ -49,6 +51,9 @@ const VendedorDashBoard = () => {
         break;
       case "CIERRE":
         navigate('/PatientRecords');
+        break;
+      case "HISTORIAL DE MEDIDAS":
+        navigate('/HistoryMeasureList')
         break;
       case "EGRESOS":
         navigate('/Egresos');
