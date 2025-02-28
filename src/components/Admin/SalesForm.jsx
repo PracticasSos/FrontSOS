@@ -172,35 +172,22 @@ const SalesForm = () => {
       const value = e.target.value;
       setInputValue(value);
     
-      const [brand, color, reference] = value.split(",").map((v) => v.trim());
+      const brand = value.trim();
+    
+      if (!brand) {
+        setSuggestions([]);
+        return;
+      }
     
       try {
-        let query = supabase.from("inventario").select("id, brand, color, reference, price");
+        const { data, error } = await supabase
+          .from("inventario")
+          .select("id, brand, price")
+          .ilike("brand", `%${brand}%`);
     
-        if (brand && !color && !reference) {
-          query = query.ilike("brand", `%${brand}%`);
-        } 
-        else if (brand && color && reference) {
-          query = query
-            .ilike("brand", `%${brand}%`)
-            .ilike("color", `%${color}%`)
-            .ilike("reference", `%${reference}%`);
-        } 
+        if (error) throw error;
     
-        const { data, error } = await query;
-    
-        if (error || !data || data.length === 0) {
-          setSuggestions([]); 
-          return;
-        }
-    
-        setSuggestions((prevSuggestions) => {
-          if (JSON.stringify(prevSuggestions) !== JSON.stringify(data)) {
-            return data;
-          }
-          return prevSuggestions;
-        });
-    
+        setSuggestions(data.length > 0 ? data : []);
       } catch (err) {
         console.error("Error al obtener sugerencias:", err);
         setSuggestions([]);
@@ -208,15 +195,16 @@ const SalesForm = () => {
     };
     
     const handleSuggestionClick = (suggestion) => {
-      setInputValue(`${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}`);
-      setSuggestions([]);  
-      setFormData({
-        ...formData,
-        inventario_id: suggestion.id, 
-        frame: `${suggestion.brand}, ${suggestion.color}, ${suggestion.reference}`,
+      setInputValue(suggestion.brand);
+      setSuggestions([]); 
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        inventario_id: suggestion.id,
+        frame: suggestion.brand,
         p_frame: suggestion.price,
-      });
+      }));
     };
+    
 
     const fetchLatestRxFinal = async () => {
       try {
@@ -591,7 +579,7 @@ const SalesForm = () => {
               <Input
                 type="text"
                 name="inventario_id"
-                placeholder="Ej. venetti, rojo, 778, 1"
+                placeholder="Ej. Armazón ..."
                 value={inputValue}
                 onChange={handleFrameInputChange}
               />
@@ -605,7 +593,7 @@ const SalesForm = () => {
                       _hover={{ bg: 'teal.100', cursor: 'pointer' }}
                       onClick={() => handleSuggestionClick(item)}
                     >
-                      {item.brand} - {item.color} - {item.reference}
+                      {item.brand} 
                     </Box>
                   ))}
                 </Box>

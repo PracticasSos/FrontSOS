@@ -53,13 +53,13 @@ const Egresos = () => {
     if (error) {
       console.error("Error fetching labs:", error);
       return;
-    }
+    } 
     setLabs(data || []);
   };
 
 
   const fetchEgresos = async () => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString("en-CA");
     const { data, error } = await supabase
       .from("egresos")
       .select(`id, records,  date, value, specification, payment_in, users (firstname), labs (name), branchs (name)`)
