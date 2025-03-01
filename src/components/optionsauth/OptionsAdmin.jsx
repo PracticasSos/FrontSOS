@@ -73,7 +73,7 @@ const AdminDashBoard = () => {
         navigate('/RegisterLens');
         break;
       case "REGISTRAR MEDIDAS":
-        navigate('/RegisterMeasures');
+        navigate('/MeasuresFinal');
         break;
       case "CIERRE":
         navigate('/PatientRecords');

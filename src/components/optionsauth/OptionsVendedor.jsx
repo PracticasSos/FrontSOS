@@ -47,7 +47,7 @@ const VendedorDashBoard = () => {
         navigate('/SalesForm');
         break;
       case "REGISTRAR MEDIDAS":
-        navigate('/RegisterMeasures');
+        navigate('/MeasuresFinal');
         break;
       case "CIERRE":
         navigate('/PatientRecords');

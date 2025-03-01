@@ -17,8 +17,6 @@ import ListLab from "../components/Admin/ListLab.jsx";
 import CashClousure from "../components/Admin/CashClousure.jsx";
 import SalesForm from "../components/Admin/SalesForm.jsx";
 import RegisterLens from "../components/Admin/RegisterLens.jsx";
-import RegisterMeasures from "../components/Admin/RegisterMeasures.jsx"
-import MeasuresUse from "../components/Admin/MeasuresUse.jsx"
 import MeasuresFinal from "../components/Admin/MeasuresFinal.jsx"
 import PatientRecords from "../components/Admin/PatientRecords.jsx"
 import Egresos from "../components/Admin/Egresos.jsx"
@@ -56,10 +54,7 @@ const AppRouter = () => {
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
             <Route path="PatientRecords" element={<PatientRecords />}> </Route>
             <Route path="PatientHistory" element={<PatientHistory/>}> </Route>
-            <Route path="RegisterMeasures" element={<RegisterMeasures />}>
-                <Route path="MeasuresUse" element={<MeasuresUse />} />
-                <Route path="MeasuresFinal" element={<MeasuresFinal />} />
-            </Route>
+            <Route path="MeasuresFinal" element={<MeasuresFinal />}></Route>
             <Route path="/OrderLaboratoryList" element={<OrderLaboratoryList/>}> </Route>
             <Route path="/OrderLaboratoryList/LaboratoryOrder/:patientId" element={<LaboratoryOrder />}></Route>
             <Route path="/HistoryMeasureList" element={<HistoryMeasureList/>}> </Route>

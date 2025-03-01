@@ -24,7 +24,7 @@ const OptometraDashBoard = () => {
         navigate('/PatientHistory');
         break;
       case "REGISTRAR MEDIDAS":
-        navigate('/RegisterMeasures');
+        navigate('/MeasuresFinal');
         break;
       default:
         break;
