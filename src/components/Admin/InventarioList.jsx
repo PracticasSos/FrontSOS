@@ -160,97 +160,76 @@ const InventarioList = () => {
           <option key={branch.id} value={branch.id}>{branch.name}</option>
         ))}
       </Select>
-      {branchFilter &&  inventoryList.filter(item => item.branchs_id === Number(branchFilter)).length === 0 ? (
+      {branchFilter && inventoryList.filter(item => item.branchs_id === Number(branchFilter)).length === 0 ? (
         <Text textAlign="center" color="gray.500">No hay inventario para esta sucursal</Text>
-      ): (
+      ) : (
         branchFilter && (
           <>
-      <Input
-        placeholder="Buscar por marca"
-        value={search}
-        onChange={handleSearchChange}
-        mt={4}
-        mb={4}
-        bg="white"
-        color="black"
-      />
-      <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-        <Table minWidth="800px" variant="striped" colorScheme="teal">
-          <Thead bg="blue.300">
-            <Tr>
-              <Th color="white">Marca</Th>
-              <Th color="white">Cantidad</Th>
-              <Th color="white">Precio</Th>
-              <Th color="white">Sucursal</Th>
-              <Th color="white">Acciones</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {inventoryList
-              .filter((item) => item.brand.toLowerCase().includes(search.toLowerCase()))
-              .map((item) => (
-                <Tr
-                  key={item.id}
-                  onClick={(e) => {
-                    if (editingId && editingId !== item.id) setEditingId(null);
-                    e.stopPropagation();
-                  }}
-                >
-                  <Td>
-                    {editingId === item.id ? (
-                      <Input value={editableData.brand} onChange={(e) => handleChange(e, "brand")} />
-                    ) : (
-                      item.brand
-                    )}
-                  </Td>
-                  <Td>
-                    {editingId === item.id ? (
-                      <Input type="number" value={editableData.quantity} onChange={(e) => handleChange(e, "quantity")} />
-                    ) : (
-                      item.quantity
-                    )}
-                  </Td>
-                  <Td>
-                    {editingId === item.id ? (
-                      <Input type="number" value={editableData.price} onChange={(e) => handleChange(e, "price")} />
-                    ) : (
-                      item.price
-                    )}
-                  </Td>
-                  <Td>
-                    {editingId === item.id ? (
-                      <Select value={editableData.branchs_id} onChange={(e) => handleChange(e, "branchs_id")}>
-                        {branches.map((branch) => (
-                          <option key={branch.id} value={branch.id}>{branch.name}</option>
-                        ))}
-                      </Select>
-                    ) : (
-                      item.branchs?.name || "N/A"
-                    )}
-                  </Td>
-                  <Td>
-                    {editingId === item.id ? (
-                      <Button colorScheme="green" size="sm" onClick={() => handleSave(item.id)}>
-                        Guardar
-                      </Button>
-                    ) : (
-                      <Button colorScheme="teal" size="sm" mr={2} onClick={() => handleEdit(item.id, item)}>
-                        Editar
-                      </Button>
-                    )}
-                    <Button colorScheme="red" size="sm" onClick={() => handleDelete(item.id)}>
-                      Eliminar
-                    </Button>
-                  </Td>
-                </Tr>
-              ))}
-          </Tbody>
-        </Table>
-        <Box mt={4} p={2} bg="gray.100" borderRadius="md" textAlign="right">
-        <Text fontSize="lg" fontWeight="bold">Stock total en esta sucursal: {totalStock}</Text>
-        </Box>
-      </Box>
-      </>
+            <Input
+              placeholder="Buscar por marca"
+              value={search}
+              onChange={handleSearchChange}
+              mt={4}
+              mb={4}
+              bg="white"
+              color="black"
+            />
+            <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
+              <Table minWidth="800px" variant="striped" colorScheme="teal">
+                <Thead bg="blue.300">
+                  <Tr>
+                    <Th color="white">Marca</Th>
+                    <Th color="white">Cantidad</Th>
+                    <Th color="white">Precio</Th>
+                    <Th color="white">Sucursal</Th>
+                    <Th color="white">Acciones</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {inventoryList
+                    .filter(item => item.branchs_id === Number(branchFilter)) 
+                    .filter(item => item.brand.toLowerCase().includes(search.toLowerCase()))
+                    .map((item) => (
+                      <Tr key={item.id} onClick={(e) => { if (editingId && editingId !== item.id) setEditingId(null); e.stopPropagation(); }}>
+                        <Td>
+                          {editingId === item.id ? (
+                            <Input value={editableData.brand} onChange={(e) => handleChange(e, "brand")} />
+                          ) : (
+                            item.brand
+                          )}
+                        </Td>
+                        <Td>
+                          {editingId === item.id ? (
+                            <Input type="number" value={editableData.quantity} onChange={(e) => handleChange(e, "quantity")} />
+                          ) : (
+                            item.quantity
+                          )}
+                        </Td>
+                        <Td>
+                          {editingId === item.id ? (
+                            <Input type="number" value={editableData.price} onChange={(e) => handleChange(e, "price")} />
+                          ) : (
+                            item.price
+                          )}
+                        </Td>
+                        <Td>{item.branchs?.name || "N/A"}</Td>
+                        <Td>
+                          {editingId === item.id ? (
+                            <Button colorScheme="green" size="sm" onClick={() => handleSave(item.id)}>Guardar</Button>
+                          ) : (
+                            <Button colorScheme="teal" size="sm" mr={2} onClick={() => handleEdit(item.id, item)}>Editar</Button>
+                          )}
+                          <Button colorScheme="red" size="sm" onClick={() => handleDelete(item.id)}>Eliminar</Button>
+                        </Td>
+                      </Tr>
+                    ))}
+                </Tbody>
+              </Table>
+              <Box mt={4} p={2} bg="gray.100" borderRadius="md" textAlign="right">
+                <Text fontSize="lg" fontWeight="bold">Stock total en esta sucursal: {totalStock}</Text>
+              </Box>
+            </Box>
+          </>
         )
       )}
     </Box>

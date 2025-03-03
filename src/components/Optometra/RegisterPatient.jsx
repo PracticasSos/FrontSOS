@@ -144,7 +144,6 @@ const RegisterPatientForm = () => {
           </Box>
         </SimpleGrid>
         <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} mt={6}>
-          <Button onClick={() => handleNavigate('/RegisterMeasures/MeasuresUse')} colorScheme="gray">USO</Button>
           <Button onClick={() => handleNavigate('/RegisterMeasures/MeasuresFinal')} colorScheme="gray">FINAL</Button>
         </Box>
       </Box>
