@@ -24,17 +24,24 @@ const HistoryMeasureList = () => {
                     patients:patients (id, pt_firstname, pt_lastname, pt_ci, pt_occupation)
                 `);
             if (error) throw error;
+            const uniquePatients = [];
+            const patientIds = new Set();
 
-            const formattedData = data.map(rx => ({
-                patient_id: rx.patient_id,
-                pt_firstname: rx.patients?.pt_firstname || "",
-                pt_lastname: rx.patients?.pt_lastname || "",
-                pt_ci: rx.patients?.pt_ci || "",
-                pt_occupation: rx.patients?.pt_occupation || "",
-                created_at: rx.created_at
-            }));
-            
-            const sortedPatients = formattedData.sort((a, b) => a.pt_lastname.localeCompare(b.pt_lastname));
+            data.forEach(rx => {
+                if (!patientIds.has(rx.patient_id)) {
+                    patientIds.add(rx.patient_id);
+                    uniquePatients.push({
+                        patient_id: rx.patient_id,
+                        pt_firstname: rx.patients?.pt_firstname || "",
+                        pt_lastname: rx.patients?.pt_lastname || "",
+                        pt_ci: rx.patients?.pt_ci || "",
+                        pt_occupation: rx.patients?.pt_occupation || "",
+                        created_at: rx.created_at
+                    });
+                }
+            });
+             
+            const sortedPatients = uniquePatients.sort((a, b) => a.pt_lastname.localeCompare(b.pt_lastname));
             setPatients(sortedPatients);
             setFilteredPatients(sortedPatients);
         } catch (error) {
