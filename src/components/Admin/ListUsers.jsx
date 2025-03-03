@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Text, Spinner } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, useToast, Td, Input, Text, Spinner, Flex, IconButton } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
 
 const ListUsers = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editableData, setEditableData] = useState({});
+  const toast = useToast();
   const navigate = useNavigate();
 
 
@@ -19,10 +20,11 @@ const ListUsers = () => {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('users')
-      .select('id, firstname, lastname, username, age, role:role_id(role_name), email, phone_number, ci, branchs:branchs_id(name)');
+      .select('id, firstname, lastname, username, age, role:role_id(role_name), email, phone_number, ci, branchs:branch_id(name)');
 
     if (error) {
       console.error('Error:', error);
+        toast({ title: 'Error', description: 'Error al obtener los usuarios', status: 'error' });
     } else {
       setUsers(data);
     }
@@ -39,74 +41,38 @@ const ListUsers = () => {
   );
 
 
-  const handleLogout = () => {
-    setIsLoggingOut(true);
-    setTimeout(() => {
-      setIsLoggingOut(false);
-      navigate('/Login');
-    }, 2000);
+  const handleEdit = (id, user) => {
+    setEditingId(id);
+    setEditableData(user);
   };
 
-  const handleSelectUser = (user) => {
-    setSelectedUser(user);
-    setIsEditing(true);
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setEditableData((prev) => ({...prev, [name]: value}));
   };
-
-  const handleUpdate = () => {
-    if (selectedUser) {
-      navigate(`/UpdateUser/${selectedUser.id}`);
+ 
+  const handleSave = async (id) => {
+    const { error } = await supabase.from('users').update(editableData).match({id});
+    if (!error) {
+      toast({title: 'Éxito', description: 'Usuario actualizado correctamente.', status: 'success'});
+      setEditingId(null);
+      fetchUsers();
     } else {
-      alert('Por favor selecciona un usuario para actualizar.');
+      toast({title: 'Error', description: 'No se pudo actualizar el usuario.', status: 'error'});
     }
   };
 
-  const handleDelete = async () => {
-    if (selectedUser) {
-      
-      const { error } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', selectedUser.id);
-
-      if (error) {
-        console.error('Error al eliminar:', error);
-      } else {
-        alert(`Usuario ${selectedUser.firstname} eliminado con éxito.`);
-        setUsers(users.filter(user => user.id !== selectedUser.id));
-        setSelectedUser(null);
-      }
+  const handleDelete = async (id) => {
+    const { error } = await supabase.from('users').delete().match({id});
+    if (!error) {
+      toast({title: 'Éxito', description: 'Usuario eliminado correctamente.', status: 'success'});
+      fetchUsers();
     } else {
-      alert('Por favor selecciona un usuario para eliminar.');
-    }
-
-    if (error) {
-      console.error('Error al actualizar:', error);
-      alert('Error al actualizar al usuario.');
-    }else {
-      alert('Usuario actualizado con éxito.')
-      setIsEditing(false);
-
-      setUsers((prevUsets) => 
-        prevUsets.map((user) => 
-          user.id === selectedUser.id ? {...user, ...selectedUser}: user  
-        )
-      );
+      toast({title: 'Error', description: 'No se pudo eliminar el usuario.', status: 'error'});
     }
   };
 
-  const handleCancel = () => {
-    setIsEditing(false)
-    setSelectedUser(null);
-  }
 
-  if (isLoggingOut) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <Text fontSize="2xl" mr={4}>Cerrando sesión...</Text>
-        <Spinner size="xl" />
-      </Box>
-    );
-  }
 
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -134,75 +100,74 @@ const ListUsers = () => {
 };
 
   return (
-    <Box>
-      <Heading as="h2" size="lg" mb={4}>Lista de Usuarios</Heading>
-      <Button onClick={() => handleNavigate('/Register')} mt={4}>
-        Registrar Usuarios
-      </Button>
-      <Button onClick={() => handleNavigate()} mt={4}>
-        Volver a Opciones
-      </Button>
-      <Button onClick={handleLogout} mt={4}>
-        Cerrar Sesión
-      </Button>
-     
+    <Box bgColor="#ffffff" minHeight="100vh" padding="20px">
+      <Heading as="h2" size="lg" mb={6} color="#000000" textAlign="center">Lista de Usuarios</Heading>
+      <Flex mb={4} gap={3} justify="center">
+        <Button onClick={() => handleNavigate('/Register')} colorScheme="blue">
+          Registrar Usuarios
+        </Button>
+        <Button onClick={() => handleNavigate()} bgColor="#00A8C8" color="white">
+           Volver a Opciones
+        </Button>
+      </Flex>
       <Input
         placeholder="Buscar por nombre, apellido o username"
         value={search}
         onChange={handleSearchChange}
         mb={4}
+        w="50%" mx="auto" display="block"
       />
-      <Box overflowX="auto">
-        <Table variant="simple" minWidth="800px">
-          <Thead>
+      <Box overflowX="auto"  bg="white" p={4} borderRadius="lg" shadow="md">
+        <Table variant="striped" colorScheme="teal">
+          <Thead bgColor="#00A8C8">
             <Tr>
-              <Th>Nombre</Th>
-              <Th>Apellido</Th>
-              <Th>Username</Th>
-              <Th>Edad</Th>
-              <Th>Rol</Th>
-              <Th>Correo</Th>
-              <Th>Celular</Th>
-              <Th>C.I.</Th>
-              <Th>Sucursal</Th>
-              <Th>Acciones</Th>
+              {[ 'Nombre', 'Apellido', 'Username', 'Edad', 'Rol', 'Email', 'Teléfono', 'CI', 'Sucursal', 'Acciones'].map((header, index) => (
+                <Th key={header} fontWeight="bold" color="white" textAlign="center">
+                  {header}
+                </Th>
+              ))}
             </Tr>
           </Thead>
           <Tbody>
-            {filteredUsers.map(user => (
-              <Tr
-                key={user.id}
-                onClick={() => handleSelectUser(user)}
-                style={{
-                  backgroundColor: selectedUser?.id === user.id ? '#e0f7fa' : 'transparent',
-                  cursor: 'pointer',
-                }}
-              >
-      
-                <Td>{user.firstname}</Td>
-                <Td>{user.lastname}</Td>
-                <Td>{user.username}</Td>
-                <Td>{user.age}</Td>
-                <Td>{user.role.role_name}</Td>
-                <Td>{user.email}</Td>
-                <Td>{user.phone_number}</Td>
-                <Td>{user.ci}</Td>
-                <Td>{user.branch.name}</Td>
-                <Td>
-                  <Button colorScheme="blue" size="sm" onClick={() => handleSelectUser(user)}>
-                    Seleccionar
-                  </Button>
+            {filteredUsers.map((user) => (
+              <Tr key = {user.id}>
+                {[ 'firstname', 'lastname', 'username', 'age', 'role', 'email', 'phone_number', 'ci', 'branchs'
+                ].map((field) => (
+                  <Td key={field}>
+                    {editingId === user.id ? (
+                      <Input
+                        name={field}
+                        value={
+                          field === 'role' ? editableData.role?.role_name || user.role?.role_name || '' :
+                          field === 'branchs' ? editableData.branchs?.name || user.branchs?.name || '' :
+                          editableData[field] || user[field]
+                        }
+                        onChange={handleChange}
+                      />
+                    ) : (
+                      field === 'role' ? user.role?.role_name || 'N/A' :
+                      field === 'branchs' ? user.branchs?.name || 'N/A' :
+                      user[field] || 'N/A'
+                    )}
+                  </Td>
+                ))}
+                <Td textAlign="center">
+                  {editingId === user.id ? (
+                    <>
+                    <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(user.id)} mr={2} />
+                    <IconButton icon={<BiX />} colorScheme="red" onClick={() => setEditingId(null)} />
+                    </>
+                  ) : (
+                    <>
+                    <IconButton icon={<BiEdit />} colorScheme="blue" onClick={() => handleEdit(user.id, user)} mr={2} />
+                    <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(user.id)} />
+                    </>
+                  )}
                 </Td>
               </Tr>
             ))}
- 
           </Tbody>
         </Table>
-        
-      </Box>
-      <Box display="flex" justifyContent="space-around" mt={6}>
-        <Button onClick={handleUpdate} colorScheme="blue">Actualizar</Button>
-        <Button onClick={handleDelete} colorScheme="red">Eliminar</Button>
       </Box>
     </Box>
   );
