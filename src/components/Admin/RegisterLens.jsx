@@ -80,9 +80,9 @@ const RegisterLens = () => {
 
     return (
         <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-            <Heading mb={4}>Registrar Lens</Heading>
+            <Heading mb={4}>Registrar Lunas</Heading>
             <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-                <Button onClick={() => handleNavigate('/ListPatients')} colorScheme="teal">Listar Pacientes</Button>
+                <Button onClick={() => handleNavigate('/ListLens')} colorScheme="teal">Listar Lunas</Button>
                 <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
                 <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
             </Box>
