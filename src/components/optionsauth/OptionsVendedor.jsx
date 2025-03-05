@@ -14,7 +14,7 @@ import egresosIcon from "../../assets/egresos.svg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
-import garantiaIcon from "../../assets/garantia.svg";
+import creditIcon from "../../assets/credit.svg";
 import inventarioIcon from "../../assets/inventario.svg";
 
 
@@ -30,7 +30,7 @@ const options = [
   { label: "EGRESOS", icon: egresosIcon },
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: garantiaIcon },
+  { label: "CREDITOS", icon: creditIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
 ];

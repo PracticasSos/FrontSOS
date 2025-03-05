@@ -4,22 +4,24 @@ import { useNavigate } from 'react-router-dom';
 
 
 import registrarPacienteIcon from "../../assets/registrarPacientes.svg";
-import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg"
-import cierredeCajaIcon from "../../assets/cierredeCaja.svg"
-import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg"
-import enviosIcon from "../../assets/envios.svg"
-import ventaIcon from "../../assets/venta.svg"
-import entregasIcon from "../../assets/entregas.svg"
-import saldosIcon from "../../assets/saldos.svg"
-import egresosIcon from "../../assets/egresos.svg"
-import historiaClinicaIcon from "../../assets/historiaClinica.svg"
-import garantiaIcon from "../../assets/garantia.svg"
-import inventarioIcon from "../../assets/inventario.svg"
-import usuariosIcon from "../../assets/usuarios.svg"
-import laboratoriosIcon from "../../assets/laboratorios.svg"
-import sucursalesIcon from "../../assets/sucursales.svg"
-import certificadoVisualIcon from "../../assets/certificadoVisual.svg"
-import medidasIcon from "../../assets/medidas.svg"
+import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
+import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
+import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
+import enviosIcon from "../../assets/envios.svg";
+import ventaIcon from "../../assets/venta.svg";
+import entregasIcon from "../../assets/entregas.svg";
+import saldosIcon from "../../assets/saldos.svg";
+import egresosIcon from "../../assets/egresos.svg";
+import historiaClinicaIcon from "../../assets/historiaClinica.svg";
+import garantiaIcon from "../../assets/garantia.svg";
+import inventarioIcon from "../../assets/inventario.svg";
+import usuariosIcon from "../../assets/usuarios.svg";
+import laboratoriosIcon from "../../assets/laboratorios.svg";
+import sucursalesIcon from "../../assets/sucursales.svg";
+import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
+import medidasIcon from "../../assets/medidas.svg";
+import creditIcon from "../../assets/credit.svg";
+
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
@@ -31,7 +33,6 @@ const options = [
   { label: "CIERRE", icon: cierredeCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
-  { label: "CREDITOS", icon: garantiaIcon },
   { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "USUARIOS", icon: usuariosIcon },
@@ -40,7 +41,8 @@ const options = [
   { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon },
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR LUNAS", icon: registrarPacienteIcon },
-  { label: "REGISTRAR MEDIDAS", icon: medidasIcon }
+  { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
+  { label: "CREDITOS", icon: creditIcon }
 ];
 
 const AdminDashBoard = () => {

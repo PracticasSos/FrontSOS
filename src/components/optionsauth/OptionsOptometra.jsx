@@ -9,7 +9,8 @@ import historiaClinicaIcon from "../../assets/historiaClinica.svg"
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
   { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon },  
-  { label: "REGISTRAR MEDIDAS", icon: medidasIcon }
+  { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon }
 ];
 
 const OptometraDashBoard = () => {
@@ -22,6 +23,9 @@ const OptometraDashBoard = () => {
         break;
       case "HISTORIAL PACIENTE":
         navigate('/PatientHistory');
+        break;
+      case "HISTORIAL DE MEDIDAS":
+        navigate('/HistoryMeasureList')
         break;
       case "REGISTRAR MEDIDAS":
         navigate('/MeasuresFinal');
