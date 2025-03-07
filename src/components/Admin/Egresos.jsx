@@ -248,10 +248,9 @@ const Egresos = () => {
         <Input
           placeholder="Valor"
           type="number"
-          value={newEgreso.value}
+          value={newEgreso.value === 0 ? "" : newEgreso.value}
           onChange={(e) => handleInputChange("value", e.target.value)}
         />
-
         <Select
           placeholder="Método de Pago"
           value={newEgreso.payment_in}
