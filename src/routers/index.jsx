@@ -30,6 +30,7 @@ import Balance from "../components/Admin/Balance.jsx"
 import HistoryMeasureList from "../components/Admin/HistoryMeasureList.jsx";
 import HistoryMeasures from "../components/Admin/HistoryMeasures.jsx";
 import ListLens from "../components/Admin/ListLens.jsx";
+import ListBalance from "../components/Admin/ListBalance.jsx";
 
 
 const AppRouter = () => {
@@ -66,6 +67,7 @@ const AppRouter = () => {
             <Route path="/RetreatsPatients/Retreats/:patientId" element={<Retreats/>}></Route>
             <Route path="/Balance" element={<Balance/>}></Route>
             <Route path="/ListLens" element={<ListLens/>}></Route>
+            <Route path="/ListBalance" element={<ListBalance/>}></Route>
         </Routes>
     )
 }

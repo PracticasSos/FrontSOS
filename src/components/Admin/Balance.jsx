@@ -118,9 +118,8 @@ const Balance = () => {
             </Heading>
             <Box mb={6} display="flex" justifyContent="center">
                 <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-                    <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Cierre Diario</Button>
+                    <Button onClick={() => handleNavigate("/ListBalance")} colorScheme="teal">Listar Abonos</Button>
                     <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-                    <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
                 </Box>
             </Box>
             <Select placeholder="Seleccione una sucursal" value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)}>
