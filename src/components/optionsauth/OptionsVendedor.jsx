@@ -44,7 +44,7 @@ const VendedorDashBoard = () => {
         navigate('/RegisterPatient');
         break;
       case "VENTA/ CONTRATO DE SERVICIO":
-        navigate('/SalesForm');
+        navigate('/Sales');
         break;
       case "REGISTRAR MEDIDAS":
         navigate('/MeasuresFinal');
