@@ -31,6 +31,9 @@ import HistoryMeasureList from "../components/Admin/HistoryMeasureList.jsx";
 import HistoryMeasures from "../components/Admin/HistoryMeasures.jsx";
 import ListLens from "../components/Admin/ListLens.jsx";
 import ListBalance from "../components/Admin/ListBalance.jsx";
+import ListSales from "../components/Admin/ListSales.jsx";
+import Sales from "../components/Admin/Sales/Sales.jsx";
+import SearchPatient from "../components/Admin/Sales/SearchPatient.jsx";
 
 
 const AppRouter = () => {
@@ -52,7 +55,7 @@ const AppRouter = () => {
             <Route path={"Labs"} element={<Lab/>}></Route>
             <Route path={"ListLabs"} element={<ListLab/>}></Route>
             <Route path="CashClousure" element={<CashClousure />} ></Route>
-            <Route path="SalesForm" element= {<SalesForm/>}></Route>
+            <Route path="Sales" element= {<Sales/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
             <Route path="PatientRecords" element={<PatientRecords />}> </Route>
             <Route path="PatientHistory" element={<PatientHistory/>}> </Route>
@@ -68,6 +71,7 @@ const AppRouter = () => {
             <Route path="/Balance" element={<Balance/>}></Route>
             <Route path="/ListLens" element={<ListLens/>}></Route>
             <Route path="/ListBalance" element={<ListBalance/>}></Route>
+            <Route path="/ListSales" element={<ListSales/>}></Route>
         </Routes>
     )
 }

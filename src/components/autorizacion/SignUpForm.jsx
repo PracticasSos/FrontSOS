@@ -1,39 +1,83 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Heading, Input, Select, SimpleGrid } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../api/supabase';
+import { Box, Button, FormControl, FormLabel, Input, Alert, AlertIcon, Icon } from '@chakra-ui/react';
+import { FaUser } from 'react-icons/fa';
 
-
-const SignUpForm = () => {
+const LoginForm = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
-    username: '',
-    age: '',
-    role_id: '',
-    birthdate: '',
-    check_in_date: '',
-    email: '',
-    phone_number: '',
-    password: '',
-    ci: '',
-    branch_id: '',
-  });
-
-  const [roles, setRoles] = useState([]);
-  const [branchs, setBranchs] = useState([]);
-
   useEffect(() => {
-    fetchData('role', setRoles);
-    fetchData('branchs', setBranchs);
-  }, []);
+    // Check if a session already exists
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        console.log('Sesión encontrada al cargar la página:', session.user);
+        navigateToRole(session.user);
+      }
+    };
+    checkSession();
 
-  const fetchData = async (table, setter) => {
-    const { data, error } = await supabase.from(table).select('*');
-    if (error) console.error(`Error fetching ${table}:`, error);
-    else setter(data);
+    // Listening for changes in authentication state
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        console.log('Cambio de estado de autenticación:', session.user);
+        navigateToRole(session.user);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  const navigateToRole = async (user) => {
+    console.log('Redirigiendo según el rol del usuario:', user);
+    localStorage.setItem('user', JSON.stringify(user)); // Save user info in localStorage
+
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('role_id')
+      .eq('id', user.id)
+      .single();
+
+    if (userError || !userData) {
+      console.error('Error obteniendo el rol del usuario:', userError);
+      setErrorMessage('Error: no se pudo obtener el rol del usuario');
+      return;
+    }
+
+    const { data: roleData, error: roleError } = await supabase
+      .from('role')
+      .select('role_name')
+      .eq('id', userData.role_id)
+      .single();
+
+    if (roleError) {
+      console.error('Error obteniendo el nombre del rol:', roleError);
+      setErrorMessage('Error: no se pudo obtener el nombre del rol');
+      return;
+    }
+
+    console.log('Rol del usuario:', roleData.role_name);
+
+    // Redirect based on role
+    switch (roleData.role_name) {
+      case 'Admin':
+        navigate('/admin');
+        break;
+      case 'Optometra':
+        navigate('/optometra');
+        break;
+      case 'Vendedor':
+        navigate('/vendedor');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
   };
 
   const handleChange = (e) => {
@@ -41,88 +85,50 @@ const SignUpForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCreate = async () => {
-    const { data, error } = await supabase.from('users').insert([formData]);
-    if (error) console.error('Error al crear:', error);
-    else console.log('Usuario creado:', data);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { email, password } = formData;
+  
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+    if (error) {
+      console.error('Error:', error);
+      setErrorMessage('Error: credenciales incorrectas');
+    } else {
+      console.log("Inicio de sesión exitoso:", data);
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store user in localStorage
+        await navigateToRole(data.user);
+      }
+    }
   };
-
-
-  const handleReset = () => {
-    setFormData({
-      firstname: '',
-      lastname: '',
-      username: '',
-      age: '',
-      role_id: '',
-      birthdate: '',
-      check_in_date: '',
-      email: '',
-      phone_number: '',
-      password: '',
-      ci: '',
-      branch_id: '',
-    });
-  };
-
-  const handleNavigate = (route) => navigate(route);
 
   return (
-    <Box className="signup-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-      <Heading mb={4}>Registrar Usuarios</Heading>
-        <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-          <Button onClick={() => handleNavigate('/ListUsers')} colorScheme="teal">Listar Usuarios</Button>
-          <Button onClick={() => handleNavigate('/Admin')} colorScheme="blue">Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
+    <Box className="login-form" display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box width="100%" maxWidth="400px">
+        {errorMessage && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            {errorMessage}
+          </Alert>
+        )}
+        <Box display="flex" justifyContent="center" mb={4}>
+          <Icon as={FaUser} boxSize={8} />
         </Box>
-        <Box as='form' onSubmit={(e) => {e.preventDefault(); handleSubmit(); }} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
-          <SimpleGrid columns={[1, 2]} spacing={4}>
-            {renderInputField('Nombre', 'firstname', 'text', true)}
-            {renderInputField('Apellido', 'lastname', 'text', true)}
-            {renderInputField('Username', 'username', 'text', true)}
-            {renderInputField('Edad', 'age', 'number', true)}
-            {renderSelectField('Rol', 'role_id', roles, true)}
-            {renderInputField('Fecha de Nacimiento', 'birthdate', 'date', true)}
-            {renderInputField('Fecha de Ingreso', 'check_in_date', 'date', true)}
-            {renderInputField('Correo', 'email', 'email', true)}
-            {renderInputField('Celular', 'phone_number', 'text', true)}
-            {renderInputField('Contraseña', 'password', 'password', true)}
-            {renderInputField('C.I.', 'ci', 'text', true)}
-            {renderSelectField('Sucursal', 'branch_id', branchs, true)}
-          </SimpleGrid>
-
-          <Box display="flex" justifyContent="space-around" mt={6}>
-            <Button onClick={handleCreate} colorScheme="teal">Crear</Button>
-            <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
-          </Box>
-        </Box>
+        <form onSubmit={handleSubmit}>
+          <FormControl id="email" isRequired>
+            <FormLabel>Correo</FormLabel>
+            <Input type="email" name="email" value={formData.email} onChange={handleChange} />
+          </FormControl>
+          <FormControl id="password" isRequired mt={4}>
+            <FormLabel>Contraseña</FormLabel>
+            <Input type="password" name="password" value={formData.password} onChange={handleChange} />
+          </FormControl>
+          <Button type="submit" mt={4} width="100%">Iniciar Sesión</Button>
+        </form>
+      </Box>
     </Box>
   );
-
-  function renderInputField(label, name, type, isRequired = false) {
-    return (
-      <FormControl id={name} isRequired={isRequired}>
-        <FormLabel>{label}</FormLabel>
-        <Input type={type} name={name} value={formData[name]} onChange={handleChange} />
-      </FormControl>
-    );
-  }
-
-  function renderSelectField(label, name, options, isRequired = false) {
-    return (
-      <FormControl id={name} isRequired={isRequired}>
-        <FormLabel>{label}</FormLabel>
-        <Select name={name} value={formData[name]} onChange={handleChange}>
-          <option value="">Seleccione {label.toLowerCase()}</option>
-          {options.map(option => (
-            <option key={option.id} value={option.id}>
-              {option.name || option.role_name}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-    );
-  }
 };
 
-export default SignUpForm;
+export default LoginForm;

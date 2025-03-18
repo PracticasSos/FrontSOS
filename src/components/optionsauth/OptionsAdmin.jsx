@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,8 @@ import sucursalesIcon from "../../assets/sucursales.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
 import creditIcon from "../../assets/credit.svg";
+import { use } from 'react';
+import { supabase } from '../../api/supabase';
 
 
 const options = [
@@ -46,7 +48,33 @@ const options = [
 ];
 
 const AdminDashBoard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: {session}, error} = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error al obtener la sesión:', error);
+        navigate('/Login');
+      }
+      if (!session?.user) {
+        navigate('/Login');
+      } else {
+        setUser(session.user);
+        localStorage.setItem('user', JSON.stringify(session.user));
+      }
+      setLoading(false);
+    };
+    const userFromStorage = JSON.parse(localStorage.getItem('user'));
+    if (userFromStorage) {
+      setUser(userFromStorage);
+      setLoading(false);
+    } else {
+      checkSession();
+    }
+  }, [navigate]);
 
   const handleOptionClick = (label) => {
     switch (label) {
@@ -69,7 +97,7 @@ const AdminDashBoard = () => {
         navigate('/CashClousure');
         break;
       case "VENTA/ CONTRATO DE SERVICIO":
-        navigate('/SalesForm');
+        navigate('/Sales');
         break;
       case "REGISTRAR LUNAS":
         navigate('/RegisterLens');
@@ -114,6 +142,11 @@ const AdminDashBoard = () => {
       <Button onClick={() => handleNavigate('/Login')} mt={4}>
         Cerrar Sesión
       </Button>
+      {loading ? (
+        <Text>Cargando...</Text>
+      ) : (
+        <Text>Bienvenido</Text>
+      )}
       <SimpleGrid columns={[2, null, 4]} spacing={5}>
         {options.map((option, index) => (
           <Box
