@@ -67,17 +67,12 @@ const Pdf = ({ formData, targetRef }) => {
     try {
       const salesContent = targetRef.current;
       const buttons = salesContent.querySelectorAll("button");
-
-      // Ocultar los botones antes de la generación del PDF
       buttons.forEach((button) => {
         button.style.display = "none";
       });
 
-      // Captura el contenido como imagen
       const canvas = await html2canvas(salesContent, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-
-      // Crea el PDF con la imagen
       const pdf = new jsPDF("p", "mm", "a4");
       pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
       const pdfBlob = pdf.output("blob");
@@ -89,8 +84,6 @@ const Pdf = ({ formData, targetRef }) => {
         duration: 3000,
         isClosable: true,
       });
-
-      // Sube el PDF a Supabase
       const fileName = `venta-${formData.patient_id}-${Date.now()}.pdf`;
       const { data, error } = await supabase.storage.from("sales").upload(fileName, pdfBlob, {
         contentType: "application/pdf",
@@ -108,8 +101,6 @@ const Pdf = ({ formData, targetRef }) => {
 
       const { data: urlData, error: urlError } = supabase.storage.from("sales").getPublicUrl(fileName);
       if (urlError) throw urlError;
-
-      // Restaurar los botones después de la generación del PDF
       buttons.forEach((button) => {
         button.style.display = "inline-block";
       });
