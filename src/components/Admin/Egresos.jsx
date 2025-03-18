@@ -86,9 +86,10 @@ const Egresos = () => {
       return;
     }
   
+    const today = new Date().toLocaleDateString("en-CA");
     const { data, error } = await supabase.from("egresos").insert({
       ...newEgreso,
-      date: new Date().toISOString().split("T")[0],
+      date: today,
     });
   
     if (error) {
