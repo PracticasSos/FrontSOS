@@ -129,6 +129,7 @@ const Sales = () => {
     }
   };
 
+  
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value);
     const today = new Date();
@@ -148,6 +149,36 @@ const Sales = () => {
   };
 
   const handleSubmit = async () => {
+    const signatureDataUrl = formData.signature;
+      if (!signatureDataUrl) {
+      console.error("La firma no ha sido proporcionada.");
+      return;
+    }
+    if (formData.brand_id) {
+      const { data: frame, error } = await supabase
+        .from("inventario")
+        .select("quantity")
+        .eq("id", formData.brand_id)
+        .single();
+      if (error || !frame) {
+        console.error("Error obteniendo cantidad:", error);
+        return;
+      }
+      if (frame.quantity > 0) {
+        const { error: updateError } = await supabase
+          .from("inventario")
+          .update({ quantity: frame.quantity - 1 })
+          .eq("id", formData.brand_id);
+  
+        if (updateError) {
+          console.error("Error actualizando cantidad:", updateError);
+        }
+      } else {
+        console.log("No hay suficiente cantidad para el armazón seleccionado.");
+        return; 
+      }
+    }
+
     const saleDataToSave = {
       date: saleData.date,
       delivery_time: saleData.delivery_time,
@@ -168,9 +199,11 @@ const Sales = () => {
       discount_lens: isNaN(parseFloat(formData.discount_lens)) ? 0 : parseFloat(formData.discount_lens),
       inventario_id: saleData.brand_id || null,
       measure_id: formData.measure_id || null,
+      signature: formData.signature || null,
     };
 
     try {
+
       const { data, error } = await supabase
         .from("sales")
         .insert([saleDataToSave])
@@ -225,90 +258,81 @@ const Sales = () => {
   };
 
   return (
-    <Box ref={salesRef}>
-    <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-      <Heading mb={4}>Registro de Venta</Heading>
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-        <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
-      </Box>
-
-      <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md">
-        <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
-        <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
-        <Box p={5} maxWidth="800px" mx="auto">
-          <SimpleGrid columns={[1, 2]} spacing={4}>
-            <SelectItems onFormDataChange={handleFormDataChange} initialFormData={formData} />
-            <FormControl>
-              <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                Entrega
-              </FormLabel>
-              <Input
-                type="date"
-                name="delivery_date"
-                onChange={handleDateChange}
-                borderColor="teal.400"
-                focusBorderColor="teal.600"
-                borderRadius="md"
-                p={2}
-              />
-              <Box
-                mt={3}
-                p={3}
-                borderWidth="1px"
-                borderRadius="md"
-                borderColor="gray.300"
-                backgroundColor="gray.50"
-                textAlign="center"
-              >
-                <Text fontSize="md" fontWeight="medium" color="gray.700">
-                  {saleData.delivery_time
-                    ? `📅 Entrega en ${saleData.delivery_time} días`
-                    : "Seleccione una fecha para ver el tiempo de entrega"}
-                </Text>
-              </Box>
-            </FormControl>
-          </SimpleGrid>
+    <Box ref={salesRef} w="full" px={4}>
+      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
+        <Heading mb={4} textAlign="center">Registro de Venta</Heading>
+        <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="full" maxWidth="900px" mb={4}>
+          <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
+          <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
+          <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
-        <Box p={5} maxWidth="1500px" mx="auto"  ml={60}>
-          <SimpleGrid columns={[1, 2]} spacing={0} mt={-3}>
-            <Box>
-            <PriceCalculation formData={formData} setFormData={setFormData} />
-            </Box>
-            <Box  maxWidth="280px"  ml={-10}>
+  
+        <Box width="full" maxWidth="1500px" p={6} boxShadow="lg" borderRadius="md">
+          <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
+          <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
+          <Box p={5} width="full" maxWidth="800px" mx="auto">
+            <SimpleGrid columns={[1, 2]} spacing={4}>
+              <SelectItems onFormDataChange={handleFormDataChange} initialFormData={formData} />
               <FormControl>
                 <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                  Mensaje
+                  Entrega
                 </FormLabel>
-                <Textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={(e) => setFormData(prevState => ({ ...prevState, message: e.target.value }))}
-                  placeholder="Escribe un mensaje personalizado..."
-                  height="150px"
-                  minHeight="100px"
+                <Input
+                  type="date"
+                  name="delivery_date"
+                  onChange={handleDateChange}
                   borderColor="teal.400"
                   focusBorderColor="teal.600"
+                  borderRadius="md"
+                  p={2}
                 />
+                <Box mt={3} p={3} borderWidth="1px" borderRadius="md" borderColor="gray.300" backgroundColor="gray.50" textAlign="center">
+                  <Text fontSize="md" fontWeight="medium" color="gray.700">
+                    {saleData.delivery_time ? `📅 Entrega en ${saleData.delivery_time} días` : "Seleccione una fecha para ver el tiempo de entrega"}
+                  </Text>
+                </Box>
               </FormControl>
-            </Box>
-          </SimpleGrid>
-          <Total formData={formData} setFormData={setFormData} />
+            </SimpleGrid>
+          </Box>
+          <Box p={5} width="full" maxWidth="1500px" mx="auto" ml={[0, 10, 20, 40]}>
+            <SimpleGrid columns={[1, 2]} spacing={4}>
+              <PriceCalculation formData={formData} setFormData={setFormData} />
+              <Box maxWidth="300px">
+                <FormControl>
+                  <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
+                    Mensaje
+                  </FormLabel>
+                  <Textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData(prevState => ({ ...prevState, message: e.target.value }))}
+                    placeholder="Escribe un mensaje personalizado..."
+                    height="150px"
+                    minHeight="100px"
+                    borderColor="teal.400"
+                    focusBorderColor="teal.600"
+                  />
+                </FormControl>
+              </Box>
+            </SimpleGrid>
+          </Box>
+          <Box p={5} width="full" maxWidth="700px" mx="auto" >
+            <SimpleGrid columns={[1, 1, 2]} spacing={4}> 
+              <Total formData={formData} setFormData={setFormData} />
+              <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({
+                ...prev,
+                signature: signatureDataUrl,
+              }))} />
+            </SimpleGrid>
+          </Box>
+          <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
+            Registrar Venta
+          </Button>
+          {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
         </Box>
-        {/*<SignaturePadComponent onSave={handleSaveSignature} /> */}
-        <Button colorScheme="teal" onClick={handleSubmit}>
-          Registrar Venta
-        </Button>
-        {saleId && (
-          <>
-          <Pdf formData={pdfData} targetRef={salesRef} />
-          </>
-        )}
       </Box>
     </Box>
-    </Box>
-  );
+  );  
 };
 
 export default Sales;

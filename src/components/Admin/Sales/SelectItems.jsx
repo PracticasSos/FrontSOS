@@ -34,8 +34,9 @@ const SelectItems = ({ onFormDataChange, initialFormData = {} }) => {
     try {
       const { data, error } = await supabase
         .from("inventario")
-        .select("id, brand, price")
-        .ilike("brand", `%${value}%`);
+        .select("id, brand, price, quantity")
+        .ilike("brand", `%${value}%`)
+        .gt("quantity", 0);
       
       if (error) throw error;
       if (data) {
@@ -79,7 +80,6 @@ const SelectItems = ({ onFormDataChange, initialFormData = {} }) => {
       setLensSuggestions([]);
     }
   };
-  
 
   return (
     <SimpleGrid columns={1} spacing={4}>

@@ -40,57 +40,60 @@ const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [
 
     return (
         <Box mt={4} mb={4}>
+          <Box overflowX="auto">
             <Table variant="simple" mb={4}>
-                <Thead>
-                    <Tr>
-                        <Th>Rx Final</Th>
-                        <Th>Esfera</Th>
-                        <Th>Cilindro</Th>
-                        <Th>Eje</Th>
-                        <Th>Prisma</Th>
-                        <Th>ADD</Th>
-                        <Th>AV VL</Th>
-                        <Th>AV VP</Th>
-                        <Th>DNP</Th>
-                        <Th>ALT</Th>
-                    </Tr>
-                </Thead>
-                <Tbody>
+              <Thead>
+                <Tr>
+                  <Th>Rx Final</Th>
+                  <Th>Esfera</Th>
+                  <Th>Cilindro</Th>
+                  <Th>Eje</Th>
+                  <Th>Prisma</Th>
+                  <Th>ADD</Th>
+                  <Th>AV VL</Th>
+                  <Th>AV VP</Th>
+                  <Th>DNP</Th>
+                  <Th>ALT</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {[
+                  { side: "OD", prefix: "right" },
+                  { side: "OI", prefix: "left" },
+                ].map(({ side, prefix }) => (
+                  <Tr key={prefix}>
+                    <Td>{side}</Td>
                     {[
-                        { side: "OD", prefix: "right" },
-                        { side: "OI", prefix: "left" },
-                    ].map(({ side, prefix }) => (
-                        <Tr key={prefix}>
-                            <Td>{side}</Td>
-                            {[
-                                "sphere",
-                                "cylinder",
-                                "axis",
-                                "prism",
-                                "add",
-                                "av_vl",
-                                "av_vp",
-                                "dnp",
-                                "alt",
-                            ].map((field) => (
-                                <Td key={field}>
-                                    <Input
-                                        name={`${field}_${prefix}`}
-                                        value={
-                                            filteredMeasures.length > 0
-                                                ? filteredMeasures[0][`${field}_${prefix}`] || ""
-                                                : formData[`${field}_${prefix}`] || ""
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </Td>
-                            ))}
-                        </Tr>
+                      "sphere",
+                      "cylinder",
+                      "axis",
+                      "prism",
+                      "add",
+                      "av_vl",
+                      "av_vp",
+                      "dnp",
+                      "alt",
+                    ].map((field) => (
+                      <Td key={field}>
+                        <Input
+                          name={`${field}_${prefix}`}
+                          value={
+                            filteredMeasures.length > 0
+                              ? filteredMeasures[0][`${field}_${prefix}`] || ""
+                              : formData[`${field}_${prefix}`] || ""
+                          }
+                          onChange={handleChange}
+                          fontSize={{ base: "sm", md: "md" }}  
+                        />
+                      </Td>
                     ))}
-                </Tbody>
+                  </Tr>
+                ))}
+              </Tbody>
             </Table>
+          </Box>
         </Box>
-    );
+      );      
 };
 
 export default Measures;

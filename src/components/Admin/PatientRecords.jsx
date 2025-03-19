@@ -35,16 +35,10 @@ const PatientRecords = () => {
     }, [totals, egresosGrandTotal, withdrawalsRecords]);
     
     const calculateFinalBalance = () => {
-        console.log("Total Withdrawals:", withdrawalsRecords);
         const totalWithdrawals = withdrawalsRecords.reduce(
             (sum, record) => sum + Number(record.abonoDelDia || 0), 
             0
         );
-        
-        console.log("Total Withdrawals (after calculation):", totalWithdrawals); 
-        console.log("Totals:", totals);  // Verifica los valores de los totales
-        console.log("Egresos Totals:", egresosTotals);  // Verifica los valores de egresos
-    
         const balance = {
             EFEC: (totals.EFEC || 0) - (egresosTotals.EFEC || 0) + (totalAbonosDelDia.EFEC || 0),
             DATAF: (totals.DATAF || 0) - (egresosTotals.DATAF || 0) + (totalAbonosDelDia.DATAF || 0),
@@ -53,12 +47,8 @@ const PatientRecords = () => {
                    - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
                    + (totalAbonosDelDia.EFEC || 0) + (totalAbonosDelDia.TRANS || 0) + (totalAbonosDelDia.DATAF || 0)
         };
-    
-        console.log("Final Balance Calculation:", balance);  // Verifica el resultado final
-        
-        setFinalBalance(balance);  // Actualiza el estado del balance final
+        setFinalBalance(balance); 
     };
-    
 
     const fetchBranches = async () => {
         try {
@@ -69,7 +59,7 @@ const PatientRecords = () => {
             if (error) throw error;
             setBranches(data || []);
         } catch (error) {
-            console.error("Error al obtener sucursales:", error);
+            setBranches([]);
         }
     };
 
@@ -99,8 +89,6 @@ const PatientRecords = () => {
 
     const fetchDailyRecords = async (branchId) => {
         const today = new Date().toLocaleDateString("en-CA");  
-        console.log("Fecha de hoy:", today);
-        
         try {
             const { data, error } = await supabase
                 .from("sales")
@@ -109,9 +97,9 @@ const PatientRecords = () => {
                     date,
                     branchs_id,
                     branchs:branchs_id (id, name),
-                    frame, 
+                    inventario (brand), 
                     lens (lens_type), 
-                    total, 
+                    total,     
                     credit, 
                     balance, 
                     payment_in,
@@ -121,8 +109,6 @@ const PatientRecords = () => {
                 .eq("branchs_id", branchId);
     
             if (error) throw error;
-    
-            console.log("Datos de ventas obtenidos:", data);
     
             if (data && data.length > 0) {
                 const formattedRecords = data.map((record) => ({
@@ -146,18 +132,14 @@ const PatientRecords = () => {
                 });
             } else {
                 resetData();
-                console.log("No sales found for selected branch on current date");
             }
         } catch (err) {
-            console.error("Error fetching daily records:", err);
             resetData();
         }
     };
 
     const fetchDailyWithdrawals = async (branchId) => {
-        const today = new Date().toLocaleDateString("en-CA");
-        console.log("Fecha de hoy:", today);
-    
+        const today = new Date().toLocaleDateString("en-CA");  
         try {
             const { data: salesToday, error: salesError } = await supabase
                 .from("sales")
@@ -188,8 +170,6 @@ const PatientRecords = () => {
                 .in("sale_id", saleIds);
     
             if (withdrawalsError) throw withdrawalsError;
-    
-            console.log("Abonos del día:", withdrawalsToday);
             
             let totalAbonosDelDia = { EFEC: 0, TRANS: 0, DATAF: 0 };
             const formattedWithdrawals = withdrawalsToday.map((withdrawal) => {
@@ -227,7 +207,6 @@ const PatientRecords = () => {
                 abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
             }));
         } catch (err) {
-            console.error("Error fetching daily withdrawals:", err);
             setWithdrawalsRecords([]); 
         }
     };
@@ -262,7 +241,6 @@ const PatientRecords = () => {
                 setEgresosGrandTotal(0);
             }
         } catch (err) {
-            console.error("Error fetching expenses:", err);
             setEgresos([]);
             setEgresosTotals({ EFEC: 0, DATAF: 0, TRANS: 0 });
             setEgresosGrandTotal(0);
@@ -361,7 +339,6 @@ const PatientRecords = () => {
                 if (error) throw error;
             }
         } catch (err) {
-            console.error("Error saving closing data:", err);
         }
     };
 
@@ -444,7 +421,7 @@ const PatientRecords = () => {
                             <Td>{record.branchName}</Td>
                             <Td>{record.firstName}</Td>
                             <Td>{record.lastName}</Td>
-                            <Td>{record.frame}</Td>
+                            <Td>{record.inventario?.brand ?? "Sin marca"}</Td>
                             <Td>{record.lens}</Td>
                             <Td isNumeric>{record.total}</Td>
                             <Td>{record.balance}</Td>

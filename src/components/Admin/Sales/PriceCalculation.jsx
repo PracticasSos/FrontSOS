@@ -53,45 +53,45 @@ const PriceCalculation = ({ formData, setFormData }) => {
     };
 
     return (
-        <SimpleGrid columns={[1, 2]} spacing={6}>
-          <Box padding={4}>
-            <SimpleGrid columns={[1, 2]} spacing={4}>
-              <FormControl>
-                <FormLabel>P. Armazón</FormLabel>
-                <Input type="number" name="p_frame" width="auto" maxWidth="100px" value={calculatedData.p_frame.toFixed(2)} readOnly />
-              </FormControl>
-              <FormControl>
-                <FormLabel>%Dto</FormLabel>
-                <Input type="number" name="discount_frame" value={calculatedData.discount_frame || ""} width="auto" maxWidth="100px" onChange={handleDiscountChange} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>P. Lunas</FormLabel>
-                <Input type="number" name="p_lens" width="auto" maxWidth="100px" value={calculatedData.p_lens.toFixed(2)} readOnly />
-              </FormControl>
-              <FormControl>
-                <FormLabel>%Dto</FormLabel>
-                <Input type="number" name="discount_lens" value={calculatedData.discount_lens || ""} width="auto" maxWidth="100px" onChange={handleDiscountChange} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Precio</FormLabel>
-                <Input type="number" name="price" width="auto" maxWidth="100px" value={calculatedData.price.toFixed(2)} readOnly />
-              </FormControl>
-            </SimpleGrid>
-          </Box>
-          <Box padding={4}>
-            <SimpleGrid columns={1} spacing={4}>
-              <FormControl>
-                <FormLabel>Total P. Armazón</FormLabel>
-                <Input type="number" name="total_p_frame" width="auto" maxWidth="100px" value={calculatedData.total_p_frame.toFixed(2)} readOnly />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Total P. Lunas</FormLabel>
-                <Input type="number" name="total_p_lens" width="auto" maxWidth="100px" value={calculatedData.total_p_lens.toFixed(2)} readOnly />
-              </FormControl>
-            </SimpleGrid>
-          </Box>
-        </SimpleGrid>
-    );
+      <SimpleGrid columns={[1, 2]} spacing={6} width="full">
+        <Box padding={4} width="full">
+          <SimpleGrid columns={[1, 2]} spacing={4}>
+            <FormControl>
+              <FormLabel>P. Armazón</FormLabel>
+              <Input type="number" name="p_frame" width="full" maxWidth="150px" value={calculatedData.p_frame.toFixed(2)} readOnly />
+            </FormControl>
+            <FormControl>
+              <FormLabel>%Dto</FormLabel>
+              <Input type="number" name="discount_frame" value={calculatedData.discount_frame || ""} width="full" maxWidth="150px" onChange={handleDiscountChange} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>P. Lunas</FormLabel>
+              <Input type="number" name="p_lens" width="full" maxWidth="150px" value={calculatedData.p_lens.toFixed(2)} readOnly />
+            </FormControl>
+            <FormControl>
+              <FormLabel>%Dto</FormLabel>
+              <Input type="number" name="discount_lens" value={calculatedData.discount_lens || ""} width="full" maxWidth="150px" onChange={handleDiscountChange} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Precio</FormLabel>
+              <Input type="number" name="price" width="full" maxWidth="150px" value={calculatedData.price.toFixed(2)} readOnly />
+            </FormControl>
+          </SimpleGrid>
+        </Box>
+        <Box padding={4} width="full">
+          <SimpleGrid columns={[1]} spacing={4}>
+            <FormControl>
+              <FormLabel>Total P. Armazón</FormLabel>
+              <Input type="number" name="total_p_frame" width="full" maxWidth="150px" value={calculatedData.total_p_frame.toFixed(2)} readOnly />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Total P. Lunas</FormLabel>
+              <Input type="number" name="total_p_lens" width="full" maxWidth="150px" value={calculatedData.total_p_lens.toFixed(2)} readOnly />
+            </FormControl>
+          </SimpleGrid>
+        </Box>
+      </SimpleGrid>
+    );    
 };
 
 export default PriceCalculation;
