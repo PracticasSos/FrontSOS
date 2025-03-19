@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
-
-import registrarPacienteIcon from "../../assets/registrarPacientes.svg";
+import historialMedidasIcon from "../../assets/historialMedidas.svg";
+import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
 import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
 import enviosIcon from "../../assets/envios.svg";
@@ -32,11 +32,39 @@ const options = [
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon:historialMedidasIcon },
 ];
 
 const VendedorDashBoard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session?.user) {
+        console.error('Error al obtener la sesión:', error);
+        navigate('/Login');
+      } else {
+        setUser(session.user);
+        localStorage.setItem('user', JSON.stringify(session.user));
+      }
+      setLoading(false);
+    };
+
+    const userFromStorage = JSON.parse(localStorage.getItem('user'));
+    if (userFromStorage) {
+      setUser(userFromStorage);
+      setLoading(false);
+    } else {
+      checkSession();
+    }
+  }, [navigate]);
+
+  if (loading || !user) {
+    return null; 
+  }
 
   const handleOptionClick = (label) => {
     switch (label) {

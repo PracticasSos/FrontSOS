@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, SimpleGrid, Text, Image, Button } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
-import registrarPacienteIcon from "../../assets/registrarPacientes.svg";
+import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
+import historialMedidasIcon from "../../assets/historialMedidas.svg";
 import medidasIcon from "../../assets/medidas.svg"
 import historiaClinicaIcon from "../../assets/historiaClinica.svg"
 
@@ -10,11 +11,39 @@ const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
   { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon },  
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon }
+  { label: "HISTORIAL DE MEDIDAS", icon: historialMedidasIcon }
 ];
 
 const OptometraDashBoard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session?.user) {
+        console.error('Error al obtener la sesión:', error);
+        navigate('/Login');
+      } else {
+        setUser(session.user);
+        localStorage.setItem('user', JSON.stringify(session.user));
+      }
+      setLoading(false);
+    };
+
+    const userFromStorage = JSON.parse(localStorage.getItem('user'));
+    if (userFromStorage) {
+      setUser(userFromStorage);
+      setLoading(false);
+    } else {
+      checkSession();
+    }
+  }, [navigate]);
+
+  if (loading || !user) {
+    return null; 
+  }
 
   const handleOptionClick = (label) => {
     switch (label) {

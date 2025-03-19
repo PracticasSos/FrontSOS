@@ -3,7 +3,8 @@ import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 
-import registrarPacienteIcon from "../../assets/registrarPacientes.svg";
+import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
+import historialMedidasIcon from "../../assets/historialMedidas.svg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
@@ -35,7 +36,7 @@ const options = [
   { label: "CIERRE", icon: cierredeCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon: registrarPacienteIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon: historialMedidasIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "USUARIOS", icon: usuariosIcon },
   { label: "LABORATORIOS", icon: laboratoriosIcon },
@@ -54,12 +55,9 @@ const AdminDashBoard = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: {session}, error} = await supabase.auth.getSession();
-      if (error) {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session?.user) {
         console.error('Error al obtener la sesión:', error);
-        navigate('/Login');
-      }
-      if (!session?.user) {
         navigate('/Login');
       } else {
         setUser(session.user);
@@ -67,6 +65,7 @@ const AdminDashBoard = () => {
       }
       setLoading(false);
     };
+
     const userFromStorage = JSON.parse(localStorage.getItem('user'));
     if (userFromStorage) {
       setUser(userFromStorage);
@@ -75,6 +74,10 @@ const AdminDashBoard = () => {
       checkSession();
     }
   }, [navigate]);
+
+  if (loading || !user) {
+    return null; 
+  }
 
   const handleOptionClick = (label) => {
     switch (label) {
@@ -142,11 +145,6 @@ const AdminDashBoard = () => {
       <Button onClick={() => handleNavigate('/Login')} mt={4}>
         Cerrar Sesión
       </Button>
-      {loading ? (
-        <Text>Cargando...</Text>
-      ) : (
-        <Text>Bienvenido</Text>
-      )}
       <SimpleGrid columns={[2, null, 4]} spacing={5}>
         {options.map((option, index) => (
           <Box
