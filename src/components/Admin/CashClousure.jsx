@@ -15,6 +15,8 @@ const CashClosure = () => {
     const [egresosGrandTotal, setEgresosGrandTotal] = useState(0);
     const [finalBalance, setFinalBalance] = useState({ EFEC: 0, DATAF: 0, TRANS: 0, total: 0 });
     const [finalBalanceTotal, setFinalBalanceTotal] = useState(0);
+    const [withdrawalsRecords, setWithdrawalsRecords] = useState([]);
+    const [totalAbonosDelDia, setTotalAbonosDelDia] = useState({ EFEC: 0, TRANS: 0, DATAF: 0 });
     const [formData, setFormData] = useState({
         since: "",
         till: "",
@@ -32,20 +34,27 @@ const CashClosure = () => {
     useEffect(() => {
         if (selectedBranch) {
             fetchDailyRecords(selectedBranch);
+            fetchDailyWithdrawals(selectedBranch);
             fetchExpenses(selectedBranch);
         }
     }, [formData.since, formData.till, formData.month]);
 
     useEffect(() => {
         calculateFinalBalance();
-    }, [totals, egresosGrandTotal]);
+    }, [totals, egresosGrandTotal, withdrawalsRecords]);
 
     const calculateFinalBalance = () => {
+        const totalWithdrawals = withdrawalsRecords.reduce(
+            (sum, record) => sum + Number(record.abonoDelDia || 0), 
+            0
+        );
         const balance = {
-            EFEC: totals.EFEC - egresosTotals.EFEC,
-            DATAF: totals.DATAF - egresosTotals.DATAF,
-            TRANS: totals.TRANS - egresosTotals.TRANS,
-            total: totals.total - egresosGrandTotal,
+            EFEC: (totals.EFEC || 0) - (egresosTotals.EFEC || 0) + (totalAbonosDelDia.EFEC || 0),
+            DATAF: (totals.DATAF || 0) - (egresosTotals.DATAF || 0) + (totalAbonosDelDia.DATAF || 0),
+            TRANS: (totals.TRANS || 0) - (egresosTotals.TRANS || 0) + (totalAbonosDelDia.TRANS || 0),
+            total: (totals.EFEC || 0) + (totals.DATAF || 0) + (totals.TRANS || 0) 
+                   - ((egresosTotals.EFEC || 0) + (egresosTotals.DATAF || 0) + (egresosTotals.TRANS || 0))
+                   + (totalAbonosDelDia.EFEC || 0) + (totalAbonosDelDia.TRANS || 0) + (totalAbonosDelDia.DATAF || 0)
         };
         setFinalBalance(balance);
         setFinalBalanceTotal(balance.total);
@@ -69,7 +78,7 @@ const CashClosure = () => {
             date,
             branchs_id,
             branchs:branchs_id (id, name),
-            frame,
+            inventario (brand),
             lens (lens_type),
             total,
             credit,
@@ -156,6 +165,96 @@ const CashClosure = () => {
             ...(name === "month" ? { since: "", till: "" } : {}),
             ...(name === "since" || name === "till" ? { month: "" } : {})
         }));
+    };
+
+    const fetchDailyWithdrawals = async (branchId) => {
+        const { since, till, month } = formData;  
+        let salesQuery = supabase
+            .from("sales")
+            .select(`
+                id,
+                branchs_id,
+                patients (pt_firstname, pt_lastname),
+                total,
+                payment_balance,
+                credit
+            `)
+            .eq("branchs_id", branchId);
+
+        if (since && till) {
+            salesQuery = salesQuery.gte("date", since).lte("date", till);
+        } else if (month) {
+            const dates = getMonthRange(month);
+            if (dates) {
+                salesQuery = salesQuery.gte("date", dates.startDate).lte("date", dates.endDate);
+            }
+        }
+
+        try {
+            const { data: salesToday, error: salesError } = await salesQuery;
+            if (salesError) throw salesError;
+            const saleIds = salesToday.map(sale => sale.id);
+
+            let withdrawalsQuery = supabase
+                .from("withdrawals")
+                .select(`
+                    id,
+                    sale_id,
+                    previous_balance, 
+                    new_balance, 
+                    difference, 
+                    date
+                `)
+                .in("sale_id", saleIds);
+
+            if (since && till) {
+                withdrawalsQuery = withdrawalsQuery.gte("date", since).lte("date", till);
+            } else if (month) {
+                const dates = getMonthRange(month);
+                if (dates) {
+                    withdrawalsQuery = withdrawalsQuery.gte("date", dates.startDate).lte("date", dates.endDate);
+                }
+            }
+            const { data: withdrawalsToday, error: withdrawalsError } = await withdrawalsQuery;
+            if (withdrawalsError) throw withdrawalsError;
+            
+            let totalAbonosDelDia = { EFEC: 0, TRANS: 0, DATAF: 0 };
+            const formattedWithdrawals = withdrawalsToday.map((withdrawal) => {
+                const relatedSale = salesToday.find(sale => sale.id === withdrawal.sale_id);
+                const abonoDelDia = withdrawal.difference ? Number(withdrawal.difference) : 0;
+                const paymentMethod = relatedSale?.payment_balance || "Sin método";
+                    if (paymentMethod === "efectivo") {
+                        totalAbonosDelDia.EFEC += abonoDelDia;
+                    } else if (paymentMethod === "transferencia") {
+                        totalAbonosDelDia.TRANS += abonoDelDia;
+                    } else if (paymentMethod === "datafast") {
+                        totalAbonosDelDia.DATAF += abonoDelDia;
+                    }
+                    
+                    return {
+                        ...withdrawal,
+                        firstName: relatedSale?.patients?.pt_firstname || "Sin nombre",
+                        lastName: relatedSale?.patients?.pt_lastname || "Sin apellido",
+                        total: relatedSale?.total || 0,
+                        credit: relatedSale?.credit || 0,
+                        saldoAnterior: Number(withdrawal.previous_balance || 0),
+                        abonoDelDia: abonoDelDia,
+                        saldo: Number(withdrawal.new_balance || 0),
+                        payment_balance: paymentMethod,
+                    };
+                });
+        
+                setWithdrawalsRecords(formattedWithdrawals);
+                setTotalAbonosDelDia((prevTotals) => ({
+                    ...prevTotals,
+                    EFEC: totalAbonosDelDia.EFEC,
+                    TRANS: totalAbonosDelDia.TRANS,
+                    DATAF: totalAbonosDelDia.DATAF,
+                    abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
+                }));
+            } catch (err) {
+                setWithdrawalsRecords([]); 
+        }
     };
 
     const fetchExpenses = async (branchId) => {
@@ -392,7 +491,7 @@ const CashClosure = () => {
                                 <Td>{record.branchName}</Td>
                                 <Td>{record.firstName}</Td>
                                 <Td>{record.lastName}</Td>
-                                <Td>{record.frame}</Td>
+                                <Td>{record.inventario?.brand ?? "Sin marca"}</Td>
                                 <Td>{record.lens}</Td>
                                 <Td isNumeric>{record.total}</Td>
                                 <Td>{record.credit}</Td>
@@ -435,12 +534,80 @@ const CashClosure = () => {
                             </Text>
                         </VStack>
                     </HStack>
-                        <Heading size="md" textAlign="center" color="green.300">
-                            Total General: {totals.total}
-                        </Heading>
-
-
+                    <Heading size="md" textAlign="center" color="green.300">
+                        Total General: {totals.total}
+                    </Heading>
+                <Box>
+                <Divider my={6} />
+                <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
+                <Table variant="striped" colorScheme="teal">
+                    <Thead>
+                        <Tr>
+                            <Th>Fecha</Th>
+                            <Th>Nombre</Th>
+                            <Th>Apellido</Th>
+                            <Th>Total</Th>
+                            <Th>Abono Anterior</Th>
+                            <Th>Abono del Día</Th>
+                            <Th>Abono Total</Th>
+                            <Th>Saldo</Th>
+                            <Th>Pago en</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {withdrawalsRecords.map((record) => (
+                            <Tr key={record.id}>
+                                    <Td>{record.date}</Td>
+                                    <Td>{record.firstName}</Td>
+                                    <Td>{record.lastName}</Td>
+                                    <Td>{record.total}</Td>
+                                    <Td>{record.saldoAnterior}</Td>
+                                    <Td>{record.abonoDelDia}</Td>
+                                    <Td>{record.saldo}</Td>
+                                    <Td>{record.credit}</Td>
+                                    <Td>
+                                        <Badge
+                                            colorScheme={
+                                                record.payment_balance ==="efectivo"
+                                                ? "green"
+                                                : record.payment_balance == "transferencia"
+                                                ? "blue"
+                                                : "orange"
+                                            }
+                                        >
+                                            {record.payment_balance}
+                                        </Badge>
+                                    </Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
                 <Divider my={10} />
+                <HStack justifyContent="space-around" spacing={6}>
+                    <VStack>
+                        <Text fontWeight="bold">EFEC</Text>
+                        <Text fontSize="lg" color="green.500">
+                            {totalAbonosDelDia.EFEC || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">TRANS</Text>
+                        <Text fontSize="lg" color="blue.500">
+                            {totalAbonosDelDia.TRANS || 0}
+                        </Text>
+                    </VStack>
+                    <VStack>
+                        <Text fontWeight="bold">DATAF</Text>
+                        <Text fontSize="lg" color="orange.500">
+                            {totalAbonosDelDia.DATAF || 0}
+                        </Text>
+                    </VStack>
+                </HStack>
+                <Heading size="md" textAlign="center" color="green.300">
+                    Total Abonos del Día: {totalAbonosDelDia.abonosDelDia || 0}
+                </Heading>
+                <Divider my={10} />
+                </Box>
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Egresos
                 </Heading>

@@ -169,7 +169,6 @@ const MeasuresFinal = () => {
             </FormControl>
           </SimpleGrid>
           
-          {/* Versión de escritorio de la tabla (visible solo en pantallas medianas y grandes) */}
           <Box display={{ base: "none", lg: "block" }} overflowX="auto" mb={4}>
             <Table variant="simple" size="md">
               <Thead>
@@ -206,7 +205,6 @@ const MeasuresFinal = () => {
             </Table>
           </Box>
     
-          {/* Versión móvil: Formulario en tarjetas separadas (visible solo en pantallas pequeñas) */}
           <Box display={{ base: "block", lg: "none" }} mb={4}>
             {['OD', 'OI'].map((eye) => (
               <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
@@ -301,8 +299,7 @@ const MeasuresFinal = () => {
           <Box p={[2, 3, 4]} maxWidth="1000px" mx="auto" border="1px solid #ccc" borderRadius="8px">
             <Heading size="md" mb={4}>Su diagnóstico es:</Heading>
             <Textarea placeholder="Escriba el diagnóstico del paciente" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} mb={4} />
-            
-            {/* Secciones responsivas con margin inferior consistente */}
+
             <Box mb={6}>
               <Heading size="sm" mb={2}>Visión cercana</Heading>
               <Text mb={2} fontSize={["sm", "md"]}>Capacidad de leer como mínimo, las letras de la escala 1 de la carta normalizada Jaeger...</Text>

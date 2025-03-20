@@ -127,17 +127,17 @@ const RegisterPatientForm = () => {
             {renderInputField('Ocupación', 'pt_occupation', 'text')}
             {renderInputField('Dirección', 'pt_address', 'text')}
             {renderInputField('Teléfono', 'pt_phone', 'text')}
-            {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
-            {renderTextareaField('Recomendaciones', 'pt_recommendations')}
+            {renderInputField('Edad', 'pt_age', 'number')}
+            {renderInputField('C.I.', 'pt_ci', 'text')}
           </Box>
           
           <Box>
-            {renderInputField('Edad', 'pt_age', 'number')}
-            {renderInputField('C.I.', 'pt_ci', 'text')}
             {renderInputField('Ciudad', 'pt_city', 'text')}
             {renderInputField('Correo', 'pt_email', 'email')}
             {renderSelectField('Responsable', 'user_id', users)}
             <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} mt={6}>
+            {renderTextareaField('Razón de Consulta', 'pt_consultation_reason')}
+            {renderTextareaField('Recomendaciones', 'pt_recommendations')}
               <Button type="submit" colorScheme="teal">Guardar</Button>
               <Button onClick={handleReset} colorScheme="gray">Limpiar</Button>
             </Box>
