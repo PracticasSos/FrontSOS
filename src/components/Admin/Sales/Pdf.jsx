@@ -120,7 +120,7 @@ const Pdf = ({ formData, targetRef }) => {
   };
 
   const sendWhatsAppMessage = async () => {
-    if (!formData) {
+    if (!formData || !formData.pt_phone) {
       toast({
         title: "Error",
         description: "No hay datos para generar el PDF.",

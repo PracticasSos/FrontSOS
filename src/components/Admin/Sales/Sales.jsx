@@ -9,6 +9,8 @@ import Total from "./Total";
 import Pdf from "./Pdf";
 import { useNavigate } from "react-router-dom";
 import SignaturePadComponent from "./SignaturePadComponent";
+import MessageInput from "./Message";
+
 
 const Sales = () => {
   const [saleData, setSaleData] = useState({
@@ -43,6 +45,7 @@ const Sales = () => {
   const [pdfGenerated, setPdfGenerated] = useState(false);
   const navigate = useNavigate();
   const salesRef = useRef(null);
+  const [branchName, setBranchName] = useState("");
 
   const handleFormDataChange = (newFormData) => {
     setFormData((prevFormData) => ({
@@ -68,6 +71,27 @@ const Sales = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchBranchName = async () => {
+        if (!saleData.branchs_id) return;
+        
+        const { data, error } = await supabase
+            .from("branchs")
+            .select("name")
+            .eq("id", saleData.branchs_id)
+            .single();
+        
+        if (error) {
+            console.error("Error obteniendo nombre de sucursal:", error);
+            return;
+        }
+
+        setBranchName(data?.name || "VEOPTICS");
+    };
+
+    fetchBranchName();
+  }, [saleData.branchs_id]);
+  
   useEffect(() => {
     fetchLatestRxFinal();
   }, []);
@@ -294,37 +318,25 @@ const Sales = () => {
               </FormControl>
             </SimpleGrid>
           </Box>
-          <Box p={5} width="full" maxWidth="1500px" mx="auto" ml={[0, 4, 8, 12]}>
-          <SimpleGrid columns={[1, 1, 2]} spacing={4}>
-            <Box width="full">
-              <PriceCalculation formData={formData} setFormData={setFormData} />
-            </Box>
-            <Box maxWidth="300px" width="full">
-              <FormControl>
-                <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                  Mensaje
-                </FormLabel>
-                <Textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={(e) => setFormData(prevState => ({ ...prevState, message: e.target.value }))}
-                  placeholder="Escribe un mensaje personalizado..."
-                  height="150px"
-                  minHeight="100px"
-                  borderColor="teal.400"
-                  focusBorderColor="teal.600"
-                />
-              </FormControl>
-            </Box>
-          </SimpleGrid>
-        </Box>
-          <Box p={5} width="full" maxWidth="700px" mx="auto" >
-            <SimpleGrid columns={[1, 1, 2]} spacing={4}> 
+          <Box p={5} width="full"  mx="auto" ml={[0, 4, 8, 12]}>
+            <PriceCalculation formData={formData} setFormData={setFormData} />
+          </Box>
+          <Box p={5} width="full" maxWidth="700px" mx="auto">
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
               <Total formData={formData} setFormData={setFormData} />
-              <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({
-                ...prev,
-                signature: signatureDataUrl,
-              }))} />
+              <Box>
+                <SimpleGrid columns={1} spacing={4}>
+                <MessageInput selectedBranch={branchName} formData={formData} setFormData={setFormData} />
+                  <SignaturePadComponent 
+                    onSave={(signatureDataUrl) => 
+                      setFormData((prev) => ({
+                        ...prev,
+                        signature: signatureDataUrl,
+                      }))
+                    } 
+                  />
+                </SimpleGrid>
+              </Box>
             </SimpleGrid>
           </Box>
           <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, FormControl, FormLabel, Input, SimpleGrid } from "@chakra-ui/react";
+import { Box, Flex, FormControl, FormLabel, Input, SimpleGrid } from "@chakra-ui/react";
 
 const PriceCalculation = ({ formData, setFormData }) => {
     const [calculatedData, setCalculatedData] = useState({
@@ -110,94 +110,98 @@ const PriceCalculation = ({ formData, setFormData }) => {
         }));
     }, [calculatedData.total_p_frame, calculatedData.total_p_lens, setFormData]);
 
-    return (
-  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} width="full">
-    <Box padding={4} width="full">
-      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
-        <FormControl>
-          <FormLabel>P. Armazón</FormLabel>
-          <Input 
-            type="number" 
-            name="p_frame" 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            value={calculatedData.p_frame.toFixed(2)} 
-            readOnly 
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>%Dto</FormLabel>
-          <Input 
-            type="number" 
-            name="discount_frame" 
-            value={calculatedData.discount_frame || ""} 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            onChange={handleDiscountChange} 
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>P. Lunas</FormLabel>
-          <Input 
-            type="number" 
-            name="p_lens" 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            value={calculatedData.p_lens.toFixed(2)} 
-            readOnly 
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>%Dto</FormLabel>
-          <Input 
-            type="number" 
-            name="discount_lens" 
-            value={calculatedData.discount_lens || ""} 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            onChange={handleDiscountChange} 
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Precio</FormLabel>
-          <Input 
-            type="number" 
-            name="price" 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            value={calculatedData.price.toFixed(2)} 
-            readOnly 
-          />
-        </FormControl>
+  return (
+    <Flex justify="center" align="center" >
+      <Box width="full" maxWidth="800px" padding={4}>
+      <SimpleGrid columns={{ base: 1, md: 2}} spacing={6} width="full">
+        <Box padding={4} width="full">
+          <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+            <FormControl>
+              <FormLabel>P. Armazón</FormLabel>
+              <Input 
+                type="number" 
+                name="p_frame" 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                value={calculatedData.p_frame.toFixed(2)} 
+                readOnly 
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>%Dto</FormLabel>
+              <Input 
+                type="number" 
+                name="discount_frame" 
+                value={calculatedData.discount_frame || ""} 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                onChange={handleDiscountChange} 
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>P. Lunas</FormLabel>
+              <Input 
+                type="number" 
+                name="p_lens" 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                value={calculatedData.p_lens.toFixed(2)} 
+                readOnly 
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>%Dto</FormLabel>
+              <Input 
+                type="number" 
+                name="discount_lens" 
+                value={calculatedData.discount_lens || ""} 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                onChange={handleDiscountChange} 
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Precio</FormLabel>
+              <Input 
+                type="number" 
+                name="price" 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                value={calculatedData.price.toFixed(2)} 
+                readOnly 
+              />
+            </FormControl>
+          </SimpleGrid>
+        </Box>
+        <Box padding={4} width="full">
+          <SimpleGrid columns={1} spacing={4}>
+            <FormControl>
+              <FormLabel>Total P. Armazón</FormLabel>
+              <Input 
+                type="number" 
+                name="total_p_frame" 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                value={calculatedData.total_p_frame || ""} 
+                onChange={handleTotalChange} 
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Total P. Lunas</FormLabel>
+              <Input 
+                type="number" 
+                name="total_p_lens" 
+                width="full" 
+                maxWidth={{ base: "100%", md: "150px" }} 
+                value={calculatedData.total_p_lens || ""} 
+                onChange={handleTotalChange} 
+              />
+            </FormControl>
+          </SimpleGrid>
+        </Box>
       </SimpleGrid>
-    </Box>
-    <Box padding={4} width="full">
-      <SimpleGrid columns={1} spacing={4}>
-        <FormControl>
-          <FormLabel>Total P. Armazón</FormLabel>
-          <Input 
-            type="number" 
-            name="total_p_frame" 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            value={calculatedData.total_p_frame || ""} 
-            onChange={handleTotalChange} 
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Total P. Lunas</FormLabel>
-          <Input 
-            type="number" 
-            name="total_p_lens" 
-            width="full" 
-            maxWidth={{ base: "100%", md: "150px" }} 
-            value={calculatedData.total_p_lens || ""} 
-            onChange={handleTotalChange} 
-          />
-        </FormControl>
-      </SimpleGrid>
-    </Box>
-  </SimpleGrid>
+      </Box>
+  </Flex>
 );
 
 };
