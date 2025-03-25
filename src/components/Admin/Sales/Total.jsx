@@ -2,33 +2,37 @@ import { Box, FormControl, FormLabel, Input, SimpleGrid, Select } from "@chakra-
 import { useEffect } from "react";
 
 const Total = ({ formData, setFormData }) => {
-
     useEffect(() => {
         setFormData(prevFormData => {
-            const newTotal = prevFormData.total || (
-                prevFormData.p_frame + prevFormData.p_lens - prevFormData.discount_frame - prevFormData.discount_lens
+            const total = (
+                (prevFormData.total_p_frame || prevFormData.p_frame || 0) + 
+                (prevFormData.total_p_lens || prevFormData.p_lens || 0)
             );
+
             return {
                 ...prevFormData,
-                total: newTotal
+                total: total
             };
         });
-    }, [formData.p_frame, formData.p_lens, formData.discount_frame, formData.discount_lens]);
-    
-    
+    }, [
+        formData.p_frame, 
+        formData.p_lens, 
+        formData.total_p_frame, 
+        formData.total_p_lens
+    ]);
+   
     const handleCreditChange = (e) => {
         const balance = parseFloat(e.target.value) || 0;
-        const credit = (balance === 0) ? (formData.total || 0) : (formData.total || 0) - balance; 
-
+        const credit = (balance === 0) ? (formData.total || 0) : (formData.total || 0) - balance;
         setFormData((prevState) => ({
             ...prevState,
             balance,
-            credit 
+            credit
         }));
     };
 
     const total = formData.total || 0;
-    const credit = formData.credit || (formData.balance === 0 ? total : (total - (formData.balance || 0))); 
+    const credit = formData.credit || (formData.balance === 0 ? total : (total - (formData.balance || 0)));
 
     return (
         <SimpleGrid columns={[1]} spacing={4} width="100%" maxWidth="400px" padding={4} mx="auto">
@@ -53,7 +57,7 @@ const Total = ({ formData, setFormData }) => {
                             name="balance"
                             width="full"
                             maxWidth="70%"
-                            value={formData.balance || ''} 
+                            value={formData.balance || ''}
                             onChange={handleCreditChange}
                         />
                     </FormControl>
@@ -65,7 +69,7 @@ const Total = ({ formData, setFormData }) => {
                             placeholder="$20"
                             width="full"
                             maxWidth="70%"
-                            value={credit.toFixed(2)} 
+                            value={credit.toFixed(2)}
                             isReadOnly
                         />
                     </FormControl>

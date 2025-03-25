@@ -294,28 +294,30 @@ const Sales = () => {
               </FormControl>
             </SimpleGrid>
           </Box>
-          <Box p={5} width="full" maxWidth="1500px" mx="auto" ml={[0, 10, 20, 40]}>
-            <SimpleGrid columns={[1, 2]} spacing={4}>
+          <Box p={5} width="full" maxWidth="1500px" mx="auto" ml={[0, 4, 8, 12]}>
+          <SimpleGrid columns={[1, 1, 2]} spacing={4}>
+            <Box width="full">
               <PriceCalculation formData={formData} setFormData={setFormData} />
-              <Box maxWidth="300px">
-                <FormControl>
-                  <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                    Mensaje
-                  </FormLabel>
-                  <Textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={(e) => setFormData(prevState => ({ ...prevState, message: e.target.value }))}
-                    placeholder="Escribe un mensaje personalizado..."
-                    height="150px"
-                    minHeight="100px"
-                    borderColor="teal.400"
-                    focusBorderColor="teal.600"
-                  />
-                </FormControl>
-              </Box>
-            </SimpleGrid>
-          </Box>
+            </Box>
+            <Box maxWidth="300px" width="full">
+              <FormControl>
+                <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
+                  Mensaje
+                </FormLabel>
+                <Textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={(e) => setFormData(prevState => ({ ...prevState, message: e.target.value }))}
+                  placeholder="Escribe un mensaje personalizado..."
+                  height="150px"
+                  minHeight="100px"
+                  borderColor="teal.400"
+                  focusBorderColor="teal.600"
+                />
+              </FormControl>
+            </Box>
+          </SimpleGrid>
+        </Box>
           <Box p={5} width="full" maxWidth="700px" mx="auto" >
             <SimpleGrid columns={[1, 1, 2]} spacing={4}> 
               <Total formData={formData} setFormData={setFormData} />
