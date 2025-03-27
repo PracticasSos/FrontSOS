@@ -153,7 +153,7 @@ const PatientHistory = () => {
                   <Th>Armazón</Th>
                   <Th>Lentes</Th>
                   <Th>Total</Th>
-                  <Th>Crédito</Th>
+                  <Th>Abono</Th>
                   <Th>Saldo</Th>
                   <Th>Pago En</Th>
                 </Tr>
