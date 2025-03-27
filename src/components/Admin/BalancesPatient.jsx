@@ -67,7 +67,7 @@ const BalancesPatient = () => {
                     .select(`
                         id,
                         date,
-                        frame,
+                        inventario:inventario_id(brand),
                         lens:lens_id(lens_type),
                         total,
                         balance,
@@ -76,13 +76,12 @@ const BalancesPatient = () => {
                     `);
     
                 if (error) throw error;
-    
                 const filteredSales = data.filter(sale => sale.balance > 0);
     
                 const formattedSales = filteredSales.map(sale => ({
                     id: sale.id,
                     date: new Date(sale.date).toLocaleDateString(),
-                    frame: sale.frame,
+                    brand: sale.inventario?.brand || "Sin Marca",
                     lens_type: sale.lens?.lens_type || "N/A",
                     total: sale.total,
                     balance: sale.balance,
@@ -172,7 +171,7 @@ const BalancesPatient = () => {
                     )}
                 </FormControl>
     
-                <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white">
+                <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
                     {loading ? (
                         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
                             <Spinner size="xl" />
@@ -201,7 +200,7 @@ const BalancesPatient = () => {
                                         <Td>{sale.date}</Td>
                                         <Td>{sale.patient.pt_firstname}</Td>
                                         <Td>{sale.patient.pt_lastname}</Td>
-                                        <Td>{sale.frame}</Td>
+                                        <Td>{sale.brand || "Sin Marca"}</Td>
                                         <Td>{sale.lens_type}</Td>
                                         <Td>{sale.total}</Td>
                                         <Td>{sale.balance}</Td>

@@ -85,7 +85,7 @@ const Retreats = () => {
                 .select(`
                     id,
                     date,
-                    frame,
+                    inventario (brand),
                     lens:lens_id(lens_type),
                     branchs:branchs_id(name), 
                     delivery_time, 
@@ -326,7 +326,7 @@ const Retreats = () => {
                                 <FormLabel>Armazón</FormLabel>
                                 <Input
                                     type="text"
-                                    value={salesData?.frame || ""}
+                                    value={salesData?.inventario?.brand ?? "Sin marca"}
                                     isReadOnly
                                     width="auto"
                                     maxWidth="300px"

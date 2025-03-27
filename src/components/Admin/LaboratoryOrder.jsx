@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
+import Pdf from "./Sales/Pdf";
 
 const LaboratoryOrder = () => {
     const { patientId } = useParams();
     console.log(patientId);
     const location = useLocation();
+    const [formData, setFormData] = useState(null);
+    const targetRef = useRef(null);
+    const [saleId, setSaleId] = useState(null);
     const [salesData, setSalesData] = useState(null);
     const [patientData, setPatientData] = useState(location.state?.patientData || null);
     const [patientsList, setPatientsList] = useState([]);
@@ -19,7 +23,9 @@ const LaboratoryOrder = () => {
     const [observations, setObservations] = useState('');
     const [lensTypes, setLensTypes] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
+    const salesRef = useRef(null);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         if (patientId) {
@@ -34,10 +40,10 @@ const LaboratoryOrder = () => {
         if (patientData?.id) {
             fetchLabs();
             fetchSalesData();
-            fetchMeasures();
             fetchLens();
         }
     }, [patientData]);
+
 
     const fetchPatientData = async () => {
         if (!patientId) {
@@ -93,7 +99,8 @@ const LaboratoryOrder = () => {
                     date,
                     inventario (brand),
                     lens:lens_id(lens_type),
-                    branchs:branchs_id(name)
+                    branchs:branchs_id(name),
+                    measure_id
                 `)
                 .eq("patient_id", patientData.id)
                 .order("date", { ascending: false })
@@ -102,6 +109,9 @@ const LaboratoryOrder = () => {
 
             if (error) throw error;
             setSalesData(data);
+            if (data?.measure_id) {
+                fetchMeausresFormSales(data.measure_id);
+            }
         } catch (error) {
             console.error("Error fetching sales data:", error);
         }
@@ -154,8 +164,6 @@ const LaboratoryOrder = () => {
         setIsTyping(false); 
     };
     
-      
-    
       const handleInputFocus = () => {
         setIsTyping(true);
       };
@@ -165,44 +173,23 @@ const LaboratoryOrder = () => {
           setIsTyping(false); 
         }, 200); 
       };
-      
-
-      const fetchMeasures = async () => {
+    const fetchMeausresFormSales = async (measureId) => {
         try {
+            if (!measureId) {
+                console.error("measure_id is undefined or invalid.");
+                return;
+            }
             const { data, error } = await supabase
                 .from("rx_final")
                 .select("*")
-                .eq("patient_id", patientId);
-
+                .eq("id", measureId)
+                .single();
             if (error) throw error;
-            setFilteredMeasures(data);
+            setFilteredMeasures([data]);
         } catch (error) {
-            console.error("Error fetching measures:", error);
+            console.error("Error fetching measures data:", error);
         }
     };
-
-    const handlePDFClick = async () => {
-        try {
-          const pdfUrl = await generateAndUploadPDF(formData);
-          alert(`PDF generado: ${pdfUrl}`);
-        } catch (err) {
-          console.error("Error generando el PDF:", err);
-          alert("Hubo un problema al generar el PDF.");
-        }
-      };
-
-    const handleWhatsAppClick = async () => {
-        try {
-          const pdfUrl = await generateAndUploadPDF(formData);
-          const message = formData.message || "Aquí tienes el documento solicitado.";
-          const phoneNumber = formData.pt_phone;
-    
-          sendWhatsAppMessage(phoneNumber, pdfUrl, message);
-        } catch (err) {
-          console.error("Error enviando mensaje por WhatsApp:", err);
-          alert("Hubo un problema al enviar el mensaje.");
-        }
-      };
 
     const filteredPatients = patientsList.filter(patient => {
         if (searchTerm === '') {
@@ -238,6 +225,7 @@ const LaboratoryOrder = () => {
     };
 
     return (
+         <Box ref={salesRef} w="full" px={4}>
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
         <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
@@ -394,16 +382,21 @@ const LaboratoryOrder = () => {
                         </FormControl>
                         </SimpleGrid>
                     </Box>
-                    <Box  width="100%" padding={4}>
+                    <Box width="100%" padding={4}>
                         <SimpleGrid columns={1} spacing={4}>
-                            <Button onClick={handleWhatsAppClick} colorScheme="teal" width="60%">WhatsApp</Button>
-                            <Button onClick={handlePDFClick}colorScheme="teal" width="60%">PDF</Button>
+                            {salesData || patientData ? (
+                                <Pdf formData={salesData || patientData} targetRef={salesRef} />
+                            ) : (
+                                <Text>No data available to generate PDF</Text>
+                            )}
                         </SimpleGrid>
                     </Box>
+
                 </SimpleGrid>
           
             </Box>
         </Box>
+    </Box>
     </Box>
     );
 };

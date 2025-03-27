@@ -30,23 +30,24 @@ const PriceCalculation = ({ formData, setFormData }) => {
 
     const handleDiscountChange = (e) => {
         const { name, value } = e.target;
+        const discount = parseFloat(value) || 0;
 
         if (name === "discount_frame" || name === "discount_lens") {
             const discount = parseFloat(value) || 0;
 
             if (name === "discount_frame") {
-                const total_p_frame = calculatedData.p_frame - (calculatedData.p_frame * discount / 100);
+              const total_p_frame = (calculatedData.p_frame - (calculatedData.p_frame * discount / 100)).toFixed(2);
                 setCalculatedData(prevState => ({
                     ...prevState,
-                    discount_frame: value,
-                    total_p_frame,
+                    discount_frame: discount.toFixed(2),
+                    total_p_frame: parseFloat(total_p_frame),
                 }));
             } else if (name === "discount_lens") {
-                const total_p_lens = calculatedData.p_lens - (calculatedData.p_lens * discount / 100);
+              const total_p_lens = (calculatedData.p_lens - (calculatedData.p_lens * discount / 100)).toFixed(2);
                 setCalculatedData(prevState => ({
                     ...prevState,
-                    discount_lens: value,
-                    total_p_lens,
+                    discount_lens: discount.toFixed(2),
+                    total_p_lens: parseFloat(total_p_lens),
                 }));
             }
         }
@@ -65,7 +66,7 @@ const PriceCalculation = ({ formData, setFormData }) => {
                 return;
             }
 
-            const totalValue = parseFloat(value);
+            const totalValue = parseFloat(value).toFixed(2);
             if (!isNaN(totalValue)) {
                 if (name === "total_p_frame") {
                     const discount_frame = (calculatedData.p_frame > 0) 
@@ -73,17 +74,17 @@ const PriceCalculation = ({ formData, setFormData }) => {
                         : 0;
                     setCalculatedData(prevState => ({
                         ...prevState,
-                        total_p_frame: totalValue,
-                        discount_frame,
+                        total_p_frame: parseFloat(totalValue),
+                        discount_frame: parseFloat(discount_frame),
                     }));
                 } else if (name === "total_p_lens") {
                     const discount_lens = (calculatedData.p_lens > 0) 
-                        ? 100 - ((totalValue / calculatedData.p_lens) * 100) 
+                    ? (100 - ((totalValue / calculatedData.p_lens) * 100)).toFixed(2)  
                         : 0;
                     setCalculatedData(prevState => ({
                         ...prevState,
-                        total_p_lens: totalValue,
-                        discount_lens,
+                        total_p_lens: parseFloat(totalValue),
+                        discount_lens: parseFloat(discount_lens),
                     }));
                 }
             }
@@ -94,7 +95,7 @@ const PriceCalculation = ({ formData, setFormData }) => {
         const totalP = (calculatedData.total_p_frame || 0) + (calculatedData.total_p_lens || 0);
         setCalculatedData(prevState => ({
             ...prevState,
-            totalP,
+            totalP: totalP.toFixed(2),
         }));
 
         setFormData((prevState) => ({
@@ -105,8 +106,8 @@ const PriceCalculation = ({ formData, setFormData }) => {
             discount_lens: calculatedData.discount_lens,
             total_p_frame: calculatedData.total_p_frame,
             total_p_lens: calculatedData.total_p_lens,
-            total: totalP,
-            price: calculatedData.price,
+            total: parseFloat(totalP),
+            price: calculatedData.price.toFixed(2),
         }));
     }, [calculatedData.total_p_frame, calculatedData.total_p_lens, setFormData]);
 

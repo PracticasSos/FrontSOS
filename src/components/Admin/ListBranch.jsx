@@ -124,7 +124,7 @@ const ListBranch = () => {
                 
                             <Tr key={branch.id}>
                                 {[
-                                    'name', 'address', 'email', 'phone', 'ruc'
+                                    'name', 'address', 'email', 'cell', 'ruc'
                                 ].map((field) => ( 
                                     <Td key={field}>
                                         {editingId === branch.id ? (

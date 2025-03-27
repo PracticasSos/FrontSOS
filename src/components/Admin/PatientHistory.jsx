@@ -60,6 +60,7 @@ const PatientHistory = () => {
     fetchSales(patient.id);
   };
 
+
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (route) {

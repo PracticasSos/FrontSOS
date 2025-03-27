@@ -51,7 +51,7 @@ const RetreatsPatients = () => {
             pt_ci,
             pt_phone
           ),
-          frame,
+          inventario:inventario_id(brand),
           lens:lens_id(lens_type),
           total,
           balance,
@@ -69,7 +69,7 @@ const RetreatsPatients = () => {
         pt_ci: sale.patients.pt_ci,
         pt_phone: sale.patients.pt_phone,
         date: sale.date,
-        frame: sale.frame,
+        brand: sale.inventario?.brand || "Sin marca",
         lens_type: sale.lens?.lens_type || "N/A",
         total: sale.total,
         balance: sale.balance,
@@ -224,7 +224,7 @@ const RetreatsPatients = () => {
       {loading ? (
         <Spinner size="xl" />
       ) : (
-        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white">
+        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
           <Table>
             <Thead>
               <Tr>
@@ -250,7 +250,7 @@ const RetreatsPatients = () => {
                   <Td>{patient.date}</Td>
                   <Td>{patient.pt_firstname}</Td>
                   <Td>{patient.pt_lastname}</Td>
-                  <Td>{patient.frame}</Td>
+                  <Td>{patient.brand || "Sin Marca"}</Td>
                   <Td>{patient.lens_type}</Td>
                   <Td>{patient.total}</Td>
                   <Td>{patient.balance}</Td>
