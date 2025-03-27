@@ -32,7 +32,7 @@ const PatientHistory = () => {
   const fetchSales = async (patientId) => {
     const { data, error } = await supabase
       .from('sales')
-      .select('id, date, frame, lens:lens_id(lens_type), total, credit, balance, payment_in')
+      .select('id, date, inventario (brand), lens:lens_id(lens_type), total, credit, balance, payment_in')
       .eq('patient_id', patientId);
 
     if (error) {
@@ -162,7 +162,7 @@ const PatientHistory = () => {
                 {sales.map(sale => (
                   <Tr key={sale.id}>
                     <Td>{sale.date}</Td>
-                    <Td>{sale.frame}</Td>
+                    <Td>{sale.inventario?.brand ?? "Sin marca"}</Td>
                     <Td>{sale.lens.lens_type}</Td>
                     <Td>{sale.total}</Td>
                     <Td>{sale.credit}</Td>

@@ -91,7 +91,7 @@ const LaboratoryOrder = () => {
                 .select(`
                     id,
                     date,
-                    frame,
+                    inventario (brand),
                     lens:lens_id(lens_type),
                     branchs:branchs_id(name)
                 `)
@@ -241,16 +241,20 @@ const LaboratoryOrder = () => {
            
         {patientData && (
         <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-          <Text fontSize="lg">
-            <strong>Nombre:</strong> {patientData.pt_firstname} {patientData.pt_lastname}
-          </Text>
-          <Text fontSize="lg">
-            <strong>Cédula:</strong> {patientData.pt_ci}
-          </Text>
-          <Text fontSize="lg">
-            <strong>Teléfono:</strong> {patientData.pt_phone || "No disponible"}
-          </Text>
-        </Box>
+            <Text fontSize="lg">
+            <strong>Sucursal:</strong> {salesData?.branchs?.name || "No disponible"}
+            </Text>
+            <Text fontSize="lg" mt={2}>
+            <strong>Fecha:</strong> {salesData?.date || "No disponible"}
+            </Text>
+            <Text fontSize="lg" mt={2}>
+            <strong>Orden:</strong> {salesData?.id || "No disponible"}
+            </Text>
+            <Text fontSize="lg" mt={2}>
+            <strong>Paciente:</strong> {patientData?.pt_firstname} {patientData?.pt_lastname}
+            </Text>
+      </Box>
+      
       )}
             <Box mt={4}>
                 <Table variant="simple">
@@ -308,32 +312,11 @@ const LaboratoryOrder = () => {
                     <Box padding={4} maxWidth="500px" textAlign="left">
                         <SimpleGrid columns={1}>
                             <FormControl mb={4}>
-                                <FormLabel>Óptica</FormLabel>
-                                <Input 
-                                    type="text" 
-                                    value={salesData?.branchs?.name || ""}
-                                    isReadOnly
-                                    width="auto" 
-                                    maxWidth="300px"
-                                />
-                            </FormControl>
-                            <FormControl mb={4}>
-                                <FormLabel>Fecha</FormLabel>
-                                <Input 
-                                    type="text" 
-                                    value={salesData?.date || ""}
-                                    isReadOnly
-                                    width="auto" 
-                                    maxWidth="300px"
-                                />
-                            </FormControl>
-                            <FormControl mb={4}>
                                 <FormLabel>Armazón</FormLabel>
                                 <Input 
                                     type="text" 
-                                    value={salesData?.frame || ""}
+                                    value={salesData?.inventario?.brand ?? "Sin marca"}
                                     isReadOnly
-                                    width="auto" 
                                     maxWidth="300px"
                                 />
                             </FormControl>
@@ -345,6 +328,7 @@ const LaboratoryOrder = () => {
                                 onChange={handleLensChange}
                                 onFocus={handleInputFocus} 
                                 placeholder="Escribe para buscar..."
+                                width="300px"
                             />
                             {isTyping && salesData?.lens?.lens_type?.trim()?.length > 0 && (
                                 <Box
@@ -356,6 +340,7 @@ const LaboratoryOrder = () => {
                                 bg="white"
                                 zIndex="10"
                                 position="relative"
+                                width="300px" 
                                 >
                                 {lensTypes
                                     .filter((lens) =>
@@ -390,28 +375,25 @@ const LaboratoryOrder = () => {
                                     ))}
                                 </Select>
                             </FormControl>
-                        </SimpleGrid>
-                    </Box>
-
-                    <SimpleGrid columns={1}>
-                        <FormControl mb={4}>
+                            <FormControl mb={4}>
                             <FormLabel>Observaciones</FormLabel>
                             <Textarea
                                 value={observations}
                                 onChange={(e) => setObservations(e.target.value)}
                                 placeholder="Ingrese observaciones..."
-                                width="auto" 
                                 maxWidth="300px"
                             />
                         </FormControl>
-                        <Box  width="100%" padding={4}>
-                            <SimpleGrid columns={1} spacing={4}>
-                                <Button onClick={handleWhatsAppClick} colorScheme="teal" width="60%">WhatsApp</Button>
-                                <Button onClick={handlePDFClick}colorScheme="teal" width="60%">PDF</Button>
-                            </SimpleGrid>
-                        </Box>
-                    </SimpleGrid>
+                        </SimpleGrid>
+                    </Box>
+                    <Box  width="100%" padding={4}>
+                        <SimpleGrid columns={1} spacing={4}>
+                            <Button onClick={handleWhatsAppClick} colorScheme="teal" width="60%">WhatsApp</Button>
+                            <Button onClick={handlePDFClick}colorScheme="teal" width="60%">PDF</Button>
+                        </SimpleGrid>
+                    </Box>
                 </SimpleGrid>
+          
             </Box>
         </Box>
     </Box>
