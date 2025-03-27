@@ -13,7 +13,7 @@ const LaboratoryOrder = () => {
     const [filteredMeasures, setFilteredMeasures] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [selectedSale, setSelectedSale] = useState(null);
+    const [selectedSale, setSelectedSale] = useState({ lens: { lens_type: "" } });
     const [labsList, setLabsList] = useState([]);
     const [selectedLab, setSelectedLab] = useState('');
     const [observations, setObservations] = useState('');
@@ -124,28 +124,36 @@ const LaboratoryOrder = () => {
         const search = e.target.value.toLowerCase();
         setIsTyping(true); 
         setSelectedSale((prevSale) => ({
-          ...prevSale,
-          lens: { lens_type: search },
+            ...prevSale || {},
+            lens: { ...(prevSale?.lens || {}), lens_type: search },
         }));
-      
+        setSalesData((prevData) => ({
+            ...prevData,
+            lens: { ...(prevData?.lens || {}), lens_type: search },
+        }));
         if (selectedSale?.id) {
-          updateLensType(selectedSale.id, search);
+            updateLensType(selectedSale.id, search);
         }
-      };
+    };
+    
       
     
-      const handleLensSelect = (lens) => {
+    const handleLensSelect = (lens) => {
         setSelectedSale((prevSale) => ({
-          ...prevSale,
-          lens: { lens_type: lens.lens_type },
+            ...prevSale,
+            lens: { lens_type: lens.lens_type },
         }));
-      
+    
+        setSalesData((prevData) => ({
+            ...prevData,
+            lens: { lens_type: lens.lens_type },
+        }));
         if (selectedSale?.id) {
-          updateLensType(selectedSale.id, lens.lens_type);
+            updateLensType(selectedSale.id, lens.lens_type);
         }
-      
         setIsTyping(false); 
-      };
+    };
+    
       
     
       const handleInputFocus = () => {
@@ -344,7 +352,7 @@ const LaboratoryOrder = () => {
                                 >
                                 {lensTypes
                                     .filter((lens) =>
-                                    lens.lens_type.toLowerCase().includes(salesData.lens.lens_type.toLowerCase())
+                                    lens.lens_type.toLowerCase().includes(salesData?.lens?.lens_type?.toLowerCase())
                                     )
                                     .map((lens) => (
                                     <Box
