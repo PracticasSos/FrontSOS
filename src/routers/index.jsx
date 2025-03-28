@@ -34,13 +34,14 @@ import ListBalance from "../components/Admin/ListBalance.jsx";
 import ListSales from "../components/Admin/ListSales.jsx";
 import Sales from "../components/Admin/Sales/Sales.jsx";
 import SearchPatient from "../components/Admin/Sales/SearchPatient.jsx";
+import Register from "../components/Admin/Register.jsx";
 
 
 const AppRouter = () => {
     return(
         <Routes>
             <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
-            <Route path="Register" element={<SignUpForm/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
+            <Route path="Register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
             <Route path="Inventory" element={<Inventario/>}></Route>
             <Route path="Login" element={<LoginForm/>} />
             <Route path="Admin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
