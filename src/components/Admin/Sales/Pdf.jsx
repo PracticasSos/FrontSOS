@@ -86,10 +86,29 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
         button.style.display = "none";
       });
 
+      // Ajustamos el canvas con una escala
       const canvas = await html2canvas(salesContent, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
+
+      // Usamos A4 como tamaño fijo (210mm x 297mm)
       const pdf = new jsPDF("p", "mm", "a4");
-      pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+
+      // Definimos el tamaño máximo para ajustar el contenido a A4
+      const pdfWidth = 210; // A4 width in mm
+      const pdfHeight = 297; // A4 height in mm
+
+      // Ajustar la imagen al tamaño de la página A4 (manteniendo la proporción)
+      let imgWidth = pdfWidth - 20; // Margen de 10mm a cada lado
+      let imgHeight = (canvas.height / canvas.width) * imgWidth;
+
+      // Si la altura es mayor que la altura del A4, ajustamos la altura
+      if (imgHeight > pdfHeight - 20) {
+        const scaleFactor = (pdfHeight - 20) / imgHeight;
+        imgWidth *= scaleFactor;
+        imgHeight = pdfHeight - 20;
+      }
+
+      pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight); // Agregar la imagen con las dimensiones ajustadas
       const pdfBlob = pdf.output("blob");
 
       toast({
@@ -230,16 +249,16 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
   };
 
   return (
-    <Box textAlign="right" width="100%" padding={4} ml={{ base: 0, md: 150 }}>
-      <SimpleGrid columns={1} spacing={4}>
-        <Button onClick={sendWhatsAppMessage} colorScheme="teal" width={{ base: "100%", md: "60%" }} isDisabled={!formData?.pt_phone}>
-          Enviar por WhatsApp
-        </Button>
-        <Button onClick={handleDownloadPdf} colorScheme="teal" width={{ base: "100%", md: "60%" }}>
+    <SimpleGrid>
+      <Box p={5}>
+        <Button onClick={handleDownloadPdf} isLoading={loading}>
           Generar PDF
         </Button>
-      </SimpleGrid>
-    </Box>
+        <Button onClick={sendWhatsAppMessage} isLoading={loading} ml={3}>
+          Enviar por WhatsApp
+        </Button>
+      </Box>
+    </SimpleGrid>
   );
 };
 

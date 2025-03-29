@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, Input, Box } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Box , Heading, SimpleGrid, FormControl, FormLabel} from "@chakra-ui/react";
 
 const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [] }) => {
     const [formData, setFormData] = useState(initialFormData);
@@ -40,7 +40,7 @@ const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [
 
     return (
         <Box mt={4} mb={4}>
-          <Box overflowX="auto">
+          <Box display={{ base: "none", lg: "block" }} overflowX="auto" mb={4}>
             <Table variant="simple" mb={4}>
               <Thead>
                 <Tr>
@@ -92,6 +92,97 @@ const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [
               </Tbody>
             </Table>
           </Box>
+          <Box display={{ base: "block", lg: "none" }} mb={4}>
+                      {['OD', 'OI'].map((eye) => (
+                        <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
+                          <Heading size="md" mb={3}>{eye === 'OD' ? 'Ojo Derecho (OD)' : 'Ojo Izquierdo (OI)'}</Heading>
+                          <SimpleGrid columns={2} spacing={3}>
+                            <FormControl>
+                              <FormLabel fontSize="sm">Esfera</FormLabel>
+                              <Input 
+                                name={`sphere_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`sphere_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">Cilindro</FormLabel>
+                              <Input 
+                                name={`cylinder_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`cylinder_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">Eje</FormLabel>
+                              <Input 
+                                name={`axis_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`axis_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">Prisma</FormLabel>
+                              <Input 
+                                name={`prism_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`prism_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">ADD</FormLabel>
+                              <Input 
+                                name={`add_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`add_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">AV VL</FormLabel>
+                              <Input 
+                                name={`av_vl_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`av_vl_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">AV VP</FormLabel>
+                              <Input 
+                                name={`av_vp_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`av_vp_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">DNP</FormLabel>
+                              <Input 
+                                name={`dnp_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`dnp_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm">ALT</FormLabel>
+                              <Input 
+                                name={`alt_${eye === 'OD' ? 'right' : 'left'}`} 
+                                value={formData[`alt_${eye === 'OD' ? 'right' : 'left'}`]} 
+                                onChange={handleChange}
+                                size="sm"
+                              />
+                            </FormControl>
+                          </SimpleGrid>
+                        </Box>
+                      ))}
+                    </Box>
+              
         </Box>
       );      
 };
