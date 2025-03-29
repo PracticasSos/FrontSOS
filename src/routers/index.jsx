@@ -33,8 +33,8 @@ import ListLens from "../components/Admin/ListLens.jsx";
 import ListBalance from "../components/Admin/ListBalance.jsx";
 import ListSales from "../components/Admin/ListSales.jsx";
 import Sales from "../components/Admin/Sales/Sales.jsx";
-import SearchPatient from "../components/Admin/Sales/SearchPatient.jsx";
 import Register from "../components/Admin/Register.jsx";
+import HistoryClinic from "../components/Admin/HistoryClinic.jsx";
 
 
 const AppRouter = () => {
@@ -59,7 +59,6 @@ const AppRouter = () => {
             <Route path="Sales" element= {<Sales/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
             <Route path="PatientRecords" element={<PatientRecords />}> </Route>
-            <Route path="PatientHistory" element={<PatientHistory/>}> </Route>
             <Route path="MeasuresFinal" element={<MeasuresFinal />}></Route>
             <Route path="/OrderLaboratoryList" element={<OrderLaboratoryList/>}> </Route>
             <Route path="/OrderLaboratoryList/LaboratoryOrder/:patientId" element={<LaboratoryOrder />}></Route>
@@ -73,6 +72,10 @@ const AppRouter = () => {
             <Route path="/ListLens" element={<ListLens/>}></Route>
             <Route path="/ListBalance" element={<ListBalance/>}></Route>
             <Route path="/ListSales" element={<ListSales/>}></Route>
+            <Route path="/HistoryClinic" element={<HistoryClinic />} />
+            <Route path="/HistoryClinic/PatientHistory/:patientId" element={<PatientHistory />} />
+            <Route path="/HistoryClinic/PatientHistory/:patientId/Sales/:saleId" element={<Sales />} />
+
         </Routes>
     )
 }

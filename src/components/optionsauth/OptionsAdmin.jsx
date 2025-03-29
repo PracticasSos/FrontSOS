@@ -130,7 +130,7 @@ const AdminDashBoard = () => {
         navigate('/HistoryMeasureList')
         break;
       case "HISTORIAL PACIENTE":
-          navigate('/PatientHistory')
+          navigate('/HistoryClinic')
       default:
         break;
     }

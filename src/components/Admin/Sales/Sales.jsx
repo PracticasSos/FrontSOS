@@ -7,7 +7,7 @@ import { supabase } from "../../../api/supabase";
 import { Box, Heading, Button, SimpleGrid, FormControl, FormLabel, Input, Text, Textarea } from "@chakra-ui/react";
 import Total from "./Total";
 import Pdf from "./Pdf";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SignaturePadComponent from "./SignaturePadComponent";
 import MessageInput from "./Message";
 
@@ -46,7 +46,76 @@ const Sales = () => {
   const navigate = useNavigate();
   const salesRef = useRef(null);
   const [branchName, setBranchName] = useState("");
+  const location = useLocation();
+  const { patientId} = useParams();
 
+
+  {/* const { patientId, saleId } = location.state || {}; 
+  useEffect(() => {
+    if (patientId) {
+      fetchPatientData(patientId, saleId);
+    }
+  }, [patientId, saleId]);
+
+  
+  const fetchPatientData = async (id) => {
+    try {
+      const { data: patientData, error: patientError } = await supabase
+        .from('patients')
+        .select('*')
+        .eq('id', id)
+        .single();
+  
+      if (patientError) {
+        console.error('Error fetching patient data:', patientError);
+        return;
+      }
+  
+      const { data: measuresData, error: measuresError } = await supabase
+        .from('rx_final')
+        .select('*')
+        .eq('patient_id', patientId);
+  
+      if (measuresError) {
+        console.error('Error fetching measures data:', measuresError);
+        return;
+      }
+  
+      const { data: salesData, error: salesError } = await supabase
+        .from('sales')
+        .select('*,  inventario(brand), lens(lens_type)')
+        .eq('patient_id', patientId);
+  
+      if (salesError) {
+        console.error('Error fetching sales data:', salesError);
+        return;
+      }
+
+    const selectedSale = salesData.find((sale) => sale.id === parseInt(saleId));
+
+    if (!selectedSale) {
+      console.error('No se encontró la venta seleccionada.');
+      return;
+    }
+  
+      setSaleData((prev) => ({
+        ...prev,
+        patient_id: patientData.id,
+        branchs_id: patientData.branchs_id,
+        pt_phone: patientData.pt_phone,
+        date: selectedSale.date,
+      }));
+      setPatientMeasures(measuresData || []);
+      setFormData((prev) => ({
+        ...prev,
+        ...selectedSale, 
+      }));
+    } catch (err) {
+      console.error('Error fetching patient-related data:', err);
+    }
+  };
+  
+*/}
   const handleFormDataChange = (newFormData) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -152,7 +221,6 @@ const Sales = () => {
       }
     }
   };
-
   
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value);
@@ -327,9 +395,7 @@ const Sales = () => {
               <Box>
                 <SimpleGrid columns={1} spacing={4}>
                 <MessageInput selectedBranch={branchName} formData={formData} setFormData={setFormData} />
-                  <SignaturePadComponent 
-                    onSave={(signatureDataUrl) => 
-                      setFormData((prev) => ({
+                  <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({
                         ...prev,
                         signature: signatureDataUrl,
                       }))
