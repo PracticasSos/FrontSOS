@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import  React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
@@ -8,15 +8,11 @@ const LaboratoryOrder = () => {
     const { patientId } = useParams();
     console.log(patientId);
     const location = useLocation();
-    const [formData, setFormData] = useState(null);
-    const targetRef = useRef(null);
-    const [saleId, setSaleId] = useState(null);
     const [salesData, setSalesData] = useState(null);
     const [patientData, setPatientData] = useState(location.state?.patientData || null);
     const [patientsList, setPatientsList] = useState([]);
     const [filteredMeasures, setFilteredMeasures] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedSale, setSelectedSale] = useState({ lens: { lens_type: "" } });
     const [labsList, setLabsList] = useState([]);
     const [selectedLab, setSelectedLab] = useState('');
@@ -25,6 +21,7 @@ const LaboratoryOrder = () => {
     const [isTyping, setIsTyping] = useState(false);
     const salesRef = useRef(null);
     const navigate = useNavigate();
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
 
     useEffect(() => {
@@ -199,6 +196,21 @@ const LaboratoryOrder = () => {
         return fullName.toLowerCase().includes(searchTerm.toLowerCase()); 
     });
 
+    const handleGeneratePdf = async () => {
+        setIsGeneratingPDF(true); // Activa el estado para mostrar la tabla vertical
+      
+        // Espera un breve momento para que el DOM se actualice
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      
+        // Llama a la función para generar el PDF
+        await handleDownloadPdf();
+      
+        setIsGeneratingPDF(false); // Desactiva el estado después de generar el PDF
+      };
+    
+    
+    
+
     const handleNavigate = (route = null) => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (route) {
@@ -225,180 +237,173 @@ const LaboratoryOrder = () => {
     };
 
     return (
-         <Box ref={salesRef} w="full" px={4}>
-        <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-        <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
-        <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-            <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">Lista de Laboratorio</Button>
-            <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-            <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
-        </Box>
-        <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
-           
-        {patientData && (
-        <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-            <Text fontSize="lg">
-            <strong>Sucursal:</strong> {salesData?.branchs?.name || "No disponible"}
-            </Text>
-            <Text fontSize="lg" mt={2}>
-            <strong>Fecha:</strong> {salesData?.date || "No disponible"}
-            </Text>
-            <Text fontSize="lg" mt={2}>
-            <strong>Orden:</strong> {salesData?.id || "No disponible"}
-            </Text>
-            <Text fontSize="lg" mt={2}>
-            <strong>Paciente:</strong> {patientData?.pt_firstname} {patientData?.pt_lastname}
-            </Text>
-      </Box>
-      
-      )}
-            <Box mt={4}>
-                <Table variant="simple">
-                    <Thead>
-                        <Tr>
-                            <Th>Rx Final</Th>
-                            <Th>Esfera</Th>
-                            <Th>Cilindro</Th>
-                            <Th>Eje</Th>
-                            <Th>Prisma</Th>
-                            <Th>ADD</Th>
-                            <Th>AV VL</Th>
-                            <Th>AV VP</Th>
-                            <Th>DNP</Th>
-                            <Th>ALT</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {[
-                            { side: "OD", prefix: "right" },
-                            { side: "OI", prefix: "left" },
-                        ].map(({ side, prefix }) => (
-                            <Tr key={prefix}>
-                                <Td>{side}</Td>
-                                {[
-                                    "sphere",
-                                    "cylinder",
-                                    "axis",
-                                    "prism",
-                                    "add",
-                                    "av_vl",
-                                    "av_vp",
-                                    "dnp",
-                                    "alt",
-                                ].map((field) => (
-                                    <Td key={field}>
-                                        <Input
-                                            name={`${field}_${prefix}`}
-                                            value={
-                                                filteredMeasures.length > 0
-                                                    ? filteredMeasures[0][`${field}_${prefix}`] || ""
-                                                    : ""
-                                            }
-                                            isReadOnly
-                                        />
-                                    </Td>
-                                ))}
-                            </Tr>
-                        ))}
-                    </Tbody>
-                </Table>
+        <Box ref={salesRef} w="full" px={4}>
+          <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
+            <Heading as="h2" size="lg" mb={4}>
+              Orden de Laboratorio
+            </Heading>
+            <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
+              <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">
+                Lista de Laboratorio
+              </Button>
+              <Button onClick={() => handleNavigate()} colorScheme="blue">
+                Volver a Opciones
+              </Button>
+              <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
+                Cerrar Sesión
+              </Button>
             </Box>
-            <Box p={5} maxWidth="800px" mx="auto">
-                <SimpleGrid columns={[1, 2]} spacing={4}>
-                    <Box padding={4} maxWidth="500px" textAlign="left">
-                        <SimpleGrid columns={1}>
-                            <FormControl mb={4}>
-                                <FormLabel>Armazón</FormLabel>
-                                <Input 
-                                    type="text" 
-                                    value={salesData?.inventario?.brand ?? "Sin marca"}
-                                    isReadOnly
-                                    maxWidth="300px"
+            <Box as="form" width="100%" maxWidth="500px" padding={6} boxShadow="lg" borderRadius="md">
+              {patientData && (
+                <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
+                  <Text fontSize="lg">
+                    <strong>Sucursal:</strong> {salesData?.branchs?.name || "No disponible"}
+                  </Text>
+                  <Text fontSize="lg" mt={2}>
+                    <strong>Fecha:</strong> {salesData?.date || "No disponible"}
+                  </Text>
+                  <Text fontSize="lg" mt={2}>
+                    <strong>Orden:</strong> {salesData?.id || "No disponible"}
+                  </Text>
+                  <Text fontSize="lg" mt={2}>
+                    <strong>Paciente:</strong> {patientData?.pt_firstname} {patientData?.pt_lastname}
+                  </Text>
+                </Box>
+              )}
+      
+                <Box maxWidth="500px" mb={4}>
+                    {['OD', 'OI'].map((eye) => (
+                        <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
+                        <Heading size="md" mb={3}>
+                            {eye === 'OD' ? 'Ojo Derecho (OD)' : 'Ojo Izquierdo (OI)'}
+                        </Heading>
+                        <SimpleGrid columns={2} spacing={3}>
+                            {[
+                            ["Esfera", "sphere"],
+                            ["Cilindro", "cylinder"],
+                            ["Eje", "axis"],
+                            ["Prisma", "prism"],
+                            ["ADD", "add"],
+                            ["AV VL", "av_vl"],
+                            ["AV VP", "av_vp"],
+                            ["DNP", "dnp"],
+                            ["ALT", "alt"],
+                            ].map(([label, field]) => (
+                            <FormControl key={field}>
+                                <FormLabel fontSize="sm">{label}</FormLabel>
+                                <Input
+                                name={`${field}_${eye === 'OD' ? 'right' : 'left'}`}
+                                value={
+                                    filteredMeasures.length > 0
+                                    ? filteredMeasures[0][`${field}_${eye === 'OD' ? 'right' : 'left'}`] || ""
+                                    : ""
+                                }
+                                isReadOnly
+                                size="sm"
                                 />
                             </FormControl>
-                            <FormControl mb={4}>
-                            <FormLabel>Tipo de Lentes</FormLabel>
-                            <Input
-                                type="text"
-                                value={salesData?.lens?.lens_type || ""}
-                                onChange={handleLensChange}
-                                onFocus={handleInputFocus} 
-                                placeholder="Escribe para buscar..."
-                                width="300px"
-                            />
-                            {isTyping && salesData?.lens?.lens_type?.trim()?.length > 0 && (
-                                <Box
-                                border="1px solid #ccc"
-                                borderRadius="md"
-                                mt={2}
-                                maxHeight="150px"
-                                overflowY="auto"
-                                bg="white"
-                                zIndex="10"
-                                position="relative"
-                                width="300px" 
-                                >
-                                {lensTypes
-                                    .filter((lens) =>
-                                    lens.lens_type.toLowerCase().includes(salesData?.lens?.lens_type?.toLowerCase())
-                                    )
-                                    .map((lens) => (
-                                    <Box
-                                        key={lens.id}
-                                        padding={2}
-                                        _hover={{ bg: "teal.100", cursor: "pointer" }}
-                                        onMouseDown={() => handleLensSelect(lens)} 
-                                    >
-                                        {lens.lens_type}
-                                    </Box>
-                                    ))}
-                                </Box>
-                            )}
-                            </FormControl>
-                            <FormControl mb={4}>
-                                <FormLabel>Laboratorio</FormLabel>
-                                <Select
-                                    value={selectedLab}
-                                    onChange={(e) => setSelectedLab(e.target.value)} 
-                                    width="auto" 
-                                    maxWidth="300px"
-                                >
-                                    <option value="">Seleccionar Laboratorio</option>
-                                    {labsList.map(lab => (
-                                        <option key={lab.id} value={lab.id}>
-                                            {lab.name}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <FormControl mb={4}>
-                            <FormLabel>Observaciones</FormLabel>
-                            <Textarea
-                                value={observations}
-                                onChange={(e) => setObservations(e.target.value)}
-                                placeholder="Ingrese observaciones..."
-                                maxWidth="300px"
-                            />
+                            ))}
+                        </SimpleGrid>
+                        </Box>
+                    ))}
+                </Box>
+                <Box p={5}>
+                <SimpleGrid columns={[1, 2]} spacing={4}>
+                    <Box padding={4} width="200%" maxWidth="500px" textAlign="left">
+                    <SimpleGrid columns={1} spacing={4}>
+                        <FormControl mb={4}>
+                        <FormLabel>Armazón</FormLabel>
+                        <Input
+                            type="text"
+                            value={salesData?.inventario?.brand ?? "Sin marca"}
+                            isReadOnly
+                            maxWidth="200%"
+                        />
                         </FormControl>
-                        </SimpleGrid>
+                        <FormControl mb={4}>
+                        <FormLabel>Tipo de Lentes</FormLabel>
+                        <Input
+                            type="text"
+                            value={salesData?.lens?.lens_type || ""}
+                            onChange={handleLensChange}
+                            onFocus={handleInputFocus}
+                            placeholder="Escribe para buscar..."
+                            width="100%"
+                        />
+                        {isTyping && salesData?.lens?.lens_type?.trim()?.length > 0 && (
+                            <Box
+                            border="1px solid #ccc"
+                            borderRadius="md"
+                            mt={2}
+                            maxHeight="150px"
+                            overflowY="auto"
+                            bg="white"
+                            zIndex="10"
+                            position="relative"
+                            width="100%"
+                            >
+                            {lensTypes
+                                .filter((lens) =>
+                                lens.lens_type.toLowerCase().includes(salesData?.lens?.lens_type?.toLowerCase())
+                                )
+                                .map((lens) => (
+                                <Box
+                                    key={lens.id}
+                                    padding={2}
+                                    _hover={{ bg: "teal.100", cursor: "pointer" }}
+                                    onMouseDown={() => handleLensSelect(lens)}
+                                >
+                                    {lens.lens_type}
+                                </Box>
+                                ))}
+                            </Box>
+                        )}
+                        </FormControl>
+                        <FormControl mb={4}>
+                        <FormLabel>Laboratorio</FormLabel>
+                        <Select
+                            value={selectedLab}
+                            onChange={(e) => setSelectedLab(e.target.value)}
+                            width="100%"
+                            maxWidth="100%"
+                        >
+                            <option value="">Seleccionar Laboratorio</option>
+                            {labsList.map((lab) => (
+                            <option key={lab.id} value={lab.id}>
+                                {lab.name}
+                            </option>
+                            ))}
+                        </Select>
+                        </FormControl>
+                        <FormControl mb={4}>
+                        <FormLabel>Observaciones</FormLabel>
+                        <Textarea
+                            value={observations}
+                            onChange={(e) => setObservations(e.target.value)}
+                            placeholder="Ingrese observaciones..."
+                            width="100%"
+                            maxWidth="100%"
+                        />
+                        </FormControl>
+                    </SimpleGrid>
                     </Box>
-                    <Box width="100%" padding={4}>
-                        <SimpleGrid columns={1} spacing={4}>
-                            {salesData || patientData ? (
-                                <Pdf formData={salesData || patientData} targetRef={salesRef} />
-                            ) : (
-                                <Text>No data available to generate PDF</Text>
-                            )}
-                        </SimpleGrid>
-                    </Box>
-
                 </SimpleGrid>
-          
+
+                <Box width="100%" padding={4}>
+                    <SimpleGrid columns={1} spacing={4}>
+                    {salesData || patientData ? (
+                        <Pdf formData={salesData || patientData} targetRef={salesRef} />
+                    ) : (
+                        <Text>No data available to generate PDF</Text>
+                    )}
+                    </SimpleGrid>
+                </Box>
+                </Box>
+
             </Box>
+          </Box>
         </Box>
-    </Box>
-    </Box>
-    );
-};
+      );
+    };      
 
 export default LaboratoryOrder;
