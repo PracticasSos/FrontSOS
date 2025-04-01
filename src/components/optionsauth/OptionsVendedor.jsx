@@ -102,7 +102,7 @@ const VendedorDashBoard = () => {
         navigate('/Inventory');
         break;
       case "HISTORIAL PACIENTE":
-          navigate('/PatientHistory')
+          navigate('/HistoryClinic')
       default:
         break;
     }
