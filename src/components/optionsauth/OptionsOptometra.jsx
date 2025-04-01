@@ -51,7 +51,7 @@ const OptometraDashBoard = () => {
         navigate('/RegisterPatient');
         break;
       case "HISTORIAL PACIENTE":
-        navigate('/PatientHistory');
+        navigate('/HistoryClinic');
         break;
       case "HISTORIAL DE MEDIDAS":
         navigate('/HistoryMeasureList')
