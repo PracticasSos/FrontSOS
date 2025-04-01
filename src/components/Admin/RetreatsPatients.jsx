@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Spinner, Grid, FormControl, FormLabel, Collapse, Input, VStack, Textarea, Text} from "@chakra-ui/react";
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Spinner, Grid, FormControl, FormLabel, Collapse, Input, VStack, Textarea, Text, Select} from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 
 const RetreatsPatients = () => {
@@ -13,14 +13,13 @@ const RetreatsPatients = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(true);
+  const [branches, setBranches] = useState([]);
+  const [branchFilter, setBranchFilter] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchPatients();
-  }, []);
-
-  useEffect(() => {
-    fetchPatients();
+    fetchBranchs();
   }, []);
 
   useEffect(() => {
@@ -34,6 +33,23 @@ const RetreatsPatients = () => {
           navigate(location.pathname, { replace: true, state: null });
       }
   }, [location.state, navigate]);
+
+  const fetchBranchs = async () => {
+    const { data, error } = await supabase.from("branchs").select("id, name");
+    if (!error) {
+      setBranches(data);
+    }
+  };
+
+  const handleBranchFilter = (e) => {
+    const selectedBranch = e.target.value;
+    setBranchFilter(selectedBranch ? parseInt(selectedBranch) : null);
+  };
+
+  const filteredByBranch = branchFilter
+  ? filteredPatients.filter(patient => Number(patient.branch_id) === Number(branchFilter))
+  : filteredPatients;
+
 
   const fetchPatients = async () => {
     setLoading(true);
@@ -55,7 +71,8 @@ const RetreatsPatients = () => {
           lens:lens_id(lens_type),
           total,
           balance,
-          credit
+          credit,
+          branchs:branchs_id(id, name)
         `)
         .eq('is_completed', false);
 
@@ -73,7 +90,9 @@ const RetreatsPatients = () => {
         lens_type: sale.lens?.lens_type || "N/A",
         total: sale.total,
         balance: sale.balance,
-        credit: sale.credit
+        credit: sale.credit,
+        branch_id: sale.branchs?.id || null, 
+        branch: sale.branchs?.name || "N/A",
       }));
 
       setPendingSales(formattedData);
@@ -220,6 +239,16 @@ const RetreatsPatients = () => {
           </Box>
         )}
       </FormControl>
+      <Select placeholder="Filtrar por sucursal" onChange={handleBranchFilter}mt={4} mb={4}>
+        {branches.map((branch) => (
+          <option key={branch.id} value={branch.id}>{branch.name}</option>
+        ))}
+      </Select>
+      {branchFilter && filteredByBranch.length === 0 ? (
+        <Text textAlign="center" color="gray.500">No hay retiros para esta sucursal</Text>
+      ) : (
+        branchFilter && (
+      <>
 
       {loading ? (
         <Spinner size="xl" />
@@ -241,7 +270,7 @@ const RetreatsPatients = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {filteredPatients.map((patient) => (
+              {filteredByBranch.map((patient) => (
                 <Tr 
                   key={`${patient.sale_id}`}
                   onClick={() => handlePatientSelect(patient)} 
@@ -270,6 +299,9 @@ const RetreatsPatients = () => {
             </Tbody>
           </Table>
         </Box>
+      )}
+    </>
+        )
       )}
 
       <Collapse in={isFormOpen} animateOpacity>
