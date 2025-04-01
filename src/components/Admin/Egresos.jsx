@@ -135,7 +135,7 @@ const Egresos = () => {
         default:
             navigate('/');
     }
-};
+  };
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
