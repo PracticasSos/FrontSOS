@@ -8,31 +8,30 @@ const Total = ({ formData, setFormData }) => {
                 (prevFormData.total_p_frame || prevFormData.p_frame || 0) + 
                 (prevFormData.total_p_lens || prevFormData.p_lens || 0)
             );
+            const credit = total - (prevFormData.balance || 0);
 
             return {
                 ...prevFormData,
-                total: total
+                total,
+                credit // Aseguramos que credit se actualice en formData
             };
         });
     }, [
         formData.p_frame, 
         formData.p_lens, 
         formData.total_p_frame, 
-        formData.total_p_lens
+        formData.total_p_lens, 
+        formData.balance // Agregamos balance para que credit se actualice
     ]);
    
     const handleCreditChange = (e) => {
         const balance = parseFloat(e.target.value) || 0;
-        const credit = (balance === 0) ? (formData.total || 0) : (formData.total || 0) - balance;
         setFormData((prevState) => ({
             ...prevState,
             balance,
-            credit
+            credit: (prevState.total || 0) - balance // Aseguramos que credit se actualice aquí también
         }));
     };
-
-    const total = formData.total || 0;
-    const credit = formData.credit || (formData.balance === 0 ? total : (total - (formData.balance || 0)));
 
     return (
         <SimpleGrid columns={[1]} spacing={4} width="100%" maxWidth="400px" padding={4} mx="auto">
@@ -46,7 +45,7 @@ const Total = ({ formData, setFormData }) => {
                             placeholder="$150"
                             width="full"
                             maxWidth="70%"
-                            value={total.toFixed(2)}
+                            value={(formData.total ?? 0).toFixed(2)}
                             isReadOnly
                         />
                     </FormControl>
@@ -57,7 +56,7 @@ const Total = ({ formData, setFormData }) => {
                             name="balance"
                             width="full"
                             maxWidth="70%"
-                            value={formData.balance || ''}
+                            value={formData.balance ?? ''}
                             onChange={handleCreditChange}
                         />
                     </FormControl>
@@ -69,7 +68,7 @@ const Total = ({ formData, setFormData }) => {
                             placeholder="$20"
                             width="full"
                             maxWidth="70%"
-                            value={credit.toFixed(2)}
+                            value={(formData.credit ?? 0).toFixed(2)}
                             isReadOnly
                         />
                     </FormControl>

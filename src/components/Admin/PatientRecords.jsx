@@ -383,7 +383,7 @@ const PatientRecords = () => {
                     Cerrar Sesión
                 </Button>
             </Box>
-            <Box mb={6}>
+            <Box mb={6} overflowX="auto">
                 <Select
                     placeholder="Seleccione una sucursal"
                     value={selectedBranch}

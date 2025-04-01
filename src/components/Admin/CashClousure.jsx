@@ -406,7 +406,7 @@ const CashClosure = () => {
                 </Button>
             </Grid>
 
-            <Box as="form" onSubmit={handleSubmit}>
+            <Box overflowX="auto" as="form" onSubmit={handleSubmit}>
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6}>
                     <FormControl isRequired>
                         <FormLabel>Óptica</FormLabel>
@@ -494,8 +494,8 @@ const CashClosure = () => {
                                 <Td>{record.inventario?.brand ?? "Sin marca"}</Td>
                                 <Td>{record.lens}</Td>
                                 <Td isNumeric>{record.total}</Td>
-                                <Td>{record.credit}</Td>
                                 <Td>{record.balance}</Td>
+                                <Td>{record.credit}</Td>
                                 <Td>
                                     <Badge
                                         colorScheme={
