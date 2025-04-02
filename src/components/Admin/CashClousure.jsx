@@ -145,7 +145,7 @@ const CashClosure = () => {
         };
     
         data.forEach((record) => {
-            const abono = Number(record.credit) || 0;
+            const abono = Number(record.balance) || 0;
     
             if (record.payment_in === "efectivo") newTotals.EFEC += abono;
             if (record.payment_in === "transferencia") newTotals.TRANS += abono;
