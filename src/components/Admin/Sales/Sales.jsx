@@ -10,6 +10,7 @@ import Pdf from "./Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SignaturePadComponent from "./SignaturePadComponent";
 import MessageInput from "./Message";
+import { useToast } from "@chakra-ui/react";
 
 
 const Sales = () => {
@@ -48,6 +49,7 @@ const Sales = () => {
   const [branchName, setBranchName] = useState("");
   const location = useLocation();
   const { patientId} = useParams();
+  const toast = useToast();
 
 
   {/* const { patientId, saleId } = location.state || {}; 
@@ -304,6 +306,13 @@ const Sales = () => {
       if (data && data.length > 0) {
         setSaleId(data[0].id);
         setPdfGenerated(true);
+        toast({
+          title: "Venta registrada con éxito.",
+          description: "La venta ha sido guardada correctamente.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     } catch (err) {
       console.error("Error al registrar la venta:", err);

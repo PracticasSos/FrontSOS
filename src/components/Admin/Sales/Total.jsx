@@ -13,7 +13,7 @@ const Total = ({ formData, setFormData }) => {
             return {
                 ...prevFormData,
                 total,
-                credit // Aseguramos que credit se actualice en formData
+                credit 
             };
         });
     }, [
@@ -21,7 +21,7 @@ const Total = ({ formData, setFormData }) => {
         formData.p_lens, 
         formData.total_p_frame, 
         formData.total_p_lens, 
-        formData.balance // Agregamos balance para que credit se actualice
+        formData.balance 
     ]);
    
     const handleCreditChange = (e) => {
@@ -29,7 +29,7 @@ const Total = ({ formData, setFormData }) => {
         setFormData((prevState) => ({
             ...prevState,
             balance,
-            credit: (prevState.total || 0) - balance // Aseguramos que credit se actualice aquí también
+            credit: (prevState.total || 0) - balance 
         }));
     };
 
@@ -56,7 +56,7 @@ const Total = ({ formData, setFormData }) => {
                             name="balance"
                             width="full"
                             maxWidth="70%"
-                            value={formData.balance ?? ''}
+                            value={formData.balance === 0 ? '' : formData.balance}
                             onChange={handleCreditChange}
                         />
                     </FormControl>
