@@ -33,6 +33,7 @@ const options = [
   { label: "CREDITOS", icon: creditIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "HISTORIAL DE MEDIDAS", icon:historialMedidasIcon },
+  { label: "REGISTRAR LUNAS", icon: registrarPacienteIcon },
 ];
 
 const VendedorDashBoard = () => {
@@ -100,6 +101,9 @@ const VendedorDashBoard = () => {
         break;
       case "INVENTARIO":
         navigate('/Inventory');
+        break;
+      case "REGISTRAR LUNAS":
+        navigate('/RegisterLens');
         break;
       case "HISTORIAL PACIENTE":
           navigate('/HistoryClinic')
