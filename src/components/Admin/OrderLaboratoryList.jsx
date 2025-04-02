@@ -132,9 +132,38 @@ const OrderLaboratoryList = () => {
     }));
   };
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+        navigate(route);
+        return;
+    }
+    if (!user || !user.role_id) {
+        navigate('/LoginForm');
+        return;
+    }
+    switch (user.role_id) {
+        case 1:
+            navigate('/Admin');
+            break;
+        case 2:
+            navigate('/Optometra');
+            break;
+        case 3:
+            navigate('/Vendedor');
+            break;
+        default:
+            navigate('/');
+    }
+  };
+
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center">Lista Pendiente de Órdenes de Laboratorio</Heading>
+      <Box display="flex" justifyContent="center" gap={4} mb={4}>
+          <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
+          <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
+      </Box>
       <FormControl mb={4}>
         <FormLabel>Sucursal</FormLabel>
         <Select 
