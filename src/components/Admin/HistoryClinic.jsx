@@ -107,7 +107,7 @@ const HistoryClinic = () => {
     
           <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
             <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-            <Button onClick={() => handleNavigate('/')} mr={2} colorScheme="blue">Volver a Opciones</Button>
+            <Button onClick={() => handleNavigate()} mr={2} colorScheme="blue">Volver a Opciones</Button>
           </Box>
 
         <Box as="form" width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md" >
