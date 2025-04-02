@@ -14,7 +14,6 @@ import entregasIcon from "../../assets/entregas.svg";
 import saldosIcon from "../../assets/saldos.svg";
 import egresosIcon from "../../assets/egresos.svg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
-import garantiaIcon from "../../assets/garantia.svg";
 import inventarioIcon from "../../assets/inventario.svg";
 import usuariosIcon from "../../assets/usuarios.svg";
 import laboratoriosIcon from "../../assets/laboratorios.svg";
@@ -22,7 +21,8 @@ import sucursalesIcon from "../../assets/sucursales.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
 import creditIcon from "../../assets/credit.svg";
-import { use } from 'react';
+import registarlunasIcon from "../../assets/registrarlunas.svg";
+import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 import { supabase } from '../../api/supabase';
 
 
@@ -36,14 +36,14 @@ const options = [
   { label: "CIERRE", icon: cierredeCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon: historialMedidasIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
   { label: "USUARIOS", icon: usuariosIcon },
   { label: "LABORATORIOS", icon: laboratoriosIcon },
   { label: "SUCURSAL", icon: sucursalesIcon },
   { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon },
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
-  { label: "REGISTRAR LUNAS", icon: registrarPacienteIcon },
+  { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon }
 ];

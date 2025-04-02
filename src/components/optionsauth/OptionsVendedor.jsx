@@ -16,6 +16,8 @@ import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
 import creditIcon from "../../assets/credit.svg";
 import inventarioIcon from "../../assets/inventario.svg";
+import registarlunasIcon from "../../assets/registrarlunas.svg";
+import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 
 
 const options = [
@@ -32,8 +34,8 @@ const options = [
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
   { label: "INVENTARIO", icon: inventarioIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon:historialMedidasIcon },
-  { label: "REGISTRAR LUNAS", icon: registrarPacienteIcon },
+  { label: "HISTORIAL DE MEDIDAS", icon:medidasHistorialIcon },
+  { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
 ];
 
 const VendedorDashBoard = () => {
