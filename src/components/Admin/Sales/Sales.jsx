@@ -281,7 +281,6 @@ const Sales = () => {
       credit: isNaN(parseFloat(formData.credit)) ? 0 : parseFloat(formData.credit),
       balance: isNaN(parseFloat(formData.balance)) ? 0 : parseFloat(formData.balance),
       payment_in: formData.payment_in,
-      message: formData.message,
       patient_id: saleData.patient_id || null,
       lens_id: saleData.lens_id || null,
       branchs_id: saleData.branchs_id || null,
