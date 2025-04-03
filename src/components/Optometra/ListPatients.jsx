@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
 
@@ -9,11 +9,13 @@ const ListPatients = () => {
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editableData, setEditableData] = useState({});
+  const [branches, setBranchs] = useState([]);
   const toast = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchPatients();
+    fetchBranchs();
   }, []);
 
   const fetchPatients = async () => {
@@ -22,6 +24,15 @@ const ListPatients = () => {
       toast({ title: 'Error', description: 'Error al obtener los pacientes', status: 'error' });
     } else {
       setPatients(data);
+    }
+  };
+
+  const fetchBranchs = async () => {
+    const { data, error } = await supabase.from('branchs').select('id, name');
+    if (error) {
+      toast({ title: 'Error', description: 'Error al obtener las sucursales', status: 'error' });
+    } else {
+      setBranchs(data);
     }
   };
 
@@ -93,7 +104,7 @@ const ListPatients = () => {
 
       <Flex mb={4} gap={3} justify="center">
         <Button colorScheme="blue" onClick={() => handleNavigate('/RegisterPatient')}>Registrar Paciente</Button>
-        <Button bgColor="#00A8C8" color="white"  onClick={() => handleNavigate()}>Volver a Opciones</Button>
+        <Button bgColor="#00A8C8" color="white" onClick={() => handleNavigate()}>Volver a Opciones</Button>
       </Flex>
 
       <Input 
@@ -113,7 +124,7 @@ const ListPatients = () => {
               {[
                 'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono', 
                 'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta', 
-                'Recomendaciones', 'Acciones'
+                'Recomendaciones', 'Sucursal', 'Acciones'
               ].map((header) => (
                 <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
               ))}
@@ -135,6 +146,24 @@ const ListPatients = () => {
                     )}
                   </Td>
                 ))}
+                <Td key="branch_id" textAlign="center">
+                  {editingId === patient.id ? (
+                    <Select
+                      name="branch_id"
+                      value={editableData.branch_id || ""}
+                      onChange={handleChange}
+                    >
+                      <option value="">Seleccione una sucursal</option>
+                      {branches.map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </option>
+                      ))}
+                    </Select>
+                  ) : (
+                    branches.find((branch) => branch.id === patient.branch_id)?.name || 'N/A'
+                  )}
+                </Td>
                 <Td textAlign="center">
                   {editingId === patient.id ? (
                     <>
