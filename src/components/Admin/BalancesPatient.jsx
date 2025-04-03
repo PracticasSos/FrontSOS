@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 
 const BalancesPatient = () => {
     const [sales, setSales] = useState([]);
@@ -11,33 +11,21 @@ const BalancesPatient = () => {
         const [isFormOpen, setIsFormOpen] = useState(false);
         const [filteredSales, setFilteredSales] = useState([]);
         const [patients, setPatients] = useState([]);
+        const [selectedBranch, setSelectedBranch] = useState("");
+        const [branches, setBranches] = useState([]);
         const [searchTermPatients, setSearchTermPatients] = useState("");
         const navigate = useNavigate();
     
         useEffect(() => {
-            fetchSales();
-        }, []);
-    
-        useEffect(() => {
-            const fetchPatients = async () => {
-                setLoading(true);
-                try {
-                    const { data, error } = await supabase
-                        .from("patients")
-                        .select("id, pt_firstname, pt_lastname, pt_phone");
-    
-                    if (error) throw error;
-    
-                    setPatients(data);
-                } catch (error) {
-                    console.error("Error fetching patients:", error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-    
-            fetchPatients();
-        }, []);
+            fetchBranches();
+            fetchPatients(); 
+          }, []);
+
+          useEffect(() => {
+            if (selectedBranch) {
+                fetchSales({ branchId: selectedBranch });
+            }
+        }, [selectedBranch]);
     
         const handleSearch = (e) => {
             const value = e.target.value.toLowerCase();
@@ -53,16 +41,16 @@ const BalancesPatient = () => {
     
             const filtered = sales.filter((sale) => {
                 const fullName = `${sale.patient.pt_firstname} ${sale.patient.pt_lastname}`.toLowerCase();
-                return fullName.includes(searchTerm.toLowerCase());
+                return fullName.includes(searchTerm.toLowerCase()) || (selectedPatient && sale.patient.id === selectedPatient.id);
             });
     
             setFilteredSales(filtered);
         };
     
-        const fetchSales = async () => {
+        const fetchSales = async ({branchId = null, patientId = null}) => {
             setLoading(true);
             try {
-                const { data, error } = await supabase
+                let query = supabase
                     .from('sales')
                     .select(`
                         id,
@@ -73,8 +61,15 @@ const BalancesPatient = () => {
                         balance,
                         credit,
                         patients:patient_id(pt_firstname, pt_lastname, pt_phone)
-                    `);
-    
+                    `)
+                if  (branchId) {
+                    query = query.eq('branchs_id', branchId);
+                }
+                if (patientId) {
+                    query = query.eq('patient_id', patientId);
+                }
+                const { data, error } = await query;
+                
                 if (error) throw error;
                 const filteredSales = data.filter(sale => sale.balance > 0);
     
@@ -97,19 +92,39 @@ const BalancesPatient = () => {
                 setLoading(false);
             }
         };
-    
+
+        const fetchBranches = async () => {
+            const { data, error } = await supabase
+                .from('branchs')
+                .select('id, name');
+            if (error) {
+                console.error('Error fetching branches:', error);
+            } else {
+                setBranches(data);
+            }
+        };
+        
+        const fetchPatients = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('patients')
+                    .select('id, pt_firstname, pt_lastname, pt_phone');
+                if (error) throw error;
+                setPatients(data);
+            } catch (error) {
+                console.error("Error fetching patients:", error);
+            }
+        };
         const handleLogout = () => {
             navigate("/LoginForm");
         };
     
         const handlePatientClick = (patient) => {
             setSelectedPatient(patient);
-            const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
-            setSearchTermPatients(fullName);
+            setSearchTermPatients(`${patient.pt_firstname} ${patient.pt_lastname}`);
             setMessage(""); 
             setIsFormOpen(true);
-
-            updateFilteredSales(fullName);
+            fetchSales({ patientId: patient.id }); 
         };
     
         const handleSendMessage = () => {
@@ -153,6 +168,19 @@ const BalancesPatient = () => {
                     <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
                     <Button onClick={handleLogout} colorScheme="red">Cerrar Sesión</Button>
                 </Box>
+
+                <FormControl mb={4}>
+                    <FormLabel>Sucursal</FormLabel>
+                    <Select 
+                    placeholder="Selecciona una sucursal"
+                    value={selectedBranch}
+                    onChange={(e) => setSelectedBranch(e.target.value)}
+                    >
+                    {branches.map(branch => (
+                        <option key={branch.id} value={branch.id}>{branch.name}</option>
+                    ))}
+                    </Select>
+                </FormControl>
     
                 <FormControl id="patient-search">
                     <FormLabel>Buscar Paciente</FormLabel>
@@ -250,5 +278,5 @@ const BalancesPatient = () => {
             </Box>
         );
     };
-
+    
 export default BalancesPatient;
