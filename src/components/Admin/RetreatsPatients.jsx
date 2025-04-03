@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Spinner, Grid, FormControl, FormLabel, Collapse, Input, VStack, Textarea, Text, Select} from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
 const RetreatsPatients = () => {
   const [allPatients, setAllPatients] = useState([]); 
@@ -14,11 +15,13 @@ const RetreatsPatients = () => {
   const [message, setMessage] = useState("");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(true);
   const [branches, setBranches] = useState([]);
-  const [branchFilter, setBranchFilter] = useState(null);
+  const [filteredSales, setFilteredSales] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPatients();
+    fetchPatients({});
     fetchBranchs();
   }, []);
 
@@ -34,6 +37,13 @@ const RetreatsPatients = () => {
       }
   }, [location.state, navigate]);
 
+  useEffect(() => {
+    if (selectedBranch) {
+      fetchPatients({ branchId: selectedBranch });
+    }
+  }, [selectedBranch]);
+
+
   const fetchBranchs = async () => {
     const { data, error } = await supabase.from("branchs").select("id, name");
     if (!error) {
@@ -41,31 +51,21 @@ const RetreatsPatients = () => {
     }
   };
 
-  const handleBranchFilter = (e) => {
-    const selectedBranch = e.target.value;
-    setBranchFilter(selectedBranch ? parseInt(selectedBranch) : null);
-  };
-
-  const filteredByBranch = branchFilter
-  ? filteredPatients.filter(patient => Number(patient.branch_id) === Number(branchFilter))
-  : filteredPatients;
-
-
-  const fetchPatients = async () => {
+  const fetchPatients = async ({branchId = null, patientId = null}) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('sales')
         .select(`
           id,
           patient_id,
           date,
           patients (
-        id,
-        pt_firstname,
-        pt_lastname,
-        pt_ci,
-        pt_phone
+            id,
+            pt_firstname,
+            pt_lastname,
+            pt_ci,
+            pt_phone
           ),
           inventario:inventario_id(brand),
           lens:lens_id(lens_type),
@@ -76,15 +76,23 @@ const RetreatsPatients = () => {
         `)
         .eq('is_completed', false);
 
+        if (branchId) {
+          query = query.eq('branchs_id', branchId);
+        }
+        if (patientId) {
+          query = query.eq('patient_id', patientId);
+        }
+        const { data, error } = await query;
+
       if (error) throw error;
 
       const formattedData = data.map(sale => ({
         sale_id: sale.id, 
         patient_id: sale.patient_id,
-        pt_firstname: sale.patients.pt_firstname,
-        pt_lastname: sale.patients.pt_lastname,
-        pt_ci: sale.patients.pt_ci,
-        pt_phone: sale.patients.pt_phone,
+        pt_firstname: sale.patients?.pt_firstname || "N/A",
+        pt_lastname: sale.patients?.pt_lastname || "N/A",
+        pt_ci: sale.patients?.pt_ci || "N/A",
+        pt_phone: sale.patients?.pt_phone || "N/A",
         date: sale.date,
         brand: sale.inventario?.brand || "Sin marca",
         lens_type: sale.lens?.lens_type || "N/A",
@@ -115,20 +123,33 @@ const RetreatsPatients = () => {
   
 
   const handleSearch = (e) => {
-    const searchValue = e.target.value.toLowerCase();
-    setSearchTermPatients(searchValue);
-    setShowSearchSuggestions(true);
-    let filtered = allPatients;
-  
-    if (searchValue.trim() !== '') {
-      filtered = filtered.filter(patient => {
+    const value = e.target.value.toLowerCase();
+    setSearchTermPatients(value);
+    const filteredSuggestions = allPatients
+      .filter((patient) => {
         const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
-        return fullName.includes(searchValue);
-      });
-    }
-    setFilteredPatients(filtered);
+        return fullName.includes(value);
+      }).map((patient) => `${patient.pt_firstname} ${patient.pt_lastname}`);
+    setSuggestions(filteredSuggestions);
+    updateFilteredSales(value);
   };
   
+  const updateFilteredSales = (searchTerm) => {
+    if (!searchTerm) {
+      setFilteredPatients(allPatients);
+      return;
+    }
+    const filtered = allPatients.filter((sale) => {
+      const fullName = sale.patients
+        ? `${sale.patients.pt_firstname} ${sale.patients.pt_lastname}`.toLowerCase()
+        : "";
+      return (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        (selectedPatient && sale.patient?.id === selectedPatient.id) 
+      );
+    });
+    setFilteredSales(filtered);
+  } 
 
   const handlePatientClick = (selectedPatient) => {
     setSelectedPatient(selectedPatient);
@@ -155,15 +176,25 @@ const RetreatsPatients = () => {
     window.open(whatsappUrl, "_blank");
   };
 
-  const searchSuggestions = searchTermPatients ? allPatients
-    .filter((patient, index, self) => {
-      const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
-      return fullName.includes(searchTermPatients.toLowerCase()) &&
-        index === self.findIndex(p => 
-          p.pt_firstname === patient.pt_firstname && 
-          p.pt_lastname === patient.pt_lastname
+  const handleSuggestionSelect = (selectedName) => {
+    setSearchTermPatients(selectedName); 
+    setSuggestions([]); 
+    const selectedPatient = allPatients.find(
+        (patient) =>
+            `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase() ===
+            selectedName.toLowerCase()
+    );
+
+    if (selectedPatient) {
+        setSelectedPatient(selectedPatient); 
+        const patientRetiros = allPatients.filter(
+            (patient) =>
+                patient.pt_firstname === selectedPatient.pt_firstname &&
+                patient.pt_lastname === selectedPatient.pt_lastname
         );
-    }) : [];
+        setFilteredPatients(patientRetiros); 
+    }
+    };
 
     const handleNavigate = (route = null) => {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -191,64 +222,37 @@ const RetreatsPatients = () => {
   };
 
   return (
-    <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+    <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6} boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center">Retiros</Heading>
-      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6} justifyItems="center">
+      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="400px" mb={4}>
         <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal" width="auto" maxWidth="200px">
           Consultas de Cierre
         </Button>
         <Button onClick={() => handleNavigate()} colorScheme="blue" width="auto" maxWidth="200px">
           Volver a Opciones
         </Button>
-      </Grid>
-      
-      <FormControl id="patient-search" position="relative" mb={6}>
-        <FormLabel>Buscar Paciente</FormLabel>
-        <Input 
-          type="text" 
-          placeholder="Buscar por nombre..." 
-          value={searchTermPatients} 
-          onChange={handleSearch}
-          onClick={() => setShowSearchSuggestions(true)}
+      </Box>
+      <Box w="50%" mx="auto" display="block">
+        <SearchBar
+          searchPlaceholder="Buscar por nombre..."
+          searchValue={searchTermPatients}
+          onSearchChange={handleSearch}
+          suggestions={suggestions}
+          onSuggestionSelect={handleSuggestionSelect}
+          branches={branches}
+          selectedBranch={selectedBranch}
+          onBranchChange={(e) => setSelectedBranch(e.target.value)}
+          showBranchFilter={true}
         />
-        {showSearchSuggestions && searchSuggestions.length > 0 && (
-          <Box 
-            position="absolute" 
-            zIndex="1"
-            width="100%"
-            bg="white"
-            border="1px solid #ccc" 
-            borderRadius="md" 
-            mt={2} 
-            maxHeight="150px" 
-            overflowY="auto"
-          >
-            {searchSuggestions.map((patient) => (
-              <Box 
-                key={`${patient.pt_firstname}-${patient.pt_lastname}-${patient.patient_id}`}
-                padding={2}
-                _hover={{ bg: "teal.100", cursor: "pointer" }}
-                onClick={() => handlePatientClick(patient)}
-              >
-                {patient.pt_firstname} {patient.pt_lastname}
-              </Box>
-            ))}
-          </Box>
-        )}
-      </FormControl>
-      <Select placeholder="Filtrar por sucursal" onChange={handleBranchFilter}mt={4} mb={4}>
-        {branches.map((branch) => (
-          <option key={branch.id} value={branch.id}>{branch.name}</option>
-        ))}
-      </Select>
-      {branchFilter && filteredByBranch.length === 0 ? (
-        <Text textAlign="center" color="gray.500">No hay retiros para esta sucursal</Text>
-      ) : (
-        branchFilter && (
-      <>
-
-      {loading ? (
-        <Spinner size="xl" />
+      </Box>
+      {(!selectedBranch && !searchTermPatients) ? (
+        <Text textAlign="center" color="gray.500" mt={6}>
+          Por favor, selecciona una sucursal o busca un nombre para mostrar los datos.
+        </Text>
+      ) : filteredPatients.length === 0 ? (
+        <Text textAlign="center" color="gray.500">
+          No se encontraron registros de pacientes.
+        </Text>
       ) : (
         <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
           <Table>
@@ -257,6 +261,7 @@ const RetreatsPatients = () => {
                 <Th>Fecha</Th>
                 <Th>Nombre</Th>
                 <Th>Apellido</Th>
+                <Th>Sucursal</Th>
                 <Th>Armazón</Th>
                 <Th>Luna</Th>
                 <Th>Total</Th>
@@ -267,15 +272,16 @@ const RetreatsPatients = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {filteredByBranch.map((patient) => (
-                <Tr 
+              {filteredPatients.map((patient) => (
+                <Tr
                   key={`${patient.sale_id}`}
-                  onClick={() => handlePatientSelect(patient)} 
+                  onClick={() => handlePatientSelect(patient)}
                   className="cursor-pointer hover:bg-gray-100"
                 >
                   <Td>{patient.date}</Td>
                   <Td>{patient.pt_firstname}</Td>
                   <Td>{patient.pt_lastname}</Td>
+                  <Td>{patient.branch}</Td>
                   <Td>{patient.brand || "Sin Marca"}</Td>
                   <Td>{patient.lens_type}</Td>
                   <Td>{patient.total}</Td>
@@ -283,9 +289,9 @@ const RetreatsPatients = () => {
                   <Td>{patient.credit}</Td>
                   <Td>{patient.pt_phone}</Td>
                   <Td>
-                    <Button 
-                      size="sm" 
-                      colorScheme="green" 
+                    <Button
+                      size="sm"
+                      colorScheme="green"
                       onClick={(e) => handleMessageClick(e, patient)}
                     >
                       Enviar Mensaje
@@ -296,9 +302,6 @@ const RetreatsPatients = () => {
             </Tbody>
           </Table>
         </Box>
-      )}
-    </>
-        )
       )}
 
       <Collapse in={isFormOpen} animateOpacity>

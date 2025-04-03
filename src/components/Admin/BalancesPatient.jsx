@@ -71,7 +71,8 @@ const BalancesPatient = () => {
                         total,
                         balance,
                         credit,
-                        patients:patient_id(pt_firstname, pt_lastname, pt_phone)
+                        patients:patient_id(pt_firstname, pt_lastname, pt_phone),
+                        branchs:branchs_id(id, name)
                     `)
                 if  (branchId) {
                     query = query.eq('branchs_id', branchId);
@@ -92,7 +93,9 @@ const BalancesPatient = () => {
                     total: sale.total,
                     balance: sale.balance,
                     credit: sale.credit,
-                    patient: sale.patients || {}
+                    patient: sale.patients || {},
+                    branch_id: sale.branchs?.id || null,
+                    branch: sale.branchs?.name || "N/A",
                 }));
     
                 setSales(formattedSales);
@@ -130,9 +133,6 @@ const BalancesPatient = () => {
             setSelectedPatient(patient); 
             setIsFormOpen(true); 
             fetchSales({ patientId: patient.id });
-        };
-        const handleLogout = () => {
-            navigate("/LoginForm");
         };
     
         const handleSuggestionSelect = (selectedName) => {
@@ -218,6 +218,7 @@ const BalancesPatient = () => {
                                     <Th>Fecha</Th>
                                     <Th>Nombre</Th>
                                     <Th>Apellido</Th>
+                                    <Th>Sucursal</Th>
                                     <Th>Armazón</Th>
                                     <Th>Luna</Th>
                                     <Th>Total</Th>
@@ -233,6 +234,7 @@ const BalancesPatient = () => {
                                         <Td>{sale.date}</Td>
                                         <Td>{sale.patient.pt_firstname}</Td>
                                         <Td>{sale.patient.pt_lastname}</Td>
+                                        <Td>{sale.branch}</Td>
                                         <Td>{sale.brand || "Sin Marca"}</Td>
                                         <Td>{sale.lens_type}</Td>
                                         <Td>{sale.total}</Td>
