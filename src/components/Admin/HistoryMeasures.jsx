@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
@@ -82,7 +82,7 @@ const HistoryMeasures = () => {
                         </Thead>
                         <Tbody>
                             {measures.map((measure) => (
-                                <>
+                                <React.Fragment key={measure.id}>
                                     <Tr key={measure.id}>
                                         <Td rowSpan={2}>{new Date(measure.created_at).toLocaleDateString()}</Td>
                                         <Td>OD</Td>
@@ -108,7 +108,7 @@ const HistoryMeasures = () => {
                                         <Td>{measure.dnp_left}</Td>
                                         <Td>{measure.alt_left}</Td>
                                     </Tr>
-                                </>
+                                </React.Fragment>
                             ))}
                         </Tbody>
                     </Table>

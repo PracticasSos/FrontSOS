@@ -61,11 +61,11 @@ const RetreatsPatients = () => {
           patient_id,
           date,
           patients (
-            id,
-            pt_firstname,
-            pt_lastname,
-            pt_ci,
-            pt_phone
+        id,
+        pt_firstname,
+        pt_lastname,
+        pt_ci,
+        pt_phone
           ),
           inventario:inventario_id(brand),
           lens:lens_id(lens_type),
@@ -118,17 +118,17 @@ const RetreatsPatients = () => {
     const searchValue = e.target.value.toLowerCase();
     setSearchTermPatients(searchValue);
     setShowSearchSuggestions(true);
-    
-    if (searchValue.trim() === '') {
-      setFilteredPatients(allPatients);
-    } else {
-      const filtered = allPatients.filter(patient => {
+    let filtered = allPatients;
+  
+    if (searchValue.trim() !== '') {
+      filtered = filtered.filter(patient => {
         const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
         return fullName.includes(searchValue);
       });
-      setFilteredPatients(filtered);
     }
+    setFilteredPatients(filtered);
   };
+  
 
   const handlePatientClick = (selectedPatient) => {
     setSelectedPatient(selectedPatient);
@@ -193,15 +193,12 @@ const RetreatsPatients = () => {
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
       <Heading mb={4} textAlign="center">Retiros</Heading>
-      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6} justifyItems="center">
         <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal" width="auto" maxWidth="200px">
           Consultas de Cierre
         </Button>
         <Button onClick={() => handleNavigate()} colorScheme="blue" width="auto" maxWidth="200px">
           Volver a Opciones
-        </Button>
-        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red" width="auto" maxWidth="200px">
-          Cerrar Sesión
         </Button>
       </Grid>
       

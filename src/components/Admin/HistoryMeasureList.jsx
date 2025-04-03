@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Spinner, Input, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, Divider } from "@chakra-ui/react";
+import SearchBar from "./SearchBar";
 
 const HistoryMeasureList = () => {
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [suggestion, setSuggestion] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -62,6 +64,17 @@ const HistoryMeasureList = () => {
     const handleSearch = (e) => {
         const query = e.target.value.toLowerCase();
         setSearch(query);
+    
+        const filteredSuggestions = patients
+            .filter(
+                (patient) =>
+                    patient.pt_firstname.toLowerCase().includes(query) ||
+                    patient.pt_lastname.toLowerCase().includes(query) ||
+                    patient.pt_ci.toLowerCase().includes(query)
+            )
+            .map((patient) => `${patient.pt_firstname} ${patient.pt_lastname}`);
+        setSuggestion(filteredSuggestions);
+    
         const filtered = patients.filter(
             (patient) =>
                 patient.pt_firstname.toLowerCase().includes(query) ||
@@ -69,6 +82,20 @@ const HistoryMeasureList = () => {
                 patient.pt_ci.toLowerCase().includes(query)
         );
         setFilteredPatients(filtered);
+    };
+    
+    const handleSuggestionSelect = (selectedName) => {
+        setSearch(selectedName); 
+        setSuggestion([]);
+    
+        const filtered = patients.filter(
+            (patient) =>
+                `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase() ===
+                selectedName.toLowerCase()
+        );
+        if (filtered.length > 0) {
+            setFilteredPatients(filtered);
+        }
     };
 
     const handleNavigate = (route = null) => {
@@ -99,21 +126,28 @@ const HistoryMeasureList = () => {
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
             <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
-            <Button colorScheme="blue" onClick={() => handleNavigate("/SalesForm")} mr={2}>Registrar Medidas</Button>
-            <Button colorScheme="gray" onClick={() => handleNavigate()}>Volver a Opciones</Button>
+            <Box display="flex" justifyContent="center" width="100%" mb={4}>
+                <Box display="flex" gap={6} justifyContent="center">
+                    <Button colorScheme="blue" onClick={() => handleNavigate("/SalesForm")}>Registrar Medidas</Button>
+                    <Button colorScheme="gray" onClick={() => handleNavigate()}>Volver a Opciones</Button>
+                </Box>
+            </Box>
+
             {loading ? (
                 <Spinner size="xl" mt={4} />
             ) : (
                 <Box>
-                    <Input
-                        placeholder="Buscar por nombre, apellido o CI"
-                        value={search}
-                        onChange={handleSearch}
-                        mt={4}
-                        mb={4}
-                        bg="white"
-                        color="black"
-                    />
+                    <Divider my={4} />
+                    <Box w="50%" mx="auto">
+                        <SearchBar 
+                            searchPlaceholder="Buscar Paciente..."
+                            searchValue={search}
+                            onSearchChange={handleSearch}
+                            suggestions={suggestion}
+                            onSuggestionSelect={handleSuggestionSelect}
+                            showBranchFilter={false} 
+                        />
+                    </Box>
                     <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
                         <Table variant="simple">
                             <Thead>
@@ -126,9 +160,11 @@ const HistoryMeasureList = () => {
                             </Thead>
                             <Tbody>
                                 {filteredPatients.map((patient) => (
-                                    <Tr key={patient.patient_id}
+                                    <Tr 
+                                        key={patient.patient_id}
                                         onClick={() => handlePatientSelect(patient)}
-                                        className="cursor-pointer hover:bg-gray-100">
+                                        className="cursor-pointer hover:bg-gray-100"
+                                    >
                                         <Td>{patient.pt_firstname}</Td>
                                         <Td>{patient.pt_lastname}</Td>
                                         <Td>{patient.pt_ci}</Td>

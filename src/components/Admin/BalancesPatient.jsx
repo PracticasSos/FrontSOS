@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, Textarea, VStack, Collapse, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
+import SearchBar from "./SearchBar";
 
 const BalancesPatient = () => {
     const [sales, setSales] = useState([]);
@@ -14,6 +15,7 @@ const BalancesPatient = () => {
         const [selectedBranch, setSelectedBranch] = useState("");
         const [branches, setBranches] = useState([]);
         const [searchTermPatients, setSearchTermPatients] = useState("");
+        const [suggestions, setSuggestions] = useState([]);
         const navigate = useNavigate();
     
         useEffect(() => {
@@ -30,20 +32,29 @@ const BalancesPatient = () => {
         const handleSearch = (e) => {
             const value = e.target.value.toLowerCase();
             setSearchTermPatients(value);
+            const filteredSuggestions = patients
+                .filter((patient) => {
+                    const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
+                    return fullName.includes(value);
+                })
+                .map((patient) => `${patient.pt_firstname} ${patient.pt_lastname}`);
+            setSuggestions(filteredSuggestions);
             updateFilteredSales(value);
         };
-    
+        
         const updateFilteredSales = (searchTerm) => {
             if (!searchTerm) {
                 setFilteredSales(sales);
                 return;
             }
-    
             const filtered = sales.filter((sale) => {
                 const fullName = `${sale.patient.pt_firstname} ${sale.patient.pt_lastname}`.toLowerCase();
-                return fullName.includes(searchTerm.toLowerCase()) || (selectedPatient && sale.patient.id === selectedPatient.id);
+                return (
+                    fullName.includes(searchTerm.toLowerCase()) ||
+                    (selectedPatient && sale.patient.id === selectedPatient.id)
+                );
             });
-    
+        
             setFilteredSales(filtered);
         };
     
@@ -115,17 +126,29 @@ const BalancesPatient = () => {
                 console.error("Error fetching patients:", error);
             }
         };
+        const handlePatientClick = (patient) => {
+            setSelectedPatient(patient); 
+            setIsFormOpen(true); 
+            fetchSales({ patientId: patient.id });
+        };
         const handleLogout = () => {
             navigate("/LoginForm");
         };
     
-        const handlePatientClick = (patient) => {
-            setSelectedPatient(patient);
-            setSearchTermPatients(`${patient.pt_firstname} ${patient.pt_lastname}`);
-            setMessage(""); 
-            setIsFormOpen(true);
-            fetchSales({ patientId: patient.id }); 
-        };
+        const handleSuggestionSelect = (selectedName) => {
+            setSearchTermPatients(selectedName);
+            setSuggestions([]);
+        
+            const selectedPatient = patients.find(
+              (patient) =>
+                `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase() ===
+                selectedName.toLowerCase()
+            );
+        
+            if (selectedPatient) {
+              handlePatientClick(selectedPatient);
+            }
+          };
     
         const handleSendMessage = () => {
             if (!selectedPatient || !message.trim()) return;
@@ -163,43 +186,25 @@ const BalancesPatient = () => {
             <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
                 <Heading mb={4} textAlign="center">Historial de Saldos</Heading>
     
-                <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
+                <Box display="flex" justifyContent="space-between" width="100%" maxWidth="400px" mb={4}>
                     <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
                     <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-                    <Button onClick={handleLogout} colorScheme="red">Cerrar Sesión</Button>
                 </Box>
-
-                <FormControl mb={4}>
-                    <FormLabel>Sucursal</FormLabel>
-                    <Select 
-                    placeholder="Selecciona una sucursal"
-                    value={selectedBranch}
-                    onChange={(e) => setSelectedBranch(e.target.value)}
-                    >
-                    {branches.map(branch => (
-                        <option key={branch.id} value={branch.id}>{branch.name}</option>
-                    ))}
-                    </Select>
-                </FormControl>
-    
-                <FormControl id="patient-search">
-                    <FormLabel>Buscar Paciente</FormLabel>
-                    <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearch} />
-                    {searchTermPatients && (
-                        <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
-                            {patients.filter((patient) => {
-                                const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`.toLowerCase();
-                                return fullName.includes(searchTermPatients.toLowerCase());
-                            }).map((patient) => (
-                                <Box key={patient.id} padding={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handlePatientClick(patient)}>
-                                    {patient.pt_firstname} {patient.pt_lastname}
-                                </Box>
-                            ))}
-                        </Box>
-                    )}
-                </FormControl>
     
                 <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
+                    <Box  w="50%" mx="auto"display="block">
+                    <SearchBar
+                        searchPlaceholder="Buscar por nombre..."
+                        searchValue={searchTermPatients}
+                        onSearchChange={handleSearch}
+                        suggestions={suggestions}
+                        onSuggestionSelect={handleSuggestionSelect}
+                        branches={branches}
+                        selectedBranch={selectedBranch}
+                        onBranchChange={(e) => setSelectedBranch(e.target.value)}
+                        showBranchFilter={true}
+                    />
+                    </Box>
                     {loading ? (
                         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
                             <Spinner size="xl" />
