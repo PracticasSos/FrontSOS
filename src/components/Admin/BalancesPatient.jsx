@@ -71,7 +71,7 @@ const BalancesPatient = () => {
                 const { data, error } = await query;
                 
                 if (error) throw error;
-                const filteredSales = data.filter(sale => sale.balance > 0);
+                const filteredSales = data.filter(sale => sale.credit > 0);
     
                 const formattedSales = filteredSales.map(sale => ({
                     id: sale.id,
