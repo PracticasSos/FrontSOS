@@ -35,6 +35,7 @@ import ListSales from "../components/Admin/ListSales.jsx";
 import Sales from "../components/Admin/Sales/Sales.jsx";
 import Register from "../components/Admin/Register.jsx";
 import HistoryClinic from "../components/Admin/HistoryClinic.jsx";
+import SalesHistory from "../components/Admin/Sales/history/SalesHistory.jsx";
 
 const AppRouter = () => {
     return(
@@ -73,7 +74,7 @@ const AppRouter = () => {
             <Route path="/ListSales" element={<ListSales/>}></Route>
             <Route path="/HistoryClinic" element={<HistoryClinic />} />
             <Route path="/HistoryClinic/PatientHistory/:patientId" element={<PatientHistory />} />
-            <Route path="/HistoryClinic/PatientHistory/:patientId/Sales/:saleId" element={<Sales />} />
+            <Route path="/HistoryClinic/PatientHistory/:patientId/SalesHistory/:saleId" element={<SalesHistory />} />
         </Routes>
     )
 }

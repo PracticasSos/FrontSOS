@@ -34,7 +34,7 @@ const PatientHistory = () => {
       console.error('No patient selected');
       return;
     }
-    navigate(`/HistoryClinic/PatientHistory/${patientId}/Sales/${sale.id}`, {
+    navigate(`/HistoryClinic/PatientHistory/${patientId}/SalesHistory/${sale.id}`, {
       state: { saleData: sale },
     });
   };
