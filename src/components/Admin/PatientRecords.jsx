@@ -101,7 +101,7 @@ const PatientRecords = () => {
                     lens (lens_type), 
                     total,     
                     credit, 
-                    balance, 
+                    payment_in_day, 
                     payment_in,
                     patients (pt_firstname, pt_lastname)
                 `)
@@ -261,12 +261,6 @@ const PatientRecords = () => {
             if (record.payment_in === "efectivo") newTotals.EFEC += abono;
             if (record.payment_in === "transferencia") newTotals.TRANS += abono;
             if (record.payment_in === "datafast") newTotals.DATAF += abono;
-
-            if (record.withdrawals && Array.isArray(record.withdrawals)) {
-                record.withdrawals.forEach((w) => {
-                    newTotals.abonosDelDia += Number(w.difference);
-                });
-            }
         });
 
         const total = newTotals.EFEC + newTotals.TRANS + newTotals.DATAF;
@@ -424,7 +418,7 @@ const PatientRecords = () => {
                             <Td>{record.inventario?.brand ?? "Sin marca"}</Td>
                             <Td>{record.lens}</Td>
                             <Td isNumeric>{record.total}</Td>
-                            <Td>{record.balance}</Td>
+                            <Td>{record.payment_in_day}</Td>
                             <Td>{record.credit}</Td>
                             <Td>
                                 <Badge

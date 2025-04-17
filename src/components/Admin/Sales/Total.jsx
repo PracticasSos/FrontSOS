@@ -21,7 +21,7 @@ const Total = ({ formData, setFormData }) => {
         formData.p_lens, 
         formData.total_p_frame, 
         formData.total_p_lens, 
-        formData.balance 
+        formData.balance,
     ]);
    
     const handleCreditChange = (e) => {
