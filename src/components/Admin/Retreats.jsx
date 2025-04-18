@@ -4,13 +4,11 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
 
 const Retreats = () => {
-    const { patientId } = useParams();
-    console.log(patientId);
+    const { saleId } = useParams();
     const location = useLocation();
     const [salesData, setSalesData] = useState(null);
     const [patientData, setPatientData] = useState(location.state?.patientData || null);
     const [patientsList, setPatientsList] = useState([]);
-    const [filteredMeasures, setFilteredMeasures] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [pendingSales, setPendingSales] = useState([]);
     const [message, setMessage] = useState("");
@@ -43,40 +41,42 @@ const Retreats = () => {
     };
 
     useEffect(() => {
-        if (patientId) {
+        if (saleId) {
             fetchPatientData();
         } else {
-            console.error("patientId is undefined or invalid.");
-            alert("Error: El ID del paciente no está disponible.");
+            console.error("Sale is undefined or invalid.");
+            alert("Error: El ID de la venta no está disponible.");
         }
-    }, [patientId]);
-
-    useEffect(() => {
-        if (patientData?.id) {
-            fetchSalesData();
-            fetchMeasures();
-        }
-    }, [patientData]);
+    }, [saleId]);
 
     const fetchPatientData = async () => {
-        if (!patientId) {
-            console.error("patientId is undefined or invalid.");
-            return; 
-        }
         try {
             const { data, error } = await supabase
-                .from("patients")
-                .select("*")
-                .eq("id", patientId)
+                .from("sales")
+                .select(`
+                    *,
+                    patients (
+                        id,
+                        pt_firstname,
+                        pt_lastname,
+                        pt_ci,
+                        pt_phone
+                    ),
+                    rx_final:measure_id (*)
+                `)
+                .eq("id", saleId)
                 .single();
-
+    
             if (error) throw error;
-            setPatientData(data);
+    
+            setPatientData(data.patients); 
+            setSalesData(data); 
         } catch (error) {
             console.error("Error fetching patient data:", error);
-            alert("Error al cargar los datos del paciente.");
+            alert("Error al cargar los datos de la venta.");
         }
     };
+    
 
     const fetchSalesData = async () => {
         try {
@@ -98,7 +98,8 @@ const Retreats = () => {
                     balance,
                     credit,
                     payment_in,
-                    payment_balance
+                    payment_balance, 
+                    meausre_id
                 `)
                 .eq("patient_id", patientData.id); 
     
@@ -126,30 +127,6 @@ const Retreats = () => {
         setTimeout(() => {
             setIsTyping(false); 
         }, 200); 
-    };
-    
-    const fetchMeasures = async () => {
-        try {
-            const { data, error } = await supabase
-                .from("rx_final")
-                .select("*")
-                .eq("patient_id", patientId);
-
-            if (error) throw error;
-            setFilteredMeasures(data);
-        } catch (error) {
-            console.error("Error fetching measures:", error);
-        }
-    };
-
-    const handlePDFClick = async () => {
-        try {
-            const pdfUrl = await generateAndUploadPDF(formData);
-            alert(`PDF generado: ${pdfUrl}`);
-        } catch (err) {
-            console.error("Error generando el PDF:", err);
-            alert("Hubo un problema al generar el PDF.");
-        }
     };
 
     const handleSendWhatsApp = async () => {
@@ -247,7 +224,7 @@ const Retreats = () => {
 
     return (
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-        <Heading as="h2" size="lg" mb={4}>Orden de Laboratorio</Heading>
+        <Heading as="h2" size="lg" mb={4}>Retiros</Heading>
         <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
             <Button onClick={() => handleNavigate("/RetreatsPatients")} colorScheme="teal">Lista de Retiros</Button>
             <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
@@ -306,9 +283,7 @@ const Retreats = () => {
                                         <Input
                                             name={`${field}_${prefix}`}
                                             value={
-                                                filteredMeasures.length > 0
-                                                    ? filteredMeasures[0][`${field}_${prefix}`] || ""
-                                                    : ""
+                                                 salesData?.rx_final?.[`${field}_${prefix}`] || ""
                                             }
                                             isReadOnly
                                         />
@@ -326,7 +301,7 @@ const Retreats = () => {
                                 <FormLabel>Armazón</FormLabel>
                                 <Input
                                     type="text"
-                                    value={salesData?.inventario?.brand ?? "Sin marca"}
+                                    value={salesData?.inventario?.brand || "Sin marca"}
                                     isReadOnly
                                     width="auto"
                                     maxWidth="300px"
@@ -337,7 +312,7 @@ const Retreats = () => {
                                 <FormLabel>Lunas</FormLabel>
                                 <Input
                                     type="text"
-                                    value={salesData?.lens.lens_type || ""}
+                                    value={salesData?.lens?.lens_type || ""}
                                     isReadOnly
                                     width="auto"
                                     maxWidth="300px"

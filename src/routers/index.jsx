@@ -67,7 +67,7 @@ const AppRouter = () => {
             <Route path="Egresos" element={<Egresos />}> </Route>
             <Route path="BalancesPatient" element={<BalancesPatient/>}></Route>
             <Route path="/RetreatsPatients" element={<RetreatsPatients/>}></Route>
-            <Route path="/RetreatsPatients/Retreats/:patientId" element={<Retreats/>}></Route>
+            <Route path="/RetreatsPatients/Retreats/:saleId" element={<Retreats/>}></Route>
             <Route path="/Balance" element={<Balance/>}></Route>
             <Route path="/ListLens" element={<ListLens/>}></Route>
             <Route path="/ListBalance" element={<ListBalance/>}></Route>

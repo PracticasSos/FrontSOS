@@ -51,7 +51,7 @@ const RetreatsPatients = () => {
     }
   };
 
-  const fetchPatients = async ({branchId = null, patientId = null}) => {
+  const fetchPatients = async ({branchId = null, saleId = null}) => {
     setLoading(true);
     try {
       let query = supabase
@@ -79,8 +79,8 @@ const RetreatsPatients = () => {
         if (branchId) {
           query = query.eq('branchs_id', branchId);
         }
-        if (patientId) {
-          query = query.eq('patient_id', patientId);
+        if (saleId) {
+          query = query.eq('patient_id', saleId);
         }
         const { data, error } = await query;
 
@@ -113,15 +113,14 @@ const RetreatsPatients = () => {
     }
   };
 
-  const handlePatientSelect = (patient) => {
-    if (patient && patient.patient_id) {  
-      navigate(`/RetreatsPatients/Retreats/${patient.patient_id}`, { 
-        state: { patientData: patient, selectedDate: patient.date } 
+  const handlePatientSelect = (sale) => {
+    if (sale && sale.sale_id) {  
+      navigate(`/RetreatsPatients/Retreats/${sale.sale_id}`, { 
+        state: { patientData: sale, selectedDate: sale.date } 
       });
     }
   };
   
-
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTermPatients(value);
