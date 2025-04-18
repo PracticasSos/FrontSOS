@@ -256,7 +256,7 @@ const PatientRecords = () => {
         };
 
         data.forEach((record) => {
-            const abono = Number(record.balance);
+            const abono = Number(record.payment_in_day);
 
             if (record.payment_in === "efectivo") newTotals.EFEC += abono;
             if (record.payment_in === "transferencia") newTotals.TRANS += abono;
