@@ -168,7 +168,7 @@ const CashClosure = () => {
     };
 
     const fetchDailyWithdrawals = async (branchId) => {
-        const { since, till, month } = formData;  
+        const { since, till, month } = formData;
         let salesQuery = supabase
             .from("sales")
             .select(`
@@ -180,80 +180,116 @@ const CashClosure = () => {
                 credit
             `)
             .eq("branchs_id", branchId);
-
-        if (since && till) {
-            salesQuery = salesQuery.gte("date", since).lte("date", till);
-        } else if (month) {
-            const dates = getMonthRange(month);
-            if (dates) {
-                salesQuery = salesQuery.gte("date", dates.startDate).lte("date", dates.endDate);
-            }
-        }
-
+    
         try {
             const { data: salesToday, error: salesError } = await salesQuery;
             if (salesError) throw salesError;
+    
             const saleIds = salesToday.map(sale => sale.id);
-
+            if (saleIds.length === 0) {
+                setWithdrawalsRecords([]);
+                setTotalAbonosDelDia((prevTotals) => ({
+                    ...prevTotals,
+                    EFEC: 0,
+                    TRANS: 0,
+                    DATAF: 0,
+                    abonosDelDia: 0,
+                }));
+                return;
+            }
+    
+            let formattedSince, formattedTill;
+            if (since && till) {
+                formattedSince = new Date(since).toISOString().split('T')[0];
+                formattedTill = new Date(till).toISOString().split('T')[0];
+            } else if (month) {
+                const dates = getMonthRange(month);
+                if (dates) {
+                    formattedSince = dates.startDate;
+                    formattedTill = dates.endDate;
+                }
+            }
+    
             let withdrawalsQuery = supabase
                 .from("withdrawals")
                 .select(`
                     id,
                     sale_id,
-                    previous_balance, 
-                    new_balance, 
-                    difference, 
-                    date
+                    previous_balance,
+                    new_balance,
+                    difference,
+                    date,
+                    sales (
+                        branchs_id,
+                        payment_balance,
+                        total,
+                        credit,
+                        patients (
+                            pt_firstname,
+                            pt_lastname
+                        )
+                    )
                 `)
-                .in("sale_id", saleIds);
-
-            if (since && till) {
-                withdrawalsQuery = withdrawalsQuery.gte("date", since).lte("date", till);
-            } else if (month) {
-                const dates = getMonthRange(month);
-                if (dates) {
-                    withdrawalsQuery = withdrawalsQuery.gte("date", dates.startDate).lte("date", dates.endDate);
-                }
+                .in("sale_id", saleIds)
+                .eq("sales.branchs_id", branchId);
+            if (formattedSince && formattedTill) {
+                withdrawalsQuery = withdrawalsQuery
+                    .gte("date", formattedSince)
+                    .lte("date", formattedTill);
             }
+    
             const { data: withdrawalsToday, error: withdrawalsError } = await withdrawalsQuery;
             if (withdrawalsError) throw withdrawalsError;
-            
+    
             let totalAbonosDelDia = { EFEC: 0, TRANS: 0, DATAF: 0 };
             const formattedWithdrawals = withdrawalsToday.map((withdrawal) => {
-                const relatedSale = salesToday.find(sale => sale.id === withdrawal.sale_id);
+                const relatedSale = withdrawal.sales;
                 const abonoDelDia = withdrawal.difference ? Number(withdrawal.difference) : 0;
                 const paymentMethod = relatedSale?.payment_balance || "Sin método";
-                    if (paymentMethod === "efectivo") {
-                        totalAbonosDelDia.EFEC += abonoDelDia;
-                    } else if (paymentMethod === "transferencia") {
-                        totalAbonosDelDia.TRANS += abonoDelDia;
-                    } else if (paymentMethod === "datafast") {
-                        totalAbonosDelDia.DATAF += abonoDelDia;
-                    }
-                    
-                    return {
-                        ...withdrawal,
-                        firstName: relatedSale?.patients?.pt_firstname || "Sin nombre",
-                        lastName: relatedSale?.patients?.pt_lastname || "Sin apellido",
-                        total: relatedSale?.total || 0,
-                        credit: relatedSale?.credit || 0,
-                        saldoAnterior: Number(withdrawal.previous_balance || 0),
-                        abonoDelDia: abonoDelDia,
-                        saldo: Number(withdrawal.new_balance || 0),
-                        payment_balance: paymentMethod,
-                    };
-                });
-        
-                setWithdrawalsRecords(formattedWithdrawals);
-                setTotalAbonosDelDia((prevTotals) => ({
-                    ...prevTotals,
-                    EFEC: totalAbonosDelDia.EFEC,
-                    TRANS: totalAbonosDelDia.TRANS,
-                    DATAF: totalAbonosDelDia.DATAF,
-                    abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
-                }));
-            } catch (err) {
-                setWithdrawalsRecords([]); 
+    
+                const patientFirstName = relatedSale?.patients?.pt_firstname || "Sin nombre";
+                const patientLastName = relatedSale?.patients?.pt_lastname || "Sin apellido";
+    
+                if (paymentMethod === "efectivo") {
+                    totalAbonosDelDia.EFEC += abonoDelDia;
+                } else if (paymentMethod === "transferencia") {
+                    totalAbonosDelDia.TRANS += abonoDelDia;
+                } else if (paymentMethod === "datafast") {
+                    totalAbonosDelDia.DATAF += abonoDelDia;
+                }
+    
+                return {
+                    ...withdrawal,
+                    firstName: patientFirstName,
+                    lastName: patientLastName,
+                    total: relatedSale?.total || 0,
+                    credit: relatedSale?.credit || 0,
+                    saldoAnterior: Number(withdrawal.previous_balance || 0),
+                    abonoDelDia: abonoDelDia,
+                    saldo: Number(withdrawal.new_balance || 0),
+                    payment_balance: paymentMethod,
+                };
+            });
+    
+            setWithdrawalsRecords(formattedWithdrawals);
+            setTotalAbonosDelDia((prevTotals) => ({
+                ...prevTotals,
+                EFEC: totalAbonosDelDia.EFEC,
+                TRANS: totalAbonosDelDia.TRANS,
+                DATAF: totalAbonosDelDia.DATAF,
+                abonosDelDia: totalAbonosDelDia.EFEC + totalAbonosDelDia.TRANS + totalAbonosDelDia.DATAF,
+            }));
+    
+        } catch (err) {
+            console.error("❌ Error en fetchDailyWithdrawals:", err);
+            setWithdrawalsRecords([]);
+            setTotalAbonosDelDia((prevTotals) => ({
+                ...prevTotals,
+                EFEC: 0,
+                TRANS: 0,
+                DATAF: 0,
+                abonosDelDia: 0,
+            }));
         }
     };
 
