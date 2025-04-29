@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../api/supabase';
 
-import historialMedidasIcon from "../../assets/historialMedidas.svg";
 import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
+import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
 import enviosIcon from "../../assets/envios.svg";
@@ -12,119 +13,123 @@ import entregasIcon from "../../assets/entregas.svg";
 import saldosIcon from "../../assets/saldos.svg";
 import egresosIcon from "../../assets/egresos.svg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
+import inventarioIcon from "../../assets/inventario.svg";
+import usuariosIcon from "../../assets/usuarios.svg";
+import laboratoriosIcon from "../../assets/laboratorios.svg";
+import sucursalesIcon from "../../assets/sucursales.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
 import medidasIcon from "../../assets/medidas.svg";
 import creditIcon from "../../assets/credit.svg";
-import inventarioIcon from "../../assets/inventario.svg";
 import registarlunasIcon from "../../assets/registrarlunas.svg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 
 
-const options = [
-  { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
-  { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon }, 
-  { label: "ORDEN DE LABORATORIO", icon: laboratorioOrdenIcon }, 
+const defaultOptions = [
+  { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon, route: "/RegisterPatient" },
+  { label: "HISTORIAL PACIENTE", icon: historiaClinicaIcon, route: "/HistoryClinic" },
+  { label: "ORDEN DE LABORATORIO", icon: laboratorioOrdenIcon, route: "/OrderLaboratoryList" },
   { label: "ENVIOS", icon: enviosIcon }, 
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon },
-  { label: "RETIROS", icon: entregasIcon },
-  { label: "CIERRE", icon: cierredeCajaIcon },
-  { label: "SALDOS", icon: saldosIcon },
-  { label: "EGRESOS", icon: egresosIcon },
+  { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon, route: "/Sales" },
+  { label: "RETIROS", icon: entregasIcon, route: "/RetreatsPatients" },
+  { label: "CIERRE", icon: cierredeCajaIcon, route: "/PatientRecords" },
+  { label: "SALDOS", icon: saldosIcon, route: "/BalancesPatient" },
+  { label: "EGRESOS", icon: egresosIcon, route: "/Egresos" },
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
-  { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: creditIcon },
-  { label: "INVENTARIO", icon: inventarioIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon:medidasHistorialIcon },
-  { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
+  { label: "REGISTRAR MEDIDAS", icon: medidasIcon, route: "/MeasuresFinal" },
+  { label: "CREDITOS", icon: creditIcon, route: "/Balance" },
+  { label: "INVENTARIO", icon: inventarioIcon, route: "/Inventory" },
+  { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon, route: "/HistoryMeasureList" },
+  { label: "REGISTRAR LUNAS", icon: registarlunasIcon, route: "/RegisterLens" }
+];
+
+// La rutas para el vendedor se debe selecionar bien las que son por defecto y las que son extras
+const extraRouters = [
+  { label: "ENVIOS", icon: enviosIcon },
+  { label: "USUARIOS", icon: usuariosIcon, route: "/Register" },
+  { label: "LABORATORIOS", icon: laboratoriosIcon, route: "/Labs" },
+  { label: "SUCURSAL", icon: sucursalesIcon, route: "/Branch" },
+  { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon, route: "/CashClousure" },
+  { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon, route: "/VisualCertificate" },
 ];
 
 const VendedorDashBoard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [allowedRoutes, setAllowedRoutes] = useState([]);
   const navigate = useNavigate();
+
+  const getRoutesByPermissions = (permittedRoutes) => {
+    const defaultFiltered = defaultOptions.filter(option =>
+      permittedRoutes.includes(option.route)
+    );
+    const extraFiltered = extraRouters.filter(option =>
+      permittedRoutes.includes(option.route)
+    );
+    return [...defaultFiltered, ...extraFiltered];
+  };
 
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error || !session?.user) {
-        console.error('Error al obtener la sesión:', error);
         navigate('/Login');
-      } else {
-        setUser(session.user);
-        localStorage.setItem('user', JSON.stringify(session.user));
+        return;
       }
+
+      const currentUser = session.user;
+      setUser(currentUser);
+      localStorage.setItem('user', JSON.stringify(currentUser));
+
+      const { data: permissions, error: permissionsError } = await supabase
+        .from('user_permissions')
+        .select('route')
+        .eq('user_id', currentUser.id);
+
+      if (permissionsError || !permissions) {
+        setAllowedRoutes(defaultOptions);
+      } else {
+        const permittedRoutes = permissions.map(p => p.route);
+        setAllowedRoutes(getRoutesByPermissions(permittedRoutes));
+      }
+
       setLoading(false);
     };
 
     const userFromStorage = JSON.parse(localStorage.getItem('user'));
     if (userFromStorage) {
       setUser(userFromStorage);
-      setLoading(false);
+      supabase
+        .from('user_permissions')
+        .select('route')
+        .eq('user_id', userFromStorage.id)
+        .then(({ data: permissions, error }) => {
+          if (error || !permissions) {
+            setAllowedRoutes(defaultOptions);
+          } else {
+            const permittedRoutes = permissions.map(p => p.route);
+            setAllowedRoutes(getRoutesByPermissions(permittedRoutes));
+          }
+          setLoading(false);
+        });
     } else {
       checkSession();
     }
   }, [navigate]);
 
-  if (loading || !user) {
-    return null; 
-  }
-
-  const handleOptionClick = (label) => {
-    switch (label) {
-      case "REGISTRAR PACIENTE":
-        navigate('/RegisterPatient');
-        break;
-      case "VENTA/ CONTRATO DE SERVICIO":
-        navigate('/Sales');
-        break;
-      case "REGISTRAR MEDIDAS":
-        navigate('/MeasuresFinal');
-        break;
-      case "CIERRE":
-        navigate('/PatientRecords');
-        break;
-      case "HISTORIAL DE MEDIDAS":
-        navigate('/HistoryMeasureList')
-        break;
-      case "EGRESOS":
-        navigate('/Egresos');
-        break;
-      case "ORDEN DE LABORATORIO":
-        navigate('/OrderLaboratoryList');
-        break;
-      case "SALDOS":
-        navigate('/BalancesPatient')
-        break;
-      case "RETIROS":
-        navigate('/RetreatsPatients')
-        break;
-      case "CREDITOS":
-        navigate('/Balance')
-        break;
-      case "INVENTARIO":
-        navigate('/Inventory');
-        break;
-      case "REGISTRAR LUNAS":
-        navigate('/RegisterLens');
-        break;
-      case "HISTORIAL PACIENTE":
-          navigate('/HistoryClinic')
-      default:
-        break;
-    }
-  };
-
-  const handleNavigate = (route) => {
-    navigate(route);
-  };
+  if (loading || !user) return null;
 
   return (
     <>
-      <Button onClick={() => handleNavigate('/Login')} mt={4}>
+      <Button onClick={() => {
+        supabase.auth.signOut();
+        localStorage.removeItem('user');
+        navigate('/Login');
+      }} mt={4}>
         Cerrar Sesión
       </Button>
-      <SimpleGrid columns={[2, null, 4]} spacing={5}>
-        {options.map((option, index) => (
+
+      <SimpleGrid columns={[2, null, 4]} spacing={5} mt={4}>
+        {allowedRoutes.map((option, index) => (
           <Box
             key={index}
             textAlign="center"
@@ -132,15 +137,9 @@ const VendedorDashBoard = () => {
             boxShadow="md"
             borderRadius="md"
             _hover={{ bg: "gray.100", cursor: "pointer" }}
-            onClick={() => handleOptionClick(option.label)}
+            onClick={() => navigate(option.route)}
           >
-            <Image
-              src={option.icon}
-              alt={option.label}
-              boxSize="40px"
-              mb={3}
-              mx="auto"
-            />
+            <Image src={option.icon} alt={option.label} boxSize="40px" mb={3} mx="auto" />
             <Text>{option.label}</Text>
           </Box>
         ))}
@@ -148,5 +147,6 @@ const VendedorDashBoard = () => {
     </>
   );
 };
+
 
 export default VendedorDashBoard;

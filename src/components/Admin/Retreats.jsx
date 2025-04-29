@@ -62,7 +62,9 @@ const Retreats = () => {
                         pt_ci,
                         pt_phone
                     ),
-                    rx_final:measure_id (*)
+                    rx_final:measure_id (*),
+                    inventario:inventario_id(brand),
+                    lens:lens_id(lens_type)
                 `)
                 .eq("id", saleId)
                 .single();
@@ -85,9 +87,7 @@ const Retreats = () => {
                 .select(`
                     id,
                     date,
-                    inventario (brand),
-                    lens:lens_id(lens_type),
-                    branchs:branchs_id(name), 
+                    inventario:inventario_id(brand),
                     delivery_time, 
                     p_frame, 
                     p_lens,
@@ -301,7 +301,7 @@ const Retreats = () => {
                                 <FormLabel>Armazón</FormLabel>
                                 <Input
                                     type="text"
-                                    value={salesData?.inventario?.brand || "Sin marca"}
+                                    value={salesData?.inventario?.brand ?? "Sin marca"}
                                     isReadOnly
                                     width="auto"
                                     maxWidth="300px"
@@ -312,7 +312,7 @@ const Retreats = () => {
                                 <FormLabel>Lunas</FormLabel>
                                 <Input
                                     type="text"
-                                    value={salesData?.lens?.lens_type || ""}
+                                    value={salesData?.lens?.lens_type ?? ""}
                                     isReadOnly
                                     width="auto"
                                     maxWidth="300px"

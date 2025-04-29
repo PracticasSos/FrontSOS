@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
-import historialMedidasIcon from "../../assets/historialMedidas.svg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";

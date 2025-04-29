@@ -39,15 +39,8 @@ const MeasuresFinal = () => {
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [searchTermPatients, setSearchTermPatients] = useState("");
+  const [showColorIssuesInput, setShowColorIssuesInput] = useState(false);
   const [error, setError] = useState(null);
-  const [diagnosis, setDiagnosis] = useState("");
-  const [nearVision, setNearVision] = useState("Aprobado");
-  const [needsLensesNear, setNeedsLensesNear] = useState(false);
-  const [farVision, setFarVision] = useState("20/20");
-  const [needsLensesFar, setNeedsLensesFar] = useState(false);
-  const [colorPerception, setColorPerception] = useState(true);
-  const [colorPerceptionDiferentation, setColorPerceptionDiferentation ] = useState(true);
-  const [colorIssues, setColorIssues] = useState("");
 
   useEffect(() => {
     fetchData('patients', data => {
@@ -298,52 +291,63 @@ const MeasuresFinal = () => {
     
           <Box p={[2, 3, 4]} maxWidth="1000px" mx="auto" border="1px solid #ccc" borderRadius="8px">
             <Heading size="md" mb={4}>Su diagnóstico es:</Heading>
-            <Textarea placeholder="Escriba el diagnóstico del paciente" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} mb={4} />
+            <Textarea placeholder="Escriba el diagnóstico del paciente" value={formData.diagnosis} onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })} mb={4} />
 
             <Box mb={6}>
               <Heading size="sm" mb={2}>Visión cercana</Heading>
               <Text mb={2} fontSize={["sm", "md"]}>Capacidad de leer como mínimo, las letras de la escala 1 de la carta normalizada Jaeger...</Text>
-              <RadioGroup value={nearVision} onChange={setNearVision} mb={2}>
+              <RadioGroup value={formData.near_vision}onChange={(val) => setFormData({ ...formData, near_vision: val })} mb={2}>
                 <Stack direction={{ base: "column", sm: "row" }} spacing={[1, 2, 4]}>
                   <Radio value="Aprobado">Aprobado</Radio>
                   <Radio value="No Aprobado">No Aprobado</Radio>
                 </Stack>
               </RadioGroup>
-              <Checkbox isChecked={needsLensesNear} onChange={(e) => setNeedsLensesNear(e.target.checked)}>Precisa lentes</Checkbox>
+              <Checkbox isChecked={formData.needs_lenses_near} onChange={(e) => setFormData({ ...formData, needs_lenses_near: e.target.checked })}>Precisa lentes</Checkbox>
             </Box>
             
             <Box mb={6}>
               <Heading size="sm" mb={2}>Visión lejana</Heading>
-              <RadioGroup value={farVision} onChange={setFarVision} mb={2}>
+              <RadioGroup value={formData.far_vision} onChange={(val) => setFormData({ ...formData, far_vision: val })} mb={2}>
                 <Stack direction={{ base: "column", sm: "row" }} spacing={[1, 2, 4]}>
                   <Radio value="20/20">Mayor o igual a 20/20 en la escala SNELLEN</Radio>
                   <Radio value="Menor a 20/20">Menor a 20/20</Radio>
                 </Stack>
               </RadioGroup>
-              <Checkbox isChecked={needsLensesFar} onChange={(e) => setNeedsLensesFar(e.target.checked)}>Precisa lentes</Checkbox>
+              <Checkbox isChecked={formData.needs_lenses_far} onChange={(e) => setFormData({ ...formData, needs_lenses_far: e.target.checked })}>Precisa lentes</Checkbox>
             </Box>
             
             <Box mb={6}>
               <Heading size="sm" mb={2}>Percepción de colores</Heading>
-              <Checkbox isChecked={colorPerception} onChange={(e) => setColorPerception(e.target.checked)}>
+              <Checkbox isChecked={formData.color_perception} onChange={(e) => setFormData({ ...formData, color_perception: e.target.checked })}>
                 Ha demostrado capacidad para distinguir y diferenciar los colores.
               </Checkbox>
             </Box>
             
             <Box mb={6}>
-              <Checkbox isChecked={colorPerceptionDiferentation} onChange={(e) => setColorPerceptionDiferentation(e.target.checked)}>
+              <Checkbox
+                isChecked={showColorIssuesInput}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setShowColorIssuesInput(checked);
+                  if (!checked) {
+                    setFormData({ ...formData, color_issues: "" });
+                  }
+                }}
+              >
                 Tiene problemas para distinguir o diferenciar los siguientes colores.
               </Checkbox>
-              {!colorPerception && (
-                <Input 
-                  placeholder="Especifique los colores con los que tiene problemas" 
-                  value={colorIssues} 
-                  onChange={(e) => setColorIssues(e.target.value)} 
-                  mt={2} 
+
+              {showColorIssuesInput && (
+                <Input
+                  placeholder="Especifique los colores con los que tiene problemas"
+                  value={formData.color_issues}
+                  onChange={(e) =>
+                    setFormData({ ...formData, color_issues: e.target.value })
+                  }
+                  mt={2}
                 />
               )}
             </Box>
-            
             <Stack direction={{ base: "column", sm: "row" }} spacing={4} justify="center">
               <Button colorScheme="teal" onClick={handleSubmit} width={["100%", "auto"]}>GUARDAR</Button>
               <Button colorScheme="red" width={["100%", "auto"]}>ELIMINAR</Button>
