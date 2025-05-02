@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select } from '@chakra-ui/react';
+import { 
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
+import ConfirmDialog from '../../components/UI/ConfirmDialog';
 
 const ListPatients = () => {
   const [patients, setPatients] = useState([]);
@@ -10,6 +13,8 @@ const ListPatients = () => {
   const [editingId, setEditingId] = useState(null);
   const [editableData, setEditableData] = useState({});
   const [branches, setBranchs] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -57,6 +62,18 @@ const ListPatients = () => {
     }
   };
 
+  const openConfirm = (id) => {
+    setSelectedId(id);
+    setIsOpen(true);
+  };
+
+  const handleConfirm = () => {
+    setIsOpen(false);
+    handleDelete(selectedId);
+  };
+
+  const handleCancel = () => setIsOpen(false);
+
   const handleDelete = async (id) => {
     const { error } = await supabase.from('patients').delete().match({ id });
     if (!error) {
@@ -94,7 +111,7 @@ const ListPatients = () => {
         navigate('/Vendedor');
         break;
       default:
-      navigate('/');
+        navigate('/');
     }
   };
 
@@ -107,12 +124,12 @@ const ListPatients = () => {
         <Button bgColor="#00A8C8" color="white" onClick={() => handleNavigate()}>Volver a Opciones</Button>
       </Flex>
 
-      <Input 
-        placeholder="Buscar paciente..." 
-        value={search} 
-        onChange={(e) => setSearch(e.target.value)} 
-        mb={4} 
-        w="50%" 
+      <Input
+        placeholder="Buscar paciente..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        mb={4}
+        w="50%"
         mx="auto"
         display="block"
       />
@@ -122,8 +139,8 @@ const ListPatients = () => {
           <Thead bgColor="#00A8C8">
             <Tr>
               {[
-                'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono', 
-                'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta', 
+                'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono',
+                'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta',
                 'Recomendaciones', 'Sucursal', 'Acciones'
               ].map((header) => (
                 <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
@@ -134,8 +151,8 @@ const ListPatients = () => {
             {filteredPatients.map((patient) => (
               <Tr key={patient.id}>
                 {[
-                  'pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone', 
-                  'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason', 
+                  'pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone',
+                  'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason',
                   'pt_recommendations'
                 ].map((field) => (
                   <Td key={field} textAlign="center">
@@ -173,7 +190,7 @@ const ListPatients = () => {
                   ) : (
                     <>
                       <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(patient.id, patient)} mr={2} />
-                      <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(patient.id)} />
+                      <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => openConfirm(patient.id)} />
                     </>
                   )}
                 </Td>
@@ -182,6 +199,14 @@ const ListPatients = () => {
           </Tbody>
         </Table>
       </Box>
+
+      <ConfirmDialog
+        isOpen={isOpen}
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+        title="¿Eliminar paciente?"
+        body="¿Está seguro de que desea eliminar este paciente?"
+      />
     </Box>
   );
 };

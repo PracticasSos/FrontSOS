@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton} from '@chakra-ui/react';
+import { 
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
+import ConfirmDialog from '../../components/UI/ConfirmDialog';
 
 const ListBranch = () => {
     const [branch, setBranch] = useState([]);
     const [search, setSearch] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [editableData, setEditableData] = useState({});
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -48,6 +53,18 @@ const ListBranch = () => {
         }
     };
     
+    const openConfirm = (id) => {
+        setSelectedId(id);
+        setIsOpen(true);
+    };
+
+    const handleConfirm = () => {
+        setIsOpen(false);
+        handleDelete(selectedId);
+    };
+
+    const handleCancel = () => setIsOpen(false);
+
     const handleDelete = async (id) => {
         const { error } = await supabase.from('branchs').delete().match({ id });
         if (!error) { 
@@ -121,7 +138,7 @@ const ListBranch = () => {
                 </Thead>
                     <Tbody>
                         {filteredBranches.map((branch) => (
-                
+                    
                             <Tr key={branch.id}>
                                 {[
                                     'name', 'address', 'email', 'cell', 'ruc'
@@ -147,7 +164,7 @@ const ListBranch = () => {
                                     ) : (
                                         <>
                                             <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(branch.id, branch)} mr={2} />
-                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(branch.id)} />
+                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => openConfirm(branch.id)} />
                                         </>
                                     )}
                                 </Td>
@@ -156,6 +173,14 @@ const ListBranch = () => {
                     </Tbody>
                 </Table>
             </Box>
+
+            <ConfirmDialog
+                isOpen={isOpen}
+                onClose={handleCancel}
+                onConfirm={handleConfirm}
+                title="¿Eliminar sucursal?"
+                body="Estas seguro de que deseas eliminar esta sucursal?"
+            />
         </Box>
     );
 };
