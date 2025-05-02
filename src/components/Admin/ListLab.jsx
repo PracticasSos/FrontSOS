@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Flex, useToast , IconButton} from '@chakra-ui/react';
+import {
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Flex, useToast, IconButton
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
+import ConfirmDialog from '../../components/UI/ConfirmDialog';
 
 const ListLab = () => {
     const [labs, setLabs] = useState([]);
     const [search, setSearch] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [editableData, setEditableData] = useState({});
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -29,12 +34,12 @@ const ListLab = () => {
     };
 
     const handleEdit = (id, lab) => {
-        setEditingId(id);       
+        setEditingId(id);
         setEditableData(lab);
     };
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setEditableData((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -49,6 +54,18 @@ const ListLab = () => {
         }
     };
 
+    const openConfirm = (id) => {
+        setSelectedId(id);
+        setIsOpen(true);
+    };
+
+    const handleConfirm = () => {
+        setIsOpen(false);
+        handleDelete(selectedId);
+    };
+
+    const handleCancel = () => setIsOpen(false);
+
     const handleDelete = async (id) => {
         const { error } = await supabase.from('labs').delete().match({ id });       
         if (!error) {
@@ -59,9 +76,8 @@ const ListLab = () => {
         }
     };
 
-    const filteredLabs = labs.filter((labs) => 
-            [labs.name].some((field) => field.toLowerCase().includes(search.toLowerCase())
-        )
+    const filteredLabs = labs.filter((lab) => 
+        [lab.name].some((field) => field.toLowerCase().includes(search.toLowerCase()))
     );
 
     const handleNavigate = (route = null) => {
@@ -95,7 +111,7 @@ const ListLab = () => {
                     Lista de Laboratorios
                 </Heading>
                 <Flex mb={4} gap={3} justify="center">
-                    <Button colorScheme="blue" onClick={() => handleNavigate('/Labs')} >
+                    <Button colorScheme="blue" onClick={() => handleNavigate('/Labs')}>
                         Registrar Laboratorio
                     </Button>
                     <Button 
@@ -107,7 +123,7 @@ const ListLab = () => {
                         Volver a Opciones
                     </Button>
                 </Flex>
-                <Input placeholder='Busacar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" />
+                <Input placeholder='Buscar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" />
                 <Box overflowX="auto"  bg="white" p={4} borderRadius="lg" shadow="md">
                     <Table variant="striped" colorScheme="teal">
                         <Thead bgColor="#00A8C8">
@@ -127,7 +143,7 @@ const ListLab = () => {
                                             {editingId === lab.id ? (
                                                 <Input
                                                     name={field}
-                                                    value={editableData[field]}
+                                                    value={editableData[field] || ''}
                                                     onChange={handleChange}
                                                 />
                                             ) : (
@@ -135,17 +151,17 @@ const ListLab = () => {
                                             )}
                                         </Td>
                                     ))}
-                                    <Td>
+                                    <Td textAlign="center">
                                         {editingId === lab.id ? (
                                             <>
-                                                <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(branch.id)} mr={2} />
+                                                <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(lab.id)} mr={2} />
                                                 <IconButton icon={<BiX />} colorScheme="gray" onClick={() => setEditingId(null)} />
                                             </>
                                         ) : (
-                                        <>
-                                            <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(branch.id, branch)} mr={2} />
-                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(branch.id)} />
-                                        </>
+                                            <>
+                                                <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(lab.id, lab)} mr={2} />
+                                                <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => openConfirm(lab.id)} />
+                                            </>
                                         )}
                                     </Td>
                                 </Tr>
@@ -153,6 +169,14 @@ const ListLab = () => {
                         </Tbody>
                     </Table>
                 </Box>
+
+                <ConfirmDialog
+                    isOpen={isOpen}
+                    onClose={handleCancel}
+                    onConfirm={handleConfirm}
+                    title="¿Eliminar laboratorio?"
+                    body="Estas seguro de que deseas eliminar este laboratorio? "
+                />
         </Box>
     );
 };

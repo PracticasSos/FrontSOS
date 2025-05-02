@@ -1,14 +1,17 @@
-import { Box, Button, Flex, Heading, IconButton, Input, Table, Tbody, Td, Thead, Tr, useToast, Th , Select} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, IconButton, Input, Table, Tbody, Td, Thead, Tr, useToast, Th, Select } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
+import ConfirmDialog from '../../components/UI/ConfirmDialog';
 
 const ListBalance = () => {
     const [listBalance, setListBalance] = useState([]);
     const [search, setSearch] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [editableData, setEditableData] = useState({ balance: "", payment_balance: "" });
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -47,6 +50,18 @@ const ListBalance = () => {
             toast({ title: 'Error', description: 'No se pudo actualizar el abono.', status: 'error' });
         }
     };
+
+    const openConfirm = (id) => {
+        setSelectedId(id);
+        setIsOpen(true);
+    };
+
+    const handleConfirm = () => {
+        setIsOpen(false);
+        handleDelete(selectedId);
+    };
+
+    const handleCancel = () => setIsOpen(false);
 
     const handleDelete = async (id) => {
         const { error } = await supabase.from('sales').delete().match({ id });
@@ -110,7 +125,7 @@ const ListBalance = () => {
                             <Tr key={balance.id}>
                                 <Td>{balance.date}</Td>
                                 <Td>{balance.patients.pt_firstname} {balance.patients.pt_lastname}</Td>
-                                <Td>{balance.branchs.name}</Td>
+                                <Td>{balance.branchs?.name || 'N/A'}</Td>
                                 <Td>{balance.total}</Td>
                                 <Td>
                                     {editingId === balance.id ? (
@@ -141,7 +156,7 @@ const ListBalance = () => {
                                     ) : (
                                         <>
                                             <IconButton icon={<BiEdit />} colorScheme="blue" onClick={() => handleEdit(balance)} mr={2} />
-                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => handleDelete(balance.id)} />
+                                            <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => openConfirm(balance.id)} />
                                         </>
                                     )}
                                 </Td>
@@ -150,6 +165,14 @@ const ListBalance = () => {
                     </Tbody>
                 </Table>
             </Box>
+
+            <ConfirmDialog
+                isOpen={isOpen}
+                onClose={handleCancel}
+                onConfirm={handleConfirm}
+                title="¿Eliminar abono?"
+                body="¿Está seguro de que desea eliminar este abono?"
+            />
         </Box>
     );
 };
