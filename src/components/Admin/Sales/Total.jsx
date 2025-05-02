@@ -56,6 +56,8 @@ const Total = ({ formData, setFormData }) => {
                             name="balance"
                             width="full"
                             maxWidth="70%"
+                            borderColor="teal.400"
+                            focusBorderColor="teal.600"
                             value={formData.balance === 0 ? '' : formData.balance}
                             onChange={handleCreditChange}
                         />
