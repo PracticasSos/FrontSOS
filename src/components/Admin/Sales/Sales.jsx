@@ -4,7 +4,7 @@ import Measures from "./Measures";
 import SelectItems from "./SelectItems";
 import PriceCalculation from "./PriceCalculation";
 import { supabase } from "../../../api/supabase";
-import { Box, Heading, Button, SimpleGrid, FormControl, FormLabel, Input, Text, Textarea } from "@chakra-ui/react";
+import { Box, Heading, Button, SimpleGrid, FormControl, FormLabel, Input, Text, Grid, Stack } from "@chakra-ui/react";
 import Total from "./Total";
 import Pdf from "./Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -303,46 +303,102 @@ const Sales = () => {
         <Box width="full" maxWidth="1500px" p={6} boxShadow="lg" borderRadius="md">
           <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
           <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
-          <Box p={5} width="full" maxWidth="800px" mx="auto">
-            <SimpleGrid columns={[1, 2]} spacing={4}>
-              <SelectItems onFormDataChange={handleFormDataChange} initialFormData={formData} />
-              <FormControl>
-                <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                  Entrega
-                </FormLabel>
-                <Input
-                  type="date"
-                  name="delivery_date"
-                  onChange={handleDateChange}
-                  borderColor="teal.400"
-                  focusBorderColor="teal.600"
+
+          <Box p={5} width="full" maxW="2000px" overflowX="auto">
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              mb={6}
+              textAlign="center"
+              color="teal.600"
+            >
+              Detalles de Venta
+            </Text>
+            <Box minWidth="1200px">
+              <Grid
+                templateColumns="repeat(3, 1fr)"
+                gap={4}
+                mb={4}
+                fontWeight="bold"
+                textAlign="center"
+                color="gray.700"
+              >
+                <Text>Armazón / Lunas</Text>
+                <Text>Precio Armazón / Lunas</Text>
+                <Text>Totales</Text>
+              </Grid>
+
+              <Grid templateColumns="repeat(3, 1fr)" gap={4} alignItems="start">
+                <Box p={3}  minW="380px">
+                  <SelectItems
+                    onFormDataChange={handleFormDataChange}
+                    initialFormData={formData}
+                  />
+                </Box>
+
+                <Box p={3} minW="380px">
+                  <PriceCalculation formData={formData} setFormData={setFormData} />
+                </Box>
+
+                <Box p={3}  minW="380px">
+                  <Total formData={formData} setFormData={setFormData} />
+                </Box>
+              </Grid>
+            </Box>
+          </Box>
+
+          <Box p={5} width="full" maxW="900px" mx="auto">
+            <SimpleGrid columns={[1, 2]} spacing={6}>
+              {/* Columna Izquierda: Fecha de Entrega */}
+              <Box>
+                <FormControl>
+                  <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
+                    Entrega
+                  </FormLabel>
+                  <Input
+                    type="date"
+                    name="delivery_date"
+                    onChange={handleDateChange}
+                    borderColor="teal.400"
+                    focusBorderColor="teal.600"
+                    borderRadius="md"
+                    p={2}
+                  />
+                </FormControl>
+                <Box
+                  mt={4}
+                  p={3}
+                  borderWidth="1px"
                   borderRadius="md"
-                  p={2}
-                />
-                <Box mt={3} p={3} borderWidth="1px" borderRadius="md" borderColor="gray.300" backgroundColor="gray.50" textAlign="center">
+                  borderColor="gray.300"
+                  bg="gray.50"
+                  textAlign="center"
+                >
                   <Text fontSize="md" fontWeight="medium" color="gray.700">
-                    {saleData.delivery_time ? `📅 Entrega en ${saleData.delivery_time} días` : "Seleccione una fecha para ver el tiempo de entrega"}
+                    {saleData.delivery_time
+                      ? `📅 Entrega en ${saleData.delivery_time} días`
+                      : "Seleccione una fecha para ver el tiempo de entrega"}
                   </Text>
                 </Box>
-              </FormControl>
-            </SimpleGrid>
-          </Box>
-          <Box p={5} width="full"  mx="auto" ml={[0, 4, 8, 12]}>
-            <PriceCalculation formData={formData} setFormData={setFormData} />
-          </Box>
-          <Box p={5} width="full" maxWidth="700px" mx="auto">
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-              <Total formData={formData} setFormData={setFormData} />
+              </Box>
+
+              {/* Columna Derecha: Mensaje y Firma */}
               <Box>
-                <SimpleGrid columns={1} spacing={4}>
-                <MessageInput selectedBranch={branchName} formData={formData} setFormData={setFormData} />
-                  <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({
+                <Stack spacing={4}>
+                  <MessageInput
+                    selectedBranch={branchName}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                  <SignaturePadComponent
+                    onSave={(signatureDataUrl) =>
+                      setFormData((prev) => ({
                         ...prev,
                         signature: signatureDataUrl,
                       }))
-                    } 
+                    }
                   />
-                </SimpleGrid>
+                </Stack>
               </Box>
             </SimpleGrid>
           </Box>

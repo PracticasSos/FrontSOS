@@ -117,12 +117,27 @@ const OrderLaboratoryList = () => {
   };
 
   const handlePatientSelect = (patient) => {
-    if (patient && patient.patient_id) {  
-      navigate(`/OrderLaboratoryList/LaboratoryOrder/${patient.patient_id}`, { state: { patientData: patient } });
-    } else {
-      console.error("ID del paciente no válido o no definido");
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user) {
+        console.error('Usuario no encontrado en localStorage');
+        alert("Error: usuario no autenticado.");
+        return;
     }
-  };
+
+    if (!patient?.patient_id) {
+        console.error("ID del paciente no válido");
+        return;
+    }
+
+    // Asegurar consistencia de estado
+    localStorage.setItem('user', JSON.stringify(user));
+    
+    navigate(`/OrderLaboratoryList/LaboratoryOrder/${patient.patient_id}`, {
+        state: { patientData: patient, user }
+    });
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

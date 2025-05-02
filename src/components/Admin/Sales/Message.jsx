@@ -20,7 +20,7 @@ const MessageInput = ({ selectedBranch, formData, setFormData }) => {
     }, [selectedBranch]);
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" p={4} width={["90%", "80%", "400px"]} mx="auto">
+        <Box display="flex" flexDirection="column" alignItems="center" width={["90%", "80%", "400px"]} mx="auto">
             <FormControl>
                 <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
                     Mensaje

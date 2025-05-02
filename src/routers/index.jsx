@@ -43,7 +43,7 @@ const AppRouter = () => {
             <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
             <Route path="Register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
             <Route path="Inventory" element={<Inventario/>}></Route>
-            <Route path="Login" element={<LoginForm/>} />
+            <Route path="login" element={<LoginForm/>} />
             <Route path="Admin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
             <Route path="RegisterPatient" element={<RegisterPatientForm />} />

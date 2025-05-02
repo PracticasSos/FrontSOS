@@ -41,7 +41,16 @@ const LaboratoryOrder = () => {
         }
     }, [patientData]);
 
-
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (!storedUser) {
+            console.error('No user found, redirecting to login');
+            navigate('/Login');
+        } else {
+            console.log('Usuario encontrado al cargar:', storedUser);
+        }
+    }, []); // Solo se ejecuta una vez al montar
+    
     const fetchPatientData = async () => {
         if (!patientId) {
             console.error("patientId is undefined or invalid.");
@@ -218,7 +227,7 @@ const LaboratoryOrder = () => {
             return;
         }
         if (!user || !user.role_id) {
-            navigate('/LoginForm');
+            navigate('/Login');
             return;
         }
         switch (user.role_id) {
@@ -249,7 +258,7 @@ const LaboratoryOrder = () => {
               <Button onClick={() => handleNavigate()} colorScheme="blue">
                 Volver a Opciones
               </Button>
-              <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
+              <Button onClick={() => handleNavigate("/Login")} colorScheme="red">
                 Cerrar Sesión
               </Button>
             </Box>

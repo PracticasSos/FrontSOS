@@ -82,7 +82,7 @@ const SelectItems = ({ onFormDataChange, initialFormData = {} }) => {
   };
 
   return (
-    <SimpleGrid columns={1} spacing={4}>
+    <SimpleGrid columns={1} p={4}>
       <FormControl>
         <FormLabel>Armazón</FormLabel>
         <Input

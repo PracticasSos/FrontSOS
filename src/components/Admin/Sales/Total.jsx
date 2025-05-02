@@ -34,8 +34,8 @@ const Total = ({ formData, setFormData }) => {
     };
 
     return (
-        <SimpleGrid columns={[1]} spacing={4} width="100%" maxWidth="400px" padding={4} mx="auto">
-            <Box padding={4} width="full" maxWidth="400px" mx="auto">
+        <SimpleGrid columns={[1]} width="100%" maxWidth="400px">
+            <Box p={4}  maxWidth="400px" >
                 <SimpleGrid columns={1} spacing={4}>
                     <FormControl>
                         <FormLabel>Total</FormLabel>
