@@ -60,7 +60,7 @@ const LoginForm = () => {
     // 3) Leer role buscándolo por email
     const { data, error } = await supabase
       .from('users')
-      .select('role:role(role_name)')
+      .select('role:role!users_role_id_fkey(role_name)')
       .eq('email', user.email)
       .single();
   
