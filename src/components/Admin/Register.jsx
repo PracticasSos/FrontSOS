@@ -254,7 +254,7 @@ const Register = () => {
 
             <Box display="flex" justifyContent="space-between" mt={8}>
               <Button type="submit" colorScheme="teal" px={8}>
-                Crear Usuario
+                Crear Nuevo Usuario
               </Button>
               <Button onClick={handleReset} colorScheme="gray" px={8}>
                 Limpiar
@@ -320,3 +320,4 @@ const Register = () => {
 };
 
 export default Register;
+
