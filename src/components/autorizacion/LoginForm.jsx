@@ -28,7 +28,7 @@ const LoginForm = () => {
     e.preventDefault();
     setErrorMessage('');
     setLoading(true);
-  
+
     // 1) Login con Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: formData.email.trim(),
@@ -47,38 +47,58 @@ const LoginForm = () => {
       return;
     }
 
-    // 2) Decodificar JWT para verificar claims
-    try {
-      const token = authData.session.access_token;
-      const payload = JSON.parse(atob(token.split('.')[1]));
-    } catch (err) {
-      console.warn('Error decodificando JWT:', err);
-    }
-
     const user = authData.user;
+    console.log('Usuario autenticado:', user);
 
-    // 3) Leer role buscándolo por email
+    // 2) Buscar usuario en la tabla 'users' usando el auth_id
     const { data, error } = await supabase
       .from('users')
-      .select('role:role!users_role_id_fkey(role_name)')
-      .eq('email', user.email)
-      .single();
-  
-    if (error || !data) {
-      console.error(error);
-      setErrorMessage('Error cargando rol de usuario.');
+      .select('id, role_id, auth_id')
+      .eq('auth_id', user.id); // Aquí estamos usando el UUID
+
+    if (error) {
+      console.error('Error al obtener datos del usuario:', error);
+      setErrorMessage('No se encontró los datos del usuario.');
       setLoading(false);
       return;
     }
-  
-    const roleName = data.role.role_name;
-  
-    // 4) Redirigir
+
+    if (data.length === 0) {
+      setErrorMessage('Usuario no encontrado.');
+      setLoading(false);
+      return;
+    }
+
+    const userData = data[0]; // Solo tomamos el primer usuario si hay varios
+    console.log('Datos del usuario:', userData);
+
+    // localStorage.setItem('user', JSON.stringify(userData)); // Guardar datos del usuario en localStorage
+    // 3) Mapeo directo de role_id a nombre del rol
+    const roleMap = {
+      1: 'Admin',
+      2: 'Optometra',
+      3: 'Vendedor',
+    };
+
+    const fullUserData = {
+      ...authData.user,
+      ...userData
+    };
+    localStorage.setItem('user', JSON.stringify(fullUserData));
+    
+
+    const roleName = roleMap[userData.role_id]; // Usamos el role_id para obtener el nombre del rol
+    console.log('Nombre del rol:', roleName);
+
+    // 4) Redirigir según el rol
     setLoading(false);
     if (roleName === 'Admin') navigate('/admin');
     else if (roleName === 'Optometra') navigate('/optometra');
     else if (roleName === 'Vendedor') navigate('/vendedor');
-    else navigate('/');
+    else {
+      setErrorMessage('Rol desconocido');
+      navigate('/'); // Redirigir a página principal si no hay rol reconocido
+    }
   };
 
   return (
