@@ -34,7 +34,6 @@ const LoginForm = () => {
       email: formData.email.trim(),
       password: formData.password,
     });
-    console.log('AUTH DATA:', authData);
 
     if (authError) {
       setErrorMessage(authError.message);
@@ -52,7 +51,6 @@ const LoginForm = () => {
     try {
       const token = authData.session.access_token;
       const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log('JWT payload:', payload);
     } catch (err) {
       console.warn('Error decodificando JWT:', err);
     }
