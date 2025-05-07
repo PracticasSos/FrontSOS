@@ -25,7 +25,7 @@ const ListUsers = () => {
   const fetchUsers = async () => {
     const { data, error } = await supabase
       .from('users')
-      .select('id, firstname, lastname, username, age, role:role_id(role_name), email, phone_number, ci, branchs:branch_id(name)');
+      .select('id, firstname, lastname, username, age, role:users_role_fkey(role_name), email, phone_number, ci, branchs:branch_id(name)');
 
     if (error) {
       console.error('Error:', error);

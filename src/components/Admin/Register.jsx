@@ -194,10 +194,39 @@ const Register = () => {
     setSelectRoutes([]);
   };
 
+  const handleNavigate = (route = null) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (route) {
+      navigate(route);
+      return;
+    }
+    if (!user || !user.role_id) {
+      navigate('/Login');
+      return;
+    }
+    switch (user.role_id) {
+      case 1:
+        navigate('/Admin');
+        break;
+      case 2:
+        navigate('/Optometra');
+        break;
+      case 3:
+        navigate('/Vendedor');
+        break;
+      default:
+      navigate('/');
+    }
+  }; 
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} bg="gray.50">
       <Heading mb={6} color="teal.700">Registrar Usuario</Heading>
-
+      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
+        <Button onClick={() => handleNavigate('/ListUsers')} colorScheme="teal">Listar Usuarios</Button>
+        <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
+        <Button onClick={() => handleNavigate('/Login')} colorScheme="red">Cerrar Sesión</Button>
+      </Box>
       <Card w="100%" maxW="900px" boxShadow="lg" borderRadius="xl">
         <CardBody as="form" onSubmit={e => { e.preventDefault(); handleCreate(); }}>
           <SimpleGrid columns={[1,2]} spacing={4}>
