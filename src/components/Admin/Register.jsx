@@ -76,16 +76,37 @@ const Register = () => {
   // Auto-select routes when role changes
   useEffect(() => {
     if (!formData.role_id) return;
-    // Example: select all for role_id === '1', else subset
+  
     let newRoutes = [];
-    if (formData.role_id === '1') {
-      newRoutes = availableRoutes;
-    } else {
-      // customize per role
-      newRoutes = availableRoutes.filter(r => ['/RegisterPatient','/MeasuresFinal'].includes(r.path));
+  
+    switch (formData.role_id) {
+      case '1': // Admin
+        newRoutes = availableRoutes;
+        break;
+
+      case '4': // Super Admin
+        newRoutes =availableRoutes;
+        break;
+  
+      case '2': // Optometra
+        newRoutes = availableRoutes.filter(r =>
+          ['/MeasuresFinal', '/HistoryClinic', '/RegisterPatient', '/HistoryMeasureList'].includes(r.path)
+        );
+        break;
+  
+      case '3': // Vendedor
+        newRoutes = availableRoutes.filter(r =>
+          ['/RegisterPatient', '/Sales', '//HistoryClinic', '/Balance', '/MeasuresFinal', '/PatientRecords', '/OrderLaboratoryList', '/HistoryMeasureList', '/BalancesPatient'].includes(r.path)
+        );
+        break;
+  
+      default:
+        newRoutes = []; // Ningún acceso si el rol no es reconocido
     }
+  
     setSelectRoutes(newRoutes.map(r => r.path));
-  }, [formData.role_id]);
+  }, [formData.role_id, availableRoutes]);
+  
 
   const handleChange = e => {
     const { name, value } = e.target;

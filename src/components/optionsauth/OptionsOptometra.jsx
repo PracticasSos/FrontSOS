@@ -25,7 +25,7 @@ import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 
 const defaultOptions = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon, route: "/RegisterPatient" },
-  { label: "HISTORIAL PACIENTE", icon: historiaClinicaIcon, route: "/HistoryClinic" },
+  { label: "HISTORIAL DE VENTAS", icon: historiaClinicaIcon, route: "/HistoryClinic" },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon, route: "/MeasuresFinal" },
   { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon, route: "/HistoryMeasureList" }
 ];
