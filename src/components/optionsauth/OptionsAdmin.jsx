@@ -44,7 +44,8 @@ const options = [
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: creditIcon }
+  { label: "CREDITOS", icon: creditIcon },
+  { label: "TENANT", icon: sucursalesIcon }
 ];
 
 const AdminDashBoard = () => {
@@ -130,6 +131,9 @@ const AdminDashBoard = () => {
         break;
       case "IMPRIMIR CERTIFICADO":
         navigate('/PrintCertificate')
+      break;
+      case "TENANT":
+        navigate('/Tenant')
       break;
       case "HISTORIAL DE VENTAS":
           navigate('/HistoryClinic')
