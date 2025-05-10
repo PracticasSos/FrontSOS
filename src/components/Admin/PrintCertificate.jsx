@@ -49,26 +49,17 @@ const PrintCertificate = () => {
   }, []);
 
   const fetchPatients = async () => {
-    const { data, error } = await supabase
-      .from('rx_final')
-      .select('patient_id(id, pt_firstname, pt_lastname, pt_ci)');
+  const { data, error } = await supabase
+    .from('patients')
+    .select('id, pt_firstname, pt_lastname, pt_ci, pt_phone'); 
 
-    if (error) {
-      console.error('Error fetching patients:', error);
-      return;
-    }
+  if (error) {
+    console.error('Error fetching patients:', error);
+    return;
+  }
 
-    const uniquePatients = Array.from(
-      new Map(
-        data
-          .map(item => item.patient_id)
-          .filter(p => p?.id)
-          .map(p => [p.id, p])
-      ).values()
-    );
-
-    setPatients(uniquePatients);
-    setFilteredPatients(uniquePatients);
+  setPatients(data); 
+  setFilteredPatients(data);
   };
 
   const handleSearchPatients = (e) => {
@@ -89,30 +80,35 @@ const PrintCertificate = () => {
 
 
   const handleSelectPatient = async (patient) => {
-  setSelectedPatient(patient);
-  setSearchTermPatients(`${patient.pt_firstname} ${patient.pt_lastname}`); 
-  setFilteredPatients([]); 
+      setSearchTermPatients(`${patient.pt_firstname} ${patient.pt_lastname}`);
+      setSelectedPatient(patient); 
 
-  const { data, error } = await supabase
-    .from('rx_final')
-    .select('*')
-    .eq('patient_id', patient.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
+      console.log("Paciente seleccionado:", patient);
 
-  if (error) {
-    console.error('Error fetching rx_final data:', error);
-    return;
-  }
+      const { data, error } = await supabase
+        .from('rx_final')
+        .select('*')
+        .eq('patient_id', patient.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
 
-  setFormData(prev => ({
-    ...prev,
-    ...data,
-    patient_id: patient.id,
-  }));
-  };
+      if (error) {
+        console.error('Error fetching rx_final data:', error);
+        return;
+      }
 
+      const newFormData = {
+      ...formData,
+      ...data,
+      patient_id: patient.id,
+      message: "Aquí tienes tu certificado de medidas 👓"
+    };
+
+    setFormData(newFormData);
+    sendWhatsAppMessage(patient, newFormData);
+    setFilteredPatients([]);
+    };
 
   const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
@@ -378,13 +374,13 @@ const PrintCertificate = () => {
         </Box>
       </Box>
       <PdfMeasures
-        targetRef={targetRef}
-        formData={{
-          patient_id: formData.patient_id,
-          pt_phone: formData.pt_phone,
-          message: "Aquí tienes tu certificado de medidas 👓"
-        }}
-      />
+          targetRef={targetRef}
+          formData={{
+            ...formData,
+            message: "Aquí tienes tu certificado de medidas"
+          }}
+          selectedPatient={selectedPatient}
+        />
     </Box>
     );
 }

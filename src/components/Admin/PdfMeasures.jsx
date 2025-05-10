@@ -4,7 +4,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../api/supabase";
 
-const PdfMeasures = ({ formData, targetRef }) => {
+const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -88,7 +88,9 @@ const PdfMeasures = ({ formData, targetRef }) => {
   };
 
   const sendWhatsAppMessage = async () => {
-    if (!formData?.pt_phone) {
+    const patient = selectedPatient;
+
+    if (!patient?.pt_phone) {
       toast({
         title: "Error",
         description: "No hay número de teléfono del paciente.",
@@ -103,7 +105,7 @@ const PdfMeasures = ({ formData, targetRef }) => {
     if (!pdfUrl) return;
 
     const message = formData.message || "Aquí tienes el documento de tus medidas.";
-    const phoneNumber = formData.pt_phone.replace(/\D/g, "");
+    const phoneNumber = patient.pt_phone.replace(/\D/g, "");
 
     if (phoneNumber.length < 8) {
       toast({
@@ -116,8 +118,10 @@ const PdfMeasures = ({ formData, targetRef }) => {
       return;
     }
 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(`${message}\n\nPuedes descargar tu documento aquí: ${pdfUrl}`)}`;
-    window.location.href = whatsappUrl;
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      `${message}\n\nPuedes descargar tu documento aquí: ${pdfUrl}`
+    )}`;
+    window.open(whatsappUrl, "_blank");
 
     toast({
       title: "WhatsApp Enviado",
