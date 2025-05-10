@@ -128,6 +128,9 @@ const AdminDashBoard = () => {
       case "HISTORIAL DE MEDIDAS":
         navigate('/HistoryMeasureList')
         break;
+      case "IMPRIMIR CERTIFICADO":
+        navigate('/PrintCertificate')
+      break;
       case "HISTORIAL DE VENTAS":
           navigate('/HistoryClinic')
       default:

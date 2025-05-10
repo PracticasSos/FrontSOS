@@ -29,7 +29,8 @@ const RegisterPatientForm = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase.from('users').select('id, username');
+      const { data, error } = await supabase.from('users').select('id, username')
+      .eq('activo', true);
       if (error) throw error;
       setUsers(data);
     } catch (error) {

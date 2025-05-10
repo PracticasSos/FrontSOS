@@ -37,6 +37,7 @@ import Register from "../components/Admin/Register.jsx";
 import HistoryClinic from "../components/Admin/HistoryClinic.jsx";
 import SalesHistory from "../components/Admin/Sales/history/SalesHistory.jsx";
 import Tenants from "../components/tenants/Tenants.jsx";
+import PrintCertificate from "../components/Admin/PrintCertificate.jsx";
 
 const AppRouter = () => {
     return(
@@ -78,6 +79,7 @@ const AppRouter = () => {
             <Route path="/HistoryClinic" element={<HistoryClinic />} />
             <Route path="/HistoryClinic/PatientHistory/:patientId" element={<PatientHistory />} />
             <Route path="/HistoryClinic/PatientHistory/:patientId/SalesHistory/:saleId" element={<SalesHistory />} />
+            <Route path="/PrintCertificate" element={<PrintCertificate/>}></Route>
         </Routes>
     )
 }

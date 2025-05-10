@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
+import { Button, Box, SimpleGrid, Text, Image, Spinner, Center } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
 
@@ -23,28 +23,23 @@ import creditIcon from "../../assets/credit.svg";
 import registarlunasIcon from "../../assets/registrarlunas.svg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 
-
 const defaultOptions = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon, route: "/RegisterPatient" },
   { label: "HISTORIAL DE VENTAS", icon: historiaClinicaIcon, route: "/HistoryClinic" },
   { label: "ORDEN DE LABORATORIO", icon: laboratorioOrdenIcon, route: "/OrderLaboratoryList" },
-  { label: "ENVIOS", icon: enviosIcon }, 
   { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon, route: "/Sales" },
   { label: "RETIROS", icon: entregasIcon, route: "/RetreatsPatients" },
   { label: "CIERRE", icon: cierredeCajaIcon, route: "/PatientRecords" },
   { label: "SALDOS", icon: saldosIcon, route: "/BalancesPatient" },
   { label: "EGRESOS", icon: egresosIcon, route: "/Egresos" },
-  { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon, route: "/MeasuresFinal" },
   { label: "CREDITOS", icon: creditIcon, route: "/Balance" },
   { label: "INVENTARIO", icon: inventarioIcon, route: "/Inventory" },
   { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon, route: "/HistoryMeasureList" },
-  { label: "REGISTRAR LUNAS", icon: registarlunasIcon, route: "/RegisterLens" }
+  { label: "REGISTRAR LUNAS", icon: registarlunasIcon, route: "/RegisterLens" },
 ];
 
-// La rutas para el vendedor se debe selecionar bien las que son por defecto y las que son extras
 const extraRouters = [
-  { label: "ENVIOS", icon: enviosIcon },
   { label: "USUARIOS", icon: usuariosIcon, route: "/Register" },
   { label: "LABORATORIOS", icon: laboratoriosIcon, route: "/Labs" },
   { label: "SUCURSAL", icon: sucursalesIcon, route: "/Branch" },
@@ -59,24 +54,23 @@ const VendedorDashBoard = () => {
   const navigate = useNavigate();
 
   const getRoutesByPermissions = (permittedRoutes) => {
-    const defaultFiltered = defaultOptions.filter(option =>
-      permittedRoutes.includes(option.route)
-    );
-    const extraFiltered = extraRouters.filter(option =>
-      permittedRoutes.includes(option.route)
-    );
+    const defaultFiltered = defaultOptions.filter(option => option.route && permittedRoutes.includes(option.route));
+    const extraFiltered = extraRouters.filter(option => option.route && permittedRoutes.includes(option.route));
     return [...defaultFiltered, ...extraFiltered];
   };
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session?.user) {
+    const loadUser = async () => {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) console.error("Error al obtener la sesión:", sessionError);
+
+      const currentUser = session?.user || JSON.parse(localStorage.getItem('user'));
+
+      if (!currentUser) {
         navigate('/Login');
         return;
       }
 
-      const currentUser = session.user;
       setUser(currentUser);
       localStorage.setItem('user', JSON.stringify(currentUser));
 
@@ -85,8 +79,12 @@ const VendedorDashBoard = () => {
         .select('route')
         .eq('user_id', currentUser.id);
 
-      if (permissionsError || !permissions) {
-        setAllowedRoutes(defaultOptions);
+      if (permissionsError) {
+        console.error("Error al obtener permisos:", permissionsError);
+        setAllowedRoutes([]);
+      } else if (!permissions || permissions.length === 0) {
+        console.warn("El usuario no tiene permisos asignados.");
+        setAllowedRoutes([]);
       } else {
         const permittedRoutes = permissions.map(p => p.route);
         setAllowedRoutes(getRoutesByPermissions(permittedRoutes));
@@ -95,28 +93,20 @@ const VendedorDashBoard = () => {
       setLoading(false);
     };
 
-    const userFromStorage = JSON.parse(localStorage.getItem('user'));
-    if (userFromStorage) {
-      setUser(userFromStorage);
-      supabase
-        .from('user_permissions')
-        .select('route')
-        .eq('user_id', userFromStorage.id)
-        .then(({ data: permissions, error }) => {
-          if (error || !permissions) {
-            setAllowedRoutes(defaultOptions);
-          } else {
-            const permittedRoutes = permissions.map(p => p.route);
-            setAllowedRoutes(getRoutesByPermissions(permittedRoutes));
-          }
-          setLoading(false);
-        });
-    } else {
-      checkSession();
-    }
+    loadUser();
   }, [navigate]);
 
-  if (loading || !user) return null;
+  if (loading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
+  if (!user) {
+    return <Text>No se encontró el usuario</Text>;
+  }
 
   return (
     <>
@@ -137,7 +127,7 @@ const VendedorDashBoard = () => {
             boxShadow="md"
             borderRadius="md"
             _hover={{ bg: "gray.100", cursor: "pointer" }}
-            onClick={() => navigate(option.route)}
+            onClick={() => option.route && navigate(option.route)}
           >
             <Image src={option.icon} alt={option.label} boxSize="40px" mb={3} mx="auto" />
             <Text>{option.label}</Text>
@@ -147,6 +137,5 @@ const VendedorDashBoard = () => {
     </>
   );
 };
-
 
 export default VendedorDashBoard;
