@@ -380,6 +380,14 @@ const Sales = () => {
                       : "Seleccione una fecha para ver el tiempo de entrega"}
                   </Text>
                 </Box>
+                <SignaturePadComponent
+                    onSave={(signatureDataUrl) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        signature: signatureDataUrl,
+                      }))
+                    }
+                  />
               </Box>
 
               {/* Columna Derecha: Mensaje y Firma */}
@@ -389,14 +397,6 @@ const Sales = () => {
                     selectedBranch={branchName}
                     formData={formData}
                     setFormData={setFormData}
-                  />
-                  <SignaturePadComponent
-                    onSave={(signatureDataUrl) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        signature: signatureDataUrl,
-                      }))
-                    }
                   />
                 </Stack>
               </Box>

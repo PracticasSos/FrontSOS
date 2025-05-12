@@ -30,9 +30,6 @@ const Tenant = () => {
 
   const toast = useToast();
 
-  const user = supabase.auth.getUser();
-console.log(user); // Asegúrate de que user.data.user existe
-
   useEffect(() => {
   const fetchRoles = async () => {
     const { data, error } = await supabase.from("role").select("id, role_name");
@@ -40,6 +37,27 @@ console.log(user); // Asegúrate de que user.data.user existe
   };
 
   fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    const getJWT = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Error al obtener la sesión:", error);
+        return;
+      }
+
+      if (session) {
+        console.log("Access Token (JWT):", session.access_token);
+        const payload = JSON.parse(atob(session.access_token.split('.')[1]));
+        console.log("Contenido del JWT:", payload);
+      } else {
+        console.warn("No hay sesión activa.");
+      }
+    };
+
+    getJWT();
   }, []);
 
 
@@ -204,6 +222,9 @@ console.log(user); // Asegúrate de que user.data.user existe
     }
     switch (user.role_id) {
       case 1:
+        navigate('/Admin');
+        break;
+      case 4:
         navigate('/Admin');
         break;
       case 2:
