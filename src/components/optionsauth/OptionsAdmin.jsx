@@ -45,7 +45,6 @@ const options = [
   { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
-  { label: "TENANT", icon: sucursalesIcon }
 ];
 
 const AdminDashBoard = () => {
@@ -135,9 +134,6 @@ const AdminDashBoard = () => {
       case "TENANT":
         navigate('/Tenant')
       break;
-      case "HISTORIAL DE VENTAS":
-          navigate('/HistoryClinic')
-      default:
         break;
     }
   };
