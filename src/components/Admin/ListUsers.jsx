@@ -89,16 +89,32 @@ const ListUsers = () => {
   };
 
   const handleNavigate = (route = null) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (route) { navigate(route); return; }
-    if (!user || !user.role_id) { navigate('/LoginForm'); return; }
-    switch (user.role_id) {
-      case 1: navigate('/Admin'); break;
-      case 2: navigate('/Optometra'); break;
-      case 3: navigate('/Vendedor'); break;
-      default: navigate('/');
-    }
-  };
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (route) {
+            navigate(route);
+            return;
+        }
+        if (!user || !user.role_id) {
+            navigate('/LoginForm');
+            return;
+        }
+        switch (user.role_id) {
+            case 1:
+                navigate('/Admin');
+                break;
+            case 2:
+                navigate('/Optometra');
+                break;
+            case 3:
+                navigate('/Vendedor');
+                break;
+            case 4:
+                navigate('/SuperAdmin');
+                break;
+            default:
+                navigate('/');
+        }
+    };
 
   return (
     <Box bgColor="#ffffff" minHeight="100vh" padding="20px">

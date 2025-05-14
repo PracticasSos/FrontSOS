@@ -235,6 +235,9 @@ const Register = () => {
       case 3:
         navigate('/Vendedor');
         break;
+      case 4:
+        navigate('/SuperAdmin');
+        break;
       default:
       navigate('/');
     }

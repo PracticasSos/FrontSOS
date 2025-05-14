@@ -91,7 +91,7 @@ const LoginForm = () => {
         navigate('/admin');
         break;
       case 4:
-        navigate('/admin');
+        navigate('/superAdmin');
         break;
       case 2:
         navigate('/optometra');

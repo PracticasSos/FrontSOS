@@ -36,43 +36,19 @@ const Tenant = () => {
     if (!error) setRoles(data);
   };
 
+
   fetchRoles();
-  }, []);
-
-  useEffect(() => {
-    const getJWT = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Error al obtener la sesión:", error);
-        return;
-      }
-
-      if (session) {
-        console.log("Access Token (JWT):", session.access_token);
-        const payload = JSON.parse(atob(session.access_token.split('.')[1]));
-        console.log("Contenido del JWT:", payload);
-      } else {
-        console.warn("No hay sesión activa.");
-      }
-    };
-
-    getJWT();
   }, []);
 
 
   const handleCreateTenant = async () => {
   try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    console.log('Session UID:', session?.user?.id); // 👈 Verifica aquí
-
-    if (!session?.user?.id) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
       toast({
         title: "Error",
-        description: "No hay sesión activa. Por favor inicia sesión.",
+        description: "No hay sesión activa.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -80,22 +56,38 @@ const Tenant = () => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("tenants")
-      .insert([{ name: tenantName }])
-      .select();
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("role_id")
+      .eq("auth_id", session.user.id)
+      .single();
 
-    if (error) throw error;
+    if (userError || !userData) {
+      toast({
+        title: "Error",
+        description: "No tienes permisos.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    setTenantId(data[0].id);
+    const { data, error } = await supabase.rpc("insert_tenant", { tenant_name: tenantName });
+
+    if (error || !data?.[0]?.id) throw error;
+
+    const createdTenantId = data[0].id;
+    localStorage.setItem("tenant_id", createdTenantId); // ✅ Guardar correctamente
 
     toast({
       title: "Óptica Creada",
-      description: "El nombre de la óptica se ha creado exitosamente.",
+      description: "Óptica registrada exitosamente.",
       status: "success",
       duration: 3000,
       isClosable: true,
     });
+
   } catch (error) {
     console.error("Error al crear tenant:", error);
     toast({
@@ -111,104 +103,119 @@ const Tenant = () => {
 
 
   const handleCreateBranch = async () => {
-    if (!tenantId) {
-      toast({
-        title: "Error",
-        description: "Primero debe crear la óptica.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+  const tenantId = localStorage.getItem("tenant_id");
 
-    try {
-      const { data, error } = await supabase
-        .from("branchs")
-        .insert([
-          {
-            name: branchName,
-            address: branchAddress,
-            cell: branchCell,
-            ruc: branchRuc,
-            email: branchEmail,
-            tenant_id: tenantId,
-          },
-        ]);
+  if (!tenantId) {
+    toast({
+      title: "Error",
+      description: "Primero debe crear la óptica.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return;
+  }
 
-      if (error) throw error;
+  try {
+    const { data, error } = await supabase
+      .from("branchs")
+      .insert([
+        {
+          name: branchName,
+          address: branchAddress,
+          cell: branchCell,
+          ruc: branchRuc,
+          email: branchEmail,
+          tenant_id: tenantId,
+        },
+      ])
+      .select(); // 👈 Necesario para obtener el branch creado
 
-      setBranchId(data[0].id);  // Guardamos el branch ID
-      toast({
-        title: "Sucursal Creada",
-        description: "La sucursal se ha creado exitosamente.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo crear la sucursal.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+    if (error || !data?.[0]?.id) throw error;
+
+    setBranchId(data[0].id);
+
+    toast({
+      title: "Sucursal Creada",
+      description: "Sucursal registrada exitosamente.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+  } catch (error) {
+    console.error("Error al crear la sucursal:", error);
+    toast({
+      title: "Error",
+      description: "No se pudo crear la sucursal.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  }
+};
+
+
 
   const handleCreateUser = async () => {
-    if (!branchId) {
-      toast({
-        title: "Error",
-        description: "Primero debe crear la sucursal.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+  const tenantId = localStorage.getItem("tenant_id");
 
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .insert([
-          {
-            email: userData.email,
-            password: userData.password,
-            firstname: userData.firstname,
-            lastname: userData.lastname,
-            username: userData.username,
-            age: userData.age,
-            role_id: userData.role_id,
-            birthdate: userData.birthdate,
-            check_in_date: userData.check_in_date,
-            phone_number: userData.phone_number,
-            ci: userData.ci,
-            branch_id: branchId,
-            tenant_id: tenantId, // Enlazamos al tenant
-          },
-        ]);
+  if (!branchId || !tenantId) {
+    toast({
+      title: "Error",
+      description: "Primero debe crear la óptica y la sucursal.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    return;
+  }
 
-      if (error) throw error;
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .insert([
+        {
+          email: userData.email,
+          password: userData.password,
+          firstname: userData.firstname,
+          lastname: userData.lastname,
+          username: userData.username,
+          age: userData.age,
+          role_id: userData.role_id,
+          birthdate: userData.birthdate,
+          check_in_date: userData.check_in_date,
+          phone_number: userData.phone_number,
+          ci: userData.ci,
+          branch_id: branchId,
+          tenant_id: tenantId,
+        },
+      ]);
 
-      toast({
-        title: "Usuario Creado",
-        description: "El usuario se ha creado exitosamente.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo crear el usuario.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+    if (error) throw error;
+
+    toast({
+      title: "Usuario Creado",
+      description: "Usuario registrado exitosamente.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    localStorage.removeItem("tenant_id"); // ✅ Limpiar después de crear usuario
+
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "No se pudo crear el usuario.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  }
+};
+
+
 
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -232,6 +239,9 @@ const Tenant = () => {
         break;
       case 3:
         navigate('/Vendedor');
+        break;
+      case 4:
+        navigate('/SuperAdmin');
         break;
       default:
       navigate('/');
