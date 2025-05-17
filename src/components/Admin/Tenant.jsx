@@ -231,9 +231,6 @@ const Tenant = () => {
       case 1:
         navigate('/Admin');
         break;
-      case 4:
-        navigate('/Admin');
-        break;
       case 2:
         navigate('/Optometra');
         break;

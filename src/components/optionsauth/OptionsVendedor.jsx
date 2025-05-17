@@ -77,7 +77,8 @@ const VendedorDashBoard = () => {
       const { data: permissions, error: permissionsError } = await supabase
         .from('user_permissions')
         .select('route')
-        .eq('user_id', currentUser.id);
+        .eq('auth_id', currentUser.id);
+
 
       if (permissionsError) {
         console.error("Error al obtener permisos:", permissionsError);

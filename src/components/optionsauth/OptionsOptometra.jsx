@@ -82,7 +82,7 @@ const OptometraDashBoard = () => {
       const { data: permissions, error: permissionsError } = await supabase
         .from('user_permissions')
         .select('route')
-        .eq('user_id', currentUser.id);
+        .eq('auth_id', currentUser.id);
 
       if (permissionsError || !permissions) {
         setAllowedRoutes(defaultOptions);
