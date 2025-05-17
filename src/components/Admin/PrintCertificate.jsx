@@ -80,25 +80,26 @@ const PrintCertificate = () => {
 
 
   const handleSelectPatient = async (patient) => {
-      setSearchTermPatients(`${patient.pt_firstname} ${patient.pt_lastname}`);
-      setSelectedPatient(patient); 
+    const fullName = `${patient.pt_firstname} ${patient.pt_lastname}`;
+    setSearchTermPatients(fullName);
+    setSelectedPatient(patient); 
 
-      console.log("Paciente seleccionado:", patient);
+    console.log("Paciente seleccionado:", patient);
 
-      const { data, error } = await supabase
-        .from('rx_final')
-        .select('*')
-        .eq('patient_id', patient.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+    const { data, error } = await supabase
+      .from('rx_final')
+      .select('*')
+      .eq('patient_id', patient.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
 
-      if (error) {
-        console.error('Error fetching rx_final data:', error);
-        return;
-      }
+    if (error) {
+      console.error('Error fetching rx_final data:', error);
+      return;
+    }
 
-      const newFormData = {
+    const newFormData = {
       ...formData,
       ...data,
       patient_id: patient.id,
@@ -108,7 +109,8 @@ const PrintCertificate = () => {
     setFormData(newFormData);
     sendWhatsAppMessage(patient, newFormData);
     setFilteredPatients([]);
-    };
+  };
+
 
   const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
@@ -174,7 +176,7 @@ const PrintCertificate = () => {
             <FormControl id="patient-search">
               <FormLabel>Buscar Paciente</FormLabel>
               <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients} />
-              {searchTermPatients && filteredPatients.length > 0 && (
+              {searchTermPatients && filteredPatients.length > 0 && !selectedPatient &&(
                 <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto" zIndex={1000} position="absolute" bg="white" width="100%">
                   {filteredPatients.map((patient) => (
                     <Box key={patient.id} p={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handleSelectPatient(patient)}>
