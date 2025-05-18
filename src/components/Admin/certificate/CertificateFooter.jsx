@@ -1,0 +1,68 @@
+import { useEffect, useState } from 'react';
+import { Box, Flex, Icon, Text, Spinner } from '@chakra-ui/react';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaFacebook, FaInstagram } from 'react-icons/fa';
+import { supabase } from '../../../api/supabase';
+
+const CertificateFooter = ({ tenantId }) => {
+  const [branch, setBranch] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!tenantId) return;
+
+    const fetchBranch = async () => {
+      const { data, error } = await supabase
+        .from('branchs')
+        .select('address, cell, name, email')
+        .eq('tenant_id', tenantId)
+        .single();
+
+      if (error) {
+        console.error('Error al cargar datos de la sucursal:', error);
+      } else {
+        setBranch(data);
+      }
+      setLoading(false);
+    };
+
+    fetchBranch();
+  }, [tenantId]);
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={10}>
+        <Spinner />
+      </Box>
+    );
+  }
+
+  if (!branch) return null;
+
+  return (
+    <Box mt={10} pt={4} borderTop="1px solid #ccc" fontSize="sm">
+      <Flex direction="column" align="center" gap={2}>
+        <Flex align="center" gap={2}>
+          <Icon as={FaMapMarkerAlt} />
+          <Text>{branch.address}</Text>
+        </Flex>
+
+        <Flex align="center" gap={2}>
+          <Icon as={FaPhoneAlt} />
+          <Text>{branch.cell}</Text>
+        </Flex>
+
+        <Flex align="center" gap={2}>
+          <Icon as={FaEnvelope} />
+          <Text>{branch.email}</Text>
+        </Flex>
+
+        <Flex align="center" gap={4} mt={2}>
+          <Icon as={FaFacebook} boxSize={5} />
+          <Icon as={FaInstagram} boxSize={5} />
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
+
+export default CertificateFooter;

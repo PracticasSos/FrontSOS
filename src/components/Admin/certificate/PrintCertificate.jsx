@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from '../../api/supabase';
+import { supabase } from '../../../api/supabase';
 import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, Stack, SimpleGrid,FormControl, FormLabel, Textarea, RadioGroup, Radio, Checkbox, Text } from '@chakra-ui/react';
-import PdfMeasures from "./PdfMeasures";
+import PdfMeasures from "../PdfMeasures";
+import CertificateLogo from "./CertificateLogo";
+import CertificateFooter from "./CertificateFooter";
 
 const PrintCertificate = () => {
   const [patients, setPatients] = useState([]);
@@ -43,6 +45,22 @@ const PrintCertificate = () => {
   });
 
   const navigate = useNavigate();
+  const [tenantId, setTenantId] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error al obtener sesión:', error);
+      } else {
+        const tId = data?.session?.user?.user_metadata?.tenant_id;
+        setTenantId(tId); // <-- Guardamos tenant_id
+        console.log('Tenant ID:', tId);
+      }
+    };
+    fetchUser();
+  }, []);
+
 
   useEffect(() => {
   fetchPatients();
@@ -164,11 +182,12 @@ const PrintCertificate = () => {
     return (
       <Box ref={targetRef} w="full" px={4}>
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
-        <Heading mb={4} textAlign="center" fontSize={["xl", "2xl", "3xl"]}>Certificado de Medidas</Heading>
+        <CertificateLogo tenantId={tenantId} />
+        <Heading mb={4} textAlign="center" fontSize={["xl", "2xl", "3xl"]}>Certificado de Agudeza Visual</Heading>
         <Stack direction={{ base: "column", md: "row" }} spacing={4} width="100%" maxWidth="800px" mb={4} justifyContent={{ base: "center", md: "center" }} alignItems="center"  mx="auto">
           <Button onClick={() => handleNavigate("/NoExiste")} colorScheme="teal" size={["sm", "md"]}>Consultar Medidas</Button>
           <Button onClick={() => handleNavigate()} colorScheme="blue" size={["sm", "md"]}>Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red" size={["sm", "md"]}>Cerrar Sesión</Button>
+          <Button onClick={() => handleNavigate("/Login")} colorScheme="red" size={["sm", "md"]}>Cerrar Sesión</Button>
         </Stack>
 
         <Box as="form" onSubmit={(e) => { e.preventDefault() }} width="100%" maxWidth="1300px" boxShadow="lg" borderRadius="md" p={[2, 4, 6]}>
@@ -376,6 +395,7 @@ const PrintCertificate = () => {
               )}
             </Box>
           </Box>
+          <CertificateFooter tenantId={tenantId} />
         </Box>
       </Box>
       <PdfMeasures

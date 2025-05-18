@@ -137,8 +137,11 @@ const SuperAdminDashBoard = () => {
       break;
       case "HISTORIAL DE VENTAS":
           navigate('/HistoryClinic')
-      default:
         break;
+      case "LOGOS":
+        navigate('/UploadLogo')
+      break;
+      default:
     }
   };
 

@@ -37,19 +37,21 @@ import Register from "../components/Admin/Register.jsx";
 import HistoryClinic from "../components/Admin/HistoryClinic.jsx";
 import SalesHistory from "../components/Admin/Sales/history/SalesHistory.jsx";
 import Tenants from "../components/tenants/Tenants.jsx";
-import PrintCertificate from "../components/Admin/PrintCertificate.jsx";
+import PrintCertificate from "../components/Admin/certificate/PrintCertificate.jsx";
 import Tenant from "../components/Admin/Tenant.jsx";
+import UploadLogo from "../components/Admin/certificate/UploadLogo.jsx";
 
 const AppRouter = () => {
     return(
         <Routes>
             <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
             <Route path="Register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
-            
+        
             <Route path="Tenants" element={<Tenants/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
             <Route path="Inventory" element={<Inventario/>}></Route>
             <Route path="login" element={<LoginForm/>} />
-            <Route path="Admin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
+            <Route path="Admin" element={<AdminDashBoard/>} />
+            <Route path="SuperAdmin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
             <Route path="RegisterPatient" element={<RegisterPatientForm />} />
             <Route path="Vendedor" element={<VendedorDashBoard />} />
@@ -82,6 +84,7 @@ const AppRouter = () => {
             <Route path="/HistoryClinic/PatientHistory/:patientId/SalesHistory/:saleId" element={<SalesHistory />} />
             <Route path="/PrintCertificate" element={<PrintCertificate/>}></Route>
             <Route path="/Tenant" element={<Tenant/>}></Route>
+            <Route path="/UploadLogo" element={<UploadLogo/>}></Route>
         </Routes>
     )
 }

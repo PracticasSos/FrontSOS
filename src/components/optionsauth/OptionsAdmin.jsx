@@ -45,6 +45,7 @@ const options = [
   { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
+  { label: "LOGOS", icon: creditIcon },
 ];
 
 const AdminDashBoard = () => {
@@ -131,10 +132,10 @@ const AdminDashBoard = () => {
       case "IMPRIMIR CERTIFICADO":
         navigate('/PrintCertificate')
       break;
-      case "TENANT":
-        navigate('/Tenant')
+      case "HISTORIAL PACIENTE":
+        navigate('/HistoryClinic')
       break;
-        break;
+    default:
     }
   };
 
