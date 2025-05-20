@@ -44,8 +44,7 @@ const options = [
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: creditIcon },
-  { label: "LOGOS", icon: creditIcon },
+  { label: "CREDITOS", icon: creditIcon }
 ];
 
 const AdminDashBoard = () => {

@@ -45,7 +45,9 @@ const options = [
   { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
-  { label: "TENANT", icon: sucursalesIcon }
+  {label: "LOGOS", icon: creditIcon },
+  {label: "TENANT", icon: creditIcon }
+
 ];
 
 const SuperAdminDashBoard = () => {
@@ -132,15 +134,15 @@ const SuperAdminDashBoard = () => {
       case "IMPRIMIR CERTIFICADO":
         navigate('/PrintCertificate')
       break;
-      case "TENANT":
-        navigate('/Tenant')
-      break;
       case "HISTORIAL DE VENTAS":
           navigate('/HistoryClinic')
         break;
       case "LOGOS":
         navigate('/UploadLogo')
-      break;
+        break;
+      case "TENANT":
+        navigate('/Tenant')
+        break;
       default:
     }
   };

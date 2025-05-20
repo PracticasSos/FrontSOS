@@ -40,6 +40,7 @@ import Tenants from "../components/tenants/Tenants.jsx";
 import PrintCertificate from "../components/Admin/certificate/PrintCertificate.jsx";
 import Tenant from "../components/Admin/Tenant.jsx";
 import UploadLogo from "../components/Admin/certificate/UploadLogo.jsx";
+import SuperAdminDashBoard from "../components/optionsauth/OptionsSuperAdmin.jsx";
 
 const AppRouter = () => {
     return(
@@ -51,7 +52,7 @@ const AppRouter = () => {
             <Route path="Inventory" element={<Inventario/>}></Route>
             <Route path="login" element={<LoginForm/>} />
             <Route path="Admin" element={<AdminDashBoard/>} />
-            <Route path="SuperAdmin" element={<AdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
+            <Route path="SuperAdmin" element={<SuperAdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
             <Route path="RegisterPatient" element={<RegisterPatientForm />} />
             <Route path="Vendedor" element={<VendedorDashBoard />} />
