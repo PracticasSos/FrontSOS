@@ -5,6 +5,8 @@ import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, S
 import PdfMeasures from "../PdfMeasures";
 import CertificateLogo from "./CertificateLogo";
 import CertificateFooter from "./CertificateFooter";
+import SelloSelector from "./SelloSelector";
+import SignaturePadComponent from "../Sales/SignaturePadComponent";
 
 const PrintCertificate = () => {
   const [patients, setPatients] = useState([]);
@@ -125,7 +127,7 @@ const PrintCertificate = () => {
     };
 
     setFormData(newFormData);
-    sendWhatsAppMessage(patient, newFormData);
+    //sendWhatsAppMessage(patient, newFormData);
     setFilteredPatients([]);
   };
 
@@ -396,6 +398,22 @@ const PrintCertificate = () => {
             </Box>
           </Box>
           <CertificateFooter tenantId={tenantId} />
+          <Box display="flex" gap={4} justifyContent="center" alignItems="flex-start" my={4}>
+            <Box flex="1" maxW="400px">
+              <SelloSelector />
+            </Box>
+
+            <Box flex="1" maxW="400px">
+              <SignaturePadComponent
+                onSave={(signatureDataUrl) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    signature: signatureDataUrl,
+                  }))
+                }
+              />
+            </Box>
+          </Box>
         </Box>
       </Box>
       <PdfMeasures

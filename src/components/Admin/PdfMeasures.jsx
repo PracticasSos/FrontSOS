@@ -8,6 +8,24 @@ const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
 
+  const waitForImagesToLoad = async (container) => {
+  const images = container.querySelectorAll('img');
+  const promises = [];
+
+  images.forEach((img) => {
+    if (!img.complete || img.naturalHeight === 0) {
+      promises.push(
+        new Promise((resolve) => {
+          img.onload = img.onerror = resolve;
+        })
+      );
+    }
+  });
+
+  return Promise.all(promises);
+  };
+
+
   const handleDownloadPdf = async () => {
     if (!targetRef?.current) {
       toast({
@@ -26,6 +44,8 @@ const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
       const content = targetRef.current;
       const buttons = content.querySelectorAll("button");
       buttons.forEach((btn) => (btn.style.display = "none"));
+
+      await waitForImagesToLoad(content);
 
       const canvas = await html2canvas(content, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");

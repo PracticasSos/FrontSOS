@@ -1,440 +1,245 @@
-import React, { useState, useEffect } from "react";
-import { Box, Button, Input, Select, FormControl, FormLabel, Stack, useToast, Card, CardBody, Heading } from "@chakra-ui/react";
-import { supabase } from "../../api/supabase";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { supabase } from '../../api/supabase';
 
-const Tenant = () => {
-  const [tenantName, setTenantName] = useState("");
-  const [branchName, setBranchName] = useState("");
-  const [branchAddress, setBranchAddress] = useState("");
-  const [branchCell, setBranchCell] = useState("");
-  const [branchRuc, setBranchRuc] = useState("");
-  const [branchEmail, setBranchEmail] = useState("");
-  const [roles, setRoles] = useState([]);
-  const navigate = useNavigate();
-  const [userData, setUserData] = useState({
-    email: "",
-    password: "",
-    firstname: "",
-    lastname: "",
-    username: "",
-    age: "",
-    role_id: "",
-    birthdate: "",
-    check_in_date: "",
-    phone_number: "",
-    ci: "",
+export default function CreateUser() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    firstname: '',
+    lastname: '',
+    username: '',
+    age: '',
+    birthdate: '',
+    phone_number: '',
+    ci: '',
+    role: '',
   });
-  const [tenantId, setTenantId] = useState(null);
-  const [branchId, setBranchId] = useState(null);
+  const [message, setMessage] = useState('');
+  const [tenantName, setTenantName] = useState('');
 
-  const toast = useToast();
-
-  useEffect(() => {
-  const fetchRoles = async () => {
-    const { data, error } = await supabase.from("role").select("id, role_name");
-    if (!error) setRoles(data);
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  fetchRoles();
-  }, []);
+     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !session) {
+    setMessage('Error obteniendo sesión del usuario.');
+    return;
+  }
 
+  // Obtener el usuario actual desde la sesión
+  const user = session.user;
 
-  const handleCreateTenant = async () => {
-  try {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  // 2. Consultar el rol en la tabla users
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("role_id")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (userError || !userData) {
+    setMessage('No tienes permisos.');
+    return;
+  }
+    // Obtener el usuario actual para asignar tenant_id si no es super-admin
+
     
-    if (sessionError || !session) {
-      toast({
-        title: "Error",
-        description: "No hay sesión activa.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+    const { role, tenant_id } = user.user_metadata;
+    
+    // Si es super-admin, no asignamos tenant_id (crea nuevos tenants)
+    const newUserMetadata = {
+      role: formData.role,
+      tenant_id: role !== 'super-admin' ? tenant_id : null,
+    };
+    
+    // 1. Crear usuario en Auth (usando signUp en lugar de admin.createUser)
+    const { data: authData, error: signupError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: newUserMetadata,
+      }
+    });
+    
+    if (signupError) {
+      setMessage(`Error creando usuario: ${signupError.message}`);
+      return;
+    }
+    
+    if (!authData || !authData.user) {
+      setMessage('Error al crear el usuario en Auth.');
       return;
     }
 
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("role_id")
-      .eq("auth_id", session.user.id)
-      .single();
+    // Ejemplo de inserción de un nuevo tenant
+    const { data: tenantData, error: tenantError } = await supabase
+      .from('tenants')
+      .insert([{ name: tenantName }])
+      .select();
 
-    if (userError || !userData) {
-      toast({
-        title: "Error",
-        description: "No tienes permisos.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+    if (tenantError) {
+      setMessage(`Error creando tenant: ${tenantError.message}`);
       return;
     }
 
-    const { data, error } = await supabase.rpc("insert_tenant", { tenant_name: tenantName });
+// ...
+      // Usar el id del nuevo tenant para el usuario
+      const newTenantId = tenantData[0].id;
 
-    if (error || !data?.[0]?.id) throw error;
+      // 2. Insertar en tabla 'users' con role_id como entero
+      let roleId = 1; // Por defecto es 1 (admin)
 
-    const createdTenantId = data[0].id;
-    localStorage.setItem("tenant_id", createdTenantId); // ✅ Guardar correctamente
-
-    toast({
-      title: "Óptica Creada",
-      description: "Óptica registrada exitosamente.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-
-  } catch (error) {
-    console.error("Error al crear tenant:", error);
-    toast({
-      title: "Error",
-      description: "No se pudo crear la óptica.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  }
-};
-
-
-
-  const handleCreateBranch = async () => {
-  const tenantId = localStorage.getItem("tenant_id");
-
-  if (!tenantId) {
-    toast({
-      title: "Error",
-      description: "Primero debe crear la óptica.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    return;
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from("branchs")
-      .insert([
+      // 3. Insertar en tabla 'users'
+      const { error: insertError } = await supabase.from('users').insert([
         {
-          name: branchName,
-          address: branchAddress,
-          cell: branchCell,
-          ruc: branchRuc,
-          email: branchEmail,
-          tenant_id: tenantId,
-        },
-      ])
-      .select(); // 👈 Necesario para obtener el branch creado
-
-    if (error || !data?.[0]?.id) throw error;
-
-    setBranchId(data[0].id);
-
-    toast({
-      title: "Sucursal Creada",
-      description: "Sucursal registrada exitosamente.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-
-  } catch (error) {
-    console.error("Error al crear la sucursal:", error);
-    toast({
-      title: "Error",
-      description: "No se pudo crear la sucursal.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  }
-};
-
-
-
-  const handleCreateUser = async () => {
-  const tenantId = localStorage.getItem("tenant_id");
-
-  if (!branchId || !tenantId) {
-    toast({
-      title: "Error",
-      description: "Primero debe crear la óptica y la sucursal.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    return;
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from("users")
-      .insert([
-        {
-          email: userData.email,
-          password: userData.password,
-          firstname: userData.firstname,
-          lastname: userData.lastname,
-          username: userData.username,
-          age: userData.age,
-          role_id: userData.role_id,
-          birthdate: userData.birthdate,
-          check_in_date: userData.check_in_date,
-          phone_number: userData.phone_number,
-          ci: userData.ci,
-          branch_id: branchId,
-          tenant_id: tenantId,
+          auth_id: authData.user.id,
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          username: formData.username,
+          age: parseInt(formData.age) || null,
+          birthdate: formData.birthdate || null,
+          phone_number: formData.phone_number,
+          ci: formData.ci,
+          role_id: roleId,
+          tenant_id: newTenantId, // <--- Usa el id recién creado
         },
       ]);
-
-    if (error) throw error;
-
-    toast({
-      title: "Usuario Creado",
-      description: "Usuario registrado exitosamente.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-
-    localStorage.removeItem("tenant_id"); // ✅ Limpiar después de crear usuario
-
-  } catch (error) {
-    toast({
-      title: "Error",
-      description: "No se pudo crear el usuario.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  }
-};
-
-
-
-  const handleNavigate = (route = null) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (route) {
-      navigate(route);
+    
+    if (insertError) {
+      setMessage(`Error insertando en tabla users: ${insertError.message}`);
       return;
     }
-    if (!user || !user.role_id) {
-      navigate('/Login');
-      return;
-    }
-    switch (user.role_id) {
-      case 1:
-        navigate('/Admin');
-        break;
-      case 2:
-        navigate('/Optometra');
-        break;
-      case 3:
-        navigate('/Vendedor');
-        break;
-      case 4:
-        navigate('/SuperAdmin');
-        break;
-      default:
-      navigate('/');
-    }
-  }; 
+    
+    setMessage('✅ Usuario creado exitosamente');
+    setFormData({
+      email: '',
+      password: '',
+      firstname: '',
+      lastname: '',
+      username: '',
+      age: '',
+      birthdate: '',
+      phone_number: '',
+      ci: '',
+      role: '',
+    });
+  };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} >
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+      <h2 className="text-xl font-bold">Crear Usuario</h2>
       
-      <Heading mb={6} color="teal.700">Registrar Tenant</Heading>
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-        <Button onClick={() => handleNavigate('/ListUsers')} colorScheme="teal">Listar Usuarios</Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-        <Button onClick={() => handleNavigate('/Login')} colorScheme="red">Cerrar Sesión</Button>
-      </Box>
-      <Stack w="100%" maxW="900px" p={6} spacing={6}>
-
-        {/* Sección Óptica */}
-        <Card>
-          <CardBody>
-            <Heading size="md" mb={4}>Crear Óptica</Heading>
-            <FormControl>
-              <FormLabel>Nombre de la Óptica</FormLabel>
-              <Input
-                value={tenantName}
-                onChange={(e) => setTenantName(e.target.value)}
-                placeholder="Nombre de la óptica"
-              />
-              <Button onClick={handleCreateTenant} mt={4} colorScheme="blue">
-                Crear Óptica
-              </Button>
-            </FormControl>
-          </CardBody>
-        </Card>
-
-        {/* Sección Sucursal */}
-        <Card>
-          <CardBody>
-            <Heading size="md" mb={4}>Crear Sucursal</Heading>
-            <Stack spacing={3}>
-              <FormControl>
-                <FormLabel>Nombre de la Sucursal</FormLabel>
-                <Input
-                  value={branchName}
-                  onChange={(e) => setBranchName(e.target.value)}
-                  placeholder="Nombre de la sucursal"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Dirección</FormLabel>
-                <Input
-                  value={branchAddress}
-                  onChange={(e) => setBranchAddress(e.target.value)}
-                  placeholder="Dirección de la sucursal"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Celular</FormLabel>
-                <Input
-                  value={branchCell}
-                  onChange={(e) => setBranchCell(e.target.value)}
-                  placeholder="Celular de contacto"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>RUC</FormLabel>
-                <Input
-                  value={branchRuc}
-                  onChange={(e) => setBranchRuc(e.target.value)}
-                  placeholder="RUC de la sucursal"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  value={branchEmail}
-                  onChange={(e) => setBranchEmail(e.target.value)}
-                  placeholder="Email de la sucursal"
-                />
-              </FormControl>
-              <Button onClick={handleCreateBranch} mt={2} colorScheme="blue">
-                Crear Sucursal
-              </Button>
-            </Stack>
-          </CardBody>
-        </Card>
-
-        {/* Sección Usuario */}
-        <Card>
-          <CardBody>
-            <Heading size="md" mb={4}>Crear Usuario</Heading>
-            <Stack spacing={3}>
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  value={userData.email}
-                  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                  placeholder="Email del usuario"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Contraseña</FormLabel>
-                <Input
-                  type="password"
-                  value={userData.password}
-                  onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-                  placeholder="Contraseña"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Nombre</FormLabel>
-                <Input
-                  value={userData.firstname}
-                  onChange={(e) => setUserData({ ...userData, firstname: e.target.value })}
-                  placeholder="Nombre"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Apellido</FormLabel>
-                <Input
-                  value={userData.lastname}
-                  onChange={(e) => setUserData({ ...userData, lastname: e.target.value })}
-                  placeholder="Apellido"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Nombre de Usuario</FormLabel>
-                <Input
-                  value={userData.username}
-                  onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-                  placeholder="Nombre de usuario"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Edad</FormLabel>
-                <Input
-                  value={userData.age}
-                  onChange={(e) => setUserData({ ...userData, age: e.target.value })}
-                  placeholder="Edad"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Fecha de Nacimiento</FormLabel>
-                <Input
-                  type="date"
-                  value={userData.birthdate}
-                  onChange={(e) => setUserData({ ...userData, birthdate: e.target.value })}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Fecha de Registro</FormLabel>
-                <Input
-                  type="date"
-                  value={userData.check_in_date}
-                  onChange={(e) => setUserData({ ...userData, check_in_date: e.target.value })}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Teléfono</FormLabel>
-                <Input
-                  value={userData.phone_number}
-                  onChange={(e) => setUserData({ ...userData, phone_number: e.target.value })}
-                  placeholder="Teléfono"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Cédula</FormLabel>
-                <Input
-                  value={userData.ci}
-                  onChange={(e) => setUserData({ ...userData, ci: e.target.value })}
-                  placeholder="Cédula"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Rol</FormLabel>
-                <Select
-                  placeholder="Selecciona un rol"
-                  value={userData.role_id}
-                  onChange={(e) => setUserData({ ...userData, role_id: e.target.value })}
-                >
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.role_name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button onClick={handleCreateUser} mt={4} colorScheme="blue">
-                Crear Usuario
-              </Button>
-            </Stack>
-          </CardBody>
-        </Card>
-      </Stack>
-    </Box>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input 
+          name="email" 
+          type="email"
+          placeholder="Email" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.email} 
+          required
+        />
+        
+        <input 
+          name="password" 
+          type="password" 
+          placeholder="Contraseña" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.password} 
+          required
+        />
+        
+        <input 
+          name="firstname" 
+          placeholder="Nombre" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.firstname} 
+          required
+        />
+        
+        <input 
+          name="lastname" 
+          placeholder="Apellido" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.lastname} 
+          required
+        />
+        
+        <input 
+          name="username" 
+          placeholder="Usuario" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.username} 
+          required
+        />
+        
+        <input 
+          name="age" 
+          type="number"
+          placeholder="Edad" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.age} 
+        />
+        
+        <input 
+          name="birthdate" 
+          type="date" 
+          placeholder="Fecha Nacimiento" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.birthdate} 
+        />
+        
+        <input 
+          name="phone_number" 
+          placeholder="Teléfono" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.phone_number} 
+        />
+        
+        <input 
+          name="ci" 
+          placeholder="Cédula" 
+          className="p-2 border rounded"
+          onChange={handleChange} 
+          value={formData.ci} 
+        />
+        
+        
+        <input
+          name="tenantName"
+          placeholder="Nombre del Tenant"
+          className="p-2 border rounded"
+          onChange={e => setTenantName(e.target.value)}
+          value={tenantName}
+          required
+        />
+      </div>
+      
+      <button 
+        type="submit" 
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Crear Usuario
+      </button>
+      
+      {message && (
+        <p className={`mt-4 p-2 rounded ${message.startsWith('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {message}
+        </p>
+      )}
+    </form>
   );
-};
-
-export default Tenant;
+}
