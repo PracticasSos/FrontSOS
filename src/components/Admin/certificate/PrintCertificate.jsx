@@ -398,9 +398,6 @@ const PrintCertificate = () => {
             </Box>
           </Box>
           <Box display="flex" gap={4} justifyContent="center" alignItems="flex-start" my={4}>
-            <Box flex="1" maxW="400px">
-              <SelloSelector />
-            </Box>
             <Box flex="1" maxW="300px">
               <SignaturePadComponent
                 onSave={(signatureDataUrl) =>
@@ -410,6 +407,9 @@ const PrintCertificate = () => {
                   }))
                 }
               />
+            </Box>
+            <Box flex="1" maxW="400px">
+              <SelloSelector />
             </Box>
           </Box>
           <CertificateFooter tenantId={tenantId} />
