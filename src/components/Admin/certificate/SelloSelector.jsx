@@ -93,7 +93,7 @@ const SelloSelector = ({ onSelect }) => {
   }
 
   return (
-    <Box my={4} maxW="400px" textAlign="left" ml={["5%", "10%", "15%"]}>
+    <Box my={4} maxW="200px" textAlign="left" ml={["5%", "10%", "30%", "50%"]}>
       {selloData && selloData.users && selloData.sello_base64 && (
         <>
           <Image
@@ -108,10 +108,10 @@ const SelloSelector = ({ onSelect }) => {
       )}
 
       <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w="100%">
+        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w="150%">
           {selectedLabel}
         </MenuButton>
-        <MenuList maxH="150px" overflowY="auto">
+        <MenuList maxH="100px" overflowY="auto">
           {sellos.map((sello) => (
             <MenuItem key={sello.user_id} onClick={() => handleSelect(sello.user_id)}>
               {sello.users
