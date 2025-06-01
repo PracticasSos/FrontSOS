@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SignaturePadComponent from "./SignaturePadComponent";
 import MessageInput from "./Message";
 import { useToast } from "@chakra-ui/react";
+import Delivery from "./Delivery";
 
 
 const Sales = () => {
@@ -22,6 +23,7 @@ const Sales = () => {
     brand_id: "", 
     lens_id: "", 
     delivery_time: "",
+    delivery_datetime: "",
   });
   const [formData, setFormData] = useState({
     p_frame: 0,
@@ -157,23 +159,6 @@ const Sales = () => {
     }
   };
   
-  const handleDateChange = (e) => {
-    const selectedDate = new Date(e.target.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const differenceInTime = selectedDate.getTime() - today.getTime();
-    let differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-
-    if (differenceInDays > 0) {
-      differenceInDays += 1;
-    }
-    setDeliveryDays(differenceInDays);
-    setSaleData((prev) => ({
-      ...prev,
-      delivery_time: differenceInDays,
-    }));
-  };
 
   const handleSubmit = async () => {
     const signatureDataUrl = formData.signature;
@@ -209,6 +194,7 @@ const Sales = () => {
     const saleDataToSave = {
       date: saleData.date,
       delivery_time: saleData.delivery_time,
+      delivery_datetime: saleData.delivery_datetime,
       p_frame: isNaN(parseFloat(formData.p_frame)) ? 0 : parseFloat(formData.p_frame),
       p_lens: isNaN(parseFloat(formData.p_lens)) ? 0 : parseFloat(formData.p_lens),
       price: isNaN(parseFloat(formData.total)) ? 0 : parseFloat(formData.total),
@@ -272,7 +258,7 @@ const Sales = () => {
       return;
     }
     if (!user || !user.role_id) {
-      navigate('/LoginForm');
+      navigate('/Login');
       return;
     }
     switch (user.role_id) {
@@ -351,35 +337,7 @@ const Sales = () => {
             <SimpleGrid columns={[1, 2]} spacing={6}>
               {/* Columna Izquierda: Fecha de Entrega */}
               <Box>
-                <FormControl>
-                  <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                    Entrega
-                  </FormLabel>
-                  <Input
-                    type="date"
-                    name="delivery_date"
-                    onChange={handleDateChange}
-                    borderColor="teal.400"
-                    focusBorderColor="teal.600"
-                    borderRadius="md"
-                    p={2}
-                  />
-                </FormControl>
-                <Box
-                  mt={4}
-                  p={3}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  borderColor="gray.300"
-                  bg="gray.50"
-                  textAlign="center"
-                >
-                  <Text fontSize="md" fontWeight="medium" color="gray.700">
-                    {saleData.delivery_time
-                      ? `📅 Entrega en ${saleData.delivery_time} días`
-                      : "Seleccione una fecha para ver el tiempo de entrega"}
-                  </Text>
-                </Box>
+                <Delivery saleData={saleData} setSaleData={setSaleData} />
                 <SignaturePadComponent
                     onSave={(signatureDataUrl) =>
                       setFormData((prev) => ({

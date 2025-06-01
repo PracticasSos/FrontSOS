@@ -30,28 +30,55 @@ const PriceCalculation = ({ formData, setFormData }) => {
         setCalculatedData(prevState => ({ ...prevState, price }));
     }, [calculatedData.p_frame, calculatedData.p_lens]);
 
+    const [discountInput, setDiscountInput] = useState({
+    discount_frame: "",
+    discount_lens: "",
+    });
+
     const handleDiscountChange = (e) => {
         const { name, value } = e.target;
-        const discount = parseFloat(value) || 0;
-
-        if (name === "discount_frame" || name === "discount_lens") {
-            if (name === "discount_frame") {
-                const total_p_frame = roundUpToNearestTenCents(calculatedData.p_frame - (calculatedData.p_frame * discount / 100));
-                setCalculatedData(prevState => ({
-                    ...prevState,
-                    discount_frame: discount.toFixed(2),
-                    total_p_frame,
-                }));
-            } else if (name === "discount_lens") {
-                const total_p_lens = roundUpToNearestTenCents(calculatedData.p_lens - (calculatedData.p_lens * discount / 100));
-                setCalculatedData(prevState => ({
-                    ...prevState,
-                    discount_lens: discount.toFixed(2),
-                    total_p_lens,
-                }));
-            }
+        setDiscountInput(prev => ({
+          ...prev,
+          [name]: value
+        }));
+        const discount = parseFloat(value);
+    if (!isNaN(discount)) {
+        if (name === "discount_frame") {
+            const total_p_frame = roundUpToNearestTenCents(calculatedData.p_frame - (calculatedData.p_frame * discount / 100));
+            setCalculatedData(prevState => ({
+                ...prevState,
+                discount_frame: discount,
+                total_p_frame,
+            }));
+        } else if (name === "discount_lens") {
+            const total_p_lens = roundUpToNearestTenCents(calculatedData.p_lens - (calculatedData.p_lens * discount / 100));
+            setCalculatedData(prevState => ({
+                ...prevState,
+                discount_lens: discount,
+                total_p_lens,
+            }));
         }
-    };
+    } else {
+        // Si está vacío o no es número, solo actualiza el input
+        setCalculatedData(prevState => ({
+            ...prevState,
+            [name]: "",
+            [name === "discount_frame" ? "total_p_frame" : "total_p_lens"]: "",
+        }));
+    }
+  };
+
+      useEffect(() => {
+          setDiscountInput({
+              discount_frame: calculatedData.discount_frame !== "" && calculatedData.discount_frame !== undefined
+                  ? calculatedData.discount_frame.toString()
+                  : "",
+              discount_lens: calculatedData.discount_lens !== "" && calculatedData.discount_lens !== undefined
+                  ? calculatedData.discount_lens.toString()
+                  : "",
+          });
+      }, [calculatedData.discount_frame, calculatedData.discount_lens]);
+
 
     const handleTotalChange = (e) => {
         const { name, value } = e.target;
@@ -130,7 +157,7 @@ const PriceCalculation = ({ formData, setFormData }) => {
                 <Input
                   type="number"
                   name="discount_frame"
-                  value={calculatedData.discount_frame || ""}
+                  value={discountInput.discount_frame && discountInput.discount_frame !== "0" ? discountInput.discount_frame : ""}
                   onChange={handleDiscountChange}
                   minW="100px"
                 />
@@ -160,7 +187,7 @@ const PriceCalculation = ({ formData, setFormData }) => {
                 <Input
                   type="number"
                   name="discount_lens"
-                  value={calculatedData.discount_lens || ""}
+                  value={discountInput.discount_lens && discountInput.discount_lens !== "0" ? discountInput.discount_lens : ""}
                   onChange={handleDiscountChange}
                   minW="100px"
                 />

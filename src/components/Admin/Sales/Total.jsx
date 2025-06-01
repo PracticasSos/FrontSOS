@@ -74,7 +74,7 @@ const Total = ({ formData, setFormData }) => {
                             isReadOnly
                         />
                     </FormControl>
-                    <FormControl>
+                    <FormControl isRequired isInvalid={!formData.payment_in}>
                         <FormLabel>Pago en</FormLabel>
                         <Select
                             name="payment_in"
@@ -88,6 +88,11 @@ const Total = ({ formData, setFormData }) => {
                             <option value="datafast">Datafast</option>
                             <option value="transferencia">Transferencia</option>
                         </Select>
+                        {!formData.payment_in && (
+                            <Box color="red.500" fontSize="sm" mt={1}>
+                                Este campo es obligatorio.
+                            </Box>
+                        )}
                     </FormControl>
                 </SimpleGrid>
             </Box>

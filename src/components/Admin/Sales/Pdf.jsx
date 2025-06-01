@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, SimpleGrid, useToast } from "@chakra-ui/react";
+import { Box, Button, SimpleGrid, useToast, Spinner } from "@chakra-ui/react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../../api/supabase";
@@ -9,6 +9,7 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
   const [user, setUser] = useState(null);
   const [branchs, setBranchs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     const getSession = async () => {
@@ -77,7 +78,7 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
       });
       return;
     }
-
+    setGenerating(true);
     try {
       const salesContent = targetRef.current;
       const buttons = salesContent.querySelectorAll("button");
@@ -159,6 +160,7 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
       buttons?.forEach((button) => {
         button.style.display = "inline-block";
       });
+      setGenerating(false);
       return null;
     }
   };
@@ -174,7 +176,7 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
       });
       return;
     }
-
+    setGenerating(true);
     try {
       const buttons = targetRef?.current?.querySelectorAll("button");
       buttons?.forEach((button) => {
@@ -245,6 +247,7 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
       buttons?.forEach((button) => {
         button.style.display = "inline-block";
       });
+      setGenerating(false);
     }
   };
 
@@ -257,6 +260,12 @@ const Pdf = ({ formData, targetRef, isLaboratoryOrder = false }) => {
         <Button onClick={sendWhatsAppMessage} isLoading={loading} ml={3}>
           Enviar por WhatsApp
         </Button>
+        {generating && (
+        <Box mt={4} display="flex" alignItems="center">
+          <Spinner size="sm" mr={2} />
+          <Text>Cargando, por favor espera...</Text>
+        </Box>
+      )}
       </Box>
     </SimpleGrid>
   );
