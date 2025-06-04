@@ -3,24 +3,24 @@ import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 
-import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
+import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
-import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
+import cierreCajaIcon from "../../assets/cierreCaja.jpg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
 import enviosIcon from "../../assets/envios.svg";
 import ventaIcon from "../../assets/venta.svg";
 import entregasIcon from "../../assets/entregas.svg";
 import saldosIcon from "../../assets/saldos.svg";
-import egresosIcon from "../../assets/egresos.svg";
+import egresosIcon from "../../assets/egresos.jpg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
-import inventarioIcon from "../../assets/inventario.svg";
+import inventarioIcon from "../../assets/inventario.jpg";
 import usuariosIcon from "../../assets/usuarios.svg";
 import laboratoriosIcon from "../../assets/laboratorios.svg";
 import sucursalesIcon from "../../assets/sucursales.svg";
 import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
-import medidasIcon from "../../assets/medidas.svg";
+import medidasIcon from "../../assets/medidas.jpg";
 import creditIcon from "../../assets/credit.svg";
-import registarlunasIcon from "../../assets/registrarlunas.svg";
+import lunasIcon from "../../assets/lunas.jpg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 import { supabase } from '../../api/supabase';
 
@@ -32,7 +32,7 @@ const options = [
   { label: "ENVIOS", icon: enviosIcon }, 
   { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon },
   { label: "RETIROS", icon: entregasIcon },
-  { label: "CIERRE", icon: cierredeCajaIcon },
+  { label: "CIERRE", icon: cierreCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
   { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon },
@@ -42,7 +42,7 @@ const options = [
   { label: "SUCURSAL", icon: sucursalesIcon },
   { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon },
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
-  { label: "REGISTRAR LUNAS", icon: registarlunasIcon },
+  { label: "REGISTRAR LUNAS", icon: lunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon }
 ];
@@ -148,27 +148,31 @@ const AdminDashBoard = () => {
         Cerrar Sesión
       </Button>
       <SimpleGrid columns={[2, null, 4]} spacing={5}>
-        {options.map((option, index) => (
-          <Box
-            key={index}
-            textAlign="center"
-            p={5}
-            boxShadow="md"
-            borderRadius="md"
-            _hover={{ bg: "gray.100", cursor: "pointer" }}
-            onClick={() => handleOptionClick(option.label)}
-          >
-            <Image
-              src={option.icon}
-              alt={option.label}
-              boxSize="40px"
-              mb={3}
-              mx="auto"
-            />
-            <Text>{option.label}</Text>
-          </Box>
-        ))}
-      </SimpleGrid>
+  {options.map((option, index) => (
+    <Box key={index} textAlign="center">
+      <Box
+        onClick={() => handleOptionClick(option.label)}
+        border="10px solid"
+        borderColor="gray.300"
+        borderRadius="md"
+        overflow="hidden"
+        boxShadow="md"
+        _hover={{ borderColor: "blue.400", cursor: "pointer" }}
+      >
+        <Image
+          src={option.icon}
+          alt={option.label}
+          objectFit="cover"
+          w="100%"
+          h="150px"
+        />
+      </Box>
+      <Text mt={2}>{option.label}</Text>
+    </Box>
+  ))}
+</SimpleGrid>
+
+
     </>
   );
 };
