@@ -6,20 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierreCajaIcon from "../../assets/cierreCaja.jpg";
-import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
+import laboratorioOrdenIcon from "../../assets/ordenLaboratorio.jpg";
 import enviosIcon from "../../assets/envios.svg";
-import ventaIcon from "../../assets/venta.svg";
-import entregasIcon from "../../assets/entregas.svg";
-import saldosIcon from "../../assets/saldos.svg";
+import ventaIcon from "../../assets/venta.jpg";
+import retirosIcon from "../../assets/retiros.jpg";
+import saldosIcon from "../../assets/pediente.jpg";
 import egresosIcon from "../../assets/egresos.jpg";
 import historiaClinicaIcon from "../../assets/historiaClinica.svg";
 import inventarioIcon from "../../assets/inventario.jpg";
 import usuariosIcon from "../../assets/usuarios.svg";
 import laboratoriosIcon from "../../assets/laboratorios.svg";
 import sucursalesIcon from "../../assets/sucursales.svg";
-import certificadoVisualIcon from "../../assets/certificadoVisual.svg";
+import certificadoVisualIcon from "../../assets/certificadovisual.jpg";
 import medidasIcon from "../../assets/medidas.jpg";
-import creditIcon from "../../assets/credit.svg";
+import creditIcon from "../../assets/creditos.jpg";
 import lunasIcon from "../../assets/lunas.jpg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 import { supabase } from '../../api/supabase';
@@ -31,7 +31,7 @@ const options = [
   { label: "ORDEN DE LABORATORIO", icon: laboratorioOrdenIcon }, 
   { label: "ENVIOS", icon: enviosIcon }, 
   { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon },
-  { label: "RETIROS", icon: entregasIcon },
+  { label: "RETIROS", icon: retirosIcon },
   { label: "CIERRE", icon: cierreCajaIcon },
   { label: "SALDOS", icon: saldosIcon },
   { label: "EGRESOS", icon: egresosIcon },
