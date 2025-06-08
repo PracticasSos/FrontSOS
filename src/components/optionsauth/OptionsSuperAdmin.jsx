@@ -3,7 +3,6 @@ import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 
-import registrarPacienteIcon from "../../assets/registrarPaciente.svg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
 import laboratorioOrdenIcon from "../../assets/laboratorioOrden.svg";
@@ -22,6 +21,7 @@ import medidasIcon from "../../assets/medidas.svg";
 import creditIcon from "../../assets/credit.svg";
 import registarlunasIcon from "../../assets/registrarlunas.svg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
+import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
 import { supabase } from '../../api/supabase';
 
 

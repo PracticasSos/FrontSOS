@@ -12,6 +12,11 @@ import SignaturePadComponent from "./SignaturePadComponent";
 import MessageInput from "./Message";
 import { useToast } from "@chakra-ui/react";
 import Delivery from "./Delivery";
+import SalesDetails from "./SalesDetails";
+import TotalUI from "./TotalUI";
+import MessageSection from "./MenssageSection";
+import ObservationSection from "./ObservationSection";
+import TermsCondition from "./TermsCondition";
 
 
 const Sales = () => {
@@ -24,6 +29,14 @@ const Sales = () => {
     lens_id: "", 
     delivery_time: "",
     delivery_datetime: "",
+    p_frame: 0,
+    p_lens: 0,
+  });
+  const [totals, setTotals] = useState({
+    frameName: "",
+    lensName: "",
+    total_p_frame: "",
+    total_p_lens: "",
   });
   const [formData, setFormData] = useState({
     p_frame: 0,
@@ -35,7 +48,7 @@ const Sales = () => {
     total: 0,
     credit: 0,
     balance: 0,
-    payment_in: 0,
+    payment_in: "",
     message: "",
     measure_id: "",
     signature: ""
@@ -54,28 +67,30 @@ const Sales = () => {
   const toast = useToast();
 
   const handleFormDataChange = (newFormData) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      ...newFormData,
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    ...newFormData,
+  }));
+
+
+  // Extraer solo las claves relevantes para saleData
+  const saleDataKeys = ["brand_id", "lens_id"];
+  const saleDataUpdates = {};
+
+  saleDataKeys.forEach((key) => {
+    if (key in newFormData) {
+      saleDataUpdates[key] = newFormData[key];
+    }
+  });
+
+  if (Object.keys(saleDataUpdates).length > 0) {
+    setSaleData((prevSaleData) => ({
+      ...prevSaleData,
+      ...saleDataUpdates,
     }));
+  }
+};
 
-    const saleDataUpdates = {};
-
-    if (newFormData.brand_id !== undefined) {
-      saleDataUpdates.brand_id = newFormData.brand_id;
-    }
-
-    if (newFormData.lens_id !== undefined) {
-      saleDataUpdates.lens_id = newFormData.lens_id;
-    }
-
-    if (Object.keys(saleDataUpdates).length > 0) {
-      setSaleData((prevSaleData) => ({
-        ...prevSaleData,
-        ...saleDataUpdates,
-      }));
-    }
-  };
 
   useEffect(() => {
     const fetchBranchName = async () => {
@@ -192,7 +207,7 @@ const Sales = () => {
     }
 
     const saleDataToSave = {
-      date: saleData.date,
+      date: formData.date,
       delivery_time: saleData.delivery_time,
       delivery_datetime: saleData.delivery_datetime,
       p_frame: isNaN(parseFloat(formData.p_frame)) ? 0 : parseFloat(formData.p_frame),
@@ -203,18 +218,20 @@ const Sales = () => {
       balance: isNaN(parseFloat(formData.balance)) ? 0 : parseFloat(formData.balance),
       payment_in: formData.payment_in,
       patient_id: saleData.patient_id || null,
-      lens_id: saleData.lens_id || null,
-      branchs_id: saleData.branchs_id || null,
+      lens_id: formData.lens_id || null,
+      branchs_id: formData.branchs_id || null,
       total_p_frame: isNaN(parseFloat(formData.total_p_frame)) ? 0 : parseFloat(formData.total_p_frame),
       total_p_lens: isNaN(parseFloat(formData.total_p_lens)) ? 0 : parseFloat(formData.total_p_lens),
       discount_frame: isNaN(parseFloat(formData.discount_frame)) ? 0 : parseFloat(formData.discount_frame),
       discount_lens: isNaN(parseFloat(formData.discount_lens)) ? 0 : parseFloat(formData.discount_lens),
-      inventario_id: saleData.brand_id || null,
+      inventario_id: formData.brand_id || null,
       measure_id: formData.measure_id || null,
       signature: formData.signature || null,
     };
 
     try {
+      console.log("Valor de formData.date:", formData.date);
+      console.log("Objeto saleDataToSave:", saleDataToSave);
 
       const { data, error } = await supabase
         .from("sales")
@@ -251,6 +268,15 @@ const Sales = () => {
     }));
   };
 
+  const handleTotalsChange = (totals) => {
+  setTotals(totals);
+  setFormData((prev) => ({
+    ...prev,
+    total_p_frame: Number(totals.total_p_frame ?? prev.p_frame ?? 0),
+    total_p_lens: Number(totals.total_p_lens ?? prev.p_lens ?? 0),
+  }));
+};
+
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (route) {
@@ -278,7 +304,7 @@ const Sales = () => {
 
   return (
     <Box ref={salesRef} w="full" px={4}>
-      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
+      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
         <Heading mb={4} textAlign="center">Registro de Venta</Heading>
         <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="full" maxWidth="900px" mb={4}>
           <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
@@ -286,58 +312,150 @@ const Sales = () => {
           <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
   
-        <Box width="full" maxWidth="1500px" p={6} boxShadow="lg" borderRadius="md">
+        <Box >
           <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
           <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
-
-          <Box p={5} width="full" maxW="2000px" overflowX="auto">
-            <Text
-              fontSize="xl"
-              fontWeight="bold"
-              mb={6}
-              textAlign="center"
-              color="teal.600"
-            >
+        </Box>
+          <Box p={5} >
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
               Detalles de Venta
             </Text>
-            <Box minWidth="1200px">
-              <Grid
-                templateColumns="repeat(3, 1fr)"
-                gap={4}
-                mb={4}
-                fontWeight="bold"
-                textAlign="center"
-                color="gray.700"
-              >
-                <Text>Armazón / Lunas</Text>
-                <Text>Precio Armazón / Lunas</Text>
-                <Text>Totales</Text>
+            <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8} 
+            >
+              <Grid  gap={4} alignItems="start">
+                <SalesDetails
+                  formData={formData}
+                  setFormData={setFormData}
+                  onTotalsChange={handleTotalsChange}
+                />
               </Grid>
+              </Box>
+          </Box>
 
-              <Grid templateColumns="repeat(3, 1fr)" gap={4} alignItems="start">
-                <Box p={3}  minW="380px">
-                  <SelectItems
-                    onFormDataChange={handleFormDataChange}
-                    initialFormData={formData}
-                  />
-                </Box>
-
-                <Box p={3} minW="380px">
-                  <PriceCalculation formData={formData} setFormData={setFormData} />
-                </Box>
-
-                <Box p={3}  minW="380px">
-                  <Total formData={formData} setFormData={setFormData} />
-                </Box>
-              </Grid>
+          <Box mb={[4, 6]}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600" >
+              Total
+            </Text>
+            <Box
+            width="100vw"
+            position="relative"
+            bg="gray.100"
+            py={8}
+            mt={8}
+            >
+            <TotalUI
+              frameName={totals.frameName}
+              lensName={totals.lensName}
+              total_p_frame={totals.total_p_frame}
+              total_p_lens={totals.total_p_lens}
+              initialFormData={formData}
+              onFormDataChange={handleFormDataChange}
+            />
             </Box>
           </Box>
 
-          <Box p={5} width="full" maxW="900px" mx="auto">
-            <SimpleGrid columns={[1, 2]} spacing={6}>
-              {/* Columna Izquierda: Fecha de Entrega */}
-              <Box>
-                <Delivery saleData={saleData} setSaleData={setSaleData} />
+          <Box mt={6}>
+            <Text
+                fontSize="xl"
+                fontWeight="bold"
+                mb={6}
+                textAlign="center"
+                color="gray.600"
+              >
+                Metodo de Pago
+              </Text>
+              <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8}
+            >
+              <Total
+                formData={formData}
+              setFormData={handleFormDataChange}
+                saleData={saleData}
+                setSaleData={setSaleData}
+              />  
+              </Box>
+            </Box>
+          
+          <Box mt={8}>
+            <Text
+                fontSize="xl"
+                fontWeight="bold"
+                mb={6}
+                textAlign="center"
+                color="gray.600"
+              >
+                Tiempo de Entrega
+              </Text>
+            <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8}
+            >
+            <Delivery saleData={saleData} setSaleData={setSaleData} />
+          </Box> 
+          </Box> 
+              <Box  mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Mensaje
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <MessageSection
+                    selectedBranch={branchName}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                </Box>
+              </Box>
+
+              <Box  mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Observación
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <ObservationSection setFormData={setFormData} />
+                </Box>
+              </Box>
+
+              <Box mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Terminos y Condiciones
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <TermsCondition
+                    selectedBranch={branchName}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+
                 <SignaturePadComponent
                     onSave={(signatureDataUrl) =>
                       setFormData((prev) => ({
@@ -346,25 +464,13 @@ const Sales = () => {
                       }))
                     }
                   />
+                </Box>
               </Box>
-
-              {/* Columna Derecha: Mensaje y Firma */}
-              <Box>
-                <Stack spacing={4}>
-                  <MessageInput
-                    selectedBranch={branchName}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                </Stack>
-              </Box>
-            </SimpleGrid>
-          </Box>
+              
           <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
             Registrar Venta
           </Button>
           {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
-        </Box>
       </Box>
     </Box>
   );  

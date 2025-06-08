@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+
 
 const RegisterPatientForm = () => {
   const navigate = useNavigate();
@@ -22,6 +25,7 @@ const RegisterPatientForm = () => {
   });
 
   const [users, setUsers] = useState([]);
+  const [pt_phone, setPt_Phone] = useState('');
 
   useEffect(() => {
     fetchUsers();
@@ -130,7 +134,30 @@ const RegisterPatientForm = () => {
             {renderInputField('Apellido', 'pt_lastname', 'text', true)}
             {renderInputField('Ocupación', 'pt_occupation', 'text')}
             {renderInputField('Dirección', 'pt_address', 'text')}
-            {renderInputField('Teléfono', 'pt_phone', 'text')}
+            
+        <FormControl>
+            <FormLabel>Teléfono</FormLabel>
+            <PhoneInput
+              value={formData.pt_phone}
+              onChange={(value) =>
+                setFormData((prevData) => ({
+                  ...prevData,
+                  pt_phone: value
+                }))
+              }
+              enableSearch={true}
+              inputStyle={{
+                width: '100%',
+                height: '40px',
+                borderRadius: '8px',
+                border: '1px solid #CBD5E0'
+              }}
+              dropdownStyle={{
+                zIndex: 1000
+              }}
+            />
+          </FormControl>
+
             {renderInputField('Edad', 'pt_age', 'number')}
             {renderInputField('C.I.', 'pt_ci', 'text')}
           </Box>

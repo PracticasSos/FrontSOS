@@ -8,7 +8,7 @@ import {
     Icon,
     Image,
     Spinner,
-    HStack
+    HStack, Stack
 } from "@chakra-ui/react";
 import { supabase } from "../../../api/supabase";
 import { FiCamera, FiUpload } from "react-icons/fi";
@@ -66,93 +66,111 @@ Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio de
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" width={["90%", "80%", "400px"]} mx="auto">
-            <FormControl mb={4}>
-                <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                    Mensaje
-                </FormLabel>
-                <Textarea
-                    value={message}
-                    onChange={(e) => {
-                        setMessage(e.target.value);
-                        setFormData((prev) => ({ ...prev, message: e.target.value }));
-                    }}
-                    height="150px"
-                    minHeight="100px"
-                    borderColor="teal.400"
-                    focusBorderColor="teal.600"
-                />
-            </FormControl>
+  <Box
+     p={4} mb={4} 
+  >
+    <Stack spacing={6} >
+      {/* Campo Mensaje */}
+      <Box bg="gray.100" borderRadius="md" p={4} mb={4} >
+      <FormControl>
+        <FormLabel fontSize="md" fontWeight="bold" color="gray.600">
+          Mensaje
+        </FormLabel>
+        <Textarea
+          value={message}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            setFormData((prev) => ({ ...prev, message: e.target.value }));
+          }}
+          minHeight="100px"
+          resize="vertical"
+          bg="white"
+        />
+      </FormControl>
+    </Box>
+      {/* Campo Observación + Imagen */}
+       <Box bg="gray.100" borderRadius="md" p={4} mb={4}>
+      <FormControl>
+        <FormLabel fontSize="lg" fontWeight="bold" color="gray.600">
+          Observación
+        </FormLabel>
+        <Textarea
+          value={observation}
+          onChange={(e) => {
+            setObservation(e.target.value);
+            setFormData((prev) => ({ ...prev, observation: e.target.value }));
+          }}
+          minHeight="100px"
+          resize="vertical"
+          bg="white"
+        />
 
-            <FormControl mb={4}>
-                <FormLabel fontSize="md" fontWeight="bold" color="teal.600">
-                    Observación
-                </FormLabel>
-                <Textarea
-                    value={observation}
-                    onChange={(e) => {
-                        setObservation(e.target.value);
-                        setFormData((prev) => ({ ...prev, observation: e.target.value }));
-                    }}
-                    height="100px"
-                    borderColor="teal.300"
-                    focusBorderColor="teal.500"
-                />
+        {/* Inputs ocultos */}
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          ref={cameraInputRef}
+          onChange={handleFileChange}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
 
-                <Box mt={2}>
-                    {/* Inputs ocultos */}
-                    <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        hidden
-                        ref={cameraInputRef}
-                        onChange={handleFileChange}
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                    />
+        {/* Botones */}
+        <HStack spacing={4} mt={3} flexWrap="wrap">
+          <Button
+            leftIcon={<Icon as={FiCamera} />}
+            size="sm"
+            color="gray.600"
+            variant="outline"
+            onClick={() => cameraInputRef.current.click()}
+          >
+            Tomar foto
+          </Button>
+          <Button
+            leftIcon={<Icon as={FiUpload} />}
+            size="sm"
+            color="gray.600"
+            variant="outline"
+            onClick={() => fileInputRef.current.click()}
+          >
+            Subir imagen
+          </Button>
+          {uploading && <Spinner size="sm" />}
+        </HStack>
 
-                    {/* Botones separados */}
-                    <HStack spacing={4} mt={2}>
-                        <Button
-                            leftIcon={<Icon as={FiCamera} />}
-                            size="sm"
-                            colorScheme="teal"
-                            variant="outline"
-                            onClick={() => cameraInputRef.current.click()}
-                        >
-                            Tomar foto
-                        </Button>
-
-                        <Button
-                            leftIcon={<Icon as={FiUpload} />}
-                            size="sm"
-                            colorScheme="teal"
-                            variant="outline"
-                            onClick={() => fileInputRef.current.click()}
-                        >
-                            Subir imagen
-                        </Button>
-
-                        {uploading && <Spinner size="sm" />}
-                    </HStack>
-                    {uploadedUrl && (
-                        <Image src={uploadedUrl} alt="Observación" mt={3} boxSize="60px" borderRadius="md" />
-                    )}
-                </Box>
-            </FormControl>
-            <TermsCondition
-            selectedBranch={selectedBranch}
-            formData={formData}
-            setFormData={setFormData}
+        {/* Vista previa de imagen */}
+        {uploadedUrl && (
+          <Box mt={4}>
+            <Image
+              src={uploadedUrl}
+              alt="Observación"
+              maxW="100%"
+              height="auto"
+              borderRadius="md"
+              objectFit="contain"
             />
-        </Box>
-    );
+          </Box>
+        )}
+      </FormControl>
+      </Box>
+
+      {/* Términos y condiciones */}
+      <TermsCondition
+        selectedBranch={selectedBranch}
+        formData={formData}
+        setFormData={setFormData}
+      />
+    </Stack>
+  </Box>
+);
+
 };
 
 export default MessageInput;

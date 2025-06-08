@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { SimpleGrid, FormControl, FormLabel, Input, Box, Select } from "@chakra-ui/react";
 import { supabase } from "../../../api/supabase"; 
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
     const [branches, setBranches] = useState([]);
@@ -34,6 +36,7 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
             setData(data);
         }
     };
+    
 
     const fetchPatients = async () => {
         const { data, error } = await supabase
@@ -98,6 +101,13 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
         }
     };
 
+    const handlePhoneChange = (value) => {
+    setFormData((prev) => ({
+        ...prev,
+        pt_phone: value.replace(/[^0-9]/g, ''),
+    }));
+};
+
     const renderInputField = (label, name, type, isRequired = false) => (
         <FormControl id={name} isRequired={isRequired}>
             <FormLabel>{label}</FormLabel>
@@ -111,11 +121,13 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
     );
 
     return (
-        <SimpleGrid columns={[1, 4]} spacing={4}>
+        <SimpleGrid columns={[1, 4]} spacing={4} px={[4, 2]}>
             <FormControl id="patient-search">
-                <FormLabel>Buscar Paciente</FormLabel>
+                <FormLabel>Nombre</FormLabel>
                 <Input 
                     type="text" 
+                    height="40px"
+                    borderRadius="full"
                     placeholder="Buscar por nombre..." 
                     value={search} 
                     onChange={handleSearchChange} 
@@ -135,32 +147,28 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
                     </Box>
                 )}
             </FormControl>
-            <FormControl id="branchs_id" isRequired>
-                <FormLabel>Sucursal</FormLabel>
-                <Select 
-                    name="branchs_id" 
-                    value={formData.branchs_id || ""} 
-                    onChange={handleChange}
-                >
-                    <option value="">Seleccione una sucursal</option>
-                    {branches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                            {branch.name || branch.id}
-                        </option>
-                    ))}
-                </Select>
-            </FormControl>
-            {renderInputField("Fecha", "date", "date", true)}
             <FormControl>
                 <FormLabel>Teléfono</FormLabel>
-                <Input
+                <PhoneInput
                     type="text"
                     name="pt_phone"
+                    height="40px"
+                    borderRadius="full"
                     value={formData.pt_phone || ""}
                     onInput={(e) => {
                         e.target.value = e.target.value.replace(/[^0-9]/g, '');
                     }}
-                    onChange={handleChange} 
+                    onChange={handlePhoneChange} 
+                    enableSearch={true}
+                    inputStyle={{
+                        width: '100%',
+                        height: '40px',
+                        borderRadius: '20px',
+                        border: '1px solid #CBD5E0'
+                    }}
+                    dropdownStyle={{
+                        zIndex: 1000
+                    }}
                 />
             </FormControl>
         </SimpleGrid>
