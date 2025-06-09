@@ -2,7 +2,7 @@
 Recuerde que las Lunas oftálmicas y Armazones son de uso 
 delicado  y el tiempo de duración depende exclusivamente del 
 cuidado que usted les de.
-**SERVICIO ÓPTICO SOCIAL** únicamente será responsable por garantias de armazones y lunas que presenten defectos de fábrica y estén dentro
+**SERVICIO ÓPTICO VEOPTICS** únicamente será responsable por garantias de armazones y lunas que presenten defectos de fábrica y estén dentro
 del período de tiempo establecido.
 Todas las armazones y lunas son inspeccionados antes de ser entregados al cliente para asegurarnos de que estén en perfectas condiciones tanto 
 físicas como en las medidas (en el caso de las lunas), no obstante recomendamos al cliente inspeccione y verifique el estado de los lentes y la
