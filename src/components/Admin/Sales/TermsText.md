@@ -2,7 +2,7 @@
 Recuerde que las Lunas oftálmicas y Armazones son de uso 
 delicado  y el tiempo de duración depende exclusivamente del 
 cuidado que usted les de.
-**SERVICIO ÓPTICO VEOPTICS** únicamente será responsable por garantias de armazones y lunas que presenten defectos de fábrica y estén dentro
+**VEOPTICS** únicamente será responsable por garantias de armazones y lunas que presenten defectos de fábrica y estén dentro
 del período de tiempo establecido.
 Todas las armazones y lunas son inspeccionados antes de ser entregados al cliente para asegurarnos de que estén en perfectas condiciones tanto 
 físicas como en las medidas (en el caso de las lunas), no obstante recomendamos al cliente inspeccione y verifique el estado de los lentes y la
@@ -24,7 +24,7 @@ la misma medida de la compra inicial.
 __IMPORTANTE: NO SE REALIZARÁN DEVOLUCIONES DE DINERO__
 
 **CONDICIONES DE APLICACIÓN DE GARANTÍA**
-Los lentes entregados son revisados fanto por personal de Servicio Óptico Social y el cliente al momento de la entrega. Se indicarán los cuidados 
+Los lentes entregados son revisados fanto por personal de VEOPTICS  y el cliente al momento de la entrega. Se indicarán los cuidados 
 y recomendaciones para el correcto mantenimiento de lunas y armazones mismos que evitan el deterioro de los productos adquiridos.
 Se cubrirá garantía sólo en los siguientes casos:
 
@@ -52,12 +52,12 @@ se realizará devoluciones de dinero.__
 
 **EXCLUSIONES DE GARANTÍA**
 La garantía está limitada a las condiciones descritas a continuación:
-1. Si el armazón o lunas presenta(n) daños producto de la mala manipulación del cliente: __Goipes, caldas, señales de pegamento, ralladuras, etc.__
+1. Si el armazón o lunas presenta(n) daños producto de la mala manipulación del cliente: __Golpes, caldas, señales de pegamento, ralladuras, etc.__
 2. No se aplica garantía en ningún tipo de lentes de contacto
 3. Si el cliente se acerca después de 45 días indicando molestias con la medida.
 El certificado de garantia sirve como prueba de compra y autenticidad de los productos comprados y como prueba del derecho a esta garantia.
 discreción en cualquier momento.
-__SERVICIO ÓPTICO SOCIAL__ se reserva el derecho de modificar o adaptar estas condiciones de garantía con implicaciones para el futuro asu
+__VEOPTICS__ se reserva el derecho de modificar o adaptar estas condiciones de garantía con implicaciones para el futuro asu
 discreción en cualquier moemnto.
 
 **IMPORTANTE:**
