@@ -23,12 +23,10 @@ Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio de
   }, [selectedBranch]);
 
   return (
-    <Box bg="gray.100" borderRadius="md" p={4} mb={4}>
+    <Box bg="gray.100" borderRadius="md" p={4} mb={4} maxW="530px" mx="auto" >
       <FormControl>
-        <FormLabel fontSize="md" fontWeight="bold" color="gray.600">
-          Mensaje
-        </FormLabel>
         <Textarea
+         borderRadius="md"
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);

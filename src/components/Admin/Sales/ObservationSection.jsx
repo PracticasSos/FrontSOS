@@ -47,11 +47,8 @@ const ObservationSection = ({ setFormData }) => {
   };
 
   return (
-    <Box bg="gray.100" borderRadius="md" p={4} mb={4}>
+    <Box bg="gray.100" borderRadius="md" p={4} mb={4} maxW="530px" mx="auto">
       <FormControl>
-        <FormLabel fontSize="lg" fontWeight="bold" color="gray.600">
-          Observación
-        </FormLabel>
         <Textarea
           value={observation}
           onChange={(e) => {

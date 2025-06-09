@@ -57,7 +57,7 @@ const SignaturePadComponent = ({ onSave }) => {
   >
     <canvas
       ref={canvasRef}
-      width={300}
+      width={510}
       bg="white"
       height={150}
       style={{
