@@ -423,7 +423,7 @@ const Sales = () => {
                   />
                 </Box>
               </Box>
-
+              
               <Box  mt={8}>
                 <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
                 Observación

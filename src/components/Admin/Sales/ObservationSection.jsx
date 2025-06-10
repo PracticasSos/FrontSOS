@@ -65,6 +65,7 @@ const ObservationSection = ({ setFormData }) => {
           accept="image/*"
           capture="environment"
           hidden
+          className="no-pdf"
           ref={cameraInputRef}
           onChange={handleFileChange}
         />
@@ -72,6 +73,7 @@ const ObservationSection = ({ setFormData }) => {
           type="file"
           accept="image/*"
           hidden
+          className="no-pdf"
           ref={fileInputRef}
           onChange={handleFileChange}
         />
