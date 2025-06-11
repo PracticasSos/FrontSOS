@@ -91,7 +91,7 @@ const PatientRecords = () => {
         const today = new Date().toLocaleDateString("en-CA");  
         try {
             const { data, error } = await supabase
-                .from("current_sales")
+                .from("sales")
                 .select(`
                     id, 
                     date,
