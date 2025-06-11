@@ -73,7 +73,7 @@ const CashClosure = () => {
 // current_sales solo son vistas para ingresos y egresos desde hoy 07/05/2025
     const fetchDailyRecords = async (branchId) => {
         const { since, till, month } = formData;
-        let query = supabase.from("current_sales").select(`
+        let query = supabase.from("sales").select(`
             id,
             date,
             branchs_id,
@@ -170,7 +170,7 @@ const CashClosure = () => {
     const fetchDailyWithdrawals = async (branchId) => {
         const { since, till, month } = formData;
         let salesQuery = supabase
-            .from("current_sales")
+            .from("sales")
             .select(`
                 id,
                 branchs_id,
@@ -211,7 +211,7 @@ const CashClosure = () => {
             }
     
             let withdrawalsQuery = supabase
-                .from("current_withdrawals")
+                .from("withdrawals")
                 .select(`
                     id,
                     sale_id,
@@ -295,7 +295,7 @@ const CashClosure = () => {
 
     const fetchExpenses = async (branchId) => {
         const { since, till, month } = formData;
-        let query = supabase.from("current_egresos").select(`
+        let query = supabase.from("egresos").select(`
             id,
             date,
             value,
