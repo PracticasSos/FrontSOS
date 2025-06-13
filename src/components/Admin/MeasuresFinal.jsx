@@ -44,8 +44,27 @@ const MeasuresFinal = () => {
 
   useEffect(() => {
     fetchData('patients', data => {
-        setPatients(data);
-        setFilteredPatients(data);
+      setPatients(data);
+      setFilteredPatients(data);
+
+      // Intentar seleccionar paciente desde localStorage
+      const stored = localStorage.getItem('selectedPatient');
+      if (stored) {
+        const selected = JSON.parse(stored);
+        // Buscar el paciente en la lista por CI o nombre
+        const found = data.find(
+          p =>
+            (selected.pt_ci && p.pt_ci === selected.pt_ci) ||
+            (p.pt_firstname === selected.pt_firstname && p.pt_lastname === selected.pt_lastname)
+        );
+        if (found) {
+          setFormData(f => ({ ...f, patient_id: found.id }));
+          setSearchTermPatients(`${found.pt_firstname} ${found.pt_lastname}`);
+          setFilteredPatients([]);
+        }
+        // Limpia el localStorage para evitar selección accidental en el futuro
+        localStorage.removeItem('selectedPatient');
+      }
     });
   }, []);
 
