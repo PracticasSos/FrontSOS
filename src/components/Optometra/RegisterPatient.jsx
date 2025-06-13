@@ -22,6 +22,7 @@ const RegisterPatientForm = () => {
     pt_email: '',
     pt_consultation_reason: '',
     pt_recommendations: '',
+    sexo: ''
   });
 
   const [users, setUsers] = useState([]);
@@ -87,6 +88,7 @@ const RegisterPatientForm = () => {
       pt_email: '',
       pt_consultation_reason: '',
       pt_recommendations: '',
+      sexo: ''
     });
   };
 
@@ -160,6 +162,7 @@ const RegisterPatientForm = () => {
 
             {renderInputField('Edad', 'pt_age', 'number')}
             {renderInputField('C.I.', 'pt_ci', 'text')}
+            {renderInputField('Sexo', 'sex0', 'text')}
           </Box>
           
           <Box>
