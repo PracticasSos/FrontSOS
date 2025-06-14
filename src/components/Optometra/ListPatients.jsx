@@ -84,11 +84,19 @@ const ListPatients = () => {
     }
   };
 
-  const filteredPatients = patients.filter((patient) =>
-    [patient.pt_firstname, patient.pt_lastname, patient.pt_phone].some((field) =>
-      field?.toLowerCase().includes(search.toLowerCase())
-    )
+  const sortedPatients = [...patients].sort((a, b) => {
+  if (!a.date && !b.date) return 0;
+  if (!a.date) return 1;
+  if (!b.date) return -1;
+  return new Date(b.date) - new Date(a.date);
+  });
+
+  const filteredPatients = sortedPatients.filter((patient) =>
+  [patient.pt_firstname, patient.pt_lastname, patient.pt_phone].some((field) =>
+    field?.toLowerCase().includes(search.toLowerCase())
+  )
   );
+
 
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
