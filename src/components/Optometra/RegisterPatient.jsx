@@ -132,6 +132,7 @@ const RegisterPatientForm = () => {
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <Box>
+            {renderInputField('Fecha', 'date', 'date', true)}
             {renderInputField('Nombre', 'pt_firstname', 'text', true)}
             {renderInputField('Apellido', 'pt_lastname', 'text', true)}
             {renderInputField('Ocupación', 'pt_occupation', 'text')}
@@ -162,7 +163,14 @@ const RegisterPatientForm = () => {
 
             {renderInputField('Edad', 'pt_age', 'number')}
             {renderInputField('C.I.', 'pt_ci', 'text')}
-            {renderInputField('Sexo', 'sex0', 'text')}
+            <FormControl>
+            <FormLabel>Sexo</FormLabel>
+            <Select name="sexo" onChange={handleChange} value={formData.sexo} placeholder="Seleccione">
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+            </Select>
+          </FormControl>
+
           </Box>
           
           <Box>

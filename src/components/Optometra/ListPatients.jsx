@@ -139,7 +139,7 @@ const ListPatients = () => {
           <Thead bgColor="#00A8C8">
             <Tr>
               {[
-                'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono',
+                'Fecha', 'Nombre', 'Apellido', 'Ocupación', 'Dirección', 'Teléfono',
                 'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta',
                 'Recomendaciones', 'Sucursal', 'Acciones'
               ].map((header) => (
@@ -151,7 +151,7 @@ const ListPatients = () => {
             {filteredPatients.map((patient) => (
               <Tr key={patient.id}>
                 {[
-                  'pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone',
+                  'date','pt_firstname', 'pt_lastname', 'pt_occupation', 'pt_address', 'pt_phone',
                   'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason',
                   'pt_recommendations'
                 ].map((field) => (
