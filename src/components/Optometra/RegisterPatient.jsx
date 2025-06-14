@@ -22,7 +22,8 @@ const RegisterPatientForm = () => {
     pt_email: '',
     pt_consultation_reason: '',
     pt_recommendations: '',
-    sexo: ''
+    sexo: '',
+    date:''
   });
 
   const [users, setUsers] = useState([]);
@@ -88,7 +89,8 @@ const RegisterPatientForm = () => {
       pt_email: '',
       pt_consultation_reason: '',
       pt_recommendations: '',
-      sexo: ''
+      sexo: '',
+      date: ''
     });
   };
 
