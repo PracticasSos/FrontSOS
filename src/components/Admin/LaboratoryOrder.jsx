@@ -2,7 +2,7 @@ import  React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
-import Pdf from "./Sales/Pdf";
+import PdfLaboratory from "./PdfLaboratory";
 
 const LaboratoryOrder = () => {
     const { patientId } = useParams();
@@ -404,7 +404,7 @@ const LaboratoryOrder = () => {
                 <Box width="100%" padding={4}>
                     <SimpleGrid columns={1} spacing={4}>
                     {salesData || patientData ? (
-                        <Pdf formData={salesData || patientData} targetRef={salesRef} />
+                        <PdfLaboratory formData={salesData || patientData} targetRef={salesRef} />
                     ) : (
                         <Text>No data available to generate PDF</Text>
                     )}
