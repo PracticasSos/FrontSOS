@@ -305,7 +305,7 @@ const Sales = () => {
   return (
     <Box ref={salesRef} w="full" px={4}>
       <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
-        <Heading mb={4} textAlign="center">Registro de Venta</Heading>
+        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
         <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="full" maxWidth="900px" mb={4}>
           <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
           <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
