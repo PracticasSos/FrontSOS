@@ -1,0 +1,91 @@
+/* src/pages/FormInitial.css */
+
+/* Contenedor ocupa toda la pantalla, centra en iPad/mobile */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background: #f2f2f2;
+}
+
+/* Tarjeta blanca con sombra */
+.form-card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    padding: 4rem;
+    border-radius: 16px; /* Bordes más suaves */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Sombra más moderna */
+    display: grid;
+    gap: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Título centrado */
+.form-title {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+/* Etiquetas e inputs */
+.form-label {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #6AB1CD;
+    box-shadow: 0 0 4px rgba(106, 177, 205, 0.5);
+    outline: none;
+}
+
+/* Botón con acento */
+.btn-primary-next {
+    font-family: 'Satoshi', sans-serif;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #6AB1CD;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #549AB3;
+    transform: scale(1.05);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .form-card {
+        padding: 1.5rem;
+    }
+    .form-title {
+        font-size: 1.75rem;
+    }
+}

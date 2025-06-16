@@ -1,0 +1,49 @@
+.admin-frames {
+    padding: 2rem;
+    font-family: 'Satoshi', sans-serif;
+  }
+  
+  .frame-form {
+    display: grid;
+    gap: 1rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+  }
+  
+  .frame-form input[type="text"],
+  .frame-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .frame-form label {
+    font-size: 0.9rem;
+  }
+  
+  .frame-form button {
+    padding: 0.75rem 1.5rem;
+    background: #6AB1CD;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .frames-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .frames-table th,
+  .frames-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .frames-table img {
+    border-radius: 4px;
+  }
+  

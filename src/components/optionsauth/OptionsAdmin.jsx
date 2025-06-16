@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-
-
+import experienciaIcon from "../../assets/experiencia.jpg";
 import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierreCajaIcon from "../../assets/cierreCaja.jpg";
@@ -44,7 +43,8 @@ const options = [
   { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
   { label: "REGISTRAR LUNAS", icon: lunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: creditIcon }
+  { label: "CREDITOS", icon: creditIcon },
+  { label: "EXPERIENCIA", icon: experienciaIcon } 
 ];
 
 const AdminDashBoard = () => {
@@ -134,7 +134,10 @@ const AdminDashBoard = () => {
       case "HISTORIAL PACIENTE":
         navigate('/HistoryClinic')
       break;
-    default:
+      case "EXPERIENCIA":
+      navigate('/RegisterExperience');
+      break;
+      default:
     }
   };
 

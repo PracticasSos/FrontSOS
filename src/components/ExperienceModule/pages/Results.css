@@ -1,0 +1,145 @@
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  background: #f2f2f2;
+  color: #eee;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Satoshi', sans-serif;
+}
+
+.results-title {
+  font-size: 2.25rem;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+/* Stack of cards for dealing effect */
+.cards-stack {
+  position: relative;
+  width: 300px;
+  height: 400px;
+}
+
+.result-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colored glow on cards */
+.black-card:nth-child(1) { border-color: #6AB1CD; box-shadow: 0 0 16px #6AB1CD; }
+.black-card:nth-child(2) { border-color: #6AB1CD; box-shadow: 0 0 16px #6AB1CD; }
+.black-card:nth-child(3) { border-color: #6AB1CD; box-shadow: 0 0 16px #6AB1CD; }
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-card h3 {
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.result-card p {
+  font-size: 1.125rem;
+}
+
+/* Extras dropdown */
+.extras-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #aaa;
+  user-select: none;
+}
+
+.extras-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 300px;
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.extra-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #333;
+  font-size: 1rem;
+  color: #ddd;
+}
+.extra-item:last-child {
+  border-bottom: none;
+}
+
+/* Final button */
+.final-btn {
+  padding: 0.75rem 2rem;
+  background: #6AB1CD;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.final-btn:hover {
+  background: #579bad;
+}
+
+/* ====================== */
+/* 📱 Responsive Mobile 💡 */
+/* ====================== */
+
+@media (max-width: 599px) {
+  .cards-stack {
+    position: static;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .result-card {
+    position: static;
+    width: 100%;
+    height: auto;
+    transform: none !important; /* remove motion x-offsets on small screens */
+  }
+
+  .extras-list {
+    width: 100%;
+  }
+
+  .results-title {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  .results-container {
+    padding: 1rem;
+  }
+
+  .final-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

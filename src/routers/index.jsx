@@ -41,6 +41,10 @@ import PrintCertificate from "../components/Admin/certificate/PrintCertificate.j
 import Tenant from "../components/Admin/Tenant.jsx";
 import UploadLogo from "../components/Admin/certificate/UploadLogo.jsx";
 import SuperAdminDashBoard from "../components/optionsauth/OptionsSuperAdmin.jsx";
+import FormInitial from '../components/ExperienceModule/pages/FormInitial.jsx';
+import QuestionnairePage from '../components/ExperienceModule/pages/QuestionnairePage.jsx'
+import Results from '../components/ExperienceModule/pages/Results.jsx'
+import VirtualTryOn3D from '../components/ExperienceModule/TryOn3D/VirtualTryOn3D.jsx'
 
 const AppRouter = () => {
     return(
@@ -86,6 +90,10 @@ const AppRouter = () => {
             <Route path="/PrintCertificate" element={<PrintCertificate/>}></Route>
             <Route path="/Tenant" element={<Tenant/>}></Route>
             <Route path="/UploadLogo" element={<UploadLogo/>}></Route>
+            <Route path="/RegisterExperience" element={<FormInitial />}> </Route>
+            <Route path="/cuestionario" element={<QuestionnairePage />}> </Route>
+            <Route path="/resultados" element={<Results />} > </Route>
+            <Route path="/tryon" element={<VirtualTryOn3D />} > </Route>
         </Routes>
     )
 }

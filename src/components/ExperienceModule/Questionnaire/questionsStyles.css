@@ -1,0 +1,196 @@
+/* questionsStyles.css */
+
+/* Contenedor de cada pregunta */
+.question-card {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Título */
+.question-title {
+  font-size: 1.75rem;
+  font-family: 'Satoshi', sans-serif;
+  color: #222;
+  text-align: center;
+}
+
+/* Subtítulo */
+.question-subtitle {
+  font-size: 1rem;
+  color: #555;
+  text-align: center;
+}
+
+/* Lista de opciones */
+.options-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+/* Botones de opción con radio */
+.option-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: 'Satoshi', sans-serif;
+  border: 2px solid #ccc;
+  border-radius: 24px;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.option-btn:hover {
+  background: #f0f0f0;
+}
+li.selected .option-btn {
+  border-color: #6AB1CD;
+  background: #E6F7F9;
+}
+
+/* Radio “bolita” */
+.radio {
+  font-size: 1.25rem;
+  color: #6AB1CD;
+}
+.option-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Sliders genéricos */
+.age-slider,
+.range-slider {
+  width: 100%;
+  cursor: pointer;
+}
+.range-value {
+  font-size: 1.25rem;
+  font-family: 'Satoshi', sans-serif;
+  color: #6AB1CD;
+  text-align: center;
+}
+
+/* Grid de imágenes */
+.images-grid {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.image-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.image-option.selected {
+  border-color: #6AB1CD;
+  background: #E6F7F9;
+}
+.selectable-img {
+  width: 150px;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Botones */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.file-upload-btn {
+  padding: 0.75rem 1.5rem;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 1rem;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.btn-primary {
+  background-color: #6AB1CD;
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: #579bad;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary,
+.file-upload-btn {
+  background-color: #eee;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.btn-secondary:hover,
+.file-upload-btn:hover {
+  background-color: #ddd;
+}
+
+.file-upload-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.file-upload-btn input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mensajes de error */
+.error-text {
+  color: #d9534f;
+  text-align: center;
+}
+
+/* Resultados: video preview */
+.camera-preview {
+  display: flex;
+  justify-content: center;
+}
+.preview-video {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen capturada */
+.photo-result img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  margin: auto;
+  display: block;
+}

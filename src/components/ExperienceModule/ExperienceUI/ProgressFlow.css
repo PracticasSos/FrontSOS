@@ -1,0 +1,64 @@
+.progress-flow {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem 0;
+  flex-wrap: wrap; /* Permite adaptación en pantallas pequeñas */
+}
+
+.circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid #6AB1CD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-family: 'Satoshi', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.circle.completed {
+  background-color: #6AB1CD;
+  color: #fff;
+}
+
+.circle.current {
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0 0 0 2px #6AB1CD;
+}
+
+.circle.pending {
+  background-color: #fff;
+  color: #ccc;
+}
+
+/* ✅ Adaptaciones SOLO para pantallas más pequeñas */
+
+/* Tablets (como iPad) */
+@media (max-width: 1023px) and (min-width: 600px) {
+  .progress-flow {
+    gap: 0.8rem;
+  }
+
+  .circle {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Teléfonos */
+@media (max-width: 599px) {
+  .progress-flow {
+    gap: 0.6rem;
+  }
+
+  .circle {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,76 @@
+/* contenedor full-screen, centra la mini-tarjeta */
+.welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #ffffff; /* fondo oscuro general */
+  padding: 1rem;
+}
+
+/* la mini-tarjeta */
+.welcome-card {
+  position: relative;
+  width: 240px;
+  padding: 1.5rem 1rem;
+  background: #111;               /* fondo negro intenso */
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+/* barra de color en la base */
+.welcome-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    #ff006e 0%,
+    #ffcd1e 33%,
+    #13fdd0 66%,
+    #006eff 100%
+  );
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* icono en la esquina superior izquierda */
+.welcome-icon {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* título */
+.welcome-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #fff;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* botón “Comenzar” */
+.welcome-button {
+  display: block;
+  width: 100%;
+  margin: 1.25rem auto 0;
+  padding: 0.6rem 0;
+  background: #fff;
+  color: #111;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.welcome-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

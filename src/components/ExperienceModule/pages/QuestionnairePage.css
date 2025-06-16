@@ -1,0 +1,25 @@
+.questionnaire-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 1rem;
+  background: #f2f2f2; /* fondo claro */
+}
+
+.questionnaire-container header {
+  flex-shrink: 0;
+}
+
+.question-wrapper {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px; /* necesario para el efecto 3D */
+}
+
+.motion-card {
+  width: 100%;
+  max-width: 600px;
+  transform-style: preserve-3d;
+}
