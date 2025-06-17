@@ -7,9 +7,9 @@ const rules = {
     redondo: "Cuadrado o angular",
     cuadrado: "Ovalado o redondo",
     corazón: "Sin marco o cat-eye",
-    triangular: "Aviador o panto",
+    triangulo: "Aviador o panto",
     diamante: "Ovalado o sin marco",
-    alargado: "Ancho o sin marco",
+    oblongo: "Ancho o sin marco", 
   },
   frameMaterial: {
     Bajo: "Plástico ligero",

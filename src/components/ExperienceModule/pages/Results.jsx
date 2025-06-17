@@ -9,12 +9,16 @@ import { ChevronDown } from 'lucide-react'
 
 export default function Results() {
   const [recs, setRecs] = useState(null)
+  const [faceShape, setFaceShape] = useState('')
   const [stage, setStage] = useState('loading')
   const [extrasOpen, setExtrasOpen] = useState(false)
   const navigate = useNavigate()
 
   const handleFinish = () => {
-    const stored = JSON.parse(localStorage.getItem('answers')) || {}
+    const stored = JSON.parse(localStorage.getItem('answers')) || []
+    // Obtener forma de rostro detectada en la posición 5
+    const detectedShape = stored[5] || ''
+    setFaceShape(detectedShape)
     setRecs(getRecommendations(stored))
     setStage('show')
   }
@@ -27,8 +31,11 @@ export default function Results() {
     { key: 'transition', title: 'Transition / Polarizado', value: recs.transition }
   ]
 
+  // Extraemos preferencias adicionales + forma de rostro
   const extras = [
-    { label: 'Tipo lente', value: recs.lensType },
+    // Mostrar primero la forma detectada
+    faceShape && { label: 'Forma de tu rostro', value: faceShape },
+    { label: 'Tipo de lente', value: recs.lensType },
     { label: 'Antirreflejante', value: recs.antiReflective },
     { label: 'Estilo', value: recs.styleSuggestion },
     recs.astigmatismNote && { label: 'Astigmatismo', value: recs.astigmatismNote }
@@ -37,6 +44,7 @@ export default function Results() {
   return (
     <div className="results-container centered">
       <h2 className="results-title">¡Aquí están tus recomendaciones!</h2>
+
       <div className="cards-stack">
         <AnimatePresence>
           {main.map((card, i) => (
@@ -47,7 +55,6 @@ export default function Results() {
               animate={{
                 y: 0,
                 opacity: 1,
-                // Disperse cards after drop
                 x: i === 0 ? -350 : i === 2 ? 350 : 0
               }}
               exit={{ opacity: 0 }}
@@ -67,6 +74,7 @@ export default function Results() {
           <ChevronDown />
         </motion.div>
       </div>
+
       <AnimatePresence>
         {extrasOpen && (
           <motion.ul
@@ -84,6 +92,7 @@ export default function Results() {
           </motion.ul>
         )}
       </AnimatePresence>
+
       <button className="btn-primary final-btn" onClick={() => navigate('/tryon')}>
         ¡Quiero probar estos lentes!
       </button>
