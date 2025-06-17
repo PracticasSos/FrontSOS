@@ -38,6 +38,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       const videoEl = videoRef.current
       videoEl.srcObject = stream
+      videoEl.style.transform = 'scaleX(-1)' // Modo espejo
       videoEl.play()
     } catch (err) {
       setError('No se pudo acceder a la cámara.')
