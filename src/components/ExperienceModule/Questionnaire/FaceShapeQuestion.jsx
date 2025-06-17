@@ -8,15 +8,14 @@ import ProgressFlow from '../ExperienceUI/ProgressFlow'
 
 export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const videoRef = useRef(null)
-  const canvasRef = useRef(null)
   const [modelsLoaded, setModelsLoaded] = useState(false)
-  const [capturedImage, setCapturedImage] = useState(null)
-  const [shape, setShape] = useState('')
+  const [status, setStatus] = useState('') // '', 'loading-models', 'detecting-face', 'detecting-shape'
   const [error, setError] = useState('')
 
-  // Cargar modelos
+  // Cargar y preparar modelos
   useEffect(() => {
     async function loadModels() {
+      setStatus('loading-models')
       try {
         await faceapi.tf.setBackend('webgl')
         await faceapi.tf.ready()
@@ -24,172 +23,125 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
         await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
         setModelsLoaded(true)
+        setStatus('')
       } catch (err) {
+        console.error(err)
         setError('No se pudieron cargar los modelos de detección.')
       }
     }
     loadModels()
   }, [])
 
-  // Iniciar cámara
-  const startCamera = async () => {
-    setError('')
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      const videoEl = videoRef.current
-      videoEl.srcObject = stream
-      videoEl.style.transform = 'scaleX(-1)' // Modo espejo
-      videoEl.play()
-    } catch (err) {
-      setError('No se pudo acceder a la cámara.')
-    }
-  }
+  // Arrancar detección continua y análisis de forma
+  useEffect(() => {
+    let stream
+    let animationId
+    async function startAndDetect() {
+      if (!modelsLoaded) return
+      setError('')
+      setStatus('detecting-face')
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true })
+        const video = videoRef.current
+        video.srcObject = stream
+        video.style.transform = 'scaleX(-1)'
+        await video.play()
 
-  // Capturar foto del video
-  const capture = async () => {
-    if (!videoRef.current || !canvasRef.current) return
+        // loop de detección
+        async function detectLoop() {
+          if (video.paused || video.ended) return
+          const detection = await faceapi
+            .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
 
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d')
-
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    context.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-    const dataUrl = canvas.toDataURL('image/png')
-    setCapturedImage(dataUrl)
-
-    const detection = await faceapi
-      .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-
-    if (detection && detection.landmarks) {
-      const faceShape = analyzeFaceShape(detection.landmarks)
-      setShape(faceShape)
-      onAnswer(faceShape)
-    } else {
-      setError('No se detectó ningún rostro en la imagen.')
-    }
-
-    // Detener cámara
-    if (video.srcObject) {
-      const tracks = video.srcObject.getTracks()
-      tracks.forEach((track) => track.stop())
-      video.srcObject = null
-    }
-  }
-
-  // Analizar forma del rostro (demo)
-  const analyzeFaceShape = (landmarks) => {
-    // Aquí pondrías tu lógica real. Retorno temporal:
-    return 'ovalado'
-  }
-
-  // Subir foto manual
-  const handleUpload = async (event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const img = new Image()
-    const reader = new FileReader()
-
-    reader.onload = async (e) => {
-      img.src = e.target.result
-      img.onload = async () => {
-        const canvas = canvasRef.current
-        const context = canvas.getContext('2d')
-        canvas.width = img.width
-        canvas.height = img.height
-        context.drawImage(img, 0, 0)
-
-        setCapturedImage(canvas.toDataURL('image/png'))
-
-        const detection = await faceapi
-          .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-
-        if (detection && detection.landmarks) {
-          const faceShape = analyzeFaceShape(detection.landmarks)
-          setShape(faceShape)
-          onAnswer(faceShape)
-        } else {
-          setError('No se detectó ningún rostro en la imagen.')
+          if (detection && detection.landmarks) {
+            cancelAnimationFrame(animationId)
+            setStatus('detecting-shape')
+            const faceShape = analyzeFaceShape(detection.landmarks)
+            onAnswer(faceShape)
+          } else {
+            animationId = requestAnimationFrame(detectLoop)
+          }
         }
+
+        animationId = requestAnimationFrame(detectLoop)
+      } catch (err) {
+        console.error(err)
+        setError('No se pudo acceder a la cámara.')
       }
     }
 
-    reader.readAsDataURL(file)
+    startAndDetect()
+
+    return () => {
+      if (animationId) cancelAnimationFrame(animationId)
+      if (stream) stream.getTracks().forEach((t) => t.stop())
+    }
+  }, [modelsLoaded, onAnswer])
+
+  // Determinar forma de rostro usando landmarks
+  const analyzeFaceShape = (landmarks) => {
+    const pts = landmarks.positions
+    // Medidas básicas: anchuras y largo
+    const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y)
+    const jawWidth = dist(pts[0], pts[16])            // ancho mandíbula
+    const cheekWidth = dist(pts[2], pts[14])         // ancho mejillas
+    const foreheadWidth = dist(pts[17], pts[26])     // ancho frente
+    const faceLength = dist(pts[8], {                // largo desde punta barbilla a entrecejo
+      x: (pts[19].x + pts[24].x) / 2,
+      y: (pts[19].y + pts[24].y) / 2,
+    })
+
+    const ratios = {
+      lengthToCheek: faceLength / cheekWidth,
+      cheekToJaw: cheekWidth / jawWidth,
+      cheekToForehead: cheekWidth / foreheadWidth,
+    }
+
+    // Clasificar según umbrales empíricos
+    if (ratios.lengthToCheek > 1.5) {
+      return 'oblongo'
+    }
+    if (Math.abs(jawWidth - cheekWidth) / cheekWidth < 0.05 && Math.abs(foreheadWidth - cheekWidth) / cheekWidth < 0.05) {
+      return 'cuadrado'
+    }
+    if (ratios.cheekToJaw > 1.15 && ratios.cheekToForehead > 1.1) {
+      // mejillas más anchas que mandíbula y frente
+      return 'diamante'
+    }
+    if (ratios.cheekToJaw > 1.05 && foreheadWidth > jawWidth) {
+      return 'corazón'
+    }
+    if (ratios.cheekToJaw < 1.05 && ratios.lengthToCheek < 1.25) {
+      return 'redondo'
+    }
+    return 'ovalado'
   }
 
   return (
-    <div className="question-card">
+    <div className="question-card FaceShapeQuestion--container">
       <ProgressFlow currentStep={step} total={total} />
       <h2 className="question-title">Necesitamos conocer la forma de tu rostro</h2>
       <p className="question-subtitle">
-        Enciende tu cámara o sube una foto para que podamos detectarla automáticamente.
+        Permite tu cámara para detectar tu rostro automáticamente.
       </p>
 
-      {!capturedImage && (
-        <>
-          <div className="camera-preview">
-            <video
-              ref={videoRef}
-              className="preview-video"
-              playsInline
-              muted
-              webkit-playsinline="true"
-            />
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
-          </div>
+      <div className="camera-preview">
+        <video
+          ref={videoRef}
+          className="preview-video"
+          playsInline
+          muted
+          webkit-playsinline="true"
+        />
+      </div>
 
-          <div className="actions">
-            <button
-              className="btn-secondary"
-              onClick={startCamera}
-              disabled={!modelsLoaded}
-            >
-              Iniciar cámara
-            </button>
-            <button
-              className="btn-primary"
-              onClick={capture}
-              disabled={!modelsLoaded}
-            >
-              Tomar foto
-            </button>
-            <label className="btn-secondary file-upload-btn">
-              Subir foto
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleUpload}
-              />
-            </label>
-          </div>
-
-          {error && <p className="error-text">{error}</p>}
-        </>
-      )}
-
-      {capturedImage && (
-        <div className="photo-result">
-          <img src={capturedImage} alt="Rostro capturado" />
-          <p className="question-subtitle">Forma detectada: {shape}</p>
-          <div className="actions">
-            <button
-              className="btn-secondary"
-              onClick={() => {
-                setCapturedImage(null)
-                setShape('')
-                setError('')
-              }}
-            >
-              Volver a intentar
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="status-area">
+        {status === 'loading-models' && <p>Cargando modelos...</p>}
+        {status === 'detecting-face' && <p>Detectando tu cara...</p>}
+        {status === 'detecting-shape' && <div className="loader"></div>}
+        {error && <p className="error-text">{error}</p>}
+      </div>
     </div>
   )
 }
