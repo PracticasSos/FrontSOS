@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import SearchPatient from "./SearchPatient";
 import Measures from "./Measures";
-import SelectItems from "./SelectItems";
-import PriceCalculation from "./PriceCalculation";
 import { supabase } from "../../../api/supabase";
-import { Box, Heading, Button, SimpleGrid, FormControl, FormLabel, Input, Text, Grid, Stack } from "@chakra-ui/react";
+import { Box, Heading, Button, Text, Grid } from "@chakra-ui/react";
 import Total from "./Total";
 import Pdf from "./Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SignaturePadComponent from "./SignaturePadComponent";
-import MessageInput from "./Message";
 import { useToast } from "@chakra-ui/react";
 import Delivery from "./Delivery";
 import SalesDetails from "./SalesDetails";

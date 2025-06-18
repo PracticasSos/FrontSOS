@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, Input, Box, Heading, SimpleGrid, FormControl, FormLabel,  useToast, Button} from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Box, Heading, SimpleGrid, FormControl, FormLabel,  useToast, Button, Text} from "@chakra-ui/react";
 import { supabase } from "../../../../api/supabase";
 
 const fields = ["sphere", "cylinder", "axis", "prism", "add", "av_vl", "av_vp", "dnp", "alt"];
@@ -105,8 +105,8 @@ const MeasuresHistory = ({ saleId, onFormDataChange, initialFormData = {} }) => 
   };
 
   return (
-    <Box mt={4} mb={4}>
-      <Box display={{ base: "none", lg: "block" }} overflowX="auto" mb={4}>
+    <Box mt={4} mb={4} px={[1, 2]}>
+      <Box display={{ base: "none", lg: "block" }}  mb={4}>
         <Table variant="simple" mb={4}>
           <Thead>
             <Tr>
@@ -136,33 +136,52 @@ const MeasuresHistory = ({ saleId, onFormDataChange, initialFormData = {} }) => 
           </Tbody>
         </Table>
       </Box>
-
       <Box display={{ base: "block", lg: "none" }} mb={4}>
-        {["OD", "OI"].map((eye) => (
-          <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
-            <Heading size="md" mb={3}>
-              {eye === "OD" ? "Ojo Derecho (OD)" : "Ojo Izquierdo (OI)"}
-            </Heading>
-            <SimpleGrid columns={2} spacing={3}>
-              {fields.map((field) => {
-                const name = `${field}_${eye === "OD" ? "right" : "left"}`;
-                return (
-                  <FormControl key={name}>
-                    <FormLabel fontSize="sm">{field.toUpperCase()}</FormLabel>
-                    <Input
-                      name={name}
-                      value={formData[name] || ""}
-                      onChange={handleChange}
-                      size="sm"
-                    />
-                  </FormControl>
-                );
-              })}
-            </SimpleGrid>
-          </Box>
-        ))}
-      </Box>
-
+                  {['OD', 'OI'].map((eye) => {
+                    const prefix = eye === 'OD' ? 'right' : 'left';
+                    return (
+                      <Box
+                        key={eye}
+                        mb={6}
+                        p={4}
+                      >
+                        <Text fontSize="lg" fontWeight="semibold" color="gray.600" mb={4}>
+                          {eye === 'OD' ? 'Ojo Derecho (OD)' : 'Ojo Izquierdo (OI)'}
+                        </Text>
+      
+                        <SimpleGrid columns={3} spacing={3}>
+                          {[
+                            { label: 'Esfera', name: 'sphere' },
+                            { label: 'Cilindro', name: 'cylinder' },
+                            { label: 'Eje', name: 'axis' },
+                            { label: 'Prisma', name: 'prism' },
+                            { label: 'AV VL', name: 'av_vl' },
+                            { label: 'AV VP', name: 'av_vp' },
+                            { label: 'ADD', name: 'add' },
+                            { label: 'ALT', name: 'alt' },
+                            { label: 'DNP', name: 'dnp' },
+                          ].map(({ label, name }) => (
+                            <FormControl key={name}>
+                              <FormLabel fontSize="xs" color="gray.500" mb={1}>
+                                {label}
+                              </FormLabel>
+                              <Input
+                                name={`${name}_${prefix}`}
+                                value={formData[`${name}_${prefix}`]}
+                                onChange={handleChange}
+                                
+                                borderRadius="full"
+                                bg="gray.100"
+                                textAlign="center"
+                               
+                              />
+                            </FormControl>
+                          ))}
+                        </SimpleGrid>
+                      </Box>
+                    );
+                  })}
+            </Box>     
       <Box mt={4} textAlign="center">
         <Button onClick={updateRxData} isDisabled={!hasChanges} colorScheme="blue">
           Actualizar Medidas

@@ -1,23 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import SearchHistory from "./SearchHistory";
 import MeasuresHistory from "./MeausresHistory";
-import SelectHistory from "./SelectHistory";
-import PriceHistory from "./PriceHistory";
 import { supabase } from "../../../../api/supabase";
-import { Box, Heading, Button, SimpleGrid, FormControl, FormLabel, Input,Text} from "@chakra-ui/react";
+import { Box, Heading, Button, Text, Grid } from "@chakra-ui/react";
 import TotalHistory from "./TotalHistory";
 import Pdf from "../Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SignaturePadComponent from "../SignaturePadComponent";
-import MessageInput from "../Message";
 import { useToast } from "@chakra-ui/react";
+import DetailsHistory from "./DetailsHistory";
+import HistoryUI from "./HistoryUI";
+import Delivery from "../Delivery";
+import MessageSection from "../MenssageSection";
+import ObservationSection from "../ObservationSection";
+import TermsCondition from "../TermsCondition";
 
 const SalesHistory = () => {
   const [filteredMeasures, setFilteredMeasures] = useState([]);
   const [deliveryDays, setDeliveryDays] = useState(0);
   const [saleRegistered, setSaleRegistered] = useState(false);
   const [saleId, setSaleId] = useState(null);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
   const [branchName, setBranchName] = useState("");
   const [patientData, setPatientData] = useState(null);
   const salesRef = useRef(null);
@@ -35,7 +37,16 @@ const SalesHistory = () => {
     brand_id: "", 
     lens_id: "", 
     delivery_time: "",
+    delivery_datetime: "",
+    p_frame: 0,
+    p_lens: 0,
   });
+  const [totals, setTotals] = useState({
+      frameName: "",
+      lensName: "",
+      total_p_frame: "",
+      total_p_lens: "",
+    });
   const [formData, setFormData] = useState({
     p_frame: 0,
     p_lens: 0,
@@ -345,6 +356,15 @@ const SalesHistory = () => {
     }));
   };
 
+  const handleTotalsChange = (totals) => {
+  setTotals(totals);
+  setFormData((prev) => ({
+    ...prev,
+    total_p_frame: Number(totals.total_p_frame ?? prev.p_frame ?? 0),
+    total_p_lens: Number(totals.total_p_lens ?? prev.p_lens ?? 0),
+  }));
+  };
+
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (route) {
@@ -372,66 +392,168 @@ const SalesHistory = () => {
 
   return (
     <Box ref={salesRef} w="full" px={4}>
-      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
-        <Heading mb={4} textAlign="center">Historial de Venta</Heading>
+      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
+        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
         <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="full" maxWidth="900px" mb={4}>
           <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
           <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
           <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
         </Box>
   
-        <Box width="full" maxWidth="1500px" p={6} boxShadow="lg" borderRadius="md">
+        <Box >
           <SearchHistory onFormDataChange={handlePatientDataChange} initialFormData={{ ...formData, ...saleData, sale_id: saleParamId || saleId }} />
-          <MeasuresHistory  onFormDataChange={handlePatientDataChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId} />
-
-          <Box p={5} width="full" maxWidth="800px" mx="auto">
-            <SimpleGrid columns={[1, 2]} spacing={4}>
-              <SelectHistory onFormDataChange={handleFormDataChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId} />
-              <FormControl>
-                <FormLabel fontSize="lg" fontWeight="bold" color="teal.600">
-                  Entrega
-                </FormLabel>
-                <Input
-                  type="date"
-                  name="delivery_date"
-                  onChange={handleDateChange}
-                  borderColor="teal.400"
-                  focusBorderColor="teal.600"
-                  borderRadius="md"
-                  p={2}
+          <MeasuresHistory onFormDataChange={handlePatientDataChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId} />
+        </Box>
+          <Box p={5} >
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Detalles de Venta
+            </Text>
+            <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8} 
+            >
+              <Grid  gap={4} alignItems="start">
+                <DetailsHistory
+                  onFormDataChange={handleFormDataChange} onTotalsChange={handleTotalsChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId}
                 />
-                <Box mt={3} p={3} borderWidth="1px" borderRadius="md" borderColor="gray.300" backgroundColor="gray.50" textAlign="center">
-                  <Text fontSize="md" fontWeight="medium" color="gray.700">
-                    {saleData.delivery_time ? `📅 Entrega en ${saleData.delivery_time} días` : "Seleccione una fecha para ver el tiempo de entrega"}
-                  </Text>
+              </Grid>
+              </Box>
+          </Box>
+
+          <Box mb={[4, 6]}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600" >
+              Total
+            </Text>
+            <Box
+            width="100vw"
+            position="relative"
+            bg="gray.100"
+            py={8}
+            mt={8}
+            >
+            <HistoryUI
+              frameName={formData.frameName}
+              lensName={formData.lensName}
+              total_p_frame={totals.total_p_frame}
+              total_p_lens={totals.total_p_lens}
+              initialFormData={formData}
+              onFormDataChange={handleFormDataChange}
+            />
+            </Box>
+          </Box>
+
+          <Box mt={6}>
+            <Text
+                fontSize="xl"
+                fontWeight="bold"
+                mb={6}
+                textAlign="center"
+                color="gray.600"
+              >
+                Metodo de Pago
+              </Text>
+              <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8}
+            >
+              <TotalHistory
+                saleId={saleId}  formData={formData} setFormData={setFormData}
+              />  
+              </Box>
+            </Box>
+          
+          <Box mt={8}>
+            <Text
+                fontSize="xl"
+                fontWeight="bold"
+                mb={6}
+                textAlign="center"
+                color="gray.600"
+              >
+                Tiempo de Entrega
+              </Text>
+            <Box
+              width="100vw"
+              position="relative"
+              bg="gray.100"
+              py={8}
+              mt={8}
+            >
+            <Delivery saleData={saleData} setSaleData={setSaleData} />
+          </Box> 
+          </Box> 
+              <Box  mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Mensaje
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <MessageSection
+                    selectedBranch={branchName}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
                 </Box>
-              </FormControl>
-            </SimpleGrid>
-          </Box>
-          <Box p={5} width="full"  mx="auto" ml={[0, 4, 8, 12]}>
-            <PriceHistory formData={formData} setFormData={setFormData} />
-          </Box>
-          <Box p={5} width="full" maxWidth="700px" mx="auto">
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-              <TotalHistory saleId={saleId}  formData={formData} setFormData={setFormData}/>
-              <Box>
-                <SimpleGrid columns={1} spacing={4}>
-                <MessageInput selectedBranch={branchName} formData={formData} setFormData={setFormData} />
-                  <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({
+              </Box>
+              
+              <Box  mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Observación
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <ObservationSection setFormData={setFormData} />
+                </Box>
+              </Box>
+
+              <Box mt={8}>
+                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+                Terminos y Condiciones
+                </Text>
+                <Box
+                  width="100vw"
+                  position="relative"
+                  bg="gray.100"
+                  py={8}
+                  mt={8}
+                >
+                  <TermsCondition
+                    selectedBranch={branchName}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+
+                <SignaturePadComponent
+                    onSave={(signatureDataUrl) =>
+                      setFormData((prev) => ({
                         ...prev,
                         signature: signatureDataUrl,
                       }))
-                    } 
+                    }
                   />
-                </SimpleGrid>
+                </Box>
               </Box>
-            </SimpleGrid>
-          </Box>
+              
           <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
-            Actualizar Venta
+            Registrar Venta
           </Button>
           {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
-        </Box>
       </Box>
     </Box>
   );  

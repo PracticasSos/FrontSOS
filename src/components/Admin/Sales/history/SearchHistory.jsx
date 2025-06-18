@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { SimpleGrid, FormControl, FormLabel, Input, Box, Select } from "@chakra-ui/react";
 import { supabase } from "../../../../api/supabase";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+
 
 const SearchHistory = ({ onFormDataChange, initialFormData = {} }) => {
     const [branches, setBranches] = useState([]);
@@ -109,38 +112,39 @@ const SearchHistory = ({ onFormDataChange, initialFormData = {} }) => {
         }
     };
 
+    const handlePhoneChange = (value) => {
+    setFormData((prev) => ({
+        ...prev,
+        pt_phone: value.replace(/[^0-9]/g, ''),
+    }));
+    };
+
     return (
         <SimpleGrid columns={[1, 4]} spacing={4}>
             <FormControl>
                 <FormLabel>Nombre del Paciente</FormLabel>
-                <Input value={formData.patient_name || "No disponible"} isReadOnly />
+                <Input value={formData.patient_name || "No disponible"} isReadOnly height="40px" borderRadius="full"  />
             </FormControl>
-
-            <FormControl isRequired>
-                <FormLabel>Sucursal</FormLabel>
-                <Select name="branchs_id" value={formData.branchs_id || ""} onChange={handleChange}>
-                    <option value="">Seleccione una sucursal</option>
-                    {branches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                            {branch.name || branch.id}
-                        </option>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl isRequired>
-                <FormLabel>Fecha</FormLabel>
-                <Input type="date" name="date" value={formData.date || ""} onChange={handleChange} />
-            </FormControl>
-
             <FormControl>
                 <FormLabel>Teléfono</FormLabel>
-                <Input
+                <PhoneInput
                     type="text"
                     name="pt_phone"
+                    height="40px"
+                    borderRadius="full"
                     value={formData.pt_phone || ""}
                     onInput={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ""))}
-                    onChange={handleChange}
+                    onChange={handlePhoneChange}
+                    enableSearch={true}
+                    inputStyle={{
+                        width: '100%',
+                        height: '40px',
+                        borderRadius: '20px',
+                        border: '1px solid #CBD5E0'
+                    }}
+                    dropdownStyle={{
+                        zIndex: 1000
+                    }}
                 />
             </FormControl>
         </SimpleGrid>
