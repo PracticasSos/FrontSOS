@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Box, SimpleGrid, Text, Image } from '@chakra-ui/react';
+import { Button, Box, SimpleGrid, Text, Image, useBreakpointValue, VStack, Heading,
+  useColorModeValue} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import experienciaIcon from "../../assets/experiencia.jpg";
 import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
@@ -23,6 +24,11 @@ import lunasIcon from "../../assets/lunas.jpg";
 import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
 import { supabase } from '../../api/supabase';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCoverflow, Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
@@ -145,38 +151,97 @@ const AdminDashBoard = () => {
     navigate(route);
   };
 
+  const carouselItems = options.slice(0, 5);
+  const bgCard = useColorModeValue('white', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'gray.100');
+
   return (
-    <>
-      <Button onClick={() => handleNavigate('/Login')} mt={4}>
-        Cerrar Sesión
-      </Button>
-      <SimpleGrid columns={[2, null, 4]} spacing={5}>
-  {options.map((option, index) => (
-    <Box key={index} textAlign="center">
-      <Box
-        onClick={() => handleOptionClick(option.label)}
-        border="10px solid"
-        borderColor="gray.300"
-        borderRadius="md"
-        overflow="hidden"
-        boxShadow="md"
-        _hover={{ borderColor: "blue.400", cursor: "pointer" }}
-      >
-        <Image
-          src={option.icon}
-          alt={option.label}
-          objectFit="cover"
-          w="100%"
-          h="150px"
-        />
+    <Box bg="gray.50" minH="100vh" py={8} px={[4, 6, 8]}>
+      <Heading size="xl" mb={6} textAlign="center" color="teal.600">
+        Panel de Administración
+      </Heading>
+
+      <Box maxW="100%" py={6}>
+        <Swiper
+          effect="coverflow"
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView={'auto'}
+          loop={true}
+          autoplay={{ delay: 3000 }}
+          pagination={{ clickable: true }}
+          modules={[EffectCoverflow, Autoplay, Pagination]}
+          coverflowEffect={{
+            rotate: 30,
+            stretch: 0,
+            depth: 100,
+            modifier: 2,
+            slideShadows: true,
+          }}
+        >
+          {carouselItems.map((option, index) => (
+            <SwiperSlide
+              key={index}
+              style={{ width: '240px', height: '350px' }}
+              onClick={() => handleOptionClick(option.label)}
+            >
+              <Box
+                bg={bgCard}
+                borderRadius="2xl"
+                overflow="hidden"
+                boxShadow="2xl"
+                p={2}
+              >
+                <Image
+                  src={option.icon}
+                  alt={option.label}
+                  w="100%"
+                  h="300px"
+                  objectFit="cover"
+                  borderRadius="xl"
+                />
+                <Text mt={2} fontWeight="semibold" fontSize="md" color={textColor}>
+                  {option.label}
+                </Text>
+              </Box>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </Box>
-      <Text mt={2}>{option.label}</Text>
+
+      <SimpleGrid columns={[2, null, 4]} spacing={5} mt={8}>
+        {options.map((option, index) => (
+          <Box key={index} textAlign="center">
+            <Box
+              onClick={() => handleOptionClick(option.label)}
+              bg={bgCard}
+              borderRadius="2xl"
+              boxShadow="lg"
+              overflow="hidden"
+              transition="0.3s"
+              _hover={{ transform: 'scale(1.05)', cursor: 'pointer', shadow: 'xl' }}
+            >
+              <Image
+                src={option.icon}
+                alt={option.label}
+                w="100%"
+                h="140px"
+                objectFit="cover"
+              />
+            </Box>
+            <Text mt={2} fontSize="sm" fontWeight="medium" color={textColor}>
+              {option.label}
+            </Text>
+          </Box>
+        ))}
+      </SimpleGrid>
+
+      <VStack mt={10} spacing={4}>
+        <Button colorScheme="red" size="lg" onClick={() => handleNavigate('/Login')}>
+          Cerrar Sesión
+        </Button>
+      </VStack>
     </Box>
-  ))}
-</SimpleGrid>
-
-
-    </>
   );
 };
 
