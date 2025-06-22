@@ -1,5 +1,22 @@
 import { useEffect, useState } from "react";
-import { Box, Button, SimpleGrid, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  SimpleGrid,
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
+  Text,
+  Flex,
+  Spinner,
+  
+} from "@chakra-ui/react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../api/supabase";
@@ -7,24 +24,26 @@ import { supabase } from "../../api/supabase";
 const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal control
+  const [modalMessage, setModalMessage] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const waitForImagesToLoad = async (container) => {
-  const images = container.querySelectorAll('img');
-  const promises = [];
+    const images = container.querySelectorAll("img");
+    const promises = [];
 
-  images.forEach((img) => {
-    if (!img.complete || img.naturalHeight === 0) {
-      promises.push(
-        new Promise((resolve) => {
-          img.onload = img.onerror = resolve;
-        })
-      );
-    }
-  });
+    images.forEach((img) => {
+      if (!img.complete || img.naturalHeight === 0) {
+        promises.push(
+          new Promise((resolve) => {
+            img.onload = img.onerror = resolve;
+          })
+        );
+      }
+    });
 
-  return Promise.all(promises);
+    return Promise.all(promises);
   };
-
 
   const handleDownloadPdf = async () => {
     if (!targetRef?.current) {
@@ -39,6 +58,8 @@ const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
     }
 
     setLoading(true);
+    setIsGenerating(true);
+    onOpen(); 
 
     try {
       const content = targetRef.current;
@@ -80,14 +101,9 @@ const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
         .getPublicUrl(fileName);
 
       if (urlError) throw urlError;
-
-      toast({
-        title: "PDF Generado",
-        description: "El documento ha sido subido correctamente.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      setIsGenerating(false);   
+      setModalMessage("✅ Se generó correctamente el certificado visual.");
+      
 
       return urlData.publicUrl;
     } catch (error) {
@@ -143,26 +159,48 @@ const PdfMeasures = ({ formData, targetRef, selectedPatient }) => {
     )}`;
     window.open(whatsappUrl, "_blank");
 
-    toast({
-      title: "WhatsApp Enviado",
-      description: "El PDF ha sido enviado correctamente.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    setModalMessage("✅ El certificado ha sido enviado por WhatsApp.");
+    onOpen(); // Mostrar modal
   };
 
   return (
-    <SimpleGrid>
-      <Box p={5}>
-        <Button onClick={handleDownloadPdf} isLoading={loading}>
-          Generar PDF
-        </Button>
-        <Button onClick={sendWhatsAppMessage} isLoading={loading} ml={3}>
-          Enviar por WhatsApp
-        </Button>
-      </Box>
-    </SimpleGrid>
+    <>
+      <SimpleGrid>
+        <Box p={5}>
+          <Button onClick={handleDownloadPdf} isLoading={loading}>
+            Generar PDF
+          </Button>
+          <Button onClick={sendWhatsAppMessage} isLoading={loading} ml={3}>
+            Enviar por WhatsApp
+          </Button>
+        </Box>
+      </SimpleGrid>
+
+      {/* Modal de confirmación */}
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{isGenerating ? "Generando certificado..." : "Certificado visual"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {isGenerating ? (
+              <Flex align="center" justify="center" py={5}>
+                <Spinner size="xl" thickness="4px" color="teal.500" />
+              </Flex>
+            ) : (
+              <Text>{modalMessage}</Text>
+            )}
+          </ModalBody>
+          {!isGenerating && (
+            <ModalFooter>
+              <Button colorScheme="green" onClick={onClose}>
+                Cerrar
+              </Button>
+            </ModalFooter>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
