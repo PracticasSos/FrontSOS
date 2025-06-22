@@ -195,6 +195,12 @@ const RetreatsPatients = () => {
     }
     };
 
+  const sortedPatients = [...filteredPatients].sort((a, b) => {
+    // Si alguna fecha es inválida, ponla al final
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(b.date) - new Date(a.date);
+  }); 
     const handleNavigate = (route = null) => {
       const user = JSON.parse(localStorage.getItem('user'));
       if (route) {
@@ -247,6 +253,7 @@ const RetreatsPatients = () => {
           showBranchFilter={true}
         />
       </Box>
+      
       {(!selectedBranch && !searchTermPatients) ? (
         <Text textAlign="center" color="gray.500" mt={6}>
           Por favor, selecciona una sucursal o busca un nombre para mostrar los datos.
@@ -274,7 +281,7 @@ const RetreatsPatients = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {filteredPatients.map((patient) => (
+              {sortedPatients.map((patient) => (
                 <Tr
                   key={`${patient.sale_id}`}
                   onClick={() => handlePatientSelect(patient)}
