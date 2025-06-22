@@ -85,6 +85,13 @@ const Balance = () => {
         }
     };
 
+    const sortedPatients = [...records].sort((a, b) => {
+        // Si alguna fecha es inválida, ponla al final
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return new Date(b.date) - new Date(a.date);
+    }); 
+
     const handleNavigate = (route = null) => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (route) {
@@ -144,7 +151,7 @@ const Balance = () => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {records.map((record) => (
+                    {sortedPatients.map((record) => (
                         <Tr key={record.id}>
                             <Td>{record.date}</Td>
                             <Td>{record.patients.pt_firstname} {record.patients.pt_lastname}</Td>
