@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
 import { Box, Button, FormControl, Input, SimpleGrid, Heading, Alert, AlertIcon, Table, Thead, Tbody, Tr, Th, Td, Textarea, RadioGroup, Radio, Stack, Checkbox, Text, FormLabel} from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const MeasuresFinal = () => {
   const navigate = useNavigate();
@@ -41,6 +41,18 @@ const MeasuresFinal = () => {
   const [searchTermPatients, setSearchTermPatients] = useState("");
   const [showColorIssuesInput, setShowColorIssuesInput] = useState(false);
   const [error, setError] = useState(null);
+  const { id } = useParams();
+
+  useEffect(() => {
+  if (id && patients.length > 0) {
+    const found = patients.find(p => String(p.id) === String(id));
+    if (found) {
+      setFormData(f => ({ ...f, patient_id: found.id }));
+      setSearchTermPatients(`${found.pt_firstname} ${found.pt_lastname}`);
+      setFilteredPatients([]);
+    }
+  }
+  }, [id, patients]); 
 
   useEffect(() => {
     fetchData('patients', data => {

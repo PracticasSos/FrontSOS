@@ -4,7 +4,7 @@ import {
   Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
+import { BiEdit, BiTrash, BiCheck, BiX, BiSearch, BiShow } from 'react-icons/bi';
 import ConfirmDialog from '../../components/UI/ConfirmDialog';
 
 const ListPatients = () => {
@@ -149,7 +149,7 @@ const ListPatients = () => {
               {[
                 'Fecha', 'Nombre', 'Apellido', 'Sexo', 'Ocupación', 'Dirección', 'Teléfono',
                 'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta',
-                'Recomendaciones', 'Sucursal', 'Acciones'
+                'Recomendaciones', 'Sucursal', 'Acciones' 
               ].map((header) => (
                 <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
               ))}
@@ -161,7 +161,7 @@ const ListPatients = () => {
                 {[
                   'date','pt_firstname', 'pt_lastname', 'sexo', 'pt_occupation', 'pt_address', 'pt_phone',
                   'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason',
-                  'pt_recommendations'
+                  'pt_recommendations',  
                 ].map((field) => (
                   <Td key={field} textAlign="center">
                     {editingId === patient.id ? (
@@ -190,18 +190,57 @@ const ListPatients = () => {
                   )}
                 </Td>
                 <Td textAlign="center">
+                <Flex justify="center" align="center" gap={2}>
                   {editingId === patient.id ? (
                     <>
-                      <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(patient.id)} mr={2} />
-                      <IconButton icon={<BiX />} colorScheme="gray" onClick={() => setEditingId(null)} />
+                      <IconButton
+                        icon={<BiCheck />}
+                        colorScheme="teal"
+                        variant="solid"
+                        size="sm"
+                        aria-label="Guardar"
+                        onClick={() => handleSave(patient.id)}
+                      />
+                      <IconButton
+                        icon={<BiX />}
+                        colorScheme="gray"
+                        variant="outline"
+                        size="sm"
+                        aria-label="Cancelar"
+                        onClick={() => setEditingId(null)}
+                      />
                     </>
                   ) : (
                     <>
-                      <IconButton icon={<BiEdit />} colorScheme="yellow" onClick={() => handleEdit(patient.id, patient)} mr={2} />
-                      <IconButton icon={<BiTrash />} colorScheme="red" onClick={() => openConfirm(patient.id)} />
+                      <IconButton
+                        icon={<BiEdit />}
+                        colorScheme="cyan"
+                        variant="outline"
+                        size="sm"
+                        aria-label="Editar"
+                        onClick={() => handleEdit(patient.id, patient)}
+                      />
+                      <IconButton
+                        icon={<BiTrash />}
+                        colorScheme="pink"
+                        variant="outline"
+                        size="sm"
+                        aria-label="Eliminar"
+                        onClick={() => openConfirm(patient.id)}
+                      />
+                      <IconButton
+                        icon={<BiShow />}
+                        colorScheme="teal"
+                        variant="solid"
+                        size="sm"
+                        aria-label="Ver XR"
+                        onClick={() => handleNavigate(`/MeasuresFinal/${patient.id}`)}
+                      />
                     </>
                   )}
-                </Td>
+                </Flex>
+              </Td>
+
               </Tr>
             ))}
           </Tbody>
