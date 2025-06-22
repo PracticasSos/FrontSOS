@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Spinner, Grid, FormControl, FormLabel, Collapse, Input, VStack, Textarea, Text, Select} from "@chakra-ui/react";
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, VStack, Textarea, Text, Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton} from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
@@ -162,11 +168,16 @@ const RetreatsPatients = () => {
     setFilteredPatients(patientRetiros);
   };
 
+  const mensajeDefault = `Le saludamos desde Veoptics, sus lentes se encuentran listos para que pueda acercarse a retirarlos.
+  Nuestro horario de atención es:
+  Lunes a viernes desde 09:00 am hasta las 19:00 pm
+  Sábados desde las 10:00 am hasta las 16:00 pm`;
+
   const handleMessageClick = (e, patient) => {
     e.stopPropagation();
     setSelectedPatient(patient);
     setIsFormOpen(true);
-    setMessage("");
+    setMessage(mensajeDefault);
   };
 
   const handleSendMessage = () => {
@@ -312,36 +323,41 @@ const RetreatsPatients = () => {
           </Table>
         </Box>
       )}
-
-      <Collapse in={isFormOpen} animateOpacity>
-        <Box
-          mt={6}
-          p={4}
-          boxShadow="lg"
-          borderRadius="md"
-          bg="gray.50"
-          width="100%"
-          maxWidth="800px"
-        >
-          <VStack align="stretch" spacing={4}>
-            <Text fontSize="lg">
-              Enviar mensaje a <strong>{selectedPatient?.pt_firstname} {selectedPatient?.pt_lastname}</strong> ({selectedPatient?.pt_phone})
-            </Text>
-            <Textarea
-              placeholder="Escribe tu mensaje aquí..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+      <Modal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} isCentered size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enviar mensaje por WhatsApp</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack align="stretch" spacing={4}>
+              <Text fontSize="md">
+                Enviar mensaje a <strong>{selectedPatient?.pt_firstname} {selectedPatient?.pt_lastname}</strong> ({selectedPatient?.pt_phone})
+              </Text>
+              <Textarea
+                placeholder="Escribe tu mensaje aquí..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={() => setIsFormOpen(false)}>
+              Cancelar
+            </Button>
             <Button
               colorScheme="green"
-              onClick={handleSendMessage}
+              onClick={() => {
+                handleSendMessage();
+                setIsFormOpen(false); // Oculta al enviar
+              }}
               isDisabled={!message.trim()}
             >
-              Enviar Mensaje por WhatsApp
+              Enviar
             </Button>
-          </VStack>
-        </Box>
-      </Collapse>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
     </Box>
   );
 };
