@@ -384,6 +384,7 @@ const MeasuresFinal = () => {
             </Box>
             <Stack direction={{ base: "column", sm: "row" }} spacing={4} justify="center">
               <Button colorScheme="teal" onClick={handleSubmit} width={["100%", "auto"]}>GUARDAR</Button>
+              <Button colorScheme="teal" onClick={() => handleNavigate(`/Sales/${formData.patient_id}`)} width={["100%", "auto"]}>Realizar Venta</Button>
               <Button colorScheme="red" width={["100%", "auto"]}>ELIMINAR</Button>
             </Stack>
           </Box>

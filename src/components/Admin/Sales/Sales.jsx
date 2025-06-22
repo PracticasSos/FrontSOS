@@ -52,15 +52,13 @@ const Sales = () => {
   });
   const [patientMeasures, setPatientMeasures] = useState([]);
   const [filteredMeasures, setFilteredMeasures] = useState([]);
-  const [deliveryDays, setDeliveryDays] = useState(0);
   const [saleRegistered, setSaleRegistered] = useState(false);
   const [saleId, setSaleId] = useState(null);
   const [pdfGenerated, setPdfGenerated] = useState(false);
   const navigate = useNavigate();
   const salesRef = useRef(null);
   const [branchName, setBranchName] = useState("");
-  const location = useLocation();
-  const { patientId} = useParams();
+  const { id } = useParams();
   const toast = useToast();
 
   const handleFormDataChange = (newFormData) => {
@@ -68,7 +66,6 @@ const Sales = () => {
     ...prevFormData,
     ...newFormData,
   }));
-
 
   // Extraer solo las claves relevantes para saleData
   const saleDataKeys = ["brand_id", "lens_id"];
@@ -87,6 +84,15 @@ const Sales = () => {
     }));
   }
 };
+
+ useEffect(() => {
+    if (id) {
+      setSaleData((prev) => ({
+        ...prev,
+        patient_id: id,
+      }));
+    }
+  }, [id]);
 
 
   useEffect(() => {

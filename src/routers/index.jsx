@@ -69,6 +69,7 @@ const AppRouter = () => {
             <Route path={"ListLabs"} element={<ListLab/>}></Route>
             <Route path="CashClousure" element={<CashClousure />} ></Route>
             <Route path="Sales" element= {<Sales/>}></Route>
+            <Route path="/Sales/:id" element= {<Sales/>}></Route>
             <Route path="RegisterLens" element={<RegisterLens/>}></Route>
             <Route path="PatientRecords" element={<PatientRecords />}> </Route>
             <Route path="MeasuresFinal" element={<MeasuresFinal />}></Route>

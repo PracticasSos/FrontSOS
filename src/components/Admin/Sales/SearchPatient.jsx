@@ -17,13 +17,33 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
     }, []);
 
     useEffect(() => {
-        if (onFormDataChange && Object.keys(formData).length > 0) {
-            const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialFormData);
-            if (hasChanges) {
-                onFormDataChange(formData);
+    if (
+        initialFormData &&
+        initialFormData.patient_id &&
+        patients.length > 0
+    ) {
+        const selected = patients.find(
+            (p) => String(p.id) === String(initialFormData.patient_id)
+        );
+        if (selected) {
+            setFormData((prev) => ({
+                ...prev,
+                patient_id: selected.id,
+                pt_phone: selected.pt_phone ? selected.pt_phone.toString() : "",
+            }));
+            setSearch(`${selected.pt_firstname} ${selected.pt_lastname}`);
+            setFilteredPatients([]);
+            // Notifica al padre que el paciente fue seleccionado por URL
+            if (onFormDataChange) {
+                onFormDataChange({
+                    ...initialFormData,
+                    patient_id: selected.id,
+                    pt_phone: selected.pt_phone ? selected.pt_phone.toString() : "",
+                });
             }
         }
-    }, [formData]); 
+    }
+}, [initialFormData.patient_id, patients]);
 
     const fetchData = async (table, setData) => {
         const { data, error } = await supabase
