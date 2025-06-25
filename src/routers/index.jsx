@@ -45,6 +45,7 @@ import FormInitial from '../components/ExperienceModule/pages/FormInitial.jsx';
 import QuestionnairePage from '../components/ExperienceModule/pages/QuestionnairePage.jsx'
 import Results from '../components/ExperienceModule/pages/Results.jsx'
 import VirtualTryOn3D from '../components/ExperienceModule/TryOn3D/VirtualTryOn3D.jsx'
+import AdminPanelModels from '../components/ExperienceModule/TryOn3D/AdminPanelModels.jsx';
 
 const AppRouter = () => {
     return(
@@ -96,6 +97,8 @@ const AppRouter = () => {
             <Route path="/cuestionario" element={<QuestionnairePage />}> </Route>
             <Route path="/resultados" element={<Results />} > </Route>
             <Route path="/tryon" element={<VirtualTryOn3D />} > </Route>
+            <Route path="/admin/modelos" element={<AdminPanelModels />} />
+
         </Routes>
     )
 }

@@ -1,7 +1,7 @@
 // src/pages/FormInitial.jsx
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../../../api/supabase'           // ajusta la ruta si tu supabase.js está en otro directorio
+import { supabase } from '../../../api/supabase'           
 import './FormInitial.css'
 
 export default function FormInitial() {

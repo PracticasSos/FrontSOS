@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import '../Questionnaire/questionsStyles.css';
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
-
 export default function QuestionBudget({ step, total, onAnswer, answer }) {
-  const options = ['Bajo', 'Medio', 'Alto'];
+  const options = [
+    'Bajo ($20-$50)',
+    'Medio ($80-$150)',
+    'Alto (+$160)'
+  ];
   const [selected, setSelected] = useState(answer || '');
 
   useEffect(() => {

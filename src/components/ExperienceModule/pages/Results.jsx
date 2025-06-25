@@ -37,7 +37,6 @@ export default function Results() {
     faceShape && { label: 'Forma de tu rostro', value: faceShape },
     { label: 'Tipo de lente', value: recs.lensType },
     { label: 'Antirreflejante', value: recs.antiReflective },
-    { label: 'Estilo', value: recs.styleSuggestion },
     recs.astigmatismNote && { label: 'Astigmatismo', value: recs.astigmatismNote }
   ].filter(Boolean)
 

@@ -18,20 +18,15 @@ const rules = {
   },
   antiReflective: hours => hours > 4 ? "Sí (filtro luz azul)" : "Opcional",
   transition: light => light === "Sí" ? "Recomendado" : "Opcional",
-  astigmatismNote: label => label === "1" ?
-    "Posible astigmatismo. Revisa con examen clínico" : "",
+  astigmatismNote: label => label === "1"
+    ? "Posible astigmatismo. Revisa con examen clínico"
+    : "",
   lensType: ({ knows, sphLeft, sphRight, age }) => {
     // Si el usuario ingresa graduación y es mayor de 40, sugerir progresivos
     if (knows === 'yes' && age >= 40) return 'Progresivos';
     // Si no ingresa graduación pero edad avanzada, sugerir progresivos
     if (knows === 'no' && age >= 45) return 'Progresivos';
     return 'Monofocal';
-  },
-  styleSuggestion: {
-    Minimal: "Modelos delgados y discretos",
-    Retro: "Monturas con formas clásicas y colores atemporales",
-    Deportivo: "Monturas robustas con agarre antideslizante",
-    Vintage: "Diseños con detalles retro y patillas llamativas",
   }
 };
 
@@ -47,9 +42,8 @@ export function getRecommendations(answers) {
   const screenHours = Number(answers[7] || 0);
   const lightSensitivity = answers[8] || 'No';
   const budget = answers[9] || 'Medio';
-  const stylePref = answers[10] || 'Minimal';
 
-  // 1. Armazón: basado en forma y actividad (si actividad deportiva, priorizar deportivo)
+  // 1. Armazón: basado en forma y actividad
   let frameByShape = rules.frameByShape[faceShape] || 'Rectangular';
   if (activity === 'Actividades deportivas o al aire libre') {
     frameByShape = 'Deportivo';
@@ -78,16 +72,12 @@ export function getRecommendations(answers) {
   // 6. Nota astigmatismo
   const astigmatismNote = rules.astigmatismNote(astigLabel);
 
-  // 7. Sugerencia de estilo
-  const styleSuggestion = rules.styleSuggestion[stylePref] || '';
-
   return {
     frameByShape,
     frameMaterial,
     lensType,
     antiReflective,
     transition,
-    astigmatismNote,
-    styleSuggestion
+    astigmatismNote
   };
 }

@@ -12,7 +12,6 @@ import QuestionGraduation from '../../../components/ExperienceModule/Questionnai
 import QuestionScreenHours from '../../../components/ExperienceModule/Questionnaire/QuestionScreenHours.jsx'
 import QuestionLightSensitivity from '../../../components/ExperienceModule/Questionnaire/QuestionLightSensitivity.jsx'
 import QuestionBudget from '../../../components/ExperienceModule/Questionnaire/QuestionBudget.jsx'
-import QuestionStylePreference from '../../../components/ExperienceModule/Questionnaire/QuestionStylePreference.jsx'
 import '../../../components/ExperienceModule/pages/QuestionnairePage.css'
 
 const variants = {
@@ -33,8 +32,7 @@ export default function QuestionnairePage() {
     QuestionGraduation,
     QuestionScreenHours,
     QuestionLightSensitivity,
-    QuestionBudget,
-    QuestionStylePreference
+    QuestionBudget
   ]
   const { step, total, current: CurrentQuestion, next, answers } =
     useQuestionnaire(questions)
