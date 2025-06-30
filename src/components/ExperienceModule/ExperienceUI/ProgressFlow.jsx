@@ -9,7 +9,7 @@ export default function ProgressFlow({ currentStep, total }) {
       {[...Array(total)].map((_, i) => (
         <div
           key={i}
-          className={`circle ${
+          className={`circle-progress ${
             i < currentStep
               ? 'completed'
               : i === currentStep
