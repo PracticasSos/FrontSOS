@@ -75,10 +75,47 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.btn-primary:hover {
+.btn-primary-next:hover {
     background-color: #549AB3;
     transform: scale(1.05);
 }
+
+.btn-secondary-initial {
+  margin-top: 0.25rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-secondary-initial:hover {
+  background-color: #d5d5d5;
+  transform: scale(1.05);
+}
+.settings-icon {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  cursor: pointer;
+  color: #444;
+  z-index: 1000;
+  transition: transform 0.2s ease;
+}
+
+.settings-icon:hover {
+  transform: scale(1.1);
+  color: #549AB3;
+}
+
+.form-container {
+  position: relative; /* importante para posicionar el ícono */
+}
+
 
 /* Responsive tweaks */
 @media (max-width: 768px) {

@@ -76,12 +76,7 @@ li.selected .option-btn {
 .range-slider {
   width: 100%;
   cursor: pointer;
-}
-.range-value {
-  font-size: 1.25rem;
-  font-family: 'Satoshi', sans-serif;
-  color: #6AB1CD;
-  text-align: center;
+  accent-color: #6AB1CD; 
 }
 
 /* Grid de imágenes */

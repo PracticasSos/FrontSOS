@@ -10,7 +10,7 @@ function App() {
   return (
     <>
     {/*<h1>Componente App</h1>border={"1px solid red"}*/}
-    <Container  padding={"10px"} maxW='100%'>
+    <Container maxW='100%' px={0}>
       <AppRouter/>
     </Container>
     </>

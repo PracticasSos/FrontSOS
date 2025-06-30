@@ -5,7 +5,7 @@ import ProgressFlow from '../ExperienceUI/ProgressFlow'
 
 
 export default function Question1({ step, total, onAnswer, answer }) {
-  const options = ['Sí','No, pero me gustaría empezar a usar']
+  const options = ['Sí', 'No, pero me gustaría empezar a usar', 'He usado pero actualmente no']
   const [selected, setSelected] = useState(answer || '')
 
   useEffect(() => {

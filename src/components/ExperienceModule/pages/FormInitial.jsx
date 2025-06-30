@@ -1,27 +1,33 @@
 // src/pages/FormInitial.jsx
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../../../api/supabase'           
-import './FormInitial.css'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../../api/supabase';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { FiSettings } from 'react-icons/fi'; // Ícono de configuración
+import './FormInitial.css';
 
 export default function FormInitial() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [form, setForm] = useState({ name: '', phone: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [form, setForm] = useState({ name: '', phone: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = e => {
-    const { name, value } = e.target
-    setForm(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhoneChange = value => {
+    setForm(prev => ({ ...prev, phone: value }));
+  };
 
   const handleSubmit = async e => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    // Inserción en Supabase
     const { error: supaErr } = await supabase
       .from('contacts')
       .insert([
@@ -29,24 +35,36 @@ export default function FormInitial() {
           name: form.name.trim(),
           phone: form.phone.replace(/\s+/g, ''),
         },
-      ])
+      ]);
 
     if (supaErr) {
-      console.error('Supabase insert error:', supaErr)
-      setError('No pudimos guardar tus datos. Intenta de nuevo más tarde.')
-      setLoading(false)
-      return
+      console.error('Supabase insert error:', supaErr);
+      setError('No pudimos guardar tus datos. Intenta de nuevo más tarde.');
+      setLoading(false);
+      return;
     }
 
-    // Guardar en localStorage para usar en el cuestionario
-    localStorage.setItem('userInfo', JSON.stringify(form))
+    localStorage.setItem('userInfo', JSON.stringify(form));
 
-    setLoading(false)
-    navigate('/cuestionario')
-  }
+    setLoading(false);
+    navigate('/cuestionario');
+  };
+
+  const handleAlreadyRegistered = () => {
+    navigate('/cuestionario');
+  };
+
+  const goToSettings = () => {
+    navigate('/admin/modelos');
+  };
 
   return (
     <div className="form-container">
+      {/* Ícono de configuración */}
+      <div className="settings-icon" onClick={goToSettings}>
+        <FiSettings size={32} />
+      </div>
+
       <form className="form-card" onSubmit={handleSubmit}>
         <h2 className="form-title">Tus datos</h2>
 
@@ -69,17 +87,24 @@ export default function FormInitial() {
         <label className="form-label" htmlFor="phone">
           Teléfono
         </label>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
+        <PhoneInput
+          country={'ec'}
           value={form.phone}
-          onChange={handleChange}
-          required
-          className="form-input"
-          placeholder="Ej. 0987123456"
-          pattern="[0-9]{9,15}"
-          title="Ingresa solo dígitos, entre 9 y 15 caracteres"
+          onChange={handlePhoneChange}
+          inputProps={{
+            required: true,
+            name: 'phone',
+            id: 'phone',
+          }}
+          inputStyle={{
+            width: '100%',
+            height: '40px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            paddingLeft: '48px',
+          }}
+          containerStyle={{ width: '100%' }}
+          dropdownStyle={{ zIndex: 9999 }}
         />
 
         <button
@@ -89,7 +114,15 @@ export default function FormInitial() {
         >
           {loading ? 'Guardando…' : 'Siguiente'}
         </button>
+
+        <button
+          type="button"
+          className="btn-secondary-initial"
+          onClick={handleAlreadyRegistered}
+        >
+          Ya me he registrado antes
+        </button>
       </form>
     </div>
-  )
+  );
 }
