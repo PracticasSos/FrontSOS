@@ -237,7 +237,7 @@ const AdminDashBoard = () => {
       </SimpleGrid>
 
       <VStack mt={10} spacing={4}>
-        <Button colorScheme="red" size="lg" onClick={() => handleNavigate('/Login')}>
+        <Button colorScheme="red" size="lg" onClick={() => handleNavigate('/LoginForm')}>
           Cerrar Sesión
         </Button>
       </VStack>

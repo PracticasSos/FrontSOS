@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import SignUpForm from "../components/autorizacion/SignUpForm";
 import Welcome from "../components/Welcome";
 import LoginForm from "../components/autorizacion/LoginForm";
 import AdminDashBoard from "../components/optionsauth/OptionsAdmin";
@@ -56,7 +55,7 @@ const AppRouter = () => {
         
             <Route path="Tenants" element={<Tenants/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
             <Route path="Inventory" element={<Inventario/>}></Route>
-            <Route path="login" element={<LoginForm/>} />
+            <Route path="LoginForm" element={<LoginForm/>} />
             <Route path="Admin" element={<AdminDashBoard/>} />
             <Route path="SuperAdmin" element={<SuperAdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
             <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}

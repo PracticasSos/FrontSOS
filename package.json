@@ -21,7 +21,7 @@
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
     "@vladmandic/face-api": "^1.7.15",
     "classnames": "^2.5.1",
-    "framer-motion": "^11.3.0",
+    "framer-motion": "^11.18.2",
     "html2canvas": "^1.4.1",
     "jeelizvtowidget": "^4.9.7",
     "jspdf": "^2.5.2",

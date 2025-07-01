@@ -9,9 +9,6 @@ const Auth = () =>{
             <h1>Componente Auth</h1>
             <Grid style={styles.Grid}>{/**templateColumns='repeat(3,500px)' gap={70} placeContent={"center"} */}
                 <GridItem>
-                    <SignUpForm/>
-                </GridItem>
-                <GridItem>
                     <LoginForm/>
                 </GridItem>
             </Grid>

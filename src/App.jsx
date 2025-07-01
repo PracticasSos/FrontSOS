@@ -1,20 +1,23 @@
-// import Auth from "./components/Auth"  // Componente renderizado de auth
-//import { Container } from "@chakra-ui/react" // Contenedor para poner el componente de auth
-//import AppRouter from "./routers"
-
-import { Container } from "@chakra-ui/react" 
-import AppRouter from "../src/routers/index"
+import { useEffect, useState } from "react";
+import Welcome from "./components/Welcome";
+import { Container } from "@chakra-ui/react";
+import AppRouter from "./routers";
+import { useNavigate } from "react-router-dom";
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const navigate = useNavigate();
 
-  return (
-    <>
-    {/*<h1>Componente App</h1>border={"1px solid red"}*/}
-    <Container maxW='100%' px={0}>
-      <AppRouter/>
+  const handleWelcomeFinish = () => {
+    setShowSplash(false);
+    navigate("/LoginForm"); 
+  };
+
+  return showSplash ? (
+    <Welcome onFinish={handleWelcomeFinish} />
+  ) : (
+    <Container maxW="100%" padding="10px">
+      <AppRouter />
     </Container>
-    </>
-  )
+  );
 }
-
-export default App

@@ -1,0 +1,24 @@
+.welcome-container {
+  background-color: #1d1d1b;
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* 👈 Apila verticalmente */
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-logo {
+  max-width: 300px;
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 20px; /* 👈 Espacio entre imagen y texto */
+}
+
+.welcome-title {
+  font-family: "Orbitron", sans-serif;
+  display: flex;
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+}
