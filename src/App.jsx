@@ -20,4 +20,5 @@ function App() {
       <AppRouter />
     </Container>
   );
-}
+};
+export default App;
