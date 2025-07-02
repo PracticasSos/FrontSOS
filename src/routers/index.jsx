@@ -46,6 +46,7 @@ import Results from '../components/ExperienceModule/pages/Results.jsx'
 import VirtualTryOn3D from '../components/ExperienceModule/TryOn3D/VirtualTryOn3D.jsx'
 import AdminPanelModels from '../components/ExperienceModule/TryOn3D/AdminPanelModels.jsx';
 import MaterialSelector from '../components/ExperienceModule/pages/MaterialSelector.jsx';
+import MessageManager from "../components/Admin/MensaageManager.jsx";
 
 const AppRouter = () => {
     return(
@@ -93,6 +94,7 @@ const AppRouter = () => {
             <Route path="/PrintCertificate" element={<PrintCertificate/>}></Route>
             <Route path="/Tenant" element={<Tenant/>}></Route>
             <Route path="/UploadLogo" element={<UploadLogo/>}></Route>
+            <Route path="/MessageManager" element={<MessageManager/>}></Route>
             <Route path="/RegisterExperience" element={<FormInitial />}> </Route>
             <Route path="/cuestionario" element={<QuestionnairePage />}> </Route>
             <Route path="/resultados" element={<Results />} > </Route>

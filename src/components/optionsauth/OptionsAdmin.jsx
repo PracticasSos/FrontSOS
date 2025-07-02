@@ -50,7 +50,8 @@ const options = [
   { label: "REGISTRAR LUNAS", icon: lunasIcon },
   { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
   { label: "CREDITOS", icon: creditIcon },
-  { label: "EXPERIENCIA", icon: experienciaIcon } 
+  { label: "EXPERIENCIA", icon: experienciaIcon },
+  { label: "MENSAJES", icon: registrarPacienteIcon }
 ];
 
 const AdminDashBoard = () => {
@@ -139,6 +140,9 @@ const AdminDashBoard = () => {
       break;
       case "HISTORIAL PACIENTE":
         navigate('/HistoryClinic')
+      break;
+      case "MENSAJES":
+        navigate('/MessageManager');
       break;
       case "EXPERIENCIA":
       navigate('/RegisterExperience');
