@@ -85,14 +85,32 @@ const Sales = () => {
   }
 };
 
+ // ...existing code...
  useEffect(() => {
     if (id) {
       setSaleData((prev) => ({
         ...prev,
         patient_id: id,
       }));
+      
+      // Cargar las medidas del paciente cuando se recibe el ID por parámetro
+      if (patientMeasures.length > 0) {
+        const patientLatestMeasures = patientMeasures.filter(
+          (measure) => measure.patient_id === id
+        );
+        setFilteredMeasures(patientLatestMeasures);
+
+        if (patientLatestMeasures.length > 0) {
+          const latestMeasure = patientLatestMeasures[0];
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            measure_id: latestMeasure.id,
+          }));
+        }
+      }
     }
-  }, [id]);
+  }, [id, patientMeasures]);
+// ...existing code...
 
 
   useEffect(() => {
