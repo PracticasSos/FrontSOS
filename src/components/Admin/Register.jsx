@@ -14,7 +14,8 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Divider
+  Divider,
+  Text,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ const Register = () => {
   const [selectRoutes, setSelectRoutes] = useState([]);
   const [roles, setRoles] = useState([]);
   const [branchs, setBranchs] = useState([]);
+  const [selloFile, setSelloFile] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -164,6 +166,19 @@ const Register = () => {
       return;
     }
 
+    let selloUrl = null;
+    if (selloFile) {
+      const ext = selloFile.name.split(".").pop();
+      const fileName = `sello-${formData.ci}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("sello").upload(fileName, selloFile);
+      if (uploadError) {
+        toast({ title: "Error subiendo sello", description: uploadError.message, status: "error" });
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("sello").getPublicUrl(fileName);
+      selloUrl = urlData?.publicUrl;
+    }
+
     // 2) Insert profile into users table
     const profile = {
       auth_id:       authUser.id,
@@ -178,7 +193,8 @@ const Register = () => {
       phone_number:  formData.phone_number,
       ci:            formData.ci,
       branch_id:     formData.branch_id,
-      tenant_id:     signup.user.user_metadata.tenant_id
+      tenant_id:     signup.user.user_metadata.tenant_id,
+      sello:         selloUrl || null
     };
     const { data: userData, error: profileError } = await supabase
       .from('users')
@@ -266,8 +282,42 @@ const Register = () => {
             {renderInputField('Celular','phone_number','text')}
             {renderInputField('C.I.','ci','text')}
             {renderSelectField('Sucursal','branch_id',branchs)}
-          </SimpleGrid>
+            <FormControl>
+  <FormLabel color="teal.700" fontWeight="semibold">
+    Sello Digital (imagen)
+  </FormLabel>
+  <Box
+    border="2px dashed #CBD5E0"
+    borderRadius="lg"
+    p={4}
+    textAlign="center"
+    position="relative"
+    bg="gray.50"
+    _hover={{ bg: "gray.100", cursor: "pointer" }}
+    onClick={() => document.getElementById('selloInput').click()}
+  >
+    <Text color="gray.600" fontSize="sm">
+      Haz clic o arrastra una imagen aquí para subir el sello
+    </Text>
+    <Input
+      id="selloInput"
+      type="file"
+      accept="image/*"
+      onChange={(e) => setSelloFile(e.target.files[0])}
+      display="none"
+    />
+    {selloFile && (
+      <Box mt={4}>
+        <Text fontSize="sm" color="gray.700" fontWeight="medium">
+          Archivo seleccionado: {selloFile.name}
+        </Text>
+      </Box>
+    )}
+  </Box>
+</FormControl>
 
+
+          </SimpleGrid>
           <Box display="flex" justifyContent="space-between" mt={8}>
             <Button type="submit" colorScheme="teal">Crear Usuario</Button>
             <Button onClick={() => navigate('/Admin')} colorScheme="gray">Cancelar</Button>
