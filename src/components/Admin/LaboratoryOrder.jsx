@@ -22,7 +22,7 @@ const LaboratoryOrder = () => {
     const salesRef = useRef(null);
     const navigate = useNavigate();
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
+    const [branchPhone, setBranchPhone] = useState('');
 
     useEffect(() => {
         if (patientId) {
@@ -50,7 +50,28 @@ const LaboratoryOrder = () => {
             console.log('Usuario encontrado al cargar:', storedUser);
         }
     }, []); // Solo se ejecuta una vez al montar
+
+    useEffect(() => {
+        if (salesData?.branchs_id) {
+            fetchBranchPhone();
+        }
+    }, [salesData]);
     
+    const fetchBranchPhone = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('branchs')
+                .select('cell')
+                .eq('id', salesData.branchs_id)
+                .single();
+            
+            if (error) throw error;
+            setBranchPhone(data?.cell || '');
+        } catch (error) {
+            console.error('Error fetching branch phone:', error);
+        }
+    };
+
     const fetchPatientData = async () => {
         if (!patientId) {
             console.error("patientId is undefined or invalid.");
@@ -404,7 +425,7 @@ const LaboratoryOrder = () => {
                 <Box width="100%" padding={4}>
                     <SimpleGrid columns={1} spacing={4}>
                     {salesData || patientData ? (
-                        <PdfLaboratory formData={salesData || patientData} targetRef={salesRef} />
+                        <PdfLaboratory formData={salesData || patientData} targetRef={salesRef} branchPhone={branchPhone} branchName={salesData?.branchs?.name}/>
                     ) : (
                         <Text>No data available to generate PDF</Text>
                     )}

@@ -4,29 +4,26 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../api/supabase";
 
-const PdfLaboratory = ({ formData, targetRef }) => {
+const PdfLaboratory = ({ formData, targetRef, branchPhone, branchName }) => {
   const toast = useToast();
   const [generating, setGenerating] = useState(false);
-
-  const getWhatsAppNumber = async () => {
-    const { data, error } = await supabase
-      .from("users")
-      .select("phone_number")
-      .eq("id", 1)
-      .single();
-
-    if (error || !data?.phone_number) {
-      throw new Error("No se pudo obtener el número de WhatsApp del usuario 1.");
-    }
-
-    return data.phone_number.replace(/\D/g, ""); // Limpia el número
-  };
 
   const handleGenerateAndSend = async () => {
     if (!targetRef?.current) {
       toast({
         title: "Error",
         description: "No se encontró el contenido para generar el PDF.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (!branchPhone) {
+      toast({
+        title: "Error",
+        description: "No se encontró el número de teléfono de la sucursal.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -77,9 +74,9 @@ const PdfLaboratory = ({ formData, targetRef }) => {
       );
 
       // Subir a Supabase
-        const patientId = formData?.patient_id || "desconocido";
-        const fileName = `orden-laboratorio-${patientId}-${Date.now()}.pdf`;
-        const pdfBlob = pdf.output("blob");
+      const patientId = formData?.patient_id || "desconocido";
+      const fileName = `orden-laboratorio-${patientId}-${Date.now()}.pdf`;
+      const pdfBlob = pdf.output("blob");
 
       const { error: uploadError } = await supabase.storage
         .from("laboratory")
@@ -95,10 +92,10 @@ const PdfLaboratory = ({ formData, targetRef }) => {
 
       if (urlError || !urlData?.publicUrl) throw urlError;
 
-      // Obtener número de teléfono y enviar por WhatsApp
-      const number = await getWhatsAppNumber();
-      const message = formData.message || "Orden de laboratorio generada.";
-      const whatsappUrl = `https://wa.me/${number}?text=${encodeURIComponent(
+      // Usar el número de teléfono de la sucursal
+      const cleanPhone = branchPhone.replace(/\D/g, ""); // Limpia el número
+      const message = formData.message || `Orden de laboratorio generada para ${branchName || 'sucursal'}.`;
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
         `${message}\n\nPuedes ver el documento aquí: ${urlData.publicUrl}`
       )}`;
 
@@ -106,7 +103,7 @@ const PdfLaboratory = ({ formData, targetRef }) => {
 
       toast({
         title: "Enviado por WhatsApp",
-        description: "El PDF fue generado y enviado exitosamente.",
+        description: `El PDF fue generado y enviado exitosamente a ${branchName || 'la sucursal'}.`,
         status: "success",
         duration: 3000,
         isClosable: true,

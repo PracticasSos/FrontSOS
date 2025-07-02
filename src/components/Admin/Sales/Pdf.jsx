@@ -11,11 +11,11 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { supabase } from "../../../api/supabase";
 
-const Pdf = ({ formData, targetRef }) => {
-  const toast = useToast();
-  const [generating, setGenerating] = useState(false);
+  const Pdf = ({ formData, targetRef, onPdfUploaded }) => {
+    const toast = useToast();
+    const [generating, setGenerating] = useState(false);
 
-  const handleDownloadPdf = async () => {
+    const handleDownloadPdf = async () => {
     if (!targetRef?.current) {
       toast({
         title: "Error",
@@ -31,6 +31,8 @@ const Pdf = ({ formData, targetRef }) => {
 
     try {
       const content = targetRef.current;
+
+      // Ocultar elementos no deseados
       const buttons = content.querySelectorAll("button");
       buttons.forEach((b) => (b.style.display = "none"));
       const icons = content.querySelectorAll(".chakra-select__icon");
@@ -38,6 +40,7 @@ const Pdf = ({ formData, targetRef }) => {
       const fileInputs = content.querySelectorAll('input[type="file"]');
       fileInputs.forEach((input) => input.remove());
 
+      // Capturar canvas
       const canvas = await html2canvas(content, {
         scale: 1.2,
         backgroundColor: "#fff",
@@ -87,6 +90,12 @@ const Pdf = ({ formData, targetRef }) => {
 
       const pdfBlob = pdf.output("blob");
       const patientId = formData?.patient_id || "desconocido";
+      const saleId = formData?.sale_id;
+
+      if (!saleId) {
+        throw new Error("No se encontró el ID de la venta.");
+      }
+
       const fileName = `venta-${patientId}-${Date.now()}.pdf`;
 
       const { error: uploadError } = await supabase.storage
@@ -97,31 +106,39 @@ const Pdf = ({ formData, targetRef }) => {
 
       if (uploadError) throw uploadError;
 
-      toast({
-        title: "PDF Subido",
-        description: "El documento se ha guardado correctamente.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
       const { data: urlData, error: urlError } = supabase.storage
         .from("sales")
         .getPublicUrl(fileName);
 
       if (urlError) throw urlError;
-      return urlData.publicUrl;
 
+      const publicUrl = urlData.publicUrl;
+
+      // Notificar al padre
+      if (onPdfUploaded) {
+        await onPdfUploaded(publicUrl);
+      }
+
+      toast({
+        title: "PDF generado y guardado",
+        description: "El documento fue subido correctamente.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      return publicUrl;
     } catch (error) {
       console.error("Error generando o subiendo el PDF:", error);
       toast({
         title: "Error",
-        description: "No se pudo generar o subir el PDF.",
+        description: error.message || "No se pudo generar o subir el PDF.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     } finally {
+      // Restaurar visibilidad de botones
       const buttons = targetRef.current?.querySelectorAll("button");
       buttons?.forEach((b) => (b.style.display = "inline-block"));
       const icons = targetRef.current?.querySelectorAll(".chakra-select__icon");
@@ -129,6 +146,7 @@ const Pdf = ({ formData, targetRef }) => {
       setGenerating(false);
     }
   };
+
 
   const sendWhatsAppMessage = async () => {
     if (!formData || !formData.pt_phone) {

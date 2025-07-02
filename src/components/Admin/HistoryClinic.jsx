@@ -22,31 +22,42 @@ const HistoryClinic = () => {
     }, [selectedBranch]);
 
     const fetchPatients = async (branchId) => {
-        if (!branchId) return;
-        const { data, error } = await supabase
-            .from('sales')
-            .select('branchs_id, patients(id, pt_firstname, pt_lastname, pt_ci)')
-            .eq('branchs_id', branchId);
+      if (!branchId) return;
 
-        if (error) {
-            console.error('Error fetching patients:', error);
-        } else {
-            const uniquePatients = Array.from(
-                new Map(
-                    data
-                        .map(sale => ({
-                            ...sale.patients,
-                            branchs_id: sale.branchs_id 
-                        }))
-                        .filter(patient => patient.id !== null) 
-                        .map(patient => [`${patient.id}-${patient.branchs_id}`, patient])
-                ).values()
-            );
+      const { data, error } = await supabase
+        .from('sales')
+        .select('branchs_id, patients(id, pt_firstname, pt_lastname, pt_ci, pt_phone), pdf_url, date')
+        .eq('branchs_id', branchId)
+        .order('date', { ascending: false });
+      if (error) {
+        console.error('Error fetching patients:', error);
+        return;
+      }
 
-            setPatients(uniquePatients);
-            setFilteredPatients(uniquePatients);
+      // Mapea pacientes y evita duplicados
+      const map = new Map();
+
+      for (const sale of data) {
+        const patient = sale.patients;
+        if (patient && patient.id) {
+          const key = `${patient.id}-${sale.branchs_id}`;
+          if (!map.has(key)) {
+            map.set(key, {
+              ...patient,
+              branchs_id: sale.branchs_id,
+              pdf_url: sale.pdf_url || null,
+              date: sale.date,
+            });
+          }
         }
+      }
+
+      const uniquePatients = Array.from(map.values());
+      uniquePatients.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setPatients(uniquePatients);
+      setFilteredPatients(uniquePatients);
     };
+
 
     const fetchBranches = async () => {
       const { data, error } = await supabase
@@ -146,6 +157,22 @@ const HistoryClinic = () => {
                       <Td>{patient.pt_firstname}</Td>
                       <Td>{patient.pt_lastname}</Td>
                       <Td>{patient.pt_ci}</Td>
+                      <Td>
+                        {patient.pdf_url && (
+                          <Button
+                            size="sm"
+                            colorScheme="green"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const mensaje = `Hola ${patient.pt_firstname}, aquí está su historial clínico: ${patient.pdf_url}`;
+                              const whatsappUrl = `https://wa.me/${patient.pt_phone}?text=${encodeURIComponent(mensaje)}`;
+                              window.open(whatsappUrl, "_blank");
+                            }}
+                          >
+                            Enviar PDF
+                          </Button>
+                        )}
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>

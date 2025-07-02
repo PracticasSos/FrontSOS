@@ -491,7 +491,22 @@ const Sales = () => {
           <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
             Registrar Venta
           </Button>
-          {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
+          {saleId && <Pdf 
+          formData={{ ...saleData, ...formData, sale_id: saleId }}
+          targetRef={salesRef} 
+          onPdfUploaded={async (pdfUrl) => {
+            // Actualiza la fila en sales con la URL del PDF
+            const { error } = await supabase
+              .from('sales')
+              .update({ pdf_url: pdfUrl })
+              .eq('id', saleId);
+            if (error) {
+              console.error('Error actualizando pdf_url:', error);
+            } else {
+              console.log('PDF URL actualizado correctamente');
+            }
+        }}
+          />}
       </Box>
     </Box>
   );  
