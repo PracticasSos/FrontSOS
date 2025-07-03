@@ -1,0 +1,138 @@
+/* Fondo general centrado */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Contenedor principal */
+.lens-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #f2f2f2;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 3.5rem;
+  gap: 5rem;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6);
+  max-width: 1200px;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Vista del lente */
+.lens-preview {
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 300px;
+  flex: 1 1 300px;
+}
+
+canvas {
+  background: #f2f2f2;
+  border-radius: 1rem;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Controles compartidos */
+.control-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f2f2f2;
+  border-radius: 1rem;
+  padding: 1rem;
+  gap: 1rem;
+  flex: 1 1 150px;
+  min-width: 150px;
+  max-width: 200px;
+  height: 100%;
+  justify-content: center;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: #000000;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Slider vertical */
+.opacity-slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vertical-slider {
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical; /* <-- Esto es lo que te pide agregar */
+  width: 12px;
+  height: 300px;
+  background: transparent;
+  margin: 1rem 0;
+}
+
+
+.opacity-label {
+  font-size: 1.25rem;
+  color: #000000;
+  font-weight: 700;
+}
+
+/* Botones de colores */
+.color-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.color-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+.color-button.selected {
+  border: 2px solid #fff;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .lens-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .control-box {
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: none;
+    width: 100%;
+  }
+
+  .color-options {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .vertical-slider {
+    transform: rotate(90deg);
+    height: 12px;
+    width: 150px;
+  }
+}

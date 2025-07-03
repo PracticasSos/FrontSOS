@@ -47,6 +47,7 @@ import VirtualTryOn3D from '../components/ExperienceModule/TryOn3D/VirtualTryOn3
 import AdminPanelModels from '../components/ExperienceModule/TryOn3D/AdminPanelModels.jsx';
 import MaterialSelector from '../components/ExperienceModule/pages/MaterialSelector.jsx';
 import MessageManager from "../components/Admin/MensaageManager.jsx";
+import LensCustomizer from "../components/ExperienceModule/pages/LensCustomizer.jsx";
 
 const AppRouter = () => {
     return(
@@ -101,6 +102,7 @@ const AppRouter = () => {
             <Route path="/tryon" element={<VirtualTryOn3D />} > </Route>
             <Route path="/admin/modelos" element={<AdminPanelModels />} />
             <Route path="/material" element={<MaterialSelector />} />
+            <Route path="/lens" element={<LensCustomizer />} />
 
         </Routes>
     )
