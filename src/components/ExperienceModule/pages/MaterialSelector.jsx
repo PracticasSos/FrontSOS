@@ -29,7 +29,7 @@ export default function MaterialSelector() {
   return (
     <div className="page-container">
       <div className="content-wrapper">
-        <h1 className="main-title">Materiales de Lunas</h1>
+        {/* <h1 className="main-title">Materiales de Lunas</h1> */}
         <div className="selector-container">
           {materials.map((mat, idx) => (
             <div key={mat.name} className="material-card">

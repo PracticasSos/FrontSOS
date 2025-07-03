@@ -16,7 +16,7 @@ function App() {
   return showSplash ? (
     <Welcome onFinish={handleWelcomeFinish} />
   ) : (
-    <Container maxW="100%" padding="10px">
+    <Container maxW="100%" padding="0px">
       <AppRouter />
     </Container>
   );
