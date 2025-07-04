@@ -3,28 +3,31 @@
 .vto-container {
   display: flex;
   flex-direction: column;
-  align-items: center;      /* centra horizontalmente */
-  justify-content: center;  /* centra verticalmente */
-  width: 100%;          /* 100% de la altura de la ventana */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   box-sizing: border-box;
   padding: 16px;
-  background: #f2f2f2;
+  background: #f9f9f9;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .vto-view {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   aspect-ratio: 1;
   background: #000;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .vto-canvas {
   width: 100%;
   height: 100%;
   display: block;
+  border-radius: 12px;
 }
 
 .vto-loading {
@@ -36,46 +39,74 @@
   color: white;
   font-weight: bold;
   background: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
+  font-size: 1.2rem;
+  z-index: 2;
+  border-radius: 12px;
 }
 
-.vto-selector {
-  margin-top: 16px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.vto-category + .vto-category {
-  margin-top: 12px;
-}
-
-.vto-category-title {
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.vto-model-list {
+.vto-carousel {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
 }
 
-.vto-btn {
-  padding: 6px 12px;
+.vto-model {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 12px 8px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 40px; /* espacio para flechas */
+  user-select: none;
+}
+
+.vto-nav {
+  background: none;
   border: none;
-  background: #f0f0f0;
-  border-radius: 4px;
+  font-size: 2rem;
+  color: #555;
   cursor: pointer;
-  font-size: 0.8rem;
-  transition: background 0.2s;
+  transition: color 0.2s, transform 0.2s;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.vto-btn.active {
-  background: #333;
-  color: #fff;
+.vto-nav:hover {
+  color: #000;
+  transform: scale(1.1);
 }
 
-.vto-btn:hover {
-  background: #ddd;
+.vto-nav.left {
+  position: absolute;
+  left: 0;
+}
+
+.vto-nav.right {
+  position: absolute;
+  right: 0;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .vto-model {
+    font-size: 0.9rem;
+    margin: 0 30px;
+  }
+
+  .vto-nav {
+    font-size: 1.8rem;
+  }
 }

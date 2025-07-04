@@ -1,65 +1,84 @@
-import { useState, useEffect } from 'react'
-import { getRecommendations } from '../utils/recommendationLogic'
-import Loader from '../../ExperienceModule/ExperienceUI/Loader'
-import './Recommendations.css'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { getRecommendations } from '../utils/recommendationLogic';
+import Loader from '../../ExperienceModule/ExperienceUI/Loader';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import './Recommendations.css';
 
 export default function Recommendations() {
-  const [recs, setRecs] = useState(null)
-  const [faceShape, setFaceShape] = useState('')
-  const [stage, setStage] = useState('loading')
-  const [extrasOpen, setExtrasOpen] = useState(false)
+  const [recs, setRecs] = useState(null);
+  const [faceShape, setFaceShape] = useState('');
+  const [stage, setStage] = useState('loading');
+  const [extrasOpen, setExtrasOpen] = useState(false);
 
   const handleFinish = () => {
-    const stored = JSON.parse(localStorage.getItem('answers')) || []
-    const detectedShape = stored[5] || ''
-    setFaceShape(detectedShape)
-    setRecs(getRecommendations(stored))
-    setStage('show')
-  }
+    const stored = JSON.parse(localStorage.getItem('answers')) || [];
+    const detectedShape = stored[5] || '';
+    setFaceShape(detectedShape);
+    setRecs(getRecommendations(stored));
+    setStage('show');
+  };
 
   useEffect(() => {
-    if (stage === 'loading') handleFinish()
-  }, [])
+    if (stage === 'loading') handleFinish();
+  }, []);
 
-  if (stage === 'loading') return <Loader onFinish={handleFinish} />
+  if (stage === 'loading') return <Loader onFinish={handleFinish} />;
 
   const main = [
-    { key: 'frameByShape', title: 'Montura', value: recs.frameByShape },
-    { key: 'frameMaterial', title: 'Material', value: recs.frameMaterial },
-    { key: 'transition', title: 'Transition / Polarizado', value: recs.transition }
-  ]
+    {
+      key: 'frameByShape',
+      title: 'Montura',
+      value: recs.frameByShape,
+      image: '../src/assets/armazonresult.png',
+    },
+    {
+      key: 'frameMaterial',
+      title: 'Material',
+      value: recs.frameMaterial,
+      image: '../src/assets/materialresult.png',
+    },
+    {
+      key: 'transition',
+      title: 'Transition / Polarizado',
+      value: recs.transition,
+      image: '../src/assets/transitionresult.png',
+    },
+  ];
 
   const extras = [
     faceShape && { label: 'Forma de tu rostro', value: faceShape },
     { label: 'Tipo de lente', value: recs.lensType },
     { label: 'Antirreflejante', value: recs.antiReflective },
     recs.astigmatismNote && { label: 'Astigmatismo', value: recs.astigmatismNote }
-  ].filter(Boolean)
+  ].filter(Boolean);
 
   return (
     <div className="results-container centered">
-      {/* <h2 className="results-title">¡Aquí están tus recomendaciones!</h2> */}
-
       <div className="cards-stack">
         <AnimatePresence>
           {main.map((card, i) => (
             <motion.div
               key={card.key}
-              className="result-card black-card"
+              className="result-card styled-card"
               initial={{ y: -200, opacity: 0 }}
               animate={{
                 y: 0,
                 opacity: 1,
-                x: i === 0 ? -350 : i === 2 ? 350 : 0
+                x: i === 0 ? -220 : i === 2 ? 220 : 0
               }}
               exit={{ opacity: 0 }}
-              transition={{ delay: i * 0.5 + 0.5, type: 'spring', stiffness: 120 }}
+              transition={{ delay: i * 0.3 + 0.3, type: 'spring', stiffness: 120 }}
             >
-              <div className="card-icon">★</div>
-              <h3>{card.title}</h3>
-              <p>{card.value}</p>
+              <div className="card-image-wrapper">
+                <img src={card.image} alt={card.title} className="card-image" />
+                <div className="card-overlay">
+                  <h4>{card.title}</h4>
+                </div>
+              </div>
+              <div className="card-content-dark">
+                <p>{card.value}</p>
+              </div>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -90,5 +109,5 @@ export default function Recommendations() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

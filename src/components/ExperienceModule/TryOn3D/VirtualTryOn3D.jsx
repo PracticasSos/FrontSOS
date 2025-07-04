@@ -8,9 +8,10 @@ export default function VirtualTryOn3D() {
   const canvasRef = useRef(null);
 
   const [models, setModels] = useState([]);
-  const [selectedSKU, setSelectedSKU] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingModels, setLoadingModels] = useState(true);
+  const [widgetStarted, setWidgetStarted] = useState(false);
 
   // Obtener modelos activos desde Supabase
   useEffect(() => {
@@ -19,16 +20,13 @@ export default function VirtualTryOn3D() {
       const { data, error } = await supabase
         .from('glasses_models')
         .select('sku, label')
-        .eq('is_active', true) // ✅ corregido
+        .eq('is_active', true)
         .order('label', { ascending: true });
 
       if (error) {
         console.error('Error cargando modelos:', error.message);
       } else {
         setModels(data);
-        if (data.length > 0) {
-          setSelectedSKU(data[0].sku); // Selecciona el primero por defecto
-        }
       }
 
       setLoadingModels(false);
@@ -37,33 +35,47 @@ export default function VirtualTryOn3D() {
     fetchModels();
   }, []);
 
-  // Inicializar el widget al cargar por primera vez
+  // Inicializar JEELIZ una sola vez
   useEffect(() => {
-    if (!selectedSKU) return;
-
-    JEELIZVTOWIDGET.start({
-      placeHolder: placeholderRef.current,
-      canvas: canvasRef.current,
-      callbacks: {
-        LOADING_START: () => setIsLoading(true),
-        LOADING_END: () => setIsLoading(false),
-      },
-      sku: selectedSKU,
-      callbackReady: () => console.log('Widget listo'),
-      onError: (err) => console.error('Error VTO:', err),
-    });
+    if (!widgetStarted && models.length > 0) {
+      const sku = models[currentIndex]?.sku;
+      JEELIZVTOWIDGET.start({
+        placeHolder: placeholderRef.current,
+        canvas: canvasRef.current,
+        callbacks: {
+          LOADING_START: () => setIsLoading(true),
+          LOADING_END: () => setIsLoading(false),
+        },
+        sku,
+        callbackReady: () => {
+          console.log('Widget listo');
+          setWidgetStarted(true);
+        },
+        onError: (err) => console.error('Error VTO:', err),
+      });
+    }
 
     return () => {
-      JEELIZVTOWIDGET.destroy();
+      JEELIZVTOWIDGET.destroy(); // Limpieza si el componente se desmonta
     };
-  }, [selectedSKU]);
+  }, [models, widgetStarted]);
 
-  // Cargar nuevo modelo al cambiar el SKU
+  // Cambiar modelo cuando cambia el índice
   useEffect(() => {
-    if (selectedSKU) {
-      JEELIZVTOWIDGET.load(selectedSKU);
+    const sku = models[currentIndex]?.sku;
+    if (sku && widgetStarted) {
+      JEELIZVTOWIDGET.load(sku);
     }
-  }, [selectedSKU]);
+  }, [currentIndex, models, widgetStarted]);
+
+  // Navegación
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + models.length) % models.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % models.length);
+  };
 
   return (
     <div className="vto-container">
@@ -72,21 +84,17 @@ export default function VirtualTryOn3D() {
         {isLoading && <div className="vto-loading">CARGANDO...</div>}
       </div>
 
-      <div className="vto-selector">
+      <div className="vto-carousel">
         {loadingModels ? (
           <div className="vto-loading">Cargando modelos...</div>
         ) : (
-          <div className="vto-model-list">
-            {models.map(({ sku, label }) => (
-              <button
-                key={sku}
-                className={`vto-btn ${sku === selectedSKU ? 'active' : ''}`}
-                onClick={() => setSelectedSKU(sku)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <>
+            <button className="vto-nav left" onClick={handlePrev}>&larr;</button>
+            <div className="vto-model">
+              <span>{models[currentIndex]?.label}</span>
+            </div>
+            <button className="vto-nav right" onClick={handleNext}>&rarr;</button>
+          </>
         )}
       </div>
     </div>

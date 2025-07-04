@@ -22,6 +22,11 @@
   text-align: center;
 }
 
+.range-value  {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
 /* Subtítulo */
 .question-subtitle {
   font-size: 1rem;
