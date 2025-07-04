@@ -3,6 +3,9 @@ import { getRecommendations } from '../utils/recommendationLogic';
 import Loader from '../../ExperienceModule/ExperienceUI/Loader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import frameByShapeImg from '../../../assets/armazonresult.png';
+import frameMaterialImg from '../../../assets/materialresult.png';
+import transitionImg from '../../../assets/transitionresult.png';
 import './Recommendations.css';
 
 export default function Recommendations() {
@@ -30,19 +33,19 @@ export default function Recommendations() {
       key: 'frameByShape',
       title: 'Montura',
       value: recs.frameByShape,
-      image: '../src/assets/armazonresult.png',
+      image: frameByShapeImg,
     },
     {
       key: 'frameMaterial',
       title: 'Material',
       value: recs.frameMaterial,
-      image: '../src/assets/materialresult.png',
+      image: frameMaterialImg,
     },
     {
       key: 'transition',
       title: 'Transition / Polarizado',
       value: recs.transition,
-      image: '../src/assets/transitionresult.png',
+      image: transitionImg,
     },
   ];
 
