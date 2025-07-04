@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import "./MaterialSelector.css";
+import plasticoImg from "../../../assets/plastico.png";
+import policarbonatoImg from "../../../assets/policarbonato.png";
+import cristalImg from "../../../assets/cristal.png";
 
 const materials = [
   {
     name: "Plástico",
-    imgSrc: "../src/assets/plastico.png",
+    imgSrc: plasticoImg,
     info: "Ventajas: resistente, económico.\nDesventajas: menor claridad que cristal.",
   },
   {
     name: "Policarbonato",
-    imgSrc: "../src/assets/policarbonato.png",
+    imgSrc: policarbonatoImg,
     info: "Ventajas: muy ligero, buena claridad óptica.\nDesventajas: se raya fácil.",
   },
   {
     name: "Cristal",
-    imgSrc: "../src/assets/cristal.png",
+    imgSrc: cristalImg,
     info: "Ventajas: máxima claridad, muy resistente a rayaduras.\nDesventajas: más pesado y caro.",
   },
 ];
