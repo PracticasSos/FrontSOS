@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image, useBreakpointValue, VStack, Heading,
   useColorModeValue} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import experienciaIcon from "../../assets/experiencia.jpg";
+import experienciaIcon from "../../assets/experiencia.png";
 import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
 import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
 import cierreCajaIcon from "../../assets/cierreCaja.jpg";
