@@ -197,6 +197,26 @@ const Sales = () => {
   
 
   const handleSubmit = async () => {
+    if (!formData.payment_in) {
+      toast({
+        title: "Error",
+        description: "Por favor, seleccione un método de pago.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!formData.branchs_id) {
+      toast({
+        title: "Error",
+        description: "Por favor, seleccione una sucursal.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
     const signatureDataUrl = formData.signature;
       if (!signatureDataUrl) {
       console.error("La firma no ha sido proporcionada.");
@@ -240,7 +260,7 @@ const Sales = () => {
       payment_in: formData.payment_in,
       patient_id: saleData.patient_id || null,
       lens_id: formData.lens_id || null,
-      branchs_id: formData.branchs_id || null,
+      branchs_id: formData.branchs_id,
       total_p_frame: isNaN(parseFloat(formData.total_p_frame)) ? 0 : parseFloat(formData.total_p_frame),
       total_p_lens: isNaN(parseFloat(formData.total_p_lens)) ? 0 : parseFloat(formData.total_p_lens),
       discount_frame: isNaN(parseFloat(formData.discount_frame)) ? 0 : parseFloat(formData.discount_frame),
