@@ -1,10 +1,9 @@
 /* contenedor full-page centrado */
-.page-container {
+.page-container-material {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #f2f2f2;
 }
 
 /* Contenedor general que incluye el título y el selector */
@@ -28,15 +27,18 @@
 
 /* contenedor principal de los ítems */
 .selector-container {
-  width: 1150px;
   display: flex;
-  gap: 2rem;
-  justify-content: space-around;
-  align-items: center;;
-  padding: 4rem;
+  flex-direction: row;
   background-color: #ffffff;
+  color: #fff;
+  padding: 2rem;
   border-radius: 3.5rem;
+  gap: 5rem;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.6);
+  max-width: 1200px;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* cada tarjeta/material */

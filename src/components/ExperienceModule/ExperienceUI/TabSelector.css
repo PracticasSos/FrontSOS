@@ -48,3 +48,16 @@
   transform: scale(1.02);
 }
 
+/* Estilos para pantallas pequeñas (menores a 600px) */
+@media (max-width: 600px) {
+  .radiotab-inputs {
+    font-size: 16px; /* un poco más pequeño */
+    gap: rem; /* menos espacio entre botones */
+    padding: 0rem;
+  }
+
+  .radiotab-inputs .radiotab .name {
+    padding: 0.25rem 0.25rem; /* menos padding */
+    font-size: 15px; /* tamaño de texto ligeramente reducido */
+  }
+}

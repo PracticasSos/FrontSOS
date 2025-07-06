@@ -30,7 +30,7 @@ export default function MaterialSelector() {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container-material">
       <div className="content-wrapper">
         {/* <h1 className="main-title">Materiales de Lunas</h1> */}
         <div className="selector-container">

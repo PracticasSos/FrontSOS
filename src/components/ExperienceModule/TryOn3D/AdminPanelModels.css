@@ -101,3 +101,21 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(18px);
 }
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+  .admin-table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.75rem 1rem;
+    white-space: nowrap; /* Previene que el texto se divida en varias líneas */
+  }
+}

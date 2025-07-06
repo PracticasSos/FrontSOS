@@ -130,8 +130,11 @@ canvas {
     justify-content: center;
   }
 
+  
   .vertical-slider {
-    transform: rotate(90deg);
+    transform: rotate(0deg); /* quitar rotación */
+    writing-mode: lr-tb; /* horizontal */
+    appearance: auto; /* restablecer */
     height: 12px;
     width: 150px;
   }
