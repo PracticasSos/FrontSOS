@@ -1,152 +1,165 @@
-import React, { useState, useEffect, useRef } from 'react'
-import '@tensorflow/tfjs-backend-webgl'
-import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection'
-import '../Questionnaire/questionsStyles.css'
-import './FaceShapeQuestion.css'
-import ProgressFlow from '../ExperienceUI/ProgressFlow'
+import React, { useRef, useEffect, useState } from 'react';
+import Webcam from 'react-webcam';
+import { FaceMesh } from '@mediapipe/face_mesh';
+import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
+import * as cam from '@mediapipe/camera_utils';
+
+import ProgressFlow from '../ExperienceUI/ProgressFlow';
+import '../Questionnaire/questionsStyles.css';
+import './FaceShapeQuestion.css';
 
 export default function FaceShapeQuestion({ step, total, onAnswer }) {
-  const videoRef = useRef(null)
-  const canvasRef = useRef(null)
-  const [detector, setDetector] = useState(null)
-  const [status, setStatus] = useState('')
-  const [error, setError] = useState('')
+  const webcamRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [faceShape, setFaceShape] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [isScanning, setIsScanning] = useState(false);
+  const [landmarkSnapshot, setLandmarkSnapshot] = useState(null);
+  const [cameraInstance, setCameraInstance] = useState(null);
 
+  // Start face mesh & camera on mount
   useEffect(() => {
-    async function loadDetector() {
-      try {
-        const det = await faceLandmarksDetection.createDetector(
-          faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
-          {
-            runtime: 'tfjs',
-            refineLandmarks: true,
-            maxFaces: 1,
-          }
-        )
-        setDetector(det)
-        console.log('✅ Modelo cargado correctamente')
-      } catch (err) {
-        console.error(err)
-        setError('Error al cargar el modelo de detección facial.')
-      }
-    }
-    loadDetector()
-  }, [])
+    const faceMesh = new FaceMesh({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+    });
 
-  useEffect(() => {
-    let stream
-    let animationId
-    let analysisTimeout
+    faceMesh.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
 
-    const startAndDetect = async () => {
-      if (!detector) return
-      setStatus('detecting-face')
+    faceMesh.onResults(onResults);
 
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            facingMode: 'user',
-          },
-        })
-
-        const video = videoRef.current
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
-
-        video.srcObject = stream
-        await video.play()
-
-        video.onloadedmetadata = () => {
-          console.log('🎥 Video dimensions:', video.videoWidth, video.videoHeight)
-
-          canvas.width = video.videoWidth
-          canvas.height = video.videoHeight
-
-          async function detectLoop() {
-            if (video.paused || video.ended) return
-
-            const faces = await detector.estimateFaces(video)
-            console.log('Faces detected:', faces)
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-            if (faces.length > 0) {
-              const face = faces[0]
-              const keypoints = face.keypoints
-
-              // Dibuja puntos faciales
-              ctx.fillStyle = 'lime'
-              for (const point of keypoints) {
-                ctx.beginPath()
-                ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI)
-                ctx.fill()
-              }
-
-              // Dibuja caja de detección
-              if (face.box) {
-                ctx.strokeStyle = 'red'
-                ctx.lineWidth = 2
-                ctx.strokeRect(face.box.xMin, face.box.yMin, face.box.width, face.box.height)
-              }
-
-              setStatus('detecting-shape')
-
-              if (!analysisTimeout) {
-                analysisTimeout = setTimeout(() => {
-                  const shape = analyzeFaceShapeFromMesh(keypoints)
-                  onAnswer(shape)
-                }, 8000)
-              }
-            }
-
-            animationId = requestAnimationFrame(detectLoop)
-          }
-
-          detectLoop()
+    if (
+      webcamRef.current &&
+      webcamRef.current.video &&
+      webcamRef.current.video.readyState >= 3
+    ) {
+      startCamera(faceMesh);
+    } else {
+      const interval = setInterval(() => {
+        if (
+          webcamRef.current &&
+          webcamRef.current.video &&
+          webcamRef.current.video.readyState >= 3
+        ) {
+          startCamera(faceMesh);
+          clearInterval(interval);
         }
-      } catch (err) {
-        console.error('❌ Error al acceder a la cámara:', err)
-        setError('No se pudo acceder a la cámara.')
-      }
+      }, 100);
     }
-
-    startAndDetect()
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId)
-      if (analysisTimeout) clearTimeout(analysisTimeout)
-      if (stream) stream.getTracks().forEach((t) => t.stop())
+      if (cameraInstance) cameraInstance.stop();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isScanning && landmarkSnapshot) {
+      const shape = determineFaceShape(landmarkSnapshot);
+      setFaceShape(shape);
+      onAnswer(shape); // ✅ integrado al flujo del cuestionario
     }
-  }, [detector, onAnswer])
+  }, [isScanning, landmarkSnapshot]);
 
-  const analyzeFaceShapeFromMesh = (keypoints) => {
-    const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y)
+  const startCamera = (faceMesh) => {
+    const camera = new cam.Camera(webcamRef.current.video, {
+      onFrame: async () => {
+        await faceMesh.send({ image: webcamRef.current.video });
+      },
+      width: 640,
+      height: 480,
+    });
 
-    const jawWidth = dist(keypoints[234], keypoints[454])
-    const cheekWidth = dist(keypoints[93], keypoints[323])
-    const foreheadWidth = dist(keypoints[151], keypoints[378])
-    const chin = keypoints[152]
-    const midForehead = keypoints[10]
-    const faceLength = dist(chin, midForehead)
+    setIsScanning(true);
+    setProgress(0);
+    camera.start();
+    setCameraInstance(camera);
 
-    const ratios = {
-      lengthToCheek: faceLength / cheekWidth,
-      cheekToJaw: cheekWidth / jawWidth,
-      cheekToForehead: cheekWidth / foreheadWidth,
+    // Progreso tipo "loading bar"
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsScanning(false);
+        }
+        return prev + 1.25;
+      });
+    }, 100);
+  };
+
+  const onResults = (results) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 640;
+    canvas.height = 480;
+
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+      const landmarks = results.multiFaceLandmarks[0];
+
+      drawConnectors(ctx, landmarks, FaceMesh.FACEMESH_TESSELATION, {
+        color: '#00FFAA',
+        lineWidth: 0.5,
+      });
+      drawLandmarks(ctx, landmarks, { color: '#FF6F61', radius: 1 });
+
+      // Guarda solo una vez
+      if (!landmarkSnapshot) {
+        setLandmarkSnapshot(landmarks);
+      }
     }
+    ctx.restore();
+  };
 
-    if (ratios.lengthToCheek > 1.5) return 'oblongo'
+  const distance = (a, b) => {
+    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+  };
+
+  const determineFaceShape = (landmarks) => {
+    const forehead = landmarks[10];
+    const chin = landmarks[152];
+    const leftJaw = landmarks[234];
+    const rightJaw = landmarks[454];
+    const leftCheek = landmarks[93];
+    const rightCheek = landmarks[323];
+    const faceHeight = distance(forehead, chin);
+    const jawWidth = distance(leftJaw, rightJaw);
+    const cheekWidth = distance(leftCheek, rightCheek);
+    const foreheadWidth = distance(landmarks[67], landmarks[297]);
+    const ratioWidthToHeight = cheekWidth / faceHeight;
+
     if (
-      Math.abs(jawWidth - cheekWidth) / cheekWidth < 0.05 &&
-      Math.abs(foreheadWidth - cheekWidth) / cheekWidth < 0.05
-    ) return 'cuadrado'
-    if (ratios.cheekToJaw > 1.15 && ratios.cheekToForehead > 1.1) return 'diamante'
-    if (ratios.cheekToJaw > 1.05 && foreheadWidth > jawWidth) return 'corazón'
-    if (ratios.cheekToJaw < 1.05 && ratios.lengthToCheek < 1.25) return 'redondo'
-    return 'ovalado'
-  }
+      Math.abs(jawWidth - cheekWidth) < 0.03 &&
+      Math.abs(cheekWidth - foreheadWidth) < 0.03 &&
+      ratioWidthToHeight > 0.9
+    ) {
+      return 'Cuadrado';
+    } else if (ratioWidthToHeight > 0.9) {
+      return 'Redondo';
+    } else if (foreheadWidth > jawWidth && cheekWidth > jawWidth) {
+      return 'Corazón';
+    } else if (cheekWidth > foreheadWidth && cheekWidth > jawWidth) {
+      return 'Diamante';
+    } else if (jawWidth > foreheadWidth && jawWidth > cheekWidth) {
+      return 'Triangular';
+    } else {
+      return 'Ovalado';
+    }
+  };
+
+  const handleRetry = () => {
+    setFaceShape(null);
+    setLandmarkSnapshot(null);
+    setProgress(0);
+    setIsScanning(true);
+  };
 
   return (
     <div className="question-card FaceShapeQuestion--container">
@@ -156,29 +169,28 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         Permite tu cámara para detectar tu rostro automáticamente.
       </p>
 
-      <div className="camera-wrapper">
-        <video
-          ref={videoRef}
-          className="video-only"
-          playsInline
-          muted
-          autoPlay
-        />
-        <canvas
-          ref={canvasRef}
-          className="overlay-canvas"
-        />
-      </div>
-
-      <div className="status-area">
-        {status === 'detecting-face' && <p>Detectando tu cara...</p>}
-        {status === 'detecting-shape' && (
-          <div className="loader">
-            <p>Analizando tu tipo de rostro...</p>
+      <div className="camera-preview">
+        <Webcam ref={webcamRef} className="preview-video" mirrored />
+        <canvas ref={canvasRef} className="overlay-canvas" />
+        {isScanning && (
+          <div className="scanning-text">
+            Escaneando rostro... {Math.floor(progress)}%
           </div>
         )}
-        {error && <p className="error-text">{error}</p>}
       </div>
+
+      {!isScanning && faceShape && (
+        <div className="photo-result">
+          <p className="question-subtitle">
+            Forma detectada: <strong>{faceShape}</strong>
+          </p>
+          <div className="actions">
+            <button className="btn-secondary" onClick={handleRetry}>
+              Volver a intentar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
