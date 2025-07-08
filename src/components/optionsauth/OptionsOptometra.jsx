@@ -3,49 +3,50 @@ import { Box, SimpleGrid, Text, Image, Button } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
 
-import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
-import cierredeCajaIcon from "../../assets/cierredeCaja.svg";
-import ordenLaboratorioIcon from "../../assets/ordenLaboratorio.jpg";
-import enviosIcon from "../../assets/envios.svg";
-import ventaIcon from "../../assets/venta.jpg";
-import retirosIcon from "../../assets/retiros.jpg";
-import saldosIcon from "../../assets/pediente.jpg";
-import egresosIcon from "../../assets/egresos.svg";
-import historiaClinicaIcon from "../../assets/historiaClinica.svg";
-import inventarioIcon from "../../assets/inventario.svg";
-import usuariosIcon from "../../assets/usuarios.svg";
-import laboratoriosIcon from "../../assets/laboratorios.svg";
-import sucursalesIcon from "../../assets/sucursales.svg";
-import certificadoVisualIcon from "../../assets/certificadovisual.jpg";
-import medidasIcon from "../../assets/medidas.svg";
-import creditIcon from "../../assets/creditos.jpg";
-import registarlunasIcon from "../../assets/registrarlunas.svg";
-import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
-import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
+import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
+import iconocierrediario from "../../assets/iconocierrediario.png";
+import iconoconsultarcierre from "../../assets/iconoconsultarcierre.png";
+import iconocreditos from "../../assets/iconocreditos.png";
+import iconoegresos from "../../assets/iconoegresos.png";
+import iconoenvios from "../../assets/iconoenvios.png";
+import iconoexperienciausuario from "../../assets/iconoexperienciausuario.png";
+import iconohistorialmedidas from "../../assets/iconohistorialmedidas.png";
+import iconohistorialventa from "../../assets/iconohistorialventa.png";
+import iconoinventario from "../../assets/iconoinventario.png";
+import iconolaboratorios from "../../assets/iconolaboratorios.png";
+import iconolunas from "../../assets/iconolunas.png";
+import iconomedidas from "../../assets/iconomedidas.png";
+import iconomensajes from "../../assets/iconomensajes.png";
+import iconoordenlaboratorio from "../../assets/iconoordenlaboratorio.png";
+import iconoregistrar from "../../assets/iconoregistrar.png";
+import iconoretiros from "../../assets/iconoretiros.png";
+import iconossaldos from "../../assets/iconossaldos.png";
+import iconosucursal from "../../assets/iconosucursal.png";
+import iconousuarios from "../../assets/iconousuarios.png";
+import iconoventa from "../../assets/iconoventa.png";
 
 const defaultOptions = [
-  { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon, route: "/RegisterPatient" },
-  { label: "HISTORIAL DE VENTAS", icon: historiaClinicaIcon, route: "/HistoryClinic" },
-  { label: "REGISTRAR MEDIDAS", icon: medidasIcon, route: "/MeasuresFinal" },
-  { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon, route: "/HistoryMeasureList" }
+  { label: "REGISTRAR PACIENTE", icon: iconoregistrar, route: "/RegisterPatient" },
+  { label: "HISTORIAL DE VENTAS", icon: iconohistorialventa, route: "/HistoryClinic" },
+  { label: "REGISTRAR MEDIDAS", icon: iconomedidas, route: "/MeasuresFinal" },
+  { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas, route: "/HistoryMeasureList" }
 ];
 
 const extraRouters = [
-  { label: "ORDEN DE LABORATORIO", icon: ordenLaboratorioIcon, route: "/OrderLaboratoryList" },
-  { label: "ENVIOS", icon: enviosIcon },
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon, route: "/Sales" },
-  { label: "RETIROS", icon: retirosIcon, route: "/RetreatsPatients" },
-  { label: "CIERRE", icon: cierredeCajaIcon, route: "/PatientRecords" },
-  { label: "SALDOS", icon: saldosIcon, route: "/BalancesPatient" },
-  { label: "EGRESOS", icon: egresosIcon, route: "/Egresos" },
-  { label: "INVENTARIO", icon: inventarioIcon, route: "/Inventory" },
-  { label: "USUARIOS", icon: usuariosIcon, route: "/Register" },
-  { label: "LABORATORIOS", icon: laboratoriosIcon, route: "/Labs" },
-  { label: "SUCURSAL", icon: sucursalesIcon, route: "/Branch" },
-  { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon, route: "/CashClousure" },
-  { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
-  { label: "REGISTRAR LUNAS", icon: registarlunasIcon, route: "/RegisterLens" },
-  { label: "CREDITOS", icon: creditIcon, route: "/Balance" }
+    { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
+    { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa, route: "/Sales" },
+    { label: "RETIROS", icon: iconoretiros, route: "/RetreatsPatients" },
+    { label: "CIERRE", icon: iconocierrediario, route: "/PatientRecords" },
+    { label: "SALDOS", icon: iconossaldos, route: "/BalancesPatient" },
+    { label: "EGRESOS", icon: iconoegresos, route: "/Egresos" },
+    { label: "CREDITOS", icon: iconocreditos, route: "/Balance" },
+    { label: "INVENTARIO", icon: iconoinventario, route: "/Inventory" },
+    { label: "REGISTRAR LUNAS", icon: iconolunas, route: "/RegisterLens" },
+    { label: "USUARIOS", icon: iconousuarios, route: "/Register" },
+    { label: "LABORATORIOS", icon: iconolaboratorios, route: "/Labs" },
+    { label: "SUCURSAL", icon: iconosucursal, route: "/Branch" },
+    { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre, route: "/CashClousure" },
+    { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual, route: "/VisualCertificate" },
 ];
 
 const OptometraDashBoard = () => {

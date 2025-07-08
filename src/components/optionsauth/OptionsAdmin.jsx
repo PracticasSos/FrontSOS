@@ -2,26 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, SimpleGrid, Text, Image, useBreakpointValue, VStack, Heading,
   useColorModeValue} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import experienciaIcon from "../../assets/experiencia.png";
-import registrarPacienteIcon from "../../assets/registrarPaciente.jpg";
-import consultarCierredeCajaIcon from "../../assets/consultarCierredeCaja.svg";
-import cierreCajaIcon from "../../assets/cierreCaja.jpg";
-import laboratorioOrdenIcon from "../../assets/ordenLaboratorio.jpg";
-import enviosIcon from "../../assets/envios.svg";
-import ventaIcon from "../../assets/venta.jpg";
-import retirosIcon from "../../assets/retiros.jpg";
-import saldosIcon from "../../assets/pediente.jpg";
-import egresosIcon from "../../assets/egresos.jpg";
-import historiaClinicaIcon from "../../assets/historiaClinica.svg";
-import inventarioIcon from "../../assets/inventario.jpg";
-import usuariosIcon from "../../assets/usuarios.svg";
-import laboratoriosIcon from "../../assets/laboratorios.svg";
-import sucursalesIcon from "../../assets/sucursales.svg";
-import certificadoVisualIcon from "../../assets/certificadovisual.jpg";
-import medidasIcon from "../../assets/medidas.jpg";
-import creditIcon from "../../assets/creditos.jpg";
-import lunasIcon from "../../assets/lunas.jpg";
-import medidasHistorialIcon from "../../assets/medidasHistorial.svg";
+import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
+import iconocierrediario from "../../assets/iconocierrediario.png";
+import iconoconsultarcierre from "../../assets/iconoconsultarcierre.png";
+import iconocreditos from "../../assets/iconocreditos.png";
+import iconoegresos from "../../assets/iconoegresos.png";
+import iconoenvios from "../../assets/iconoenvios.png";
+import iconoexperienciausuario from "../../assets/iconoexperienciausuario.png";
+import iconohistorialmedidas from "../../assets/iconohistorialmedidas.png";
+import iconohistorialventa from "../../assets/iconohistorialventa.png";
+import iconoinventario from "../../assets/iconoinventario.png";
+import iconolaboratorios from "../../assets/iconolaboratorios.png";
+import iconolunas from "../../assets/iconolunas.png";
+import iconomedidas from "../../assets/iconomedidas.png";
+import iconomensajes from "../../assets/iconomensajes.png";
+import iconoordenlaboratorio from "../../assets/iconoordenlaboratorio.png";
+import iconoregistrar from "../../assets/iconoregistrar.png";
+import iconoretiros from "../../assets/iconoretiros.png";
+import iconossaldos from "../../assets/iconossaldos.png";
+import iconosucursal from "../../assets/iconosucursal.png";
+import iconousuarios from "../../assets/iconousuarios.png";
+import iconoventa from "../../assets/iconoventa.png";
+import usuariofemenino from "../../assets/usuariofemenino.png";
+import usuariomasculino from "../../assets/usuariomasculino.png";
 import { supabase } from '../../api/supabase';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -32,27 +35,27 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 const options = [
-  { label: "REGISTRAR PACIENTE", icon: registrarPacienteIcon },
-  { label: "HISTORIAL PACIENTE", icon:  historiaClinicaIcon }, 
-  { label: "ORDEN DE LABORATORIO", icon: laboratorioOrdenIcon }, 
-  { label: "ENVIOS", icon: enviosIcon }, 
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: ventaIcon },
-  { label: "RETIROS", icon: retirosIcon },
-  { label: "CIERRE", icon: cierreCajaIcon },
-  { label: "SALDOS", icon: saldosIcon },
-  { label: "EGRESOS", icon: egresosIcon },
-  { label: "HISTORIAL DE MEDIDAS", icon: medidasHistorialIcon },
-  { label: "INVENTARIO", icon: inventarioIcon },
-  { label: "USUARIOS", icon: usuariosIcon },
-  { label: "LABORATORIOS", icon: laboratoriosIcon },
-  { label: "SUCURSAL", icon: sucursalesIcon },
-  { label: "CONSULTAR CIERRE", icon: consultarCierredeCajaIcon },
-  { label: "IMPRIMIR CERTIFICADO", icon: certificadoVisualIcon },
-  { label: "REGISTRAR LUNAS", icon: lunasIcon },
-  { label: "REGISTRAR MEDIDAS", icon: medidasIcon },
-  { label: "CREDITOS", icon: creditIcon },
-  { label: "EXPERIENCIA", icon: experienciaIcon },
-  { label: "MENSAJES", icon: registrarPacienteIcon }
+  { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
+  { label: "HISTORIAL PACIENTE", icon:  iconohistorialventa }, 
+  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio }, 
+  { label: "ENVIOS", icon: iconoenvios }, 
+  { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
+  { label: "RETIROS", icon: iconoretiros },
+  { label: "CIERRE", icon: iconocierrediario },
+  { label: "SALDOS", icon: iconossaldos },
+  { label: "EGRESOS", icon: iconoegresos },
+  { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
+  { label: "INVENTARIO", icon: iconoinventario },
+  { label: "USUARIOS", icon: iconousuarios },
+  { label: "LABORATORIOS", icon: iconolaboratorios },
+  { label: "SUCURSAL", icon: iconosucursal },
+  { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre },
+  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual },
+  { label: "REGISTRAR LUNAS", icon: iconolunas },
+  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
+  { label: "CREDITOS", icon: iconocreditos },
+  { label: "EXPERIENCIA", icon: iconoexperienciausuario },
+  { label: "MENSAJES", icon: iconomensajes }
 ];
 
 const AdminDashBoard = () => {
