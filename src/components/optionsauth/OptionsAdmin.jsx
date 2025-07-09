@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Box, SimpleGrid, Text, Image, useBreakpointValue, VStack, Heading,
-  useColorModeValue} from '@chakra-ui/react';
+import { Box,
+  Flex,
+  Text,
+  Image,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  useColorModeValue,} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
 import iconocierrediario from "../../assets/iconocierrediario.png";
@@ -29,33 +39,36 @@ import { supabase } from '../../api/supabase';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Autoplay, Pagination, Navigation } from 'swiper/modules';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import { Imag } from '@tensorflow/tfjs';
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
+  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
+  { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
+  { label: "RETIROS", icon: iconoretiros },
+  { label: "EXPERIENCIA", icon: iconoexperienciausuario },
+  { label: "USUARIOS", icon: iconousuarios },
+  { label: "SALDOS", icon: iconossaldos },
+  { label: "MENSAJES", icon: iconomensajes },
+  { label: "CIERRE", icon: iconocierrediario },
+  { label: "EGRESOS", icon: iconoegresos },
+  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual },
+
   { label: "HISTORIAL PACIENTE", icon:  iconohistorialventa }, 
   { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio }, 
   { label: "ENVIOS", icon: iconoenvios }, 
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
-  { label: "RETIROS", icon: iconoretiros },
-  { label: "CIERRE", icon: iconocierrediario },
-  { label: "SALDOS", icon: iconossaldos },
-  { label: "EGRESOS", icon: iconoegresos },
   { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
   { label: "INVENTARIO", icon: iconoinventario },
-  { label: "USUARIOS", icon: iconousuarios },
   { label: "LABORATORIOS", icon: iconolaboratorios },
   { label: "SUCURSAL", icon: iconosucursal },
   { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre },
-  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual },
   { label: "REGISTRAR LUNAS", icon: iconolunas },
-  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
-  { label: "CREDITOS", icon: iconocreditos },
-  { label: "EXPERIENCIA", icon: iconoexperienciausuario },
-  { label: "MENSAJES", icon: iconomensajes }
+  { label: "CREDITOS", icon: iconocreditos }
 ];
 
 const AdminDashBoard = () => {
@@ -92,11 +105,23 @@ const AdminDashBoard = () => {
 
   const handleOptionClick = (label) => {
     switch (label) {
-      case "USUARIOS":
-        navigate('/Register');
-        break;
       case "REGISTRAR PACIENTE":
         navigate('/RegisterPatient');
+        break;
+      case "REGISTRAR MEDIDAS":
+        navigate('/MeasuresFinal');
+        break;
+      case "VENTA/ CONTRATO DE SERVICIO":
+        navigate('/Sales');
+        break;
+      case "RETIROS":
+        navigate('/RetreatsPatients')
+        break;
+      case "EXPERIENCIA":
+        navigate('/RegisterExperience');
+        break;
+      case "USUARIOS":
+        navigate('/Register');
         break;
       case "INVENTARIO":
         navigate('/Inventory');
@@ -110,14 +135,8 @@ const AdminDashBoard = () => {
       case "CONSULTAR CIERRE":
         navigate('/CashClousure');
         break;
-      case "VENTA/ CONTRATO DE SERVICIO":
-        navigate('/Sales');
-        break;
       case "REGISTRAR LUNAS":
         navigate('/RegisterLens');
-        break;
-      case "REGISTRAR MEDIDAS":
-        navigate('/MeasuresFinal');
         break;
       case "CIERRE":
         navigate('/PatientRecords');
@@ -130,9 +149,6 @@ const AdminDashBoard = () => {
         break;
       case "SALDOS":
         navigate('/BalancesPatient')
-        break;
-      case "RETIROS":
-        navigate('/RetreatsPatients')
         break;
       case "CREDITOS":
         navigate('/Balance')
@@ -149,9 +165,6 @@ const AdminDashBoard = () => {
       case "MENSAJES":
         navigate('/MessageManager');
       break;
-      case "EXPERIENCIA":
-      navigate('/RegisterExperience');
-      break;
       default:
     }
   };
@@ -160,157 +173,163 @@ const AdminDashBoard = () => {
     navigate(route);
   };
 
+
   const carouselItems = options.slice(0, 5);
   const bgCard = useColorModeValue('white', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.100');
+  const moreItems = [
+    { label: "HISTORIAL PACIENTE", icon: iconohistorialventa },
+    { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
+    { label: "ENVIOS", icon: iconoenvios },
+    { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
+    { label: "INVENTARIO", icon: iconoinventario },
+    { label: "LABORATORIOS", icon: iconolaboratorios },
+    { label: "SUCURSAL", icon: iconosucursal },
+    { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre },
+    { label: "REGISTRAR LUNAS", icon: iconolunas },
+    { label: "CREDITOS", icon: iconocreditos }
+  ];
 
   return (
     <Box
       bgGradient="linear(to-b, #bde9f0, rgb(56, 145, 170))"
       minH="100vh"
-      py={[8, 10]}
-      px={[4, 6, 8]}
-      textAlign="center"
-      color="white"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
     >
+      <Flex
+        bg="gray.200"
+        px={6}
+        py={3}
+        align="center"
+        justify="space-between"
+        boxShadow="sm"
+      >
+        {/* Izquierda: Espaciador invisible */}
+        <Box />
 
-      {!showAll ? (
-        <>
-          {/* CARRUSEL */}
-          <Box maxW="100%" mx="auto">
-            <Swiper
-              effect="coverflow"
-              grabCursor
-              centeredSlides
-              slidesPerView={3}
-              loop={true}
-              autoplay={{ delay: 3000 }}
-              navigation={true}
-              modules={[EffectCoverflow, Autoplay, Navigation]}
-              coverflowEffect={{
-                rotate: 0,
-                stretch: 0,
-                depth: 200,
-                modifier: 2.5,
-                slideShadows: false,
-              }}
-              loopFillGroupWithBlank={true}
-              breakpoints={{
-                0: {
-                  slidesPerView: 3,
-                  spaceBetween: 10,
-                },
-                768: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
-                1024: {
-                  slidesPerView: 3,
-                  spaceBetween: 30,
-                },
-              }}
-              style={{ paddingBottom: '40px' }}
+        {/* Centro: Menú */}
+        <Flex gap={20} align="center">
+          <Text
+            fontWeight="medium"
+            cursor="pointer"
+            onClick={() => navigate('/')}
+          >
+            Inicio
+          </Text>
+          <Text
+            fontWeight="medium"
+            cursor="pointer"
+            onClick={() => navigate('/PrintCertificate')}
+          >
+            Certificado
+          </Text>
+          <Text
+            fontWeight="medium"
+            cursor="pointer"
+            onClick={() => navigate('/egresos')}
+          >
+            Egresos
+          </Text>
+        </Flex>
+
+        {/* Derecha: Iconos */}
+        <Flex gap={4} align="center">
+          {/* Avatar redondo que navega a perfil */}
+          <Image
+            src={iconocierrediario} // o usuariomasculino
+            w="55px"
+            h="55px"
+            borderRadius="full"
+            cursor="pointer"
+            onClick={() => navigate('/PatientRecords')}
+            border="2px solid #50bcd8"
+            objectFit="cover"
+          />
+
+          {/* Botón tipo menú desplegable */}
+            <Menu>
+            <MenuButton>
+              <Image
+                src={usuariomasculino} 
+                w="55px"
+                h="55px"
+                borderRadius="full"
+                cursor="pointer"
+                border="2px solid #50bcd8"
+                objectFit="cover"
+                _hover={{ opacity: 0.8 }}
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => navigate('/Register')}>
+                Registrar Usuario
+              </MenuItem>
+              <MenuItem onClick={() => navigate('/BalancesPatient')}>
+                Saldos Pendientes
+              </MenuItem>
+              <MenuItem onClick={() => navigate('/MessageManager')}>
+                Mensajes
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+      </Flex>
+
+      {/* ZONA CENTRAL */}
+      <Flex
+        direction="column"
+        align="center"
+        py={[8, 10]}
+        px={[4, 6, 8]}
+        mt={32}
+        textAlign="center"
+      >
+        {/* Tarjetas */}
+        <Flex
+          justify="center"
+          align="center"
+          flexWrap="wrap"
+          gap={6}
+          mb={10}
+        >
+          {(showAll ? moreItems : carouselItems).map((option, index) => (
+            <Box
+              key={index}
+              bg={bgCard}
+              borderRadius="xl"
+              boxShadow="lg"
+              overflow="hidden"
+              w={["120px", "140px", "160px"]}
+              h={["160px", "180px", "200px"]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              transition="0.3s"
+              _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+              onClick={() => handleOptionClick(option.label)}
             >
-              {carouselItems.map((option, index) => (
-                <SwiperSlide
-                  key={index}
-                  style={{
-                    width: '240px',
-                    height: 'auto',
-                  }}
-                  onClick={() => handleOptionClick(option.label)}
-                >
-                  <Box
-                    bg={bgCard}
-                    borderRadius="2xl"
-                    overflow="hidden"
-                    boxShadow="2xl"
-                    transition="0.3s"
-                    _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
-                    h={['160px', '260px', '360px']}
-                  >
-                    <Image
-                      src={option.icon}
-                      alt={option.label}
-                      w="100%"
-                      h="100%"
-                      objectFit="cover"
-                    />
-                  </Box>
-                  <Text mt={2} fontSize="sm" fontWeight="semibold" color={textColor}>
-                    {option.label}
-                  </Text>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </Box>
+              <Image
+                src={option.icon}
+                alt={option.label}
+                w="60%"
+                h="60%"
+                objectFit="contain"
+              />
+            </Box>
+          ))}
+        </Flex>
 
-          <Heading mt={6} fontSize={["2xl", "3xl", "4xl"]} fontWeight="bold">
-            Opciones Disponibles
-          </Heading>
-
-          <Button
-            mt={6}
-            colorScheme="whiteAlpha"
-            variant="outline"
-            size="lg"
-            borderRadius="full"
-            onClick={() => setShowAll(true)}
-            _hover={{ bg: "whiteAlpha.300" }}
-          >
-            Buscar más
-          </Button>
-        </>
-      ) : (
-        <>
-          {/* TODAS LAS TARJETAS */}
-          <Heading mb={6} fontSize={["2xl", "3xl", "4xl"]} fontWeight="bold">
-            Todas las Opciones
-          </Heading>
-
-          <SimpleGrid columns={[2, 3, 4]} spacing={5}>
-            {options.map((option, index) => (
-              <Box key={index} textAlign="center">
-                <Box
-                  onClick={() => handleOptionClick(option.label)}
-                  bg={bgCard}
-                  borderRadius="2xl"
-                  boxShadow="lg"
-                  overflow="hidden"
-                  transition="0.3s"
-                  _hover={{ transform: 'scale(1.05)', cursor: 'pointer', shadow: 'xl' }}
-                >
-                  <Image
-                    src={option.icon}
-                    alt={option.label}
-                    w="100%"
-                    h={["120px", "160px", "200px"]}
-                    objectFit="cover"
-                  />
-                </Box>
-                <Text mt={2} fontSize="sm" fontWeight="medium" color={textColor}>
-                  {option.label}
-                </Text>
-              </Box>
-            ))}
-          </SimpleGrid>
-
-          <Button
-            mt={10}
-            colorScheme="whiteAlpha"
-            variant="outline"
-            size="lg"
-            borderRadius="full"
-            onClick={() => setShowAll(false)}
-            _hover={{ bg: "whiteAlpha.300" }}
-          >
-            Volver al carrusel
-          </Button>
-        </>
-      )}
+        {/* Botón Ver más */}
+        <Button
+          colorScheme="whiteAlpha"
+          variant="outline"
+          size="lg"
+          borderRadius="full"
+          onClick={() => setShowAll(!showAll)}
+          _hover={{ bg: "whiteAlpha.300" }}
+        >
+         {showAll ? "Ver menos" : "Ver más"}
+        </Button>
+      </Flex>
     </Box>
   );
 };
