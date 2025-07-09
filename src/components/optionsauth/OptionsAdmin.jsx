@@ -3,8 +3,6 @@ import { Box,
   Flex,
   Text,
   Image,
-  IconButton,
-  Avatar,
   Menu,
   MenuButton,
   MenuList,
@@ -37,14 +35,11 @@ import usuariofemenino from "../../assets/usuariofemenino.png";
 import usuariomasculino from "../../assets/usuariomasculino.png";
 import { supabase } from '../../api/supabase';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { Imag } from '@tensorflow/tfjs';
+
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar },

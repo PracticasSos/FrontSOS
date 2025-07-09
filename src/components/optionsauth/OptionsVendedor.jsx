@@ -1,7 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Box, SimpleGrid, Text, Image, Spinner, Center } from '@chakra-ui/react';
+import { Box,
+  Flex,
+  Text,
+  Image,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Center,
+  Spinner,
+  useColorModeValue,} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
+
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
 import iconocierrediario from "../../assets/iconocierrediario.png";
@@ -24,6 +40,7 @@ import iconossaldos from "../../assets/iconossaldos.png";
 import iconosucursal from "../../assets/iconosucursal.png";
 import iconousuarios from "../../assets/iconousuarios.png";
 import iconoventa from "../../assets/iconoventa.png";
+import usuariomasculino from "../../assets/usuariomasculino.png";
 
 const defaultOptions = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar, route: "/RegisterPatient" },
@@ -46,10 +63,11 @@ const extraRouters = [
   { label: "LABORATORIOS", icon: iconolaboratorios, route: "/Labs" },
   { label: "SUCURSAL", icon: iconosucursal, route: "/Branch" },
   { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre, route: "/CashClousure" },
-  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual, route: "/VisualCertificate" },
+  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual, route: "/PrintCertificate" },
 ];
 
 const VendedorDashBoard = () => {
+  const [showAll, setShowAll] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [allowedRoutes, setAllowedRoutes] = useState([]);
@@ -61,43 +79,95 @@ const VendedorDashBoard = () => {
     return [...defaultFiltered, ...extraFiltered];
   };
 
+  const handleOptionClick = (label) => {
+    const option = allowedRoutes.find(opt => opt.label === label);
+    if (option && option.route) {
+      navigate(option.route);
+    }
+  };
+
   useEffect(() => {
-    const loadUser = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) console.error("Error al obtener la sesión:", sessionError);
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (session) {
+          const currentUser = session.user;
+          setUser(currentUser);
+          localStorage.setItem("user", JSON.stringify(currentUser));
+          localStorage.setItem("session", JSON.stringify(session));
 
-      const currentUser = session?.user || JSON.parse(localStorage.getItem('user'));
+          const { data: permissions, error: permissionsError } = await supabase
+            .from("user_permissions")
+            .select("route")
+            .eq("auth_id", currentUser.id);
 
-      if (!currentUser) {
-        navigate('/Login');
-        return;
-      }
+          if (permissionsError) {
+            console.error("Error al obtener permisos:", permissionsError);
+            // TEMPORAL: Mostrar todas las opciones por defecto si hay error
+            setAllowedRoutes(defaultOptions);
+          } else {
+            const permittedRoutes = permissions.map(p => p.route);
+            console.log("Permisos obtenidos:", permittedRoutes);
+            const filteredRoutes = getRoutesByPermissions(permittedRoutes);
+            console.log("Rutas filtradas:", filteredRoutes);
+            setAllowedRoutes(filteredRoutes);
+          }
 
-      setUser(currentUser);
-      localStorage.setItem('user', JSON.stringify(currentUser));
-
-      const { data: permissions, error: permissionsError } = await supabase
-        .from('user_permissions')
-        .select('route')
-        .eq('auth_id', currentUser.id);
-
-
-      if (permissionsError) {
-        console.error("Error al obtener permisos:", permissionsError);
+          setLoading(false);
+        }
+      } else if (event === "SIGNED_OUT") {
+        localStorage.removeItem("user");
+        localStorage.removeItem("session");
+        setUser(null);
         setAllowedRoutes([]);
-      } else if (!permissions || permissions.length === 0) {
-        console.warn("El usuario no tiene permisos asignados.");
-        setAllowedRoutes([]);
-      } else {
-        const permittedRoutes = permissions.map(p => p.route);
-        setAllowedRoutes(getRoutesByPermissions(permittedRoutes));
+        navigate("/Login");
       }
+    });
 
+    // Verificar sesión existente
+    const sessionFromStorage = localStorage.getItem("session");
+    const userFromStorage = localStorage.getItem("user");
+
+    if (sessionFromStorage && userFromStorage) {
+      const user = JSON.parse(userFromStorage);
+      setUser(user);
+      
+      // TEMPORAL: Cargar permisos para usuario existente
+      const loadPermissions = async () => {
+        const { data: permissions, error: permissionsError } = await supabase
+          .from("user_permissions")
+          .select("route")
+          .eq("auth_id", user.id);
+
+        if (permissionsError) {
+          console.error("Error al obtener permisos:", permissionsError);
+          setAllowedRoutes(defaultOptions);
+        } else {
+          const permittedRoutes = permissions.map(p => p.route);
+          const filteredRoutes = getRoutesByPermissions(permittedRoutes);
+          setAllowedRoutes(filteredRoutes);
+        }
+      };
+
+      loadPermissions();
       setLoading(false);
-    };
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setUser(session.user);
+          localStorage.setItem("user", JSON.stringify(session.user));
+          localStorage.setItem("session", JSON.stringify(session));
+        } else {
+          navigate("/Login");
+        }
+        setLoading(false);
+      });
+    }
 
-    loadUser();
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
   }, [navigate]);
+
 
   if (loading) {
     return (
@@ -111,32 +181,152 @@ const VendedorDashBoard = () => {
     return <Text>No se encontró el usuario</Text>;
   }
 
+  const carouselItems = allowedRoutes.slice(0, 5);
+  const moreItems = allowedRoutes.slice(5);
+  const bgCard = useColorModeValue('white', 'gray.700');
+
   return (
     <>
-      <Button onClick={() => {
-        supabase.auth.signOut();
-        localStorage.removeItem('user');
-        navigate('/Login');
-      }} mt={4}>
-        Cerrar Sesión
-      </Button>
-
-      <SimpleGrid columns={[2, null, 4]} spacing={5} mt={4}>
-        {allowedRoutes.map((option, index) => (
-          <Box
-            key={index}
-            textAlign="center"
-            p={5}
-            boxShadow="md"
-            borderRadius="md"
-            _hover={{ bg: "gray.100", cursor: "pointer" }}
-            onClick={() => option.route && navigate(option.route)}
+      <Box
+            bgGradient="linear(to-b, #bde9f0, rgb(56, 145, 170))"
+            minH="100vh"
           >
-            <Image src={option.icon} alt={option.label} boxSize="40px" mb={3} mx="auto" />
-            <Text>{option.label}</Text>
+            <Flex
+              bg="gray.200"
+              px={6}
+              py={3}
+              align="center"
+              justify="space-between"
+              boxShadow="sm"
+            >
+              {/* Izquierda: Espaciador invisible */}
+              <Box />
+      
+              {/* Centro: Menú */}
+              <Flex gap={20} align="center">
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/')}
+                >
+                  Inicio
+                </Text>
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/PrintCertificate')}
+                >
+                  Certificado
+                </Text>
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/egresos')}
+                >
+                  Egresos
+                </Text>
+              </Flex>
+      
+              {/* Derecha: Iconos */}
+              <Flex gap={4} align="center">
+                {/* Avatar redondo que navega a perfil */}
+                <Image
+                  src={iconocierrediario} // o usuariomasculino
+                  w="55px"
+                  h="55px"
+                  borderRadius="full"
+                  cursor="pointer"
+                  onClick={() => navigate('/PatientRecords')}
+                  border="2px solid #50bcd8"
+                  objectFit="cover"
+                />
+      
+                {/* Botón tipo menú desplegable */}
+                  <Menu>
+                  <MenuButton>
+                    <Image
+                      src={usuariomasculino} 
+                      w="55px"
+                      h="55px"
+                      borderRadius="full"
+                      cursor="pointer"
+                      border="2px solid #50bcd8"
+                      objectFit="cover"
+                      _hover={{ opacity: 0.8 }}
+                    />
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem onClick={() => navigate('/RegisterPatient')}>
+                      Registrar Paciente
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate('/BalancesPatient')}>
+                      Saldos Pendientes
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate('/MessageManager')}>
+                      Mensajes
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Flex>
+            </Flex>
+      
+            {/* ZONA CENTRAL */}
+            <Flex
+              direction="column"
+              align="center"
+              py={[8, 10]}
+              px={[4, 6, 8]}
+              mt={32}
+              textAlign="center"
+            >
+              {/* Tarjetas */}
+              <Flex
+                justify="center"
+                align="center"
+                flexWrap="wrap"
+                gap={6}
+                mb={10}
+              >
+                {(showAll ? moreItems : carouselItems).map((option, index) => (
+                  <Box
+                    key={index}
+                    bg={bgCard}
+                    borderRadius="xl"
+                    boxShadow="lg"
+                    overflow="hidden"
+                    w={["120px", "140px", "160px"]}
+                    h={["160px", "180px", "200px"]}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    transition="0.3s"
+                    _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                    onClick={() => handleOptionClick(option.label)}
+                  >
+                    <Image
+                      src={option.icon}
+                      alt={option.label}
+                      w="60%"
+                      h="60%"
+                      objectFit="contain"
+                    />
+                  </Box>
+                ))}
+              </Flex>
+      
+              {/* Botón Ver más */}
+              <Button
+                colorScheme="whiteAlpha"
+                variant="outline"
+                size="lg"
+                borderRadius="full"
+                onClick={() => setShowAll(!showAll)}
+                _hover={{ bg: "whiteAlpha.300" }}
+              >
+               {showAll ? "Ver menos" : "Ver más"}
+              </Button>
+            </Flex>
           </Box>
-        ))}
-      </SimpleGrid>
     </>
   );
 };

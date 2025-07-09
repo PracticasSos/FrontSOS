@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, SimpleGrid, Text, Image, Button } from '@chakra-ui/react';
+import {Box,
+  Flex,
+  Text,
+  Image,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  useColorModeValue,} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
 
@@ -116,6 +125,10 @@ const OptometraDashBoard = () => {
     }
   }, [navigate]);
 
+  const carouselItems = options.slice(0, 5);
+  const bgCard = useColorModeValue('white', 'gray.700');
+  const textColor = useColorModeValue('gray.600', 'gray.100');
+
   if (loading || !user) return null;
 
   return (
@@ -128,22 +141,146 @@ const OptometraDashBoard = () => {
         Cerrar Sesión
       </Button>
 
-      <SimpleGrid columns={[2, null, 4]} spacing={5} mt={4}>
-        {allowedRoutes.map((option, index) => (
-          <Box
-            key={index}
-            textAlign="center"
-            p={5}
-            boxShadow="md"
-            borderRadius="md"
-            _hover={{ bg: "gray.100", cursor: "pointer" }}
-            onClick={() => navigate(option.route)}
+      <Box
+            bgGradient="linear(to-b, #bde9f0, rgb(56, 145, 170))"
+            minH="100vh"
           >
-            <Image src={option.icon} alt={option.label} boxSize="40px" mb={3} mx="auto" />
-            <Text>{option.label}</Text>
+            <Flex
+              bg="gray.200"
+              px={6}
+              py={3}
+              align="center"
+              justify="space-between"
+              boxShadow="sm"
+            >
+              {/* Izquierda: Espaciador invisible */}
+              <Box />
+      
+              {/* Centro: Menú */}
+              <Flex gap={20} align="center">
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/')}
+                >
+                  Inicio
+                </Text>
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/PrintCertificate')}
+                >
+                  Certificado
+                </Text>
+                <Text
+                  fontWeight="medium"
+                  cursor="pointer"
+                  onClick={() => navigate('/egresos')}
+                >
+                  Egresos
+                </Text>
+              </Flex>
+      
+              {/* Derecha: Iconos */}
+              <Flex gap={4} align="center">
+                {/* Avatar redondo que navega a perfil */}
+                <Image
+                  src={iconocierrediario} // o usuariomasculino
+                  w="55px"
+                  h="55px"
+                  borderRadius="full"
+                  cursor="pointer"
+                  onClick={() => navigate('/PatientRecords')}
+                  border="2px solid #50bcd8"
+                  objectFit="cover"
+                />
+      
+                {/* Botón tipo menú desplegable */}
+                  <Menu>
+                  <MenuButton>
+                    <Image
+                      src={usuariomasculino} 
+                      w="55px"
+                      h="55px"
+                      borderRadius="full"
+                      cursor="pointer"
+                      border="2px solid #50bcd8"
+                      objectFit="cover"
+                      _hover={{ opacity: 0.8 }}
+                    />
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem onClick={() => navigate('/Register')}>
+                      Registrar Usuario
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate('/BalancesPatient')}>
+                      Saldos Pendientes
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate('/MessageManager')}>
+                      Mensajes
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Flex>
+            </Flex>
+      
+            {/* ZONA CENTRAL */}
+            <Flex
+              direction="column"
+              align="center"
+              py={[8, 10]}
+              px={[4, 6, 8]}
+              mt={32}
+              textAlign="center"
+            >
+              {/* Tarjetas */}
+              <Flex
+                justify="center"
+                align="center"
+                flexWrap="wrap"
+                gap={6}
+                mb={10}
+              >
+                {(showAll ? moreItems : carouselItems).map((option, index) => (
+                  <Box
+                    key={index}
+                    bg={bgCard}
+                    borderRadius="xl"
+                    boxShadow="lg"
+                    overflow="hidden"
+                    w={["120px", "140px", "160px"]}
+                    h={["160px", "180px", "200px"]}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    transition="0.3s"
+                    _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+                    onClick={() => handleOptionClick(option.label)}
+                  >
+                    <Image
+                      src={option.icon}
+                      alt={option.label}
+                      w="60%"
+                      h="60%"
+                      objectFit="contain"
+                    />
+                  </Box>
+                ))}
+              </Flex>
+      
+              {/* Botón Ver más */}
+              <Button
+                colorScheme="whiteAlpha"
+                variant="outline"
+                size="lg"
+                borderRadius="full"
+                onClick={() => setShowAll(!showAll)}
+                _hover={{ bg: "whiteAlpha.300" }}
+              >
+               {showAll ? "Ver menos" : "Ver más"}
+              </Button>
+            </Flex>
           </Box>
-        ))}
-      </SimpleGrid>
     </>
   );
 };
