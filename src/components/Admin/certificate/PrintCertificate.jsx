@@ -339,8 +339,16 @@ const PrintCertificate = () => {
     
           <Box p={[2, 3, 4]} maxWidth="1000px" mx="auto" border="1px solid #ccc" borderRadius="8px">
             <Heading size="md" mb={4}>Su diagnóstico es:</Heading>
-            <Textarea placeholder="Escriba el diagnóstico del paciente" value={formData.diagnosis} onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })} mb={4} />
-
+            <Textarea 
+              placeholder="Escriba el diagnóstico del paciente" 
+              value={formData.diagnosis} 
+              onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })} 
+              mb={4}
+              resize="vertical"
+              minHeight="100px"
+              maxHeight="300px"
+              overflowY="auto"
+            />
             <Box mb={6}>
               <Heading size="sm" mb={2}>Visión cercana</Heading>
               <Text mb={2} fontSize={["sm", "md"]}>Capacidad de leer como mínimo, las letras de la escala 1 de la carta normalizada Jaeger...</Text>

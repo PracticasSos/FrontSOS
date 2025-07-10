@@ -192,21 +192,33 @@ const AdminDashBoard = () => {
     >
       <Flex
         bg="gray.200"
-        px={6}
+        px={[3, 4, 6]}
         py={3}
         align="center"
         justify="space-between"
         boxShadow="sm"
+        flexWrap="wrap"
+        minH="60px"
       >
-        {/* Izquierda: Espaciador invisible */}
-        <Box />
+        {/* Izquierda: Espaciador invisible (solo desktop) */}
+        <Box display={{ base: "none", md: "block" }} flex="1" />
 
         {/* Centro: Menú */}
-        <Flex gap={20} align="center">
+        <Flex 
+          gap={[2, 4, 6, 20]} 
+          align="center"
+          justify="center"
+          flex={{ base: "none", md: "1" }}
+          order={{ base: 2, md: 0 }}
+          width={{ base: "100%", md: "auto" }}
+          mt={{ base: 2, md: 0 }}
+        >
           <Text
             fontWeight="medium"
             cursor="pointer"
             onClick={() => navigate('/')}
+            fontSize={["sm", "md"]}
+            whiteSpace="nowrap"
           >
             Inicio
           </Text>
@@ -214,6 +226,8 @@ const AdminDashBoard = () => {
             fontWeight="medium"
             cursor="pointer"
             onClick={() => navigate('/PrintCertificate')}
+            fontSize={["sm", "md"]}
+            whiteSpace="nowrap"
           >
             Certificado
           </Text>
@@ -221,18 +235,26 @@ const AdminDashBoard = () => {
             fontWeight="medium"
             cursor="pointer"
             onClick={() => navigate('/egresos')}
+            fontSize={["sm", "md"]}
+            whiteSpace="nowrap"
           >
             Egresos
           </Text>
         </Flex>
 
         {/* Derecha: Iconos */}
-        <Flex gap={4} align="center">
+        <Flex 
+          gap={[2, 3, 4]} 
+          align="center"
+          flex="1"
+          order={{ base: 1, md: 0 }}
+          justify={{ base: "flex-end", md: "flex-end" }}
+        >
           {/* Avatar redondo que navega a perfil */}
           <Image
-            src={iconocierrediario} // o usuariomasculino
-            w="55px"
-            h="55px"
+            src={iconocierrediario}
+            w={["40px", "45px", "55px"]}
+            h={["40px", "45px", "55px"]}
             borderRadius="full"
             cursor="pointer"
             onClick={() => navigate('/PatientRecords')}
@@ -241,12 +263,12 @@ const AdminDashBoard = () => {
           />
 
           {/* Botón tipo menú desplegable */}
-            <Menu>
+          <Menu>
             <MenuButton>
               <Image
                 src={usuariomasculino} 
-                w="55px"
-                h="55px"
+                w={["40px", "45px", "55px"]}
+                h={["40px", "45px", "55px"]}
                 borderRadius="full"
                 cursor="pointer"
                 border="2px solid #50bcd8"
