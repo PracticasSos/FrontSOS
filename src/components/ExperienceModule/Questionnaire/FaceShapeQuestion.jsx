@@ -16,70 +16,39 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const [isScanning, setIsScanning] = useState(false);
   const [landmarkSnapshot, setLandmarkSnapshot] = useState(null);
   const [cameraInstance, setCameraInstance] = useState(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
-  // Start face mesh & camera on mount
   useEffect(() => {
-    const faceMesh = new FaceMesh({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-    });
-
-    faceMesh.setOptions({
-      maxNumFaces: 1,
-      refineLandmarks: true,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
-
-    faceMesh.onResults(onResults);
-
-    if (
-      webcamRef.current &&
-      webcamRef.current.video &&
-      webcamRef.current.video.readyState >= 3
-    ) {
-      startCamera(faceMesh);
-    } else {
-      const interval = setInterval(() => {
-        if (
-          webcamRef.current &&
-          webcamRef.current.video &&
-          webcamRef.current.video.readyState >= 3
-        ) {
-          startCamera(faceMesh);
-          clearInterval(interval);
-        }
-      }, 100);
-    }
-
     return () => {
       if (cameraInstance) cameraInstance.stop();
     };
-  }, []);
+  }, [cameraInstance]);
 
   useEffect(() => {
     if (!isScanning && landmarkSnapshot) {
       const shape = determineFaceShape(landmarkSnapshot);
       setFaceShape(shape);
-      onAnswer(shape); // ✅ integrado al flujo del cuestionario
+      onAnswer(shape);
     }
   }, [isScanning, landmarkSnapshot]);
 
   const startCamera = (faceMesh) => {
-    const camera = new cam.Camera(webcamRef.current.video, {
+    const videoElement = webcamRef.current.video;
+
+    const camera = new cam.Camera(videoElement, {
       onFrame: async () => {
-        await faceMesh.send({ image: webcamRef.current.video });
+        await faceMesh.send({ image: videoElement });
       },
       width: 640,
       height: 480,
     });
 
+    setCameraInstance(camera);
+    camera.start();
+
     setIsScanning(true);
     setProgress(0);
-    camera.start();
-    setCameraInstance(camera);
 
-    // Progreso tipo "loading bar"
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -94,23 +63,20 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const onResults = (results) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
     canvas.width = 640;
     canvas.height = 480;
 
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+    if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-
       drawConnectors(ctx, landmarks, FaceMesh.FACEMESH_TESSELATION, {
         color: '#00FFAA',
         lineWidth: 0.5,
       });
       drawLandmarks(ctx, landmarks, { color: '#FF6F61', radius: 1 });
 
-      // Guarda solo una vez
       if (!landmarkSnapshot) {
         setLandmarkSnapshot(landmarks);
       }
@@ -129,19 +95,20 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     const rightJaw = landmarks[454];
     const leftCheek = landmarks[93];
     const rightCheek = landmarks[323];
+    const foreheadWidth = distance(landmarks[67], landmarks[297]);
+
     const faceHeight = distance(forehead, chin);
     const jawWidth = distance(leftJaw, rightJaw);
     const cheekWidth = distance(leftCheek, rightCheek);
-    const foreheadWidth = distance(landmarks[67], landmarks[297]);
-    const ratioWidthToHeight = cheekWidth / faceHeight;
+    const ratio = cheekWidth / faceHeight;
 
     if (
       Math.abs(jawWidth - cheekWidth) < 0.03 &&
       Math.abs(cheekWidth - foreheadWidth) < 0.03 &&
-      ratioWidthToHeight > 0.9
+      ratio > 0.9
     ) {
       return 'Cuadrado';
-    } else if (ratioWidthToHeight > 0.9) {
+    } else if (ratio > 0.9) {
       return 'Redondo';
     } else if (foreheadWidth > jawWidth && cheekWidth > jawWidth) {
       return 'Corazón';
@@ -161,6 +128,26 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     setIsScanning(true);
   };
 
+  const handleCameraReady = async () => {
+    if (!isCameraReady) {
+      const faceMesh = new FaceMesh({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+      });
+
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      faceMesh.onResults(onResults);
+      setIsCameraReady(true);
+      startCamera(faceMesh);
+    }
+  };
+
   return (
     <div className="question-card FaceShapeQuestion--container">
       <ProgressFlow currentStep={step} total={total} />
@@ -170,12 +157,22 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       </p>
 
       <div className="camera-preview">
-        <Webcam ref={webcamRef} className="preview-video" mirrored />
-        <canvas ref={canvasRef} className="overlay-canvas" />
-        {isScanning && (
-          <div className="scanning-text">
-            Escaneando rostro... {Math.floor(progress)}%
+        {!isCameraReady && (
+          <div className="loading-camera-text">
+            Iniciando cámara... por favor espera unos segundos hasta que tu rostro aparezca correctamente.
           </div>
+        )}
+
+        <Webcam
+          ref={webcamRef}
+          className={`preview-video ${isCameraReady ? 'fade-in' : 'hidden'}`}
+          onUserMedia={handleCameraReady}
+        />
+
+        {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
+
+        {isCameraReady && isScanning && (
+          <div className="scanning-text">Escaneando rostro... {Math.floor(progress)}%</div>
         )}
       </div>
 

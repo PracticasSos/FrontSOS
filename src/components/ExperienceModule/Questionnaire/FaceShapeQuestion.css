@@ -12,46 +12,63 @@
   margin-bottom: 1rem;
   color: #333;
 }
-
-.camera-container {
+.camera-preview {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  max-width: 640px;
   position: relative;
-  width: 640px;
-  max-width: 90vw;
-  height: 480px;
+  background: black;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  background-color: #000;
-  margin-bottom: 1rem;
 }
 
-.webcam-feed {
+
+.preview-video,
+.overlay-canvas {
   position: absolute;
+  top: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
   z-index: 1;
+  background-color: transparent;
 }
 
 .overlay-canvas {
-  position: absolute;
-  width: 100%;
-  height: 100%;
   z-index: 2;
   pointer-events: none;
-  background-color: transparent;
+}
+
+.loading-camera-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
 }
 
 .scanning-text {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  bottom: 12px;
+  left: 12px;
+  background-color: rgba(255, 255, 255, 0.92);
   padding: 0.5rem 1rem;
   border-radius: 12px;
   font-size: 1rem;
   color: #333;
-  z-index: 3;
+  z-index: 4;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -62,4 +79,19 @@
   color: #222;
   margin-top: 1rem;
   text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
