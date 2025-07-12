@@ -49,7 +49,7 @@ import 'swiper/css/navigation';
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
-  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
+  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
   { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
   { label: "RETIROS", icon: iconoretiros },
   { label: "EXPERIENCIA", icon: iconoexperienciausuario },
@@ -60,8 +60,8 @@ const options = [
   { label: "EGRESOS", icon: iconoegresos },
   { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual },
 
-  { label: "HISTORIAL PACIENTE", icon:  iconohistorialventa }, 
-  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio }, 
+  { label: "HISTORIAL PACIENTE", icon:  iconohistorialventa },
+  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },  
   { label: "ENVIOS", icon: iconoenvios }, 
   { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
   { label: "INVENTARIO", icon: iconoinventario },
@@ -181,7 +181,7 @@ const AdminDashBoard = () => {
   const textColor = useColorModeValue('gray.600', 'gray.100');
   const moreItems = [
     { label: "HISTORIAL PACIENTE", icon: iconohistorialventa },
-    { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
+    { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
     { label: "ENVIOS", icon: iconoenvios },
     { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
     { label: "INVENTARIO", icon: iconoinventario },
@@ -194,22 +194,25 @@ const AdminDashBoard = () => {
 
   return (
     <Box
-      bgGradient="linear(to-b, #bde9f0, rgb(56, 145, 170))"
+      bg="#000000"
       minH="100vh"
     >
       <Box
       as="nav"
-      position="fixed"
-      top="1rem"
-      left="50%"
-      transform="translateX(-50%)"
-      width="80%"
+      width="100%"
       zIndex="9999"
-      bg="rgba(13,13,13,0.5)"
-      backdropFilter="blur(10px)"
-      border="1px solid rgba(255,255,255,0.1)"
-      borderRadius="20px"
+      pt="1rem"
+      pb="1rem"
+      display="flex"
+      justifyContent="center"
     >
+      <Box
+          width="80%"
+          bg="rgba(46, 46, 46, 0.5)"
+          backdropFilter="blur(10px)"
+          border="1px solid rgba(255,255,255,0.1)"
+          borderRadius="20px"
+        >
       <Flex
         align="center"
         justify="space-between"
@@ -411,6 +414,7 @@ const AdminDashBoard = () => {
         </Flex>
       </Collapse>
     </Box>
+    </Box>
 
       {/* ZONA CENTRAL */}
       <Flex
@@ -418,7 +422,7 @@ const AdminDashBoard = () => {
         align="center"
         py={[8, 10]}
         px={[4, 6, 8]}
-        mt={32}
+        mt={24}
         textAlign="center"
       >
         {/* Tarjetas */}
@@ -432,17 +436,18 @@ const AdminDashBoard = () => {
           {(showAll ? moreItems : carouselItems).map((option, index) => (
             <Box
               key={index}
-              bg={bgCard}
               borderRadius="xl"
               boxShadow="lg"
+              bg="rgba(46, 46, 46, 0.5)"
+              border="2px solid #219BAA"
               overflow="hidden"
-              w={["120px", "140px", "160px"]}
-              h={["160px", "180px", "200px"]}
+              w={["140px", "160px", "180px"]}
+              h={["220px", "240px", "260px"]}
               display="flex"
               alignItems="center"
               justifyContent="center"
               transition="0.3s"
-              _hover={{ transform: 'scale(1.05)', cursor: 'pointer' }}
+              _hover={{ transform: 'scale(1.15)', cursor: 'pointer' }}
               onClick={() => handleOptionClick(option.label)}
             >
               <Image
