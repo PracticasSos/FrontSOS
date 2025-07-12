@@ -48,6 +48,7 @@ import AdminPanelModels from '../components/ExperienceModule/TryOn3D/AdminPanelM
 import MaterialSelector from '../components/ExperienceModule/pages/MaterialSelector.jsx';
 import MessageManager from "../components/Admin/MensaageManager.jsx";
 import LensCustomizer from "../components/ExperienceModule/pages/LensCustomizer.jsx";
+import Loader from "../components/ExperienceModule/ExperienceUI/Loader.jsx";
 
 const AppRouter = () => {
     return(
@@ -103,6 +104,8 @@ const AppRouter = () => {
             <Route path="/admin/modelos" element={<AdminPanelModels />} />
             <Route path="/material" element={<MaterialSelector />} />
             <Route path="/lens" element={<LensCustomizer />} />
+            <Route path="/loader" element={<Loader />} />
+
 
         </Routes>
     )

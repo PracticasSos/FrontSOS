@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import './Loader.css'
+import animationLens from '../../../assets/animationlens.svg'
 
 export default function Loader({ onFinish }) {
   const [progress, setProgress] = useState(0)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const totalDuration = 15000 // 15 segundos
+    const totalDuration = 15000
     const intervalMs = 100
     const step = 100 / (totalDuration / intervalMs)
 
@@ -27,7 +28,13 @@ export default function Loader({ onFinish }) {
 
   return (
     <div className="loader-container">
-      {/* Aquí podrías poner tu imagen animada */}
+      <div className="loader-animation-wrapper">
+        <img
+          className="loader-animation"
+          src={animationLens}
+          alt="Animación de lentes"
+        />
+      </div>
       <div className="loader-title">Estamos creando tus lentes perfectos</div>
       <div className="loader-bar-bg">
         <div
@@ -41,7 +48,7 @@ export default function Loader({ onFinish }) {
       <button
         className="loader-btn"
         disabled={!ready}
-        onClick={() => ready && onFinish()}
+        onClick={onFinish}
       >
         Ver mis Lentes
       </button>

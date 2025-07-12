@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
-import { FaceMesh } from '@mediapipe/face_mesh';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
 import * as cam from '@mediapipe/camera_utils';
 
@@ -71,11 +70,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      drawConnectors(ctx, landmarks, FaceMesh.FACEMESH_TESSELATION, {
+      drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
         color: '#00FFAA',
         lineWidth: 0.5,
       });
-      drawLandmarks(ctx, landmarks, { color: '#FF6F61', radius: 1 });
+      drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
 
       if (!landmarkSnapshot) {
         setLandmarkSnapshot(landmarks);
@@ -130,7 +129,8 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
   const handleCameraReady = async () => {
     if (!isCameraReady) {
-      const faceMesh = new FaceMesh({
+      const faceMeshModule = await import('@mediapipe/face_mesh');
+      const faceMesh = new faceMeshModule.FaceMesh({
         locateFile: (file) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
       });
@@ -143,6 +143,10 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       });
 
       faceMesh.onResults(onResults);
+
+      // Guardamos referencias a constantes de MediaPipe si las necesitas
+      window.FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
+
       setIsCameraReady(true);
       startCamera(faceMesh);
     }

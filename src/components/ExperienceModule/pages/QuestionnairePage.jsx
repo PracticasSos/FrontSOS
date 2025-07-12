@@ -1,7 +1,8 @@
-// src/pages/QuestionnairePage.jsx
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useState } from 'react'
 import useQuestionnaire from '../hooks/useQuestionnaire'
+import Loader from '../../../components/ExperienceModule/Questionnaire/Loader.jsx'
 import Question1 from '../../../components/ExperienceModule/Questionnaire/Question1.jsx'
 import Question2 from '../../../components/ExperienceModule/Questionnaire/Question2.jsx'
 import Question3 from '../../../components/ExperienceModule/Questionnaire/Question3.jsx'
@@ -17,11 +18,13 @@ import '../../../components/ExperienceModule/pages/QuestionnairePage.css'
 const variants = {
   initial: { rotateY: 90, opacity: 0 },
   animate: { rotateY: 0, opacity: 1 },
-  exit: { rotateY: -90, opacity: 0 } // ← Asegura que haya animación de salida
+  exit: { rotateY: -90, opacity: 0 }
 }
 
 export default function QuestionnairePage() {
   const navigate = useNavigate()
+  const [showLoader, setShowLoader] = useState(false)
+
   const questions = [
     Question1,
     Question2,
@@ -34,6 +37,7 @@ export default function QuestionnairePage() {
     QuestionLightSensitivity,
     QuestionBudget
   ]
+
   const { step, total, current: CurrentQuestion, next, answers } =
     useQuestionnaire(questions)
 
@@ -46,33 +50,43 @@ export default function QuestionnairePage() {
     } catch (err) {
       console.error('Error guardando respuestas en localStorage:', err)
     }
+
     if (step + 1 === total) {
-      navigate('/resultados')
+      setShowLoader(true) // ← Mostramos el loader si es la última
+      return
     }
+  }
+
+  const handleLoaderFinish = () => {
+    navigate('/resultados')
   }
 
   return (
     <div className="questionnaire-container">
-      <main className="question-wrapper">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            variants={variants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="motion-card"
-          >
-            <CurrentQuestion
-              step={step}
-              total={total}
-              onAnswer={handleNext}
-              answer={answers[step]}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </main>
+      {showLoader ? (
+        <Loader onFinish={handleLoaderFinish} />
+      ) : (
+        <main className="question-wrapper">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              className="motion-card"
+            >
+              <CurrentQuestion
+                step={step}
+                total={total}
+                onAnswer={handleNext}
+                answer={answers[step]}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      )}
     </div>
   )
 }

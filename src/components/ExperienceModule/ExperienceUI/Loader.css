@@ -1,61 +1,83 @@
 .loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 1rem;
-    text-align: center;
-    background: #f2f2f2;
-    font-family: 'Satoshi', sans-serif;
-  }
-  
-  .loader-title {
-    font-size: 1.75rem;
-    color: #000;
-    margin-bottom: 1.5rem;
-  }
-  
-  .loader-bar-bg {
-    width: 80%;
-    max-width: 500px;
-    height: 8px;
-    background: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.75rem;
-  }
-  
-  .loader-bar-fill {
-    height: 100%;
-    background: #6AB1CD;
-    transition: width 0.1s linear;
-  }
-  
-  .loader-subtitle {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 1.5rem;
-  }
-  
-  .loader-btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-family: 'Satoshi', sans-serif;
-    background: #6AB1CD;
-    color: #fff;
-    border: none;
-    border-radius: 24px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-  }
-  
-  .loader-btn:enabled {
-    opacity: 1;
-  }
-  
-  .loader-btn:enabled:hover {
-    opacity: 0.9;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  text-align: center;
+  background: #f2f2f2;
+  font-family: 'Satoshi', sans-serif;
+  position: relative;
+}
+
+/* NUEVO: Wrapper que recorta la parte inferior del SVG */
+.loader-animation-wrapper {
+  position: relative;
+  width: 100%;
+  height: 300px; /* controla cuánto se muestra del SVG */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: -10px; /* permite que los lentes sobresalgan */
+}
+
+/* NUEVO: Animación SVG desplazada hacia abajo */
+.loader-animation {
+  position: relative;
+  bottom: -120px; /* oculta la marca de agua */
+  width: 250px;
+  max-width: 80%;
+  height: auto;
+  display: block;
+}
+
+.loader-title {
+  font-size: 1.75rem;
+  color: #000;
+  margin-bottom: 1.5rem;
+  z-index: 1;
+}
+
+.loader-bar-bg {
+  width: 80%;
+  max-width: 500px;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.loader-bar-fill {
+  height: 100%;
+  background: #6AB1CD;
+  transition: width 0.1s linear;
+}
+
+.loader-subtitle {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.loader-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-family: 'Satoshi', sans-serif;
+  background: #6AB1CD;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.loader-btn:enabled {
+  opacity: 1;
+}
+
+.loader-btn:enabled:hover {
+  opacity: 0.9;
+}
