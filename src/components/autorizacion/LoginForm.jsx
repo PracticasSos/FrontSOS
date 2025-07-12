@@ -9,16 +9,20 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
   Text,
   Flex,
   Icon,
   useBreakpointValue,
+  Image,
+  IconButton
 } from '@chakra-ui/react'; 
-import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import './LoginForm.css';
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -162,27 +166,28 @@ const LoginForm = () => {
     <Box
       className="login-right"
       flex="1"
-      bg={{ base: "gray.50", md: "white" }}
+      bg="#333333"
       display="flex"
       flexDir="column"
+      alignItems="center"
+      justifyContent="center"
       minH="100vh"
       w="100%"
+      px={4}
     >
+
       {/* Barra superior SOLO EN MOBILE */}
-      <Box
+      <Box display="flex" flexDir="column" alignItems="center" gap={4}>
+       <Box
         display={{ base: "flex", md: "none" }}
-        w="100%"
-        h="200px"
-        bgGradient="linear(to-r, #76b5c5, rgb(62, 112, 124))"
-        alignItems="center"
-        justifyContent="center"
-        boxShadow="md"
-        flexShrink={0}
-        borderBottomRadius="3xl"
       >
-        <Text color="white" fontSize="xl" fontWeight="bold">
-          ALGORA
-        </Text>
+        <Image
+          src="/assets/loginalgora.jpg"
+          w="80px"
+          h="80px"
+          borderRadius="full"
+          objectFit="cover"
+        />
       </Box>
 
       {/* Contenedor del formulario que ocupa el resto del espacio */}
@@ -199,7 +204,7 @@ const LoginForm = () => {
           borderRadius="lg"
           color="black"
         >
-          {/*<Text
+          <Text
             fontSize="2xl" 
             fontWeight="bold"
             mb={20}
@@ -208,7 +213,6 @@ const LoginForm = () => {
           >
             Iniciar Sesión
           </Text>
-          */}
           {errorMessage && (
             <Text color="red.500" mb={4} textAlign="center" fontSize="sm">
               {errorMessage}
@@ -243,32 +247,62 @@ const LoginForm = () => {
                 </InputLeftElement>
                 <Input
                   variant="flushed"
-                  type="password"
                   name="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="********"
                   value={formData.password}
                   onChange={handleChange}
                   color="black"
                   _placeholder={{ color: "gray.400" }}
                 />
+                <InputRightElement>
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    icon={<Icon as={showPassword ? FaEyeSlash : FaEye} color="gray.400" />}
+                    onClick={() => setShowPassword(!showPassword)}
+                    _hover={{ bg: "transparent" }}
+                  />
+                </InputRightElement>
               </InputGroup>
             </FormControl>
 
             <Button
               type="submit"
-              bgGradient="linear(to-r, #76b5c5,rgb(62, 112, 124))"
+              
               color="white"
               w="100%"
               mt={10}
               borderRadius="full"
-              _hover={{ bgGradient: "linear(to-r, #76b5c5, #50bcd8)" }}
+             bg="#219BAA"
               isLoading={loading}
               loadingText="Ingresando..."
             >
               Ingresar
             </Button>
           </form>
+         <Text
+            fontSize="sm"
+            textAlign="center"
+            color="gray.500"
+            mt={6}
+            px={2}
+          >
+            Algora protege tu privacidad. ¿Quieres conocer más de nuestros servicios?{" "}
+            <Text
+              as="span"
+              color="#219BAA"
+              cursor="pointer"
+              textDecoration="underline"
+              _hover={{ color: "#1A7A87" }}
+              onClick={() => navigate("/servicios")}
+            >
+              Ingresa aquí
+            </Text>
+          </Text>  
         </Box>
+      </Box>
       </Box>
     </Box>
   </Flex>
