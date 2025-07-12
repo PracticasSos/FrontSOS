@@ -39,6 +39,7 @@ import iconousuarios from "../../assets/iconousuarios.png";
 import iconoventa from "../../assets/iconoventa.png";
 import usuariofemenino from "../../assets/usuariofemenino.png";
 import usuariomasculino from "../../assets/usuariomasculino.png";
+import avataralgora from "../../assets/avataralgora.jpg";
 import { supabase } from '../../api/supabase';
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import 'swiper/css';
@@ -277,7 +278,7 @@ const AdminDashBoard = () => {
           <Menu>
             <MenuButton>
               <Image
-                src={usuariomasculino}
+                src={avataralgora}
                 w="45px"
                 h="45px"
                 borderRadius="full"
@@ -340,7 +341,7 @@ const AdminDashBoard = () => {
               <Menu>
                 <MenuButton>
                   <Image
-                    src={usuariomasculino}
+                    src={avataralgora}
                     w="40px"
                     h="40px"
                     borderRadius="full"
