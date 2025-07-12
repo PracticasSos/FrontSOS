@@ -8,7 +8,13 @@ import { Box,
   MenuList,
   MenuItem,
   Button,
-  useColorModeValue,} from '@chakra-ui/react';
+  useColorModeValue,
+  useDisclosure,
+  IconButton,
+  Link,
+  Stack,
+  Collapse,
+  } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
 import iconocierrediario from "../../assets/iconocierrediario.png";
@@ -34,7 +40,7 @@ import iconoventa from "../../assets/iconoventa.png";
 import usuariofemenino from "../../assets/usuariofemenino.png";
 import usuariomasculino from "../../assets/usuariomasculino.png";
 import { supabase } from '../../api/supabase';
-
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
@@ -71,6 +77,7 @@ const AdminDashBoard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isOpen, onToggle } = useDisclosure();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -190,106 +197,220 @@ const AdminDashBoard = () => {
       bgGradient="linear(to-b, #bde9f0, rgb(56, 145, 170))"
       minH="100vh"
     >
+      <Box
+      as="nav"
+      position="fixed"
+      top="1rem"
+      left="50%"
+      transform="translateX(-50%)"
+      width="80%"
+      zIndex="9999"
+      bg="rgba(13,13,13,0.5)"
+      backdropFilter="blur(10px)"
+      border="1px solid rgba(255,255,255,0.1)"
+      borderRadius="20px"
+    >
       <Flex
-        bg="gray.200"
-        px={[3, 4, 6]}
-        py={3}
         align="center"
         justify="space-between"
-        boxShadow="sm"
-        flexWrap="wrap"
+        py={3}
+        px={6}
+        fontFamily="Satoshi, sans-serif"
         minH="60px"
       >
-        {/* Izquierda: Espaciador invisible (solo desktop) */}
-        <Box display={{ base: "none", md: "block" }} flex="1" />
-
-        {/* Centro: Menú */}
-        <Flex 
-          gap={[2, 4, 6, 20]} 
-          align="center"
-          justify="center"
-          flex={{ base: "none", md: "1" }}
-          order={{ base: 2, md: 0 }}
-          width={{ base: "100%", md: "auto" }}
-          mt={{ base: 2, md: 0 }}
+        {/* Logo ALGORA */}
+        <Text
+          fontSize="xl"
+          fontFamily="Chaney Extended, sans-serif"
+          fontWeight="bold"
+          color="white"
         >
+          ALGORA
+        </Text>
+
+        <Flex gap={24} align="center" display={{ base: "none", md: "flex" }}>
           <Text
-            fontWeight="medium"
+            color="white"
             cursor="pointer"
-            onClick={() => navigate('/')}
-            fontSize={["sm", "md"]}
-            whiteSpace="nowrap"
+            onClick={() => navigate("/")}
+            _hover={{ color: "#00E599" }}
+            fontWeight="medium"
           >
             Inicio
           </Text>
           <Text
-            fontWeight="medium"
+            color="white"
             cursor="pointer"
-            onClick={() => navigate('/PrintCertificate')}
-            fontSize={["sm", "md"]}
-            whiteSpace="nowrap"
+            onClick={() => navigate("/PrintCertificate")}
+            _hover={{ color: "#00E599" }}
+            fontWeight="medium"
           >
             Certificado
           </Text>
           <Text
-            fontWeight="medium"
+            color="white"
             cursor="pointer"
-            onClick={() => navigate('/egresos')}
-            fontSize={["sm", "md"]}
-            whiteSpace="nowrap"
+            onClick={() => navigate("/egresos")}
+            _hover={{ color: "#00E599" }}
+            fontWeight="medium"
           >
             Egresos
           </Text>
-        </Flex>
+          </Flex>
 
-        {/* Derecha: Iconos */}
-        <Flex 
-          gap={[2, 3, 4]} 
-          align="center"
-          flex="1"
-          order={{ base: 1, md: 0 }}
-          justify={{ base: "flex-end", md: "flex-end" }}
-        >
-          {/* Avatar redondo que navega a perfil */}
+        {/* Desktop: íconos a la derecha */}
+        <Flex display={{ base: "none", md: "flex" }} gap={8} align="center" justify="center" mt={4}>
           <Image
             src={iconocierrediario}
-            w={["40px", "45px", "55px"]}
-            h={["40px", "45px", "55px"]}
+            w="45px"
+            h="45px"
+            objectFit="cover"
+            objectPosition="bottom"
             borderRadius="full"
             cursor="pointer"
-            onClick={() => navigate('/PatientRecords')}
+            onClick={() => navigate("/PatientRecords")}
             border="2px solid #50bcd8"
-            objectFit="cover"
           />
-
-          {/* Botón tipo menú desplegable */}
           <Menu>
             <MenuButton>
               <Image
-                src={usuariomasculino} 
-                w={["40px", "45px", "55px"]}
-                h={["40px", "45px", "55px"]}
+                src={usuariomasculino}
+                w="45px"
+                h="45px"
                 borderRadius="full"
                 cursor="pointer"
                 border="2px solid #50bcd8"
-                objectFit="cover"
                 _hover={{ opacity: 0.8 }}
               />
             </MenuButton>
-            <MenuList>
-              <MenuItem onClick={() => navigate('/Register')}>
+            <MenuList zIndex="99999">
+              <MenuItem onClick={() => navigate("/Register")}>
                 Registrar Usuario
               </MenuItem>
-              <MenuItem onClick={() => navigate('/BalancesPatient')}>
+              <MenuItem onClick={() => navigate("/BalancesPatient")}>
                 Saldos Pendientes
               </MenuItem>
-              <MenuItem onClick={() => navigate('/MessageManager')}>
+              <MenuItem onClick={() => navigate("/MessageManager")}>
                 Mensajes
               </MenuItem>
             </MenuList>
           </Menu>
         </Flex>
+
+        {/* Móvil: botón hamburguesa */}
+        <IconButton
+          aria-label="Abrir menú"
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          display={{ base: "flex", md: "none" }}
+          onClick={onToggle}
+          variant="ghost"
+          color="white"
+        />
       </Flex>
+
+      <Collapse in={isOpen} animateOpacity>
+        <Flex
+          direction="column"
+          align="center"
+          bg="black"
+          px={4}
+          py={4}
+          borderBottomRadius="12px"
+          borderTop="1px solid rgba(255,255,255,0.1)"
+          display={{ md: "none" }}
+        >
+          <Stack spacing={3} align="center" width="100%">
+            <Flex gap={4} justify="flex-end" pt={3}>
+              <Image
+                src={iconocierrediario}
+                w="40px"
+                h="40px"
+                borderRadius="full"
+                cursor="pointer"
+                onClick={() => {
+                  onToggle();
+                  navigate("/PatientRecords");
+                }}
+                border="2px solid #50bcd8"
+              />
+
+              <Menu>
+                <MenuButton>
+                  <Image
+                    src={usuariomasculino}
+                    w="40px"
+                    h="40px"
+                    borderRadius="full"
+                    cursor="pointer"
+                    border="2px solid #50bcd8"
+                    _hover={{ opacity: 0.8 }}
+                  />
+                </MenuButton>
+                <MenuList zIndex="99999">
+                  <MenuItem
+                    onClick={() => {
+                      onToggle();
+                      navigate("/Register");
+                    }}
+                  >
+                    Registrar Usuario
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      onToggle();
+                      navigate("/BalancesPatient");
+                    }}
+                  >
+                    Saldos Pendientes
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      onToggle();
+                      navigate("/MessageManager");
+                    }}
+                  >
+                    Mensajes
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+            <Text
+              color="white"
+              cursor="pointer"
+              onClick={() => {
+                onToggle();
+                navigate("/");
+              }}
+              _hover={{ color: "#00E599" }}
+            >
+              Inicio
+            </Text>
+            <Text
+              color="white"
+              cursor="pointer"
+              onClick={() => {
+                onToggle();
+                navigate("/PrintCertificate");
+              }}
+              _hover={{ color: "#00E599" }}
+            >
+              Certificado
+            </Text>
+            <Text
+              color="white"
+              cursor="pointer"
+              onClick={() => {
+                onToggle();
+                navigate("/egresos");
+              }}
+              _hover={{ color: "#00E599" }}
+            >
+              Egresos
+            </Text>
+          </Stack>
+        </Flex>
+      </Collapse>
+    </Box>
 
       {/* ZONA CENTRAL */}
       <Flex
