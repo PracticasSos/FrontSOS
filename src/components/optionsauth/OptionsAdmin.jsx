@@ -46,6 +46,7 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import ColorModeToggle from '../../Toggle';
 
 
 const options = [
@@ -105,6 +106,73 @@ const AdminDashBoard = () => {
   if (loading || !user) {
     return null; 
   }
+
+  // Colores adaptativos - mantener tu estética oscura para dark mode
+  const mainBg = useColorModeValue(
+    'linear(to-b, #f7fafc, #edf2f7)', // Light: gradiente gris claro
+    '#000000' // Dark: tu negro actual
+  );
+
+  const navBg = useColorModeValue(
+    'rgba(255, 255, 255, 0.9)', // Light: fondo blanco semi-transparente
+    'rgba(46, 46, 46, 0.5)' // Dark: tu fondo actual
+  );
+
+  const navBorder = useColorModeValue(
+    '1px solid rgba(0,0,0,0.1)', // Light: borde negro sutil
+    '1px solid rgba(255,255,255,0.1)' // Dark: tu borde actual
+  );
+
+  const textColor = useColorModeValue(
+    'gray.800', // Light: texto oscuro
+    'white' // Dark: texto blanco
+  );
+
+  const textHoverColor = useColorModeValue(
+    '#2196f3', // Light: azul
+    '#00E599' // Dark: tu verde actual
+  );
+
+  const cardBg = useColorModeValue(
+    'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
+    'rgba(46, 46, 46, 0.5)' // Dark: tu fondo actual
+  );
+
+  const cardBorder = useColorModeValue(
+    '2px solid #219BAA', // Light: tu borde actual
+    '2px solid #219BAA' // Dark: tu borde actual
+  );
+
+  const collapseBg = useColorModeValue(
+    'white', // Light: fondo blanco
+    'black' // Dark: tu negro actual
+  );
+
+  const borderTopColor = useColorModeValue(
+    'rgba(0,0,0,0.1)', // Light: borde negro sutil
+    'rgba(255,255,255,0.1)' // Dark: tu borde actual
+  );
+
+  // Agregar estilos adaptativos para el botón
+  const buttonBg = useColorModeValue(
+    'gray.300', // Light: fondo gris claro
+    'whiteAlpha.200' // Dark: fondo transparente blanco
+  );
+
+  const buttonBorderColor = useColorModeValue(
+    'gray.600', // Light: borde gris
+    'whiteAlpha.300' // Dark: borde transparente blanco
+  );
+
+  const buttonTextColor = useColorModeValue(
+    'gray.800', // Light: texto oscuro
+    'white' // Dark: texto blanco
+  );
+
+  const buttonHoverBg = useColorModeValue(
+    'gray.200', // Light: hover gris más oscuro
+    'whiteAlpha.300' // Dark: hover transparente
+  );
 
   const handleOptionClick = (label) => {
     switch (label) {
@@ -179,7 +247,7 @@ const AdminDashBoard = () => {
 
   const carouselItems = options.slice(0, 5);
   const bgCard = useColorModeValue('white', 'gray.700');
-  const textColor = useColorModeValue('gray.600', 'gray.100');
+
   const moreItems = [
     { label: "HISTORIAL PACIENTE", icon: iconohistorialventa },
     { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
@@ -195,155 +263,95 @@ const AdminDashBoard = () => {
 
   return (
     <Box
-      bg="#000000"
+      bg={mainBg}
       minH="100vh"
     >
       <Box
-      as="nav"
-      width="100%"
-      zIndex="9999"
-      pt="1rem"
-      pb="1rem"
-      display="flex"
-      justifyContent="center"
-    >
-      <Box
+        as="nav"
+        width="100%"
+        zIndex="9999"
+        pt="1rem"
+        pb="1rem"
+        display="flex"
+        justifyContent="center"
+      >
+        <Box
           width="80%"
-          bg="rgba(46, 46, 46, 0.5)"
+          bg={navBg}
           backdropFilter="blur(10px)"
-          border="1px solid rgba(255,255,255,0.1)"
+          border={navBorder}
           borderRadius="20px"
         >
-      <Flex
-        align="center"
-        justify="space-between"
-        py={3}
-        px={6}
-        fontFamily="Satoshi, sans-serif"
-        minH="60px"
-      >
-        {/* Logo ALGORA */}
-        <Text
-          fontSize="xl"
-          fontFamily="Chaney Extended, sans-serif"
-          fontWeight="bold"
-          color="white"
-        >
-          ALGORA
-        </Text>
+          <Flex
+            align="center"
+            justify="space-between"
+            py={3}
+            px={6}
+            fontFamily="Satoshi, sans-serif"
+            minH="60px"
+          >
+            {/* Logo ALGORA */}
+            <Text
+              fontSize="xl"
+              fontFamily="Chaney Extended, sans-serif"
+              fontWeight="bold"
+              color={textColor}
+            >
+              ALGORA
+            </Text>
 
-        <Flex gap={24} align="center" display={{ base: "none", md: "flex" }}>
-          <Text
-            color="white"
-            cursor="pointer"
-            onClick={() => navigate("/")}
-            _hover={{ color: "#00E599" }}
-            fontWeight="medium"
-          >
-            Inicio
-          </Text>
-          <Text
-            color="white"
-            cursor="pointer"
-            onClick={() => navigate("/PrintCertificate")}
-            _hover={{ color: "#00E599" }}
-            fontWeight="medium"
-          >
-            Certificado
-          </Text>
-          <Text
-            color="white"
-            cursor="pointer"
-            onClick={() => navigate("/egresos")}
-            _hover={{ color: "#00E599" }}
-            fontWeight="medium"
-          >
-            Egresos
-          </Text>
-          </Flex>
-
-        {/* Desktop: íconos a la derecha */}
-        <Flex display={{ base: "none", md: "flex" }} gap={8} align="center" justify="center" mt={4}>
-          <Image
-            src={iconocierrediario}
-            w="45px"
-            h="45px"
-            objectFit="cover"
-            objectPosition="bottom"
-            borderRadius="full"
-            cursor="pointer"
-            onClick={() => navigate("/PatientRecords")}
-            border="2px solid #50bcd8"
-          />
-          <Menu>
-            <MenuButton>
-              <Image
-                src={avataralgora}
-                w="45px"
-                h="45px"
-                borderRadius="full"
+            <Flex gap={24} align="center" display={{ base: "none", md: "flex" }}>
+              <Text
+                color={textColor}
                 cursor="pointer"
-                border="2px solid #50bcd8"
-                _hover={{ opacity: 0.8 }}
-              />
-            </MenuButton>
-            <MenuList zIndex="99999">
-              <MenuItem onClick={() => navigate("/Register")}>
-                Registrar Usuario
-              </MenuItem>
-              <MenuItem onClick={() => navigate("/BalancesPatient")}>
-                Saldos Pendientes
-              </MenuItem>
-              <MenuItem onClick={() => navigate("/MessageManager")}>
-                Mensajes
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
+                onClick={() => navigate("/")}
+                _hover={{ color: textHoverColor }}
+                fontWeight="medium"
+              >
+                Inicio
+              </Text>
+              <Text
+                color={textColor}
+                cursor="pointer"
+                onClick={() => navigate("/PrintCertificate")}
+                _hover={{ color: textHoverColor }}
+                fontWeight="medium"
+              >
+                Certificado
+              </Text>
+              <Text
+                color={textColor}
+                cursor="pointer"
+                onClick={() => navigate("/egresos")}
+                _hover={{ color: textHoverColor }}
+                fontWeight="medium"
+              >
+                Egresos
+              </Text>
+            </Flex>
 
-        {/* Móvil: botón hamburguesa */}
-        <IconButton
-          aria-label="Abrir menú"
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          display={{ base: "flex", md: "none" }}
-          onClick={onToggle}
-          variant="ghost"
-          color="white"
-        />
-      </Flex>
-
-      <Collapse in={isOpen} animateOpacity>
-        <Flex
-          direction="column"
-          align="center"
-          bg="black"
-          px={4}
-          py={4}
-          borderBottomRadius="12px"
-          borderTop="1px solid rgba(255,255,255,0.1)"
-          display={{ md: "none" }}
-        >
-          <Stack spacing={3} align="center" width="100%">
-            <Flex gap={4} justify="flex-end" pt={3}>
+            {/* Desktop: íconos a la derecha */}
+            <Flex display={{ base: "none", md: "flex" }} gap={8} align="center" justify="center" mt={4}>
+              {/* Toggle de modo oscuro */}
+              <ColorModeToggle />
+              
               <Image
                 src={iconocierrediario}
-                w="40px"
-                h="40px"
+                w="45px"
+                h="45px"
+                objectFit="cover"
+                objectPosition="bottom"
                 borderRadius="full"
                 cursor="pointer"
-                onClick={() => {
-                  onToggle();
-                  navigate("/PatientRecords");
-                }}
+                onClick={() => navigate("/PatientRecords")}
                 border="2px solid #50bcd8"
               />
-
               <Menu>
                 <MenuButton>
                   <Image
                     src={avataralgora}
-                    w="40px"
-                    h="40px"
+                    w="45px"
+                    h="45px"
                     borderRadius="full"
                     cursor="pointer"
                     border="2px solid #50bcd8"
@@ -351,71 +359,137 @@ const AdminDashBoard = () => {
                   />
                 </MenuButton>
                 <MenuList zIndex="99999">
-                  <MenuItem
-                    onClick={() => {
-                      onToggle();
-                      navigate("/Register");
-                    }}
-                  >
+                  <MenuItem onClick={() => navigate("/Register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      onToggle();
-                      navigate("/BalancesPatient");
-                    }}
-                  >
+                  <MenuItem onClick={() => navigate("/BalancesPatient")}>
                     Saldos Pendientes
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      onToggle();
-                      navigate("/MessageManager");
-                    }}
-                  >
+                  <MenuItem onClick={() => navigate("/MessageManager")}>
                     Mensajes
                   </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
-            <Text
-              color="white"
-              cursor="pointer"
-              onClick={() => {
-                onToggle();
-                navigate("/");
-              }}
-              _hover={{ color: "#00E599" }}
+
+            {/* Móvil: botón hamburguesa y toggle */}
+            <Flex display={{ base: "flex", md: "none" }} align="center" gap={2}>
+              <ColorModeToggle />
+              <IconButton
+                aria-label="Abrir menú"
+                icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+                onClick={onToggle}
+                variant="ghost"
+                color={textColor}
+              />
+            </Flex>
+          </Flex>
+
+          <Collapse in={isOpen} animateOpacity>
+            <Flex
+              direction="column"
+              align="center"
+              bg={collapseBg}
+              px={4}
+              py={4}
+              borderBottomRadius="12px"
+              borderTop={`1px solid ${borderTopColor}`}
+              display={{ md: "none" }}
             >
-              Inicio
-            </Text>
-            <Text
-              color="white"
-              cursor="pointer"
-              onClick={() => {
-                onToggle();
-                navigate("/PrintCertificate");
-              }}
-              _hover={{ color: "#00E599" }}
-            >
-              Certificado
-            </Text>
-            <Text
-              color="white"
-              cursor="pointer"
-              onClick={() => {
-                onToggle();
-                navigate("/egresos");
-              }}
-              _hover={{ color: "#00E599" }}
-            >
-              Egresos
-            </Text>
-          </Stack>
-        </Flex>
-      </Collapse>
-    </Box>
-    </Box>
+              <Stack spacing={3} align="center" width="100%">
+                <Flex gap={4} justify="flex-end" pt={3}>
+                  <Image
+                    src={iconocierrediario}
+                    w="40px"
+                    h="40px"
+                    borderRadius="full"
+                    cursor="pointer"
+                    onClick={() => {
+                      onToggle();
+                      navigate("/PatientRecords");
+                    }}
+                    border="2px solid #50bcd8"
+                  />
+
+                  <Menu>
+                    <MenuButton>
+                      <Image
+                        src={avataralgora}
+                        w="40px"
+                        h="40px"
+                        borderRadius="full"
+                        cursor="pointer"
+                        border="2px solid #50bcd8"
+                        _hover={{ opacity: 0.8 }}
+                      />
+                    </MenuButton>
+                    <MenuList zIndex="99999">
+                      <MenuItem
+                        onClick={() => {
+                          onToggle();
+                          navigate("/Register");
+                        }}
+                      >
+                        Registrar Usuario
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          onToggle();
+                          navigate("/BalancesPatient");
+                        }}
+                      >
+                        Saldos Pendientes
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          onToggle();
+                          navigate("/MessageManager");
+                        }}
+                      >
+                        Mensajes
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Flex>
+                
+                <Text
+                  color={textColor}
+                  cursor="pointer"
+                  onClick={() => {
+                    onToggle();
+                    navigate("/");
+                  }}
+                  _hover={{ color: textHoverColor }}
+                >
+                  Inicio
+                </Text>
+                <Text
+                  color={textColor}
+                  cursor="pointer"
+                  onClick={() => {
+                    onToggle();
+                    navigate("/PrintCertificate");
+                  }}
+                  _hover={{ color: textHoverColor }}
+                >
+                  Certificado
+                </Text>
+                <Text
+                  color={textColor}
+                  cursor="pointer"
+                  onClick={() => {
+                    onToggle();
+                    navigate("/egresos");
+                  }}
+                  _hover={{ color: textHoverColor }}
+                >
+                  Egresos
+                </Text>
+              </Stack>
+            </Flex>
+          </Collapse>
+        </Box>
+      </Box>
 
       {/* ZONA CENTRAL */}
       <Flex
@@ -439,8 +513,8 @@ const AdminDashBoard = () => {
               key={index}
               borderRadius="xl"
               boxShadow="lg"
-              bg="rgba(46, 46, 46, 0.5)"
-              border="2px solid #219BAA"
+              bg={cardBg}
+              border={cardBorder}
               overflow="hidden"
               w={["140px", "160px", "180px"]}
               h={["220px", "240px", "260px"]}
@@ -464,12 +538,18 @@ const AdminDashBoard = () => {
 
         {/* Botón Ver más */}
         <Button
-          colorScheme="whiteAlpha"
+          bg={buttonBg}
+          border={`2px solid ${buttonBorderColor}`}
+          color={buttonTextColor}
           variant="outline"
           size="lg"
           borderRadius="full"
           onClick={() => setShowAll(!showAll)}
-          _hover={{ bg: "whiteAlpha.300" }}
+          _hover={{ 
+            bg: buttonHoverBg,
+            transform: 'scale(1.05)'
+          }}
+          fontWeight="medium"
         >
          {showAll ? "Ver menos" : "Ver más"}
         </Button>

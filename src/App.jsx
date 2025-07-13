@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Welcome from "./components/Welcome";
-import { Container } from "@chakra-ui/react";
+import { Container, useColorModeValue } from "@chakra-ui/react";
 import AppRouter from "./routers";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "./api/supabase";
@@ -12,6 +12,9 @@ function App() {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Colores adaptativos para light/dark mode
+  const bgColor = useColorModeValue('white', 'gray.800');
   
   const { allowedRoutes, loading: permissionsLoading } = useUserPermissions(userData);
 
@@ -76,7 +79,7 @@ function App() {
   return showSplash ? (
     <Welcome onFinish={handleWelcomeFinish} />
   ) : (
-    <Container maxW="100%" padding="0px">
+    <Container maxW="100%" padding="0px" bg={bgColor} minH="100vh">
       <AppRouter />
     </Container>
   );
