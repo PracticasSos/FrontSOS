@@ -1,4 +1,4 @@
-import { Box, FormControl, FormLabel, Textarea } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Textarea, useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 const MessageSection = ({ selectedBranch, formData, setFormData }) => {
@@ -22,8 +22,16 @@ Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio de
     }));
   }, [selectedBranch]);
 
+  const boxBg = useColorModeValue('gray.100', 'gray.700');
+    const boxColor = useColorModeValue('gray.700', 'white');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const secondaryTextColor = useColorModeValue('gray.600', 'gray.300');
+    const labelColor = useColorModeValue('gray.600', 'gray.300');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const selectBg = useColorModeValue('white', 'gray.600');
+
   return (
-    <Box bg="gray.100" borderRadius="md" p={4} mb={4} maxW="530px" mx="auto" >
+    <Box bg={boxBg}  borderRadius="md" p={4} mb={4} maxW="530px" mx="auto" >
       <FormControl>
         <Textarea
          borderRadius="md"
@@ -34,7 +42,16 @@ Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio de
           }}
           minHeight="100px"
           resize="vertical"
-          bg="white"
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         />
       </FormControl>
     </Box>

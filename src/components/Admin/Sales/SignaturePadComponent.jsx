@@ -1,14 +1,37 @@
 import React, { useRef, useEffect } from "react";
 import SignaturePad from "signature_pad";
-import { Box, Button} from "@chakra-ui/react";
+import { Box, Button, useColorModeValue } from "@chakra-ui/react";
 
 const SignaturePadComponent = ({ onSave }) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
 
+  // Colores adaptativos - TODOS los hooks al inicio
+  const canvasBg = useColorModeValue('#fff', '#2D3748');
+  const borderColor = useColorModeValue('rgb(94, 97, 100)', '#4A5568');
+  const boxShadow = useColorModeValue(
+    '0 2px 8px rgba(0,0,0,0.08)', 
+    '0 2px 8px rgba(0,0,0,0.3)'
+  );
+  const penColor = useColorModeValue('#000', '#fff'); // Movido aquí
+
+  const initializeCanvas = () => {
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.fillStyle = canvasBg;
+      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+  };
+
   useEffect(() => {
-    signaturePadRef.current = new SignaturePad(canvasRef.current);
-  }, []);
+    if (canvasRef.current) {
+      signaturePadRef.current = new SignaturePad(canvasRef.current, {
+        backgroundColor: canvasBg,
+        penColor: penColor // Usar la variable definida arriba
+      });
+      initializeCanvas();
+    }
+  }, [canvasBg, penColor]); // Agregar penColor como dependencia
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,15 +42,8 @@ const SignaturePadComponent = ({ onSave }) => {
     }, 1000); 
 
     return () => clearInterval(interval); 
-  }, []);
+  }, [onSave]);
 
-  useEffect(() => {
-    signaturePadRef.current = new SignaturePad(canvasRef.current);
-    // Pintar fondo blanco
-    const ctx = canvasRef.current.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  }, []); 
   const getSignatureDataUrl = () => {
     if (signaturePadRef.current && !signaturePadRef.current.isEmpty()) {
       return signaturePadRef.current.toDataURL();
@@ -36,46 +52,40 @@ const SignaturePadComponent = ({ onSave }) => {
   };
 
   const clearSignature = () => {
-  if (signaturePadRef.current) {
-    signaturePadRef.current.clear();
-    // Repintar fondo blanco
-    const ctx = canvasRef.current.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  }
-};
+    if (signaturePadRef.current) {
+      signaturePadRef.current.clear();
+      initializeCanvas();
+    }
+  };
 
   return (
-  <Box
-    display="flex"
-    flexDirection="column"
-    alignItems="center"
-    p={4}
-    width={["90%", "80%", "400px"]}
-    mx="auto"
-    
-  >
-    <canvas
-      ref={canvasRef}
-      width={510}
-      bg="white"
-      height={150}
-      style={{
-    border: "2px solidrgb(94, 97, 100)", 
-    borderRadius: "12px",    
-    background: "#fff",    
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)", 
-    display: "block"
-  }}
-    />
-    <Box display="flex" flexDirection="column" mt={4} width="full" maxWidth="200px">
-      <Button colorScheme="blue" onClick={clearSignature}>
-        Borrar Firma
-      </Button>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      p={4}
+      width={["90%", "80%", "400px"]}
+      mx="auto"
+    >
+      <canvas
+        ref={canvasRef}
+        width={510}
+        height={150}
+        style={{
+          border: `2px solid ${borderColor}`, 
+          borderRadius: "12px",    
+          background: canvasBg,    
+          boxShadow: boxShadow, 
+          display: "block"
+        }}
+      />
+      <Box display="flex" flexDirection="column" mt={4} width="full" maxWidth="200px">
+        <Button colorScheme="blue" onClick={clearSignature}>
+          Borrar Firma
+        </Button>
+      </Box>
     </Box>
-  </Box>
-);
-
+  );
 };
 
 export default SignaturePadComponent;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SimpleGrid, FormControl, FormLabel, Input, Box, Select } from "@chakra-ui/react";
+import { SimpleGrid, FormControl, FormLabel, Input, Box, Select, useColorModeValue, useColorMode } from "@chakra-ui/react";
 import { supabase } from "../../../api/supabase"; 
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -140,6 +140,12 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
         </FormControl>
     );
 
+    const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const selectBg = useColorModeValue('white', 'gray.700');
+    const { colorMode } = useColorMode();
+
     return (
         <SimpleGrid columns={[1, 4]} spacing={4} px={[4, 2]}>
             <FormControl id="patient-search">
@@ -151,14 +157,27 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
                     placeholder="Buscar por nombre..." 
                     value={search} 
                     onChange={handleSearchChange} 
+                    bg={selectBg}
+                    borderColor={borderColor}
+                    color={textColor}
+                    _hover={{
+                        borderColor: useColorModeValue('gray.300', 'gray.500')
+                    }}
+                    _focus={{
+                         borderColor: useColorModeValue('blue.500', 'blue.300'),
+                        boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                    }}
                 />
                 {search && (
-                    <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
+                    <Box border={`1px solid ${borderColor}`} borderRadius="md" mt={2} maxHeight="150px" overflowY="auto">
                         {filteredPatients.map((patient) => (
                             <Box 
                                 key={patient.id} 
                                 padding={2} 
-                                _hover={{ bg: "teal.100", cursor: "pointer" }} 
+                                _hover={{ 
+                                    bg: useColorModeValue("gray.100", "gray.600"), 
+                                    cursor: "pointer" 
+                                }} 
                                 onClick={() => handlePatientSelect(patient)}
                             >
                                 {patient.pt_firstname} {patient.pt_lastname}
@@ -184,10 +203,25 @@ const SearchPatient = ({ onFormDataChange, initialFormData = {} }) => {
                         width: '100%',
                         height: '40px',
                         borderRadius: '20px',
-                        border: '1px solid #CBD5E0'
+                        border: `1px solid ${colorMode === 'dark' ? '#4A5568' : '#CBD5E0'}`,
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : 'white',
+                        color: colorMode === 'dark' ? 'white' : '#1A202C',
+                        fontSize: '14px',
+                        paddingLeft: '48px'
+                    }}
+                    buttonStyle={{
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : 'white',
+                        border: `1px solid ${colorMode === 'dark' ? '#4A5568' : '#CBD5E0'}`,
+                        borderRadius: '20px 0 0 20px'
                     }}
                     dropdownStyle={{
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : 'white',
+                        color: colorMode === 'dark' ? 'white' : 'black',
                         zIndex: 1000
+                    }}
+                    searchStyle={{
+                        backgroundColor: colorMode === 'dark' ? '#4A5568' : '#F7FAFC',
+                        color: colorMode === 'dark' ? 'white' : 'black'
                     }}
                 />
             </FormControl>

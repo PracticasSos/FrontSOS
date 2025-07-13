@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, Input, Box , Heading, SimpleGrid, FormControl, FormLabel, Text} from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Box , Heading, SimpleGrid, FormControl, FormLabel, Text, useColorModeValue} from "@chakra-ui/react";
 
 const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [] }) => {
     const [formData, setFormData] = useState(initialFormData);
@@ -38,8 +38,16 @@ const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [
         }));
     };
 
+  const boxBg = useColorModeValue('gray.100', 'gray.700');
+  const boxColor = useColorModeValue('gray.700', 'white');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const secondaryTextColor = useColorModeValue('gray.600', 'gray.300');
+  const labelColor = useColorModeValue('gray.600', 'gray.300');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.600');
+
     return (
-        <Box mt={4} mb={4} px={[1, 2]}>
+        <Box mt={4} mb={4} px={[1, 2]} >
           <Box display={{ base: "none", lg: "block" }}  mb={4}>
             <Table variant="simple" mb={4}>
               <Thead>
@@ -127,7 +135,16 @@ const Measures = ({ initialFormData = {}, onFormDataChange, filteredMeasures = [
                           onChange={handleChange}
                           
                           borderRadius="full"
-                          bg="gray.100"
+                          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
                           textAlign="center"
                          
                         />

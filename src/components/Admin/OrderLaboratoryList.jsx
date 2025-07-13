@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, FormControl, FormLabel, Select, Spinner, Grid } from "@chakra-ui/react";
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, FormControl, FormLabel, Select, Spinner, Grid, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 
 const OrderLaboratoryList = () => {
@@ -175,44 +175,109 @@ const OrderLaboratoryList = () => {
     }
   };
 
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const tableBg = useColorModeValue('white', 'gray.700');
+  const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+  const inputBg = useColorModeValue('white', 'gray.700');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
   return (
-    <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
-      <Heading mb={4} textAlign="center">Lista Pendiente de Órdenes de Laboratorio</Heading>
+    <Box 
+      p={6} 
+      maxW="1300px" 
+      mx="auto" 
+      bg={bgColor}
+      color={textColor}
+      minH="100vh"
+    >
+      <Heading mb={4} textAlign="center" color={textColor}>
+        Lista Pendiente de Órdenes de Laboratorio
+      </Heading>
+      
       <Box display="flex" justifyContent="center" gap={4} mb={4}>
-          <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-          <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
+        <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">
+          Registrar Pacientes
+        </Button>
+        <Button onClick={() => handleNavigate()} colorScheme="blue">
+          Volver a Opciones
+        </Button>
       </Box>
+
       <FormControl mb={4}>
-        <FormLabel>Sucursal</FormLabel>
+        <FormLabel color={textColor}>Sucursal</FormLabel>
         <Select 
           placeholder="Selecciona una sucursal"
           value={selectedBranch}
           onChange={(e) => setSelectedBranch(e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           {branches.map(branch => (
-            <option key={branch.id} value={branch.id}>{branch.name}</option>
+            <option 
+              key={branch.id} 
+              value={branch.id}
+              style={{
+                backgroundColor: useColorModeValue('white', '#2D3748'),
+                color: useColorModeValue('black', 'white')
+              }}
+            >
+              {branch.name}
+            </option>
           ))}
         </Select>
       </FormControl>
+
       <Grid templateColumns="repeat(3, 1fr)" gap={4} mb={6}>
         <FormControl>
-          <FormLabel>Desde</FormLabel>
+          <FormLabel color={textColor}>Desde</FormLabel>
           <Input 
             type="date" 
             name="since" 
             value={formData.since} 
-            onChange={handleChange} 
+            onChange={handleChange}
+            bg={inputBg}
+            borderColor={borderColor}
+            color={textColor}
+            _hover={{
+              borderColor: useColorModeValue('gray.300', 'gray.500')
+            }}
+            _focus={{
+              borderColor: useColorModeValue('blue.500', 'blue.300'),
+              boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+            }}
           />
         </FormControl>
+        
         <FormControl>
-          <FormLabel>Hasta</FormLabel>
+          <FormLabel color={textColor}>Hasta</FormLabel>
           <Input 
             type="date" 
             name="till" 
             value={formData.till} 
-            onChange={handleChange} 
+            onChange={handleChange}
+            bg={inputBg}
+            borderColor={borderColor}
+            color={textColor}
+            _hover={{
+              borderColor: useColorModeValue('gray.300', 'gray.500')
+            }}
+            _focus={{
+              borderColor: useColorModeValue('blue.500', 'blue.300'),
+              boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+            }}
           />
         </FormControl>
+        
         <Button 
           type="submit" 
           colorScheme="blue" 
@@ -225,16 +290,16 @@ const OrderLaboratoryList = () => {
       </Grid>
 
       {loading ? (
-        <Spinner size="xl" />
+        <Spinner size="xl" color={useColorModeValue('blue.500', 'blue.300')} />
       ) : (
         <Box className="w-full max-w-4xl overflow-x-auto">
-          <Table>
+          <Table bg={tableBg} borderRadius="md" overflow="hidden">
             <Thead>
-              <Tr>
-                <Th>Nombre</Th>
-                <Th>Apellido</Th>
-                <Th>Cédula</Th>
-                <Th>Fecha</Th>
+              <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                <Th color={textColor} borderColor={borderColor}>Apellido</Th>
+                <Th color={textColor} borderColor={borderColor}>Cédula</Th>
+                <Th color={textColor} borderColor={borderColor}>Fecha</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -242,12 +307,16 @@ const OrderLaboratoryList = () => {
                 <Tr 
                   key={patient.patient_id}  
                   onClick={() => handlePatientSelect(patient)} 
-                  className="cursor-pointer hover:bg-gray-100"
+                  cursor="pointer"
+                  _hover={{ bg: tableHoverBg }}
+                  borderColor={borderColor}
                 >
-                  <Td>{patient.pt_firstname}</Td>
-                  <Td>{patient.pt_lastname}</Td>
-                  <Td>{patient.pt_ci}</Td>
-                  <Td>{new Date(patient.date).toLocaleDateString()}</Td>
+                  <Td color={textColor} borderColor={borderColor}>{patient.pt_firstname}</Td>
+                  <Td color={textColor} borderColor={borderColor}>{patient.pt_lastname}</Td>
+                  <Td color={textColor} borderColor={borderColor}>{patient.pt_ci}</Td>
+                  <Td color={textColor} borderColor={borderColor}>
+                    {new Date(patient.date).toLocaleDateString()}
+                  </Td>
                 </Tr>
               ))}
             </Tbody>

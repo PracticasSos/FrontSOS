@@ -7,6 +7,7 @@ import {
   Text,
   Button,
   Collapse,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 const baseMessage = "Acepta las condiciones de no devolución de {{BRANCH}}.";
@@ -39,9 +40,20 @@ const TermsCondition = ({ selectedBranch, formData, setFormData }) => {
     }));
   }, [selectedBranch]);
 
+  // Colores adaptativos
+  const boxBg = useColorModeValue('gray.100', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.600');
+  
+  // Colores específicos para el contenido de términos
+  const termsBg = useColorModeValue('white', 'gray.600');
+  const termsTextColor = useColorModeValue('gray.700', 'gray.200');
+  const buttonColor = useColorModeValue('teal.600', 'teal.300');
+
   return (
     <Box
-      bg="gray.100"
+      bg={boxBg} 
       p={4}
       borderRadius="lg"
       maxW="530px"
@@ -49,22 +61,25 @@ const TermsCondition = ({ selectedBranch, formData, setFormData }) => {
       mb={4}
     >
       <Box
-        bg="white"
+        bg={termsBg}
         p={3}
         borderRadius="lg"
         shadow="md"
         fontSize="sm"
         lineHeight="1.6"
-        color="gray.700"
+        color={termsTextColor}
         width="100%"
         mb={3}
+        border={`1px solid ${borderColor}`}
       >
         {/* Resumen visible */}
-        <ReactMarkdown>{previewLines}</ReactMarkdown>
+        <Box color={termsTextColor}>
+          <ReactMarkdown>{previewLines}</ReactMarkdown>
+        </Box>
 
         {/* Expandible */}
         <Collapse in={showFullTerms} animateOpacity>
-          <Box mt={2}>
+          <Box mt={2} color={termsTextColor}>
             <ReactMarkdown>{remainingLines}</ReactMarkdown>
           </Box>
         </Collapse>
@@ -73,9 +88,12 @@ const TermsCondition = ({ selectedBranch, formData, setFormData }) => {
           variant="link"
           size="sm"
           mt={2}
-          color="teal.600"
+          color={buttonColor}
           onClick={() => setShowFullTerms(!showFullTerms)}
           fontWeight="bold"
+          _hover={{
+            color: useColorModeValue('teal.700', 'teal.200')
+          }}
         >
           {showFullTerms ? "Leer menos" : "Leer más."}
         </Button>
@@ -87,7 +105,11 @@ const TermsCondition = ({ selectedBranch, formData, setFormData }) => {
         colorScheme="teal"
         fontSize="sm"
       >
-        <Text fontSize="sm" color="gray.600">
+        <Text 
+          fontSize="sm" 
+          color={textColor}
+          ml={2}
+        >
           Acepta las condiciones de no devolución de {selectedBranch || "VEOPTICS"}.
         </Text>
       </Checkbox>

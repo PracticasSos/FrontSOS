@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../api/supabase";
- import { Box, VStack, SimpleGrid, Flex, Img, FormControl, FormLabel, Input, useBreakpointValue } from "@chakra-ui/react";
+ import { Box, VStack, SimpleGrid, Flex, Img, FormControl, FormLabel, Input, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
 
 const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = () => {} }) => {
   const [searchFrame, setSearchFrame] = useState("");
@@ -259,6 +259,11 @@ useEffect(() => {
   formData.brand,
   formData.lens_type_name,
 ]);
+
+    const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const selectBg = useColorModeValue('white', 'gray.700');
     
 return (
   <Box w="100vw" >
@@ -295,7 +300,16 @@ return (
                 height="40px"
                 borderRadius="full"
                 w="100%"
-                bg="white"
+                bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
               />
               {frameSuggestions.length > 0 && (
                 <Box maxH="100px" overflowY="auto" fontSize="sm">
@@ -303,7 +317,10 @@ return (
                     <Box
                       key={index}
                       p={2}
-                      _hover={{ bg: "gray.100", cursor: "pointer" }}
+                      _hover={{ 
+                        bg: useColorModeValue("gray.100", "gray.600"), 
+                        cursor: "pointer" 
+                      }}
                       onClick={() => handleSuggestionClick(item, "frame", 1)}
                     >
                       {item.brand}
@@ -324,7 +341,16 @@ return (
                   value={calculatedData.p_frame.toFixed(2)}
                   readOnly
                   fontSize="sm"
-                  bg="white"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
               <FormControl>
@@ -337,7 +363,16 @@ return (
                   fontSize="sm"
                   h="40px"
                   borderRadius="full"
-                  bg="white"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
               <FormControl>
@@ -350,7 +385,16 @@ return (
                   fontSize="sm"
                   h="40px"
                   borderRadius="full"
-                  bg="white"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
             </SimpleGrid>
@@ -383,7 +427,16 @@ return (
                 h="40px"
                 borderRadius="full"
                 w="100%"
-                bg="white"
+                bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
               />
               {lensSuggestions.length > 0 && (
                 <Box maxH="100px" overflowY="auto" fontSize="sm">
@@ -391,7 +444,10 @@ return (
                     <Box
                       key={index}
                       p={2}
-                      _hover={{ bg: "gray.100", cursor: "pointer" }}
+                       _hover={{ 
+                        bg: useColorModeValue("gray.100", "gray.600"), 
+                        cursor: "pointer" 
+                      }}
                       onClick={() => handleSuggestionClick(item, "lens", 1)}
                     >
                       {item.lens_type}
@@ -412,7 +468,16 @@ return (
                   fontSize="sm"
                   h="40px"
                   borderRadius="full"
-                  bg="white"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
               <FormControl>
@@ -425,7 +490,16 @@ return (
                   fontSize="sm"
                   h="40px"
                   borderRadius="full"
-                  bg="white"
+                  bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
                 />
               </FormControl>
               <FormControl>
@@ -438,7 +512,16 @@ return (
                   fontSize="sm"
                   h="40px"
                   borderRadius="full"
-                  bg="white"
+                  bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
                 />
               </FormControl>
             </SimpleGrid>

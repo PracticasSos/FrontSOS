@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SimpleGrid, FormControl, FormLabel, Select, Input, Grid, GridItem, Box , Flex } from "@chakra-ui/react";
+import { SimpleGrid, FormControl, FormLabel, Select, Input, Grid, GridItem, Box , Flex, useColorModeValue, } from "@chakra-ui/react";
 import { supabase } from "../../../api/supabase";
 
 const TotalUI = ({
@@ -34,6 +34,10 @@ const TotalUI = ({
 
   const total = (parseFloat(total_p_frame) || 0) + (parseFloat(total_p_lens) || 0);
 
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
   return (
     <Box w="100%" maxW="500px" mx="auto" px={[8, 2]}>
       <Grid
@@ -62,7 +66,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
               maxW={["100%", "200px"]}
             />
           </Flex>
@@ -80,7 +93,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
             >
               <option value="">Seleccione una sucursal</option>
               {branches.map((branch) => (
@@ -105,7 +127,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
             />
           </FormControl>
         </GridItem>
@@ -120,7 +151,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
             />
           </FormControl>
         </GridItem>
@@ -138,7 +178,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
             />
           </FormControl>
         </GridItem>
@@ -153,7 +202,16 @@ const TotalUI = ({
               h="40px"
               borderRadius="full"
               fontSize="sm"
-              bg="white"
+              bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
             />
           </FormControl>
         </GridItem>
@@ -169,7 +227,16 @@ const TotalUI = ({
                 h="40px"
                 borderRadius="full"
                 fontSize="md"
-                bg="white"
+                bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
               />
             </FormControl>
           </Flex>

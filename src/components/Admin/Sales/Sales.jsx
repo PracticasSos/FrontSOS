@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SearchPatient from "./SearchPatient";
 import Measures from "./Measures";
 import { supabase } from "../../../api/supabase";
-import { Box, Heading, Button, Text, Grid } from "@chakra-ui/react";
+import { Box, Heading, Button, Text, Grid, useColorModeValue  } from "@chakra-ui/react";
 import Total from "./Total";
 import Pdf from "./Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -343,6 +343,11 @@ const Sales = () => {
     }
   };
 
+  const cardBg = useColorModeValue(
+    'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
+    'rgba(48, 44, 44, 0.2)' // Dark: tu fondo actual
+  );
+
   return (
     <Box ref={salesRef} w="full" px={4}>
       <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
@@ -364,7 +369,7 @@ const Sales = () => {
             <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8} 
             >
@@ -385,7 +390,7 @@ const Sales = () => {
             <Box
             width="100vw"
             position="relative"
-            bg="gray.100"
+            bg={cardBg}
             py={8}
             mt={8}
             >
@@ -413,7 +418,7 @@ const Sales = () => {
               <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8}
             >
@@ -439,7 +444,7 @@ const Sales = () => {
             <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8}
             >
@@ -453,7 +458,7 @@ const Sales = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
@@ -472,7 +477,7 @@ const Sales = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
@@ -487,7 +492,7 @@ const Sales = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
