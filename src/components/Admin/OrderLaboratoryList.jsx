@@ -292,7 +292,7 @@ const OrderLaboratoryList = () => {
       {loading ? (
         <Spinner size="xl" color={useColorModeValue('blue.500', 'blue.300')} />
       ) : (
-        <Box className="w-full max-w-4xl overflow-x-auto">
+        <Box className="w-full max-w-4xl">
           <Table bg={tableBg} borderRadius="md" overflow="hidden">
             <Thead>
               <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
