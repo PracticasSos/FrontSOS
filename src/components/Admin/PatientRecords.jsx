@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate } from "react-router-dom";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select,Grid, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select,Grid, FormControl, FormLabel, Input, useColorModeValue } from "@chakra-ui/react";
 
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
@@ -364,8 +364,16 @@ const PatientRecords = () => {
         }
     };
 
+    const bgColor = useColorModeValue('white', 'gray.800');
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const tableBg = useColorModeValue('white', 'gray.700');
+      const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+      const inputBg = useColorModeValue('white', 'gray.700');
+      const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
-        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" bg={bgColor} color={textColor}>
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
                 Cierre Diario - {branches.find(b => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
@@ -385,6 +393,16 @@ const PatientRecords = () => {
                     placeholder="Seleccione una sucursal"
                     value={selectedBranch}
                     onChange={handleBranchChange}
+                    bg={selectBg}
+                    borderColor={borderColor}
+                    color={textColor}
+                    _hover={{
+                        borderColor: useColorModeValue('gray.300', 'gray.500')
+                    }}
+                    _focus={{
+                        borderColor: useColorModeValue('blue.500', 'blue.300'),
+                        boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                    }}
                 >
                     {branches.map((branch) => (
                         <option key={branch.id} value={branch.id}>
@@ -394,36 +412,36 @@ const PatientRecords = () => {
                 </Select>
             </Box>
             <Heading size="md" textAlign="center" color="cyan.900">Ingresos</Heading>
-            <Table variant="striped" colorScheme="teal">
+            <Table bg={tableBg} borderRadius="md" overflow="hidden">
                 <Thead>
-                    <Tr>
-                        <Th>Orden</Th>
-                        <Th>Fecha</Th>
-                        <Th>Sucursal</Th>
-                        <Th>Nombre</Th>
-                        <Th>Apellido</Th>
-                        <Th>Armazón</Th>
-                        <Th>Luna</Th>
-                        <Th isNumeric>Total</Th>
-                        <Th>Abono</Th>
-                        <Th>Saldo</Th>
-                        <Th>Pago</Th>
+                    <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                        <Th color={textColor} borderColor={borderColor} >Orden</Th>
+                        <Th color={textColor} borderColor={borderColor}>Fecha</Th>
+                        <Th color={textColor} borderColor={borderColor}>Sucursal</Th>
+                        <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                        <Th color={textColor} borderColor={borderColor}>Apellido</Th>
+                        <Th color={textColor} borderColor={borderColor}>Armazón</Th>
+                        <Th color={textColor} borderColor={borderColor}>Luna</Th>
+                        <Th color={textColor} borderColor={borderColor} isNumeric>Total</Th>
+                        <Th color={textColor} borderColor={borderColor} >Abono</Th>
+                        <Th color={textColor} borderColor={borderColor}>Saldo</Th>
+                        <Th color={textColor} borderColor={borderColor}>Pago</Th>
                     </Tr>
                 </Thead>
                 <Tbody>
                     {records.map((record) => (
-                        <Tr key={record.id}>
-                            <Td>{record.id}</Td>
-                            <Td>{record.date}</Td>
-                            <Td>{record.branchName}</Td>
-                            <Td>{record.firstName}</Td>
-                            <Td>{record.lastName}</Td>
-                            <Td>{record.inventario?.brand ?? "Sin marca"}</Td>
-                            <Td>{record.lens}</Td>
-                            <Td isNumeric>{record.total}</Td>
-                            <Td>{record.payment_in_day}</Td>
-                            <Td>{record.credit}</Td>
-                            <Td>
+                        <Tr key={record.id} _hover={{ bg: tableHoverBg }} borderColor={borderColor} cursor="pointer" >
+                            <Td color={textColor} borderColor={borderColor}>{record.id}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.date}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.branchName}</Td>
+                            <Td color={textColor} borderColor={borderColor} >{record.firstName}</Td>
+                            <Td color={textColor} borderColor={borderColor} >{record.lastName}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.inventario?.brand ?? "Sin marca"}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.lens}</Td>
+                            <Td color={textColor} borderColor={borderColor} isNumeric>{record.total}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.payment_in_day}</Td>
+                            <Td color={textColor} borderColor={borderColor}>{record.credit}</Td>
+                            <Td color={textColor} borderColor={borderColor}>
                                 <Badge
                                     colorScheme={
                                         record.payment_in === "efectivo"
@@ -468,32 +486,32 @@ const PatientRecords = () => {
             <Box>
                 <Divider my={6} />
                 <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
-                <Table variant="striped" colorScheme="teal">
+                <Table bg={tableBg} borderRadius="md" overflow="hidden">
                     <Thead>
-                        <Tr>
-                            <Th>Fecha</Th>
-                            <Th>Nombre</Th>
-                            <Th>Apellido</Th>
-                            <Th>Total</Th>
-                            <Th>Abono Anterior</Th>
-                            <Th>Abono del Día</Th>
-                            <Th>Abono Total</Th>
-                            <Th>Saldo</Th>
-                            <Th>Pago en</Th>
+                        <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                            <Th color={textColor} borderColor={borderColor}>Fecha</Th>
+                            <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                            <Th color={textColor} borderColor={borderColor}>Apellido</Th>
+                            <Th color={textColor} borderColor={borderColor}>Total</Th>
+                            <Th color={textColor} borderColor={borderColor} >Abono Anterior</Th>
+                            <Th color={textColor} borderColor={borderColor}>Abono del Día</Th>
+                            <Th color={textColor} borderColor={borderColor}>Abono Total</Th>
+                            <Th color={textColor} borderColor={borderColor}>Saldo</Th>
+                            <Th color={textColor} borderColor={borderColor}>Pago en</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {withdrawalsRecords.map((record) => (
-                            <Tr key={record.id}>
-                                <Td>{record.date}</Td>
-                                <Td>{record.firstName}</Td>
-                                <Td>{record.lastName}</Td>
-                                <Td>{record.total}</Td>
-                                <Td>{record.saldoAnterior}</Td>
-                                <Td>{record.abonoDelDia}</Td>
-                                <Td>{record.saldo}</Td>
-                                <Td>{record.credit}</Td>
-                                <Td>
+                            <Tr key={record.id} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor} >
+                                <Td color={textColor} borderColor={borderColor}>{record.date}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.firstName}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.lastName}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.total}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.saldoAnterior}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.abonoDelDia}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.saldo}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{record.credit}</Td>
+                                <Td color={textColor} borderColor={borderColor}>
                                     <Badge
                                         colorScheme={
                                             record.payment_balance ==="efectivo"
@@ -540,30 +558,30 @@ const PatientRecords = () => {
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Egresos
                 </Heading>
-                <Table variant="striped" colorScheme="teal" mb={6}>
+                <Table  bg={tableBg} borderRadius="md" overflow="hidden" mb={6}>
                     <Thead>
-                        <Tr>
-                            <Th>Orden</Th>
-                            <Th>Fecha</Th>
-                            <Th>Encargado</Th>
-                            <Th>Laboratorio</Th>
-                            <Th>Valor</Th>
-                            <Th>Especificación</Th>
-                            <Th>Sucursal</Th>
-                            <Th>Pago</Th>
+                        <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                            <Th color={textColor} borderColor={borderColor}>Orden</Th>
+                            <Th color={textColor} borderColor={borderColor}>Fecha</Th>
+                            <Th color={textColor} borderColor={borderColor}>Encargado</Th>
+                            <Th color={textColor} borderColor={borderColor}>Laboratorio</Th>
+                            <Th color={textColor} borderColor={borderColor}>Valor</Th>
+                            <Th color={textColor} borderColor={borderColor}>Especificación</Th>
+                            <Th color={textColor} borderColor={borderColor}>Sucursal</Th>
+                            <Th color={textColor} borderColor={borderColor}>Pago</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {egresos.map((egreso) => (
-                            <Tr key={egreso.id}>
-                                <Td>{egreso.id}</Td>
-                                <Td>{egreso.date}</Td>
-                                <Td>{egreso.users?.firstname || "Sin encargado"}</Td>
-                                <Td>{egreso.labs?.name || "Sin laboratorio"}</Td>
-                                <Td>{egreso.value}</Td>
-                                <Td>{egreso.specification}</Td>
-                                <Td>{egreso.branchs?.name || "Sin Sucursal"}</Td>
-                                <Td>
+                            <Tr key={egreso.id} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor}>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.id}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.date}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.users?.firstname || "Sin encargado"}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.labs?.name || "Sin laboratorio"}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.value}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.specification}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{egreso.branchs?.name || "Sin Sucursal"}</Td>
+                                <Td color={textColor} borderColor={borderColor}>
                                     <Badge
                                         colorScheme={
                                             egreso.payment_in === "efectivo"
@@ -616,6 +634,16 @@ const PatientRecords = () => {
                     width="auto"
                     maxWidth="150px"
                     readOnly
+                    bg={selectBg}
+                        borderColor={borderColor}
+                        color={textColor}
+                        _hover={{
+                            borderColor: useColorModeValue('gray.300', 'gray.500')
+                        }}
+                        _focus={{
+                            borderColor: useColorModeValue('blue.500', 'blue.300'),
+                            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                        }}
                     />
                 </FormControl>
                 <FormControl display="flex" justifyContent="center">
@@ -627,6 +655,16 @@ const PatientRecords = () => {
                     width="auto"
                     maxWidth="150px"
                     readOnly
+                    bg={selectBg}
+                        borderColor={borderColor}
+                        color={textColor}
+                        _hover={{
+                            borderColor: useColorModeValue('gray.300', 'gray.500')
+                        }}
+                        _focus={{
+                            borderColor: useColorModeValue('blue.500', 'blue.300'),
+                            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                        }}
                     />
                 </FormControl>
                 <FormControl display="flex" justifyContent="center">
@@ -638,6 +676,16 @@ const PatientRecords = () => {
                     width="auto"
                     maxWidth="150px"
                     readOnly
+                    bg={selectBg}
+                        borderColor={borderColor}
+                        color={textColor}
+                        _hover={{
+                            borderColor: useColorModeValue('gray.300', 'gray.500')
+                        }}
+                        _focus={{
+                            borderColor: useColorModeValue('blue.500', 'blue.300'),
+                            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                        }}
                     />
                 </FormControl>
                 </Grid>
@@ -650,6 +698,16 @@ const PatientRecords = () => {
                         width="auto"
                         maxWidth="150px"
                         readOnly
+                        bg={selectBg}
+                        borderColor={borderColor}
+                        color={textColor}
+                        _hover={{
+                            borderColor: useColorModeValue('gray.300', 'gray.500')
+                        }}
+                        _focus={{
+                            borderColor: useColorModeValue('blue.500', 'blue.300'),
+                            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                        }}
                     />
                 </FormControl> 
             </Box>
