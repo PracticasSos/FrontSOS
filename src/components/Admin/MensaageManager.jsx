@@ -11,6 +11,7 @@ import {
   Flex,
   IconButton,
   Text,
+   useColorModeValue 
 } from "@chakra-ui/react";
 import { supabase } from "../../api/supabase";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -132,6 +133,11 @@ const MessageManager = () => {
         }
     };
 
+    const boxBg = useColorModeValue('gray.100', 'gray.700');
+        const textColor = useColorModeValue('gray.800', 'white');
+        const borderColor = useColorModeValue('gray.200', 'gray.600');
+        const selectBg = useColorModeValue('white', 'gray.600');
+
   return (
     <Box p={6} maxW="800px" mx="auto">
       <Heading size="lg" mb={4} textAlign="center">Gestión de Mensajes</Heading>
@@ -154,7 +160,14 @@ const MessageManager = () => {
         {loading && <Spinner />}
         {!loading && messages.length === 0 && <Text>No hay mensajes guardados.</Text>}
         {!loading && messages.map((msg) => (
-          <Flex key={msg.id} p={4} boxShadow="md" borderRadius="md" bg="gray.50" justify="space-between" align="center">
+          <Flex key={msg.id} p={4} boxShadow="md" borderRadius="md" justify="space-between" align="center" bg={selectBg} borderColor={borderColor} color={textColor} _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
+          >
             <Text whiteSpace="pre-wrap">{msg.content}</Text>
             <Box>
               <IconButton icon={<EditIcon />} size="sm" mr={2} onClick={() => handleEdit(msg)} />

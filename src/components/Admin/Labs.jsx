@@ -74,9 +74,9 @@ const Lab = () => {
     };
 
     return (
-        <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh" bgColor="#f0f0f0">
-            <Box width="100%" maxWidth="900px" bgColor="#ffffff" borderRadius="8px" boxShadow="md" padding="20px">
-                <Heading as="h2" size="lg" textAlign="center" mb={4} color="#000000">
+        <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh" >
+            <Box width="100%" maxWidth="900px" borderRadius="8px" boxShadow="md" padding="20px">
+                <Heading as="h2" size="lg" textAlign="center" mb={4} >
                     Laboratorio
                 </Heading>
                 {message && (
@@ -122,7 +122,7 @@ const Lab = () => {
                 <form onSubmit={handleSubmit}>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <FormControl id="name" isRequired>
-                            <FormLabel color="#000000">Nombre</FormLabel>
+                            <FormLabel >Nombre</FormLabel>
                             <Input 
                                 type="text" 
                                 name="name" 
@@ -134,7 +134,7 @@ const Lab = () => {
                         </FormControl>
 
                         <FormControl id="address" isRequired>
-                            <FormLabel color="#000000">Dirección</FormLabel>
+                            <FormLabel >Dirección</FormLabel>
                             <Input 
                                 type="text" 
                                 name="address" 
@@ -146,7 +146,7 @@ const Lab = () => {
                         </FormControl>
 
                         <FormControl id="email" isRequired>
-                            <FormLabel color="#000000">Correo</FormLabel>
+                            <FormLabel >Correo</FormLabel>
                             <Input 
                                 type="email" 
                                 name="email" 
@@ -158,7 +158,7 @@ const Lab = () => {
                         </FormControl>
 
                         <FormControl id="cell" isRequired>
-                            <FormLabel color="#000000">Teléfono</FormLabel>
+                            <FormLabel >Teléfono</FormLabel>
                             <Input 
                                 type="text" 
                                 name="cell" 
@@ -170,7 +170,7 @@ const Lab = () => {
                         </FormControl>
 
                         <FormControl id="ruc" isRequired>
-                            <FormLabel color="#000000">RUC</FormLabel>
+                            <FormLabel >RUC</FormLabel>
                             <Input 
                                 type="text" 
                                 name="ruc" 

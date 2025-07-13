@@ -16,6 +16,7 @@ import {
   CardBody,
   Divider,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -260,7 +261,7 @@ const Register = () => {
   }; 
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} bg="gray.50">
+    <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} >
       <Heading mb={6} color="teal.700">Registrar Usuario</Heading>
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
         <Button onClick={() => handleNavigate('/ListUsers')} colorScheme="teal">Listar Usuarios</Button>

@@ -6,7 +6,9 @@ import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, T
   ModalHeader,
   ModalBody,
   ModalFooter,
-  ModalCloseButton} from "@chakra-ui/react";
+  ModalCloseButton,
+    useColorModeValue
+} from "@chakra-ui/react";
 import SearchBar from "./SearchBar";
 
 const BalancesPatient = () => {
@@ -208,6 +210,14 @@ const BalancesPatient = () => {
         }
     };
 
+      const bgColor = useColorModeValue('white', 'gray.800');
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const tableBg = useColorModeValue('white', 'gray.700');
+      const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+      const inputBg = useColorModeValue('white', 'gray.700');
+      const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
             <Heading mb={4} textAlign="center">Historial de Saldos</Heading>
@@ -242,37 +252,37 @@ const BalancesPatient = () => {
             ) : filteredSales.length === 0 ? (
                 <Text textAlign="center" color="gray.500">No se encontraron registros de ventas con saldos pendientes.</Text>
             ) : (
-                <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
-                    <Table variant="simple">
+                <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" overflowX="auto">
+                    <Table bg={tableBg} borderRadius="md" overflow="hidden">
                         <Thead>
-                            <Tr>
-                                <Th>Fecha</Th>
-                                <Th>Nombre</Th>
-                                <Th>Apellido</Th>
-                                <Th>Sucursal</Th>
-                                <Th>Armazón</Th>
-                                <Th>Luna</Th>
-                                <Th>Total</Th>
-                                <Th>Abono</Th>
-                                <Th>Saldo</Th>
-                                <Th>TELF</Th>
-                                <Th>Acción</Th>
+                            <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                                <Th color={textColor} borderColor={borderColor}>Fecha</Th>
+                                <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                                <Th color={textColor} borderColor={borderColor}>Apellido</Th>
+                                <Th color={textColor} borderColor={borderColor}>Sucursal</Th>
+                                <Th color={textColor} borderColor={borderColor}>Armazón</Th>
+                                <Th color={textColor} borderColor={borderColor}>Luna</Th>
+                                <Th color={textColor} borderColor={borderColor}>Total</Th>
+                                <Th color={textColor} borderColor={borderColor}>Abono</Th>
+                                <Th color={textColor} borderColor={borderColor}>Saldo</Th>
+                                <Th color={textColor} borderColor={borderColor}>TELF</Th>
+                                <Th color={textColor} borderColor={borderColor}>Acción</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
                             {sortedSales.map(sale => (
-                                <Tr key={sale.id}>
-                                    <Td>{new Date(sale.date).toLocaleDateString()}</Td>
-                                    <Td>{sale.patient.pt_firstname}</Td>
-                                    <Td>{sale.patient.pt_lastname}</Td>
-                                    <Td>{sale.branch}</Td>
-                                    <Td>{sale.brand || "Sin Marca"}</Td>
-                                    <Td>{sale.lens_type}</Td>
-                                    <Td>${sale.total}</Td>
-                                    <Td>${sale.balance}</Td>
-                                    <Td>${sale.credit}</Td>
-                                    <Td>{sale.patient.pt_phone}</Td>
-                                    <Td>
+                                <Tr key={sale.id} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor}>
+                                    <Td color={textColor} borderColor={borderColor}>{new Date(sale.date).toLocaleDateString()}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.patient.pt_firstname}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.patient.pt_lastname}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.branch}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.brand || "Sin Marca"}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.lens_type}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>${sale.total}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>${sale.balance}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>${sale.credit}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>{sale.patient.pt_phone}</Td>
+                                    <Td color={textColor} borderColor={borderColor}>
                                         <Button 
                                             size="sm" 
                                             colorScheme="green" 

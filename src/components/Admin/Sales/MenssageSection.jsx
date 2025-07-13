@@ -22,11 +22,8 @@ Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio de
     }));
   }, [selectedBranch]);
 
-  const boxBg = useColorModeValue('gray.100', 'gray.700');
-    const boxColor = useColorModeValue('gray.700', 'white');
+    const boxBg = useColorModeValue('gray.100', 'gray.700');
     const textColor = useColorModeValue('gray.800', 'white');
-    const secondaryTextColor = useColorModeValue('gray.600', 'gray.300');
-    const labelColor = useColorModeValue('gray.600', 'gray.300');
     const borderColor = useColorModeValue('gray.200', 'gray.600');
     const selectBg = useColorModeValue('white', 'gray.600');
 

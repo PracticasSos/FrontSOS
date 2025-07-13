@@ -91,7 +91,6 @@ const Inventario = () => {
 
   return (
     <Box
-      bg="gray.50"
       minHeight="100vh"
       display="flex"
       justifyContent="center"
@@ -99,7 +98,6 @@ const Inventario = () => {
       px={4}
     >
       <Box
-        bg="white"
         p={8}
         borderRadius="lg"
         shadow="md"

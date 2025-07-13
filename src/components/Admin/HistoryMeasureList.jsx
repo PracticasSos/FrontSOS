@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, Divider } from "@chakra-ui/react";
+import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, Divider, useColorModeValue } from "@chakra-ui/react";
 import SearchBar from "./SearchBar";
 
 const HistoryMeasureList = () => {
@@ -125,9 +125,16 @@ const HistoryMeasureList = () => {
                 navigate('/');
         }
     };
+    const bgColor = useColorModeValue('white', 'gray.800');
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const tableBg = useColorModeValue('white', 'gray.700');
+      const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+      const inputBg = useColorModeValue('white', 'gray.700');
+      const selectBg = useColorModeValue('white', 'gray.700');
 
     return (
-        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
             <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
             <Box display="flex" justifyContent="center" width="100%" mb={4}>
                 <Box display="flex" gap={6} justifyContent="center">
@@ -151,14 +158,14 @@ const HistoryMeasureList = () => {
                             showBranchFilter={false} 
                         />
                     </Box>
-                    <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-                        <Table variant="simple">
+                    <Box overflowX="auto"p={4} borderRadius="lg" shadow="md">
+                        <Table bg={tableBg} borderRadius="md" overflow="hidden">
                             <Thead>
-                                <Tr>
-                                    <Th>Nombre</Th>
-                                    <Th>Apellido</Th>
-                                    <Th>Cédula</Th>
-                                    <Th>Ocupación</Th>
+                                <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                                    <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                                    <Th color={textColor} borderColor={borderColor}>Apellido</Th>
+                                    <Th color={textColor} borderColor={borderColor}>Cédula</Th>
+                                    <Th color={textColor} borderColor={borderColor}>Ocupación</Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
@@ -166,12 +173,14 @@ const HistoryMeasureList = () => {
                                     <Tr 
                                         key={patient.patient_id}
                                         onClick={() => handlePatientSelect(patient)}
-                                        className="cursor-pointer hover:bg-gray-100"
+                                         cursor="pointer"
+                                        _hover={{ bg: tableHoverBg }}
+                                        borderColor={borderColor}
                                     >
-                                        <Td>{patient.pt_firstname}</Td>
-                                        <Td>{patient.pt_lastname}</Td>
-                                        <Td>{patient.pt_ci}</Td>
-                                        <Td>{patient.pt_occupation}</Td>
+                                        <Td color={textColor} borderColor={borderColor}>{patient.pt_firstname}</Td>
+                                        <Td color={textColor} borderColor={borderColor}>{patient.pt_lastname}</Td>
+                                        <Td color={textColor} borderColor={borderColor}>{patient.pt_ci}</Td>
+                                        <Td color={textColor} borderColor={borderColor}>{patient.pt_occupation}</Td>
                                     </Tr>
                                 ))}
                             </Tbody>

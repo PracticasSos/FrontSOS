@@ -82,10 +82,9 @@ const Branch = () => {
             justifyContent="center"
             alignItems="center"
             minHeight="100vh"
-            bgColor="#f4f4f4"
         >
-            <Box width="100%" maxWidth="800px" bgColor="white" p={6} borderRadius="lg" boxShadow="lg">
-                <Heading as="h3" size="lg" textAlign="center" mb={6} color="black">
+            <Box width="100%" maxWidth="800px" p={6} borderRadius="lg" boxShadow="lg">
+                <Heading as="h3" size="lg" textAlign="center" mb={6} >
                     Sucursal
                 </Heading>
                 {message && (
@@ -130,61 +129,54 @@ const Branch = () => {
 
                 <Box display="grid" gridTemplateColumns="1fr 1fr" gap={4}>
                     <FormControl id="name" isRequired>
-                        <FormLabel color="black">Nombre</FormLabel>
+                        <FormLabel >Nombre</FormLabel>
                         <Input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            bgColor="#f0f0f0"
                             borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
                     <FormControl id="address" isRequired>
-                        <FormLabel color="black">Dirección</FormLabel>
+                        <FormLabel >Dirección</FormLabel>
                         <Input
                             type="text"
                             name="address"
                             value={formData.address}
                             onChange={handleChange}
-                            bgColor="#f0f0f0"
                             borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
                     <FormControl id="email" isRequired>
-                        <FormLabel color="black">Correo</FormLabel>
+                        <FormLabel >Correo</FormLabel>
                         <Input
                             type="text"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            bgColor="#f0f0f0"
                             borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
                     <FormControl id="cell" >
-                        <FormLabel color="black">Teléfono</FormLabel>
+                        <FormLabel >Teléfono</FormLabel>
                         <Input
                             type="text"
                             name="cell"
                             value={formData.cell}
-                            onChange={handleChange}
-                            bgColor="#f0f0f0"
                             borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
                     <FormControl id="ruc">
-                        <FormLabel color="black">RUC</FormLabel>
+                        <FormLabel >RUC</FormLabel>
                         <Input
                             type="text"
                             name="ruc"
                             value={formData.ruc}
-                            onChange={handleChange}
-                            bgColor="#f0f0f0"
                             borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />

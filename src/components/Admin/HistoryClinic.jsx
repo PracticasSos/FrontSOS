@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, useColorModeValue } from '@chakra-ui/react';
 
 const HistoryClinic = () => {
     const [patients, setPatients] = useState([]);
@@ -115,6 +115,10 @@ const HistoryClinic = () => {
       }
     };
 
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
           <Heading mb={4} textAlign="center">Historial de Pacientes</Heading>
@@ -131,11 +135,31 @@ const HistoryClinic = () => {
             onChange={handleSearchChange} 
             mb={4} 
             maxWidth="800px"
+            bg={selectBg}
+            borderColor={borderColor}
+            color={textColor}
+            _hover={{
+              borderColor: useColorModeValue('gray.300', 'gray.500')
+            }}
+            _focus={{
+              borderColor: useColorModeValue('blue.500', 'blue.300'),
+              boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+            }}
           />
           <Select 
             placeholder="Seleccione una sucursal" 
             value={selectedBranch} 
             onChange={(e) => setSelectedBranch(e.target.value)}
+            bg={selectBg}
+            borderColor={borderColor}
+            color={textColor}
+            _hover={{
+              borderColor: useColorModeValue('gray.300', 'gray.500')
+            }}
+            _focus={{
+              borderColor: useColorModeValue('blue.500', 'blue.300'),
+              boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+            }}
           >
             {branches.map((branch) => (
               <option key={branch.id} value={branch.id}>{branch.name}</option>
