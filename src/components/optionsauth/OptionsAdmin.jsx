@@ -497,7 +497,7 @@ const AdminDashBoard = () => {
         align="center"
         py={[8, 10]}
         px={[4, 6, 8]}
-        mt={24}
+        mt={8}
         textAlign="center"
       >
         {/* Tarjetas */}
