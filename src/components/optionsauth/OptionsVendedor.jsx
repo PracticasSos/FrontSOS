@@ -12,6 +12,7 @@ import { Box,
   Spinner,
   useColorModeValue,} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useUserPermissions } from './UserPermissions';
 import { supabase } from '../../api/supabase';
 
 import 'swiper/css';
@@ -69,14 +70,15 @@ const extraRouters = [
 const VendedorDashBoard = () => {
   const [showAll, setShowAll] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [allowedRoutes, setAllowedRoutes] = useState([]);
   const navigate = useNavigate();
 
-  const getRoutesByPermissions = (permittedRoutes) => {
-    const defaultFiltered = defaultOptions.filter(option => option.route && permittedRoutes.includes(option.route));
-    const extraFiltered = extraRouters.filter(option => option.route && permittedRoutes.includes(option.route));
-    return [...defaultFiltered, ...extraFiltered];
+  const { allowedRoutes, loading } = useUserPermissions(userData);
+
+  const getFilteredOptions = () => {
+    const allOptions = [...defaultOptions, ...extraRouters];
+    return allOptions.filter(option => 
+      option.route && allowedRoutes.includes(option.route)
+    );
   };
 
   const handleOptionClick = (label) => {
@@ -87,85 +89,14 @@ const VendedorDashBoard = () => {
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        if (session) {
-          const currentUser = session.user;
-          setUser(currentUser);
-          localStorage.setItem("user", JSON.stringify(currentUser));
-          localStorage.setItem("session", JSON.stringify(session));
-
-          const { data: permissions, error: permissionsError } = await supabase
-            .from("user_permissions")
-            .select("route")
-            .eq("auth_id", currentUser.id);
-
-          if (permissionsError) {
-            console.error("Error al obtener permisos:", permissionsError);
-            // TEMPORAL: Mostrar todas las opciones por defecto si hay error
-            setAllowedRoutes(defaultOptions);
-          } else {
-            const permittedRoutes = permissions.map(p => p.route);
-            console.log("Permisos obtenidos:", permittedRoutes);
-            const filteredRoutes = getRoutesByPermissions(permittedRoutes);
-            console.log("Rutas filtradas:", filteredRoutes);
-            setAllowedRoutes(filteredRoutes);
-          }
-
-          setLoading(false);
-        }
-      } else if (event === "SIGNED_OUT") {
-        localStorage.removeItem("user");
-        localStorage.removeItem("session");
-        setUser(null);
-        setAllowedRoutes([]);
-        navigate("/Login");
-      }
-    });
-
-    // Verificar sesión existente
-    const sessionFromStorage = localStorage.getItem("session");
+    // Obtener datos del usuario desde localStorage
     const userFromStorage = localStorage.getItem("user");
-
-    if (sessionFromStorage && userFromStorage) {
-      const user = JSON.parse(userFromStorage);
-      setUser(user);
-      
-      // TEMPORAL: Cargar permisos para usuario existente
-      const loadPermissions = async () => {
-        const { data: permissions, error: permissionsError } = await supabase
-          .from("user_permissions")
-          .select("route")
-          .eq("auth_id", user.id);
-
-        if (permissionsError) {
-          console.error("Error al obtener permisos:", permissionsError);
-          setAllowedRoutes(defaultOptions);
-        } else {
-          const permittedRoutes = permissions.map(p => p.route);
-          const filteredRoutes = getRoutesByPermissions(permittedRoutes);
-          setAllowedRoutes(filteredRoutes);
-        }
-      };
-
-      loadPermissions();
-      setLoading(false);
+    if (userFromStorage) {
+      setUserData(JSON.parse(userFromStorage));
     } else {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          setUser(session.user);
-          localStorage.setItem("user", JSON.stringify(session.user));
-          localStorage.setItem("session", JSON.stringify(session));
-        } else {
-          navigate("/Login");
-        }
-        setLoading(false);
-      });
+      // Si no hay usuario, redirigir al login
+      navigate("/LoginForm");
     }
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
   }, [navigate]);
 
 
