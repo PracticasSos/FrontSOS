@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, useColorModeValue, useColorMode } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -122,6 +122,15 @@ const RegisterPatientForm = () => {
     }
   };
 
+  const { colorMode } = useColorMode();
+  const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const tableBg = useColorModeValue('white', 'gray.700');
+    const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+    const inputBg = useColorModeValue('white', 'gray.700');
+    const selectBg = useColorModeValue('white', 'gray.700');
+
   return (
     <Box className="register-patient-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
       <Heading mb={4} textAlign="center">Registrar Paciente</Heading>
@@ -133,7 +142,8 @@ const RegisterPatientForm = () => {
 
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-          <Box>
+          <Box 
+          >
             {renderInputField('Fecha', 'date', 'date', true)}
             {renderInputField('Nombre', 'pt_firstname', 'text', true)}
             {renderInputField('Apellido', 'pt_lastname', 'text', true)}
@@ -152,11 +162,24 @@ const RegisterPatientForm = () => {
               }
               enableSearch={true}
               inputStyle={{
-                width: '100%',
-                height: '40px',
-                borderRadius: '8px',
-                border: '1px solid #CBD5E0'
-              }}
+                        width: '100%',
+                        height: '40px',
+                        borderRadius: '20px',
+                        border: `1px solid ${colorMode === 'dark' ? '#4A5568' : '#CBD5E0'}`,
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : 'white',
+                        color: colorMode === 'dark' ? 'white' : '#1A202C',
+                        fontSize: '14px',
+                        paddingLeft: '48px'
+                    }}
+                    buttonStyle={{
+                        backgroundColor: colorMode === 'dark' ? '#2D3748' : 'white',
+                        border: `1px solid ${colorMode === 'dark' ? '#4A5568' : '#CBD5E0'}`,
+                        borderRadius: '20px 0 0 20px'
+                    }}
+              searchStyle={{
+                        backgroundColor: colorMode === 'dark' ? '#4A5568' : '#F7FAFC',
+                        color: colorMode === 'dark' ? 'white' : 'black'
+                    }}
               dropdownStyle={{
                 zIndex: 1000
               }}

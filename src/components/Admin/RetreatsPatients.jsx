@@ -6,7 +6,9 @@ import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, VStack, Textarea
   ModalHeader,
   ModalBody,
   ModalFooter,
-  ModalCloseButton} from "@chakra-ui/react";
+  ModalCloseButton,
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
@@ -240,8 +242,17 @@ const RetreatsPatients = () => {
       }
   };
 
+  const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const tableBg = useColorModeValue('white', 'gray.700');
+    const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+    const inputBg = useColorModeValue('white', 'gray.700');
+    const selectBg = useColorModeValue('white', 'gray.700');
+  
+
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6} boxShadow="md" borderRadius="lg" bg="gray.50">
+    <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
       <Heading mb={4} textAlign="center">Retiros</Heading>
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="400px" mb={4}>
         <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal" width="auto" maxWidth="200px">
@@ -262,33 +273,34 @@ const RetreatsPatients = () => {
           selectedBranch={selectedBranch}
           onBranchChange={(e) => setSelectedBranch(e.target.value)}
           showBranchFilter={true}
+          
         />
       </Box>
       
       {(!selectedBranch && !searchTermPatients) ? (
-        <Text textAlign="center" color="gray.500" mt={6}>
+        <Text textAlign="center" color={useColorModeValue('gray.500', 'gray.400')} mt={6}>
           Por favor, selecciona una sucursal o busca un nombre para mostrar los datos.
         </Text>
       ) : filteredPatients.length === 0 ? (
-        <Text textAlign="center" color="gray.500">
+        <Text textAlign="center" color={useColorModeValue('gray.500', 'gray.400')}>
           No se encontraron registros de pacientes.
         </Text>
       ) : (
-        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" borderRadius="md" bg="white" overflowX="auto">
-          <Table>
+        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" overflowX="auto">
+          <Table bg={tableBg}  borderRadius="md" overflow="hidden">
             <Thead>
-              <Tr>
-                <Th>Fecha</Th>
-                <Th>Nombre</Th>
-                <Th>Apellido</Th>
-                <Th>Sucursal</Th>
-                <Th>Armazón</Th>
-                <Th>Luna</Th>
-                <Th>Total</Th>
-                <Th>Abono</Th>
-                <Th>Saldo</Th>
-                <Th>TELF</Th>
-                <Th>Acción</Th>
+              <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                <Th color={textColor} borderColor={borderColor}>Fecha</Th>
+                <Th color={textColor} borderColor={borderColor}>Nombre</Th>
+                <Th color={textColor} borderColor={borderColor} >Apellido</Th>
+                <Th color={textColor} borderColor={borderColor} >Sucursal</Th>
+                <Th color={textColor} borderColor={borderColor} >Armazón</Th>
+                <Th color={textColor} borderColor={borderColor} >Luna</Th>
+                <Th color={textColor} borderColor={borderColor} >Total</Th>
+                <Th color={textColor} borderColor={borderColor} >Abono</Th>
+                <Th color={textColor} borderColor={borderColor} >Saldo</Th>
+                <Th color={textColor} borderColor={borderColor} >TELF</Th>
+                <Th color={textColor} borderColor={borderColor} >Acción</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -296,19 +308,21 @@ const RetreatsPatients = () => {
                 <Tr
                   key={`${patient.sale_id}`}
                   onClick={() => handlePatientSelect(patient)}
-                  className="cursor-pointer hover:bg-gray-100"
+                  cursor="pointer"
+                  _hover={{ bg: tableHoverBg }}
+                  borderColor={borderColor}
                 >
-                  <Td>{patient.date}</Td>
-                  <Td>{patient.pt_firstname}</Td>
-                  <Td>{patient.pt_lastname}</Td>
-                  <Td>{patient.branch}</Td>
-                  <Td>{patient.brand || "Sin Marca"}</Td>
-                  <Td>{patient.lens_type}</Td>
-                  <Td>{patient.total}</Td>
-                  <Td>{patient.balance}</Td>
-                  <Td>{patient.credit}</Td>
-                  <Td>{patient.pt_phone}</Td>
-                  <Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.date}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.pt_firstname}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.pt_lastname}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.branch}</Td>
+                  <Td color={textColor} borderColor={borderColor}>{patient.brand || "Sin Marca"}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.lens_type}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.total}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.balance}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.credit}</Td>
+                  <Td color={textColor} borderColor={borderColor} >{patient.pt_phone}</Td>
+                  <Td color={textColor} borderColor={borderColor}>
                     <Button
                       size="sm"
                       colorScheme="green"
