@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, IconButton, Input, Table, Tbody, Td, Thead, Tr, useToast, Th, Select } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, IconButton, Input, Table, Tbody, Td, Thead, Tr, useToast, Th, Select, useColorModeValue  } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
@@ -106,39 +106,64 @@ const ListBalance = () => {
         }
     };
 
+    const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const tableBg = useColorModeValue('white', 'gray.700');
+    const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+    const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
-        <Box bgColor="#ffffff" minHeight="100vh" padding="20px">
-            <Heading as="h2" size="lg" mb={6} color="#000000" textAlign="center"> Listar Abonos</Heading>
-            <Flex mb={4} gap={3} justify="center">
+        <Box 
+        p={6} 
+        maxW="1300px" 
+        mx="auto" 
+        bg={bgColor}
+        color={textColor}
+        minH="100vh"
+      >
+            <Heading  mb={4} textAlign="center"> Listar Abonos</Heading>
+            <Box display="flex" justifyContent="center" gap={4} mb={4}>
                 <Button onClick={() => handleNavigate('/Balance')} colorScheme="blue">Registrar Abono</Button>
                 <Button onClick={() => handleNavigate('/')} bgColor="#00A8C8" color="white">Volver a Opciones</Button>
-            </Flex>
-            <Input placeholder='Buscar Abono...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4} w="50%" mx="auto" display="block" />
-            <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-                <Table variant="striped" colorScheme="teal">
-                    <Thead bgColor="#00A8C8">
-                        <Tr>
+            </Box>
+            <Input placeholder='Buscar Abono...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4} w="50%" mx="auto" display="block" 
+                bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
+            />
+            <Box width="100%" maxWidth="1500px"  overflowX="auto">
+                <Table bg={tableBg}  borderRadius="md" overflow="hidden">
+                    <Thead>
+                        <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             {['Fecha', 'Paciente', 'Sucursal', 'Total', 'Abono', 'Saldo', 'Pago En', 'Acción'].map((header) => (
-                                <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
+                                <Th key={header} color={textColor} borderColor={borderColor}>{header}</Th>
                             ))}
                         </Tr>
                     </Thead>
                     <Tbody>
                         {filteredBalance.map((balance) => (
-                            <Tr key={balance.id}>
-                                <Td>{balance.date}</Td>
-                                <Td>{balance.patients.pt_firstname} {balance.patients.pt_lastname}</Td>
-                                <Td>{balance.branchs?.name || 'N/A'}</Td>
-                                <Td>{balance.total}</Td>
-                                <Td>
+                            <Tr>
+                                <Td color={textColor} borderColor={borderColor}>{balance.date}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{balance.patients.pt_firstname} {balance.patients.pt_lastname}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{balance.branchs?.name || 'N/A'}</Td>
+                                <Td color={textColor} borderColor={borderColor}>{balance.total}</Td>
+                                <Td color={textColor} borderColor={borderColor}>
                                     {editingId === balance.id ? (
                                         <Input name="balance" value={editableData.balance} onChange={handleChange} />
                                     ) : (
                                         balance.balance
                                     )}
                                 </Td>
-                                <Td>{balance.credit}</Td>
-                                <Td>
+                                <Td color={textColor} borderColor={borderColor}>{balance.credit}</Td>
+                                <Td color={textColor} borderColor={borderColor}>
                                     {editingId === balance.id ? (
                                         <Select name="payment_balance" value={editableData.payment_balance} onChange={handleChange}>
                                             <option value="">Seleccione</option>
@@ -150,7 +175,7 @@ const ListBalance = () => {
                                         balance.payment_balance || 'N/A'
                                     )}
                                 </Td>
-                                <Td textAlign="center">
+                                <Td textAlign="center" color={textColor} borderColor={borderColor}>
                                     {editingId === balance.id ? (
                                         <>
                                             <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(balance.id)} mr={2} />

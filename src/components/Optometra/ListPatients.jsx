@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { 
-  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select, useColorModeValue 
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX, BiSearch, BiShow } from 'react-icons/bi';
@@ -123,6 +123,11 @@ const ListPatients = () => {
     }
   };
 
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const tableBg = useColorModeValue('white', 'gray.700');
+  const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+
   return (
     <Box p={5}>
       <Heading mb={4} textAlign="center">Lista de Pacientes</Heading>
@@ -140,30 +145,40 @@ const ListPatients = () => {
         w="50%"
         mx="auto"
         display="block"
+        bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
       />
 
-      <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-        <Table variant="striped" colorScheme="teal">
-          <Thead bgColor="#00A8C8">
-            <Tr>
+      <Box overflowX="auto" p={4} borderRadius="lg" shadow="md">
+        <Table bg={tableBg}  borderRadius="md" overflow="hidden">
+          <Thead >
+            <Tr  bg={useColorModeValue('gray.50', 'gray.600')}>
               {[
                 'Fecha', 'Nombre', 'Apellido', 'Sexo', 'Ocupación', 'Dirección', 'Teléfono',
                 'Edad', 'C.L.', 'Ciudad', 'Correo', 'Razón de Consulta',
                 'Recomendaciones', 'Sucursal', 'Acciones' 
               ].map((header) => (
-                <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
+                <Th key={header} fontWeight="bold" textAlign="center" color={textColor} borderColor={borderColor}>{header}</Th>
               ))}
             </Tr>
           </Thead>
           <Tbody>
             {filteredPatients.map((patient) => (
-              <Tr key={patient.id}>
+              <Tr key={patient.id} cursor="pointer"  _hover={{ bg: tableHoverBg }} borderColor={borderColor} >
                 {[
                   'date','pt_firstname', 'pt_lastname', 'sexo', 'pt_occupation', 'pt_address', 'pt_phone',
                   'pt_age', 'pt_ci', 'pt_city', 'pt_email', 'pt_consultation_reason',
                   'pt_recommendations',  
                 ].map((field) => (
-                  <Td key={field} textAlign="center">
+                  <Td key={field} textAlign="center" color={textColor} borderColor={borderColor} >
                     {editingId === patient.id ? (
                       <Input name={field} value={editableData[field] || ''} onChange={handleChange} />
                     ) : (
@@ -171,7 +186,7 @@ const ListPatients = () => {
                     )}
                   </Td>
                 ))}
-                <Td key="branch_id" textAlign="center">
+                <Td key="branch_id" textAlign="center" color={textColor} borderColor={borderColor} >
                   {editingId === patient.id ? (
                     <Select
                       name="branch_id"
@@ -189,7 +204,7 @@ const ListPatients = () => {
                     branches.find((branch) => branch.id === patient.branch_id)?.name || 'N/A'
                   )}
                 </Td>
-                <Td textAlign="center">
+                <Td textAlign="center" color={textColor} borderColor={borderColor} >
                 <Flex justify="center" align="center" gap={2}>
                   {editingId === patient.id ? (
                     <>

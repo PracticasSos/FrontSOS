@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
 import {
   Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td,
-  Input, Text, Spinner, Flex, IconButton, useToast
+  Input, Flex, IconButton, useToast, useColorModeValue
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
@@ -116,13 +116,25 @@ const ListUsers = () => {
         }
     };
 
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const tableBg = useColorModeValue('white', 'gray.700');
+  const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
   return (
-    <Box bgColor="#ffffff" minHeight="100vh" padding="20px">
-      <Heading as="h2" size="lg" mb={6} color="#000000" textAlign="center">Lista de Usuarios</Heading>
-      <Flex mb={4} gap={3} justify="center">
+    <Box p={6} 
+      maxW="1300px" 
+      mx="auto" 
+      bg={bgColor}
+      color={textColor}
+      minH="100vh">
+      <Heading mb={4} textAlign="center">Lista de Usuarios</Heading>
+      <Box display="flex" justifyContent="center" gap={4} mb={4}>
         <Button onClick={() => handleNavigate('/Register')} colorScheme="blue">Registrar Usuarios</Button>
         <Button onClick={() => handleNavigate()} bgColor="#00A8C8" color="white">Volver a Opciones</Button>
-      </Flex>
+      </Box>
       <Input
         placeholder="Buscar por nombre, apellido o username"
         value={search}
@@ -131,11 +143,21 @@ const ListUsers = () => {
         w="50%"
         mx="auto"
         display="block"
+        bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
       />
-      <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-        <Table variant="striped" colorScheme="teal">
-          <Thead bgColor="#00A8C8">
-            <Tr>
+      <Box width="100%" maxWidth="1500px"  overflowX="auto">
+        <Table bg={tableBg}  borderRadius="md" overflow="hidden">
+          <Thead>
+            <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
               {['Nombre', 'Apellido', 'Username', 'Edad', 'Rol', 'Email', 'Teléfono', 'CI', 'Sucursal', 'Acciones'].map(header => (
                 <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>
               ))}
@@ -143,9 +165,9 @@ const ListUsers = () => {
           </Thead>
           <Tbody>
             {filteredUsers.map(user => (
-              <Tr key={user.id}>
+              <Tr key={user.id} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor}>
                 {['firstname', 'lastname', 'username', 'age', 'role', 'email', 'phone_number', 'ci', 'branchs'].map(field => (
-                  <Td key={field}>
+                  <Td key={field} color={textColor} borderColor={borderColor}>
                     {editingId === user.id ? (
                       <Input
                         name={field}
@@ -163,7 +185,7 @@ const ListUsers = () => {
                     )}
                   </Td>
                 ))}
-                <Td textAlign="center">
+                <Td textAlign="center" color={textColor} borderColor={borderColor}>
                   {editingId === user.id ? (
                     <>
                       <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(user.id)} mr={2} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase.js";
-import { Box, Button, Heading, Input, Table, Tbody, Text, Td, Th, Thead, Tr, Select, useToast} from "@chakra-ui/react";
+import { Box, Button, Heading, Input, Table, Tbody, Text, Td, Th, Thead, Tr, Select, useToast, useColorModeValue } from "@chakra-ui/react";
 
 const InventarioList = () => {
   const [inventoryList, setInventoryList] = useState([]);
@@ -119,6 +119,13 @@ const InventarioList = () => {
     }
   };
 
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const tableBg = useColorModeValue('white', 'gray.700');
+  const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (route) {
@@ -148,21 +155,32 @@ const InventarioList = () => {
   };
 
   return (
-    <Box  p={6} minHeight="100vh">
-      <Heading as="h2" size="lg" mb={4} color="black">
+    <Box 
+      p={6} 
+      maxW="1300px" 
+      mx="auto" 
+      bg={bgColor}
+      color={textColor}
+      minH="100vh"
+    >
+      <Heading mb={4} textAlign="center">
         Lista de Inventario
       </Heading>
+      <Box display="flex" justifyContent="center" gap={4} mb={4}>
       <Button colorScheme="blue" onClick={() => handleNavigate("/Inventory")} mr={2}>
         Registrar Inventario
       </Button>
       <Button colorScheme="gray" onClick={() => handleNavigate()}>
         Volver a Opciones
       </Button>
+      </Box>
+      <Box w="50%" mx="auto" display="block">
       <Select placeholder="Filtrar por sucursal" onChange={(e) => setBranchFilter(parseInt(e.target.value))} mt={4} mb={4}>
         {branches.map((branch) => (
           <option key={branch.id} value={branch.id}>{branch.name}</option>
         ))}
       </Select>
+      </Box>
       {branchFilter && inventoryList.filter(item => item.branchs_id === Number(branchFilter)).length === 0 ? (
         <Text textAlign="center" color="gray.500">No hay inventario para esta sucursal</Text>
       ) : (
@@ -174,18 +192,26 @@ const InventarioList = () => {
               onChange={handleSearchChange}
               mt={4}
               mb={4}
-              bg="white"
-              color="black"
+              bg={selectBg}
+              borderColor={borderColor}
+              color={textColor}
+              _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+              }}
+              _focus={{
+                borderColor: useColorModeValue('blue.500', 'blue.300'),
+                boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+              }}
             />
-            <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
-              <Table minWidth="800px" variant="striped" colorScheme="teal">
-                <Thead bg="blue.300">
-                  <Tr>
-                    <Th color="white">Marca</Th>
-                    <Th color="white">Cantidad</Th>
-                    <Th color="white">Precio</Th>
-                    <Th color="white">Sucursal</Th>
-                    <Th color="white">Acciones</Th>
+            <Box width="100%" maxWidth="1500px"  overflowX="auto">
+              <Table bg={tableBg}  borderRadius="md" overflow="hidden">
+                <Thead>
+                  <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
+                    <Th color={textColor} borderColor={borderColor}>Marca</Th>
+                    <Th color={textColor} borderColor={borderColor}>Cantidad</Th>
+                    <Th color={textColor} borderColor={borderColor}>Precio</Th>
+                    <Th color={textColor} borderColor={borderColor}>Sucursal</Th>
+                    <Th color={textColor} borderColor={borderColor}>Acciones</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -193,30 +219,30 @@ const InventarioList = () => {
                     .filter(item => item.branchs_id === Number(branchFilter)) 
                     .filter(item => item.brand.toLowerCase().includes(search.toLowerCase()))
                     .map((item) => (
-                      <Tr key={item.id} onClick={(e) => { if (editingId && editingId !== item.id) setEditingId(null); e.stopPropagation(); }}>
-                        <Td>
+                      <Tr key={item.id} onClick={(e) => { if (editingId && editingId !== item.id) setEditingId(null); e.stopPropagation(); }} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor}>
+                        <Td color={textColor} borderColor={borderColor}>
                           {editingId === item.id ? (
                             <Input value={editableData.brand} onChange={(e) => handleChange(e, "brand")} />
                           ) : (
                             item.brand
                           )}
                         </Td>
-                        <Td>
+                        <Td color={textColor} borderColor={borderColor}>
                           {editingId === item.id ? (
                             <Input type="number" value={editableData.quantity} onChange={(e) => handleChange(e, "quantity")} />
                           ) : (
                             item.quantity
                           )}
                         </Td>
-                        <Td>
+                        <Td color={textColor} borderColor={borderColor}>
                           {editingId === item.id ? (
                             <Input type="number" value={editableData.price} onChange={(e) => handleChange(e, "price")} />
                           ) : (
                             item.price
                           )}
                         </Td>
-                        <Td>{item.branchs?.name || "N/A"}</Td>
-                        <Td>
+                        <Td color={textColor} borderColor={borderColor}>{item.branchs?.name || "N/A"}</Td>
+                        <Td color={textColor} borderColor={borderColor}>
                           {editingId === item.id ? (
                             <Button colorScheme="green" size="sm" onClick={() => handleSave(item.id)}>Guardar</Button>
                           ) : (
@@ -228,7 +254,18 @@ const InventarioList = () => {
                     ))}
                 </Tbody>
               </Table>
-              <Box mt={4} p={2} bg="gray.100" borderRadius="md" textAlign="right">
+              <Box mt={4} p={2} borderRadius="md" textAlign="right"
+                bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
+              >
                 <Text fontSize="lg" fontWeight="bold">Stock total en esta sucursal: {totalStock}</Text>
               </Box>
             </Box>

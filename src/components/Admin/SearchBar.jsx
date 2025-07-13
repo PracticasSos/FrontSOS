@@ -12,12 +12,8 @@ const SearchBar = ({
   onSuggestionSelect, 
 }) => {
 
-  const bgColor = useColorModeValue('white', 'gray.800');
     const textColor = useColorModeValue('gray.800', 'white');
     const borderColor = useColorModeValue('gray.200', 'gray.600');
-    const tableBg = useColorModeValue('white', 'gray.700');
-    const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
-    const inputBg = useColorModeValue('white', 'gray.700');
     const selectBg = useColorModeValue('white', 'gray.700');
 
   return (

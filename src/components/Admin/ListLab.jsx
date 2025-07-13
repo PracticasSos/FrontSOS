@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../api/supabase';
 import {
-  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Flex, useToast, IconButton
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Flex, useToast, IconButton, useColorModeValue
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX } from 'react-icons/bi';
@@ -108,12 +108,26 @@ const ListLab = () => {
         }
     };
 
+    const bgColor = useColorModeValue('white', 'gray.800');
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const tableBg = useColorModeValue('white', 'gray.700');
+      const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
+      const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
-        <Box bgColor="#f0f0f0" minHeight="100vh" padding="20px">
-                <Heading as="h2" size="lg" textAlign="center" mb={4} color="#000000">
+        <Box 
+            p={6} 
+            maxW="1300px" 
+            mx="auto" 
+            bg={bgColor}
+            color={textColor}
+            minH="100vh"
+        >
+                <Heading mb={4} textAlign="center">
                     Lista de Laboratorios
                 </Heading>
-                <Flex mb={4} gap={3} justify="center">
+                <Box display="flex" justifyContent="center" gap={4} mb={4}>
                     <Button colorScheme="blue" onClick={() => handleNavigate('/Labs')}>
                         Registrar Laboratorio
                     </Button>
@@ -125,24 +139,35 @@ const ListLab = () => {
                     >
                         Volver a Opciones
                     </Button>
-                </Flex>
-                <Input placeholder='Buscar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" />
-                <Box overflowX="auto"  bg="white" p={4} borderRadius="lg" shadow="md">
-                    <Table variant="striped" colorScheme="teal">
-                        <Thead bgColor="#00A8C8">
-                            <Tr>
+                </Box>
+                <Input placeholder='Buscar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" 
+                    bg={selectBg}
+                    borderColor={borderColor}
+                    color={textColor}
+                    _hover={{
+                        borderColor: useColorModeValue('gray.300', 'gray.500')
+                    }}
+                    _focus={{
+                        borderColor: useColorModeValue('blue.500', 'blue.300'),
+                        boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                    }}
+                />
+                <Box width="100%" maxWidth="1500px"  overflowX="auto">
+                    <Table bg={tableBg}  borderRadius="md" overflow="hidden">
+                        <Thead>
+                            <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                                 {['Nombre', 'Dirección', 'Correo', 'Celular', 'RUC', 'Acciones'].map((header) => (
-                                    <Th key={header} fontWeight="bold" color="white" textAlign="center">{header}</Th>     
+                                    <Th key={header} color={textColor} borderColor={borderColor}>{header}</Th>     
                                 ))}
                             </Tr>
                         </Thead>
                         <Tbody>
                             {filteredLabs.map((lab) => (
-                                <Tr key={lab.id}>
+                                <Tr key={lab.id} cursor="pointer" _hover={{ bg: tableHoverBg }} borderColor={borderColor}>
                                     {[
                                         'name', 'address', 'email', 'phone', 'ruc'
                                     ].map((field) => (
-                                        <Td key={field}>
+                                        <Td key={field} color={textColor} borderColor={borderColor}>
                                             {editingId === lab.id ? (
                                                 <Input
                                                     name={field}
@@ -154,7 +179,7 @@ const ListLab = () => {
                                             )}
                                         </Td>
                                     ))}
-                                    <Td textAlign="center">
+                                    <Td textAlign="center" color={textColor} borderColor={borderColor}>
                                         {editingId === lab.id ? (
                                             <>
                                                 <IconButton icon={<BiCheck />} colorScheme="green" onClick={() => handleSave(lab.id)} mr={2} />
