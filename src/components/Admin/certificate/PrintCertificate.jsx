@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, Stack, SimpleGrid,FormControl, FormLabel, Textarea, RadioGroup, Radio, Checkbox, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, Stack, SimpleGrid,FormControl, FormLabel, Textarea, RadioGroup, Radio, Checkbox, Text, useColorModeValue  } from '@chakra-ui/react';
 import PdfMeasures from "../PdfMeasures";
 import CertificateLogo from "./CertificateLogo";
 import CertificateFooter from "./CertificateFooter";
@@ -248,7 +248,7 @@ const PrintCertificate = () => {
     
           <Box display={{ base: "block", lg: "none" }} mb={4}>
             {['OD', 'OI'].map((eye) => (
-              <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
+              <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md">
                 <Heading size="md" mb={3}>{eye === 'OD' ? 'Ojo Derecho (OD)' : 'Ojo Izquierdo (OI)'}</Heading>
                 <SimpleGrid columns={2} spacing={3}>
                   <FormControl>
