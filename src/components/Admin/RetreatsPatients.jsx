@@ -286,7 +286,7 @@ const RetreatsPatients = () => {
           No se encontraron registros de pacientes.
         </Text>
       ) : (
-        <Box width="100%" maxWidth="1500px" padding={6} boxShadow="lg" overflowX="auto">
+        <Box width="100%" maxWidth="1500px"  overflowX="auto">
           <Table bg={tableBg}  borderRadius="md" overflow="hidden">
             <Thead>
               <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
