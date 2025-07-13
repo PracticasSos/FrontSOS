@@ -436,7 +436,8 @@ const CashClosure = () => {
       const selectBg = useColorModeValue('white', 'gray.700');
 
     return (
-        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
+        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
+             <Box position="sticky" top={0} bg={bgColor} zIndex={10} pb={4}>
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
                 Consultar Cierre - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
@@ -549,12 +550,13 @@ const CashClosure = () => {
                         />
                     </FormControl>
                 </Grid>
-                
+                </Box>
+                <Box maxH="70vh" overflowY="auto" overflowX="auto">
                 <Divider my={10} />
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Cierre Diario
                 </Heading>
-                <Table variant="striped" colorScheme="teal" overflowX="auto">
+                <Table colorScheme="teal"  overflow="hidden">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Orden</Th>
@@ -627,7 +629,7 @@ const CashClosure = () => {
                 <Box>
                 <Divider my={6} />
                 <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
-                <Table variant="striped" colorScheme="teal">
+                <Table  overflow="hidden" colorScheme="teal">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Fecha</Th>
@@ -698,7 +700,7 @@ const CashClosure = () => {
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Egresos
                 </Heading>
-                <Table variant="striped" colorScheme="teal" mb={6}>
+                <Table  overflow="hidden" colorScheme="teal" mb={6}>
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Orden</Th>
@@ -738,6 +740,7 @@ const CashClosure = () => {
                         ))}
                     </Tbody>
                     </Table>
+                    </Box>
                         <Divider my={6} />
                             <HStack justifyContent="space-around" spacing={6}>
                                 <VStack>
@@ -867,6 +870,7 @@ const CashClosure = () => {
                         Enviar
                     </Button>
                 </Box>
+
             </Box>
         </Box>
     );
