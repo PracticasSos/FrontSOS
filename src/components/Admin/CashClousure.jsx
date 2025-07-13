@@ -453,7 +453,7 @@ const CashClosure = () => {
                 </Button>
             </Grid>
 
-            <Box overflowX="auto" as="form" onSubmit={handleSubmit}>
+            <Box as="form" onSubmit={handleSubmit}>
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6}>
                     <FormControl isRequired>
                         <FormLabel>Óptica</FormLabel>
@@ -554,7 +554,7 @@ const CashClosure = () => {
                 <Heading size="md" textAlign="center" color="cyan.900">
                     Cierre Diario
                 </Heading>
-                <Table variant="striped" colorScheme="teal">
+                <Table variant="striped" colorScheme="teal" overflowX="auto">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Orden</Th>

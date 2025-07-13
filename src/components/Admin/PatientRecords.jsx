@@ -388,7 +388,7 @@ const PatientRecords = () => {
                     Cerrar Sesión
                 </Button>
             </Box>
-            <Box mb={6} overflowX="auto">
+            <Box mb={6}>
                 <Select
                     placeholder="Seleccione una sucursal"
                     value={selectedBranch}
@@ -412,7 +412,7 @@ const PatientRecords = () => {
                 </Select>
             </Box>
             <Heading size="md" textAlign="center" color="cyan.900">Ingresos</Heading>
-            <Table bg={tableBg} borderRadius="md" overflow="hidden">
+            <Table bg={tableBg} borderRadius="md" overflow="hidden" overflowX="auto">
                 <Thead>
                     <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                         <Th color={textColor} borderColor={borderColor} >Orden</Th>
