@@ -18,7 +18,7 @@ export const useUserPermissions = (userData) => {
           '/MessageManager', '/ListBalance', '/ListSales',
           '/ListPatients', '/ListUsers', '/ListLens', '/ListInventory',
           '/ListBranch', '/ListLab','/cuestionario','/lens','/material',
-          '/admin/modelos','/resultados','/RegisterExperience',
+          '/admin/modelos','/resultados','/RegisterExperience','/mensajeria',
         ];
       case 2: 
         return ['/optometra', '/registrar-paciente', '/medidas', '/historial-medidas', '/certificado', '/cuestionario',

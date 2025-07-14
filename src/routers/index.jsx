@@ -49,6 +49,8 @@ import MaterialSelector from '../components/ExperienceModule/pages/MaterialSelec
 import MessageManager from "../components/Admin/MensaageManager.jsx";
 import LensCustomizer from "../components/ExperienceModule/pages/LensCustomizer.jsx";
 import Loader from "../components/ExperienceModule/ExperienceUI/Loader.jsx";
+import MessageClients from "../components/ExperienceModule/pages/MessageClients.jsx";
+
 
 const AppRouter = () => {
     return(
@@ -105,6 +107,7 @@ const AppRouter = () => {
             <Route path="/material" element={<MaterialSelector />} />
             <Route path="/lens" element={<LensCustomizer />} />
             <Route path="/loader" element={<Loader />} />
+            <Route path="/mensajeria" element={<MessageClients />} />
 
 
         </Routes>

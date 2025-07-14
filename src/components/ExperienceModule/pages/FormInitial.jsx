@@ -1,10 +1,9 @@
-// src/pages/FormInitial.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../api/supabase';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { FiSettings } from 'react-icons/fi'; // Ícono de configuración
+import { FiSettings } from 'react-icons/fi'; 
 import './FormInitial.css';
 
 export default function FormInitial() {
@@ -13,6 +12,7 @@ export default function FormInitial() {
   const [form, setForm] = useState({ name: '', phone: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -54,16 +54,29 @@ export default function FormInitial() {
     navigate('/cuestionario');
   };
 
-  const goToSettings = () => {
-    navigate('/admin/modelos');
+  const toggleSettingsMenu = () => {
+    setShowSettingsMenu(prev => !prev);
+  };
+
+  const goToRoute = route => {
+    setShowSettingsMenu(false);
+    navigate(route);
   };
 
   return (
     <div className="form-container">
       {/* Ícono de configuración */}
-      <div className="settings-icon" onClick={goToSettings}>
-        <FiSettings size={32} />
-      </div>
+<div className="settings-icon-wrapper">
+  <div className="settings-icon" onClick={toggleSettingsMenu}>
+    <FiSettings size={32} />
+  </div>
+  {showSettingsMenu && (
+    <div className="settings-dropdown">
+      <button onClick={() => goToRoute('/admin/modelos')}>Modelos 3D</button>
+      <button onClick={() => goToRoute('/mensajeria')}>Mensajería</button>
+    </div>
+  )}
+</div>
 
       <form className="form-card" onSubmit={handleSubmit}>
         <h2 className="form-title">Tus datos</h2>
