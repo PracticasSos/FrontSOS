@@ -71,7 +71,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
       drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
-        color: '#00FFAA',
+        color: '#6AB1CD',
         lineWidth: 0.5,
       });
       drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });

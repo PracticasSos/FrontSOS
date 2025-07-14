@@ -81,9 +81,9 @@
   text-align: center;
 }
 
-.hidden {
+/* .hidden {
   display: none;
-}
+} */
 
 .fade-in {
   animation: fadeIn 0.8s ease-in forwards;

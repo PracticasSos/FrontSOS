@@ -293,7 +293,7 @@ const AdminDashBoard = () => {
             {/* Logo ALGORA */}
             <Text
               fontSize="xl"
-              fontFamily="Chaney Extended, sans-serif"
+              fontFamily="Satoshi, sans-serif"
               fontWeight="bold"
               color={textColor}
             >

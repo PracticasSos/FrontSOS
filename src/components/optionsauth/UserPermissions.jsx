@@ -17,17 +17,21 @@ export const useUserPermissions = (userData) => {
           '/HistoryMeasureList', '/PrintCertificate', '/HistoryClinic', 
           '/MessageManager', '/ListBalance', '/ListSales',
           '/ListPatients', '/ListUsers', '/ListLens', '/ListInventory',
-          '/ListBranch', '/ListLab', 
+          '/ListBranch', '/ListLab','/cuestionario','/lens','/material',
+          '/admin/modelos','/resultados','/RegisterExperience',
         ];
       case 2: 
-        return ['/optometra', '/registrar-paciente', '/medidas', '/historial-medidas', '/certificado'];
+        return ['/optometra', '/registrar-paciente', '/medidas', '/historial-medidas', '/certificado', '/cuestionario',
+          '/lens','/material',
+          '/admin/modelos','/resultados','/RegisterExperience',];
       case 3: 
         return [
           '/vendedor', '/RegisterPatient', '/HistoryClinic', 
           '/OrderLaboratoryList', '/Sales', '/RetreatsPatients', 
           '/PatientRecords', '/BalancesPatient', '/Egresos', 
           '/MeasuresFinal', '/Balance', '/Inventory', 
-          '/HistoryMeasureList', '/RegisterLens'
+          '/HistoryMeasureList', '/RegisterLens','/cuestionario','/lens','/material',
+          '/admin/modelos','/resultados','/RegisterExperience',
         ];
       case 4: 
         return [
@@ -36,7 +40,9 @@ export const useUserPermissions = (userData) => {
           '/registrar-paciente', '/retiros', '/saldos', '/mensajes', 
           '/cierre', '/Egresos', '/certificado', '/historial-paciente', 
           '/medidas', '/envios', '/historial-medidas', '/laboratorios', 
-          '/sucursal', '/consultar-cierre', '/lunas', '/creditos'
+          '/sucursal', '/consultar-cierre', '/lunas', '/creditos','/cuestionario',
+          '/lens','/material',
+          '/admin/modelos','/resultados','/RegisterExperience',
         ];
       default: 
         return ['/LoginForm'];

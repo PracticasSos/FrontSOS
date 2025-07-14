@@ -36,6 +36,7 @@
 
 /* Lista de opciones */
 .options-list {
+  color:#555 ;
   list-style: none;
   padding: 0;
   margin: 0;
