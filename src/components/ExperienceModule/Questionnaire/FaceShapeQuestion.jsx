@@ -31,6 +31,16 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     }
   }, [isScanning, landmarkSnapshot]);
 
+  // Fallback en caso de que onUserMedia no funcione en producción
+  useEffect(() => {
+    const checkCameraReady = async () => {
+      if (webcamRef.current?.video && !isCameraReady) {
+        await handleCameraReady();
+      }
+    };
+    checkCameraReady();
+  }, []);
+
   const startCamera = (faceMesh) => {
     const videoElement = webcamRef.current.video;
 
@@ -129,26 +139,30 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
   const handleCameraReady = async () => {
     if (!isCameraReady) {
-      const faceMeshModule = await import('@mediapipe/face_mesh');
-      const faceMesh = new faceMeshModule.FaceMesh({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-      });
+      console.log('Cámara iniciada');
+      try {
+        const faceMeshModule = await import('@mediapipe/face_mesh');
+        const faceMesh = new faceMeshModule.FaceMesh({
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+        });
 
-      faceMesh.setOptions({
-        maxNumFaces: 1,
-        refineLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
+        faceMesh.setOptions({
+          maxNumFaces: 1,
+          refineLandmarks: true,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5,
+        });
 
-      faceMesh.onResults(onResults);
+        faceMesh.onResults(onResults);
 
-      // Guardamos referencias a constantes de MediaPipe si las necesitas
-      window.FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
+        window.FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
 
-      setIsCameraReady(true);
-      startCamera(faceMesh);
+        setIsCameraReady(true);
+        startCamera(faceMesh);
+      } catch (err) {
+        console.error('Error cargando FaceMesh o accediendo a la cámara:', err);
+      }
     }
   };
 
@@ -170,10 +184,19 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         <Webcam
           ref={webcamRef}
           className={`preview-video ${isCameraReady ? 'fade-in' : 'hidden'}`}
-          onUserMedia={handleCameraReady}
+          onUserMedia={() => {
+            console.log('onUserMedia activado');
+            handleCameraReady();
+          }}
+          onUserMediaError={(err) =>
+            console.error('Error al acceder a la cámara:', err)
+          }
+          audio={false}
         />
 
-        {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
+        {isCameraReady && (
+          <canvas ref={canvasRef} className="overlay-canvas fade-in" />
+        )}
 
         {isCameraReady && isScanning && (
           <div className="scanning-text">Escaneando rostro... {Math.floor(progress)}%</div>
