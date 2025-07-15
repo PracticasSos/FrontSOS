@@ -96,9 +96,8 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     ctx.restore();
   };
 
-  const distance = (a, b) => {
-    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-  };
+  const distance = (a, b) =>
+    Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
   const determineFaceShape = (landmarks) => {
     const forehead = landmarks[10];
@@ -114,7 +113,14 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     const cheekWidth = distance(leftCheek, rightCheek);
     const ratio = cheekWidth / faceHeight;
 
-    console.log('[determineFaceShape] Distancias - frente:', foreheadWidth.toFixed(2), ' mandíbula:', jawWidth.toFixed(2), ' mejillas:', cheekWidth.toFixed(2));
+    console.log(
+      '[determineFaceShape] Distancias - frente:',
+      foreheadWidth.toFixed(2),
+      ' mandíbula:',
+      jawWidth.toFixed(2),
+      ' mejillas:',
+      cheekWidth.toFixed(2)
+    );
 
     if (
       Math.abs(jawWidth - cheekWidth) < 0.03 &&
@@ -143,23 +149,12 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     setIsScanning(true);
   };
 
-  const handleCameraReady = async () => {
+  const handleCameraReady = () => {
     if (isCameraReady) return;
 
-    console.log('[handleCameraReady] Cargando módulo FaceMesh...');
-
+    console.log('[handleCameraReady] Iniciando FaceMesh desde CDN...');
     try {
-      const module = await import('@mediapipe/face_mesh');
-
-      // ✅ Compatibilidad para Vite (prod + dev)
-      const FaceMesh = module.FaceMesh || module.default?.FaceMesh || module.default;
-
-      if (!FaceMesh) {
-        console.error('[handleCameraReady] No se pudo cargar la clase FaceMesh.');
-        return;
-      }
-
-      const faceMesh = new FaceMesh({
+      const faceMesh = new window.FaceMesh.FaceMesh({
         locateFile: (file) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
       });
@@ -173,14 +168,13 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
       faceMesh.onResults(onResults);
 
-      const { FACEMESH_TESSELATION } = module;
-      window.FACEMESH_TESSELATION = FACEMESH_TESSELATION;
+      window.FACEMESH_TESSELATION = window.FaceMesh.FACEMESH_TESSELATION;
 
       setIsCameraReady(true);
       console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
       startCamera(faceMesh);
     } catch (error) {
-      console.error('[handleCameraReady] Error al cargar FaceMesh:', error);
+      console.error('[handleCameraReady] Error al iniciar FaceMesh:', error);
     }
   };
 
