@@ -20,7 +20,7 @@ function LensCustomizer() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true }); // ✅ Corrección aplicada
 
     const image = new Image();
     image.src = lensImage;
