@@ -1,7 +1,9 @@
+// FaceShapeQuestion.jsx
 import React, { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
-import * as cam from '@mediapipe/camera_utils';
+import { Camera } from '@mediapipe/camera_utils';
+import { FaceMesh, FACEMESH_TESSELATION } from '@mediapipe/face_mesh';
 
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 import '../Questionnaire/questionsStyles.css';
@@ -43,7 +45,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     }
 
     console.log('[startCamera] Iniciando cámara...');
-    const camera = new cam.Camera(videoElement, {
+    const camera = new Camera(videoElement, {
       onFrame: async () => {
         await faceMesh.send({ image: videoElement });
       },
@@ -79,7 +81,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
+      drawConnectors(ctx, landmarks, FACEMESH_TESSELATION, {
         color: '#00FFAA',
         lineWidth: 0.5,
       });
@@ -152,9 +154,9 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const handleCameraReady = () => {
     if (isCameraReady) return;
 
-    console.log('[handleCameraReady] Iniciando FaceMesh desde CDN...');
+    console.log('[handleCameraReady] Iniciando FaceMesh (import)...');
     try {
-      const faceMesh = new window.FaceMesh.FaceMesh({
+      const faceMesh = new FaceMesh({
         locateFile: (file) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
       });
@@ -167,8 +169,6 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       });
 
       faceMesh.onResults(onResults);
-
-      window.FACEMESH_TESSELATION = window.FaceMesh.FACEMESH_TESSELATION;
 
       setIsCameraReady(true);
       console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
