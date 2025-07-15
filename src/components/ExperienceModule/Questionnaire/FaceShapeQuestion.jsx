@@ -1,15 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
-import * as cam from '@mediapipe/camera_utils';
-import * as faceMeshModule from '@mediapipe/face_mesh'; // ✅ Importación segura
+import { Camera } from '@mediapipe/camera_utils';
+import { FaceMesh, FACEMESH_TESSELATION } from '@mediapipe/face_mesh';
 
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 import '../Questionnaire/questionsStyles.css';
 import './FaceShapeQuestion.css';
-
-const FaceMesh = faceMeshModule.FaceMesh;
-const FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
 
 export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const webcamRef = useRef(null);
@@ -47,8 +44,12 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     }
 
     console.log('[startCamera] Iniciando cámara...');
-    const camera = new cam.Camera(videoElement, {
+    const camera = new Camera(videoElement, {
       onFrame: async () => {
+        if (videoElement.videoWidth === 0 || videoElement.videoHeight === 0) {
+          console.warn('[startCamera] Video aún no tiene dimensiones válidas.');
+          return;
+        }
         await faceMesh.send({ image: videoElement });
       },
       width: 640,
@@ -74,12 +75,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
   const onResults = (results) => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      console.warn('[onResults] Canvas no disponible aún');
-      return;
-    }
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     canvas.width = 640;
     canvas.height = 480;
 
@@ -159,28 +159,34 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   };
 
   const handleCameraReady = () => {
-    if (isCameraReady) return;
+    const video = webcamRef.current?.video;
 
-    console.log('[handleCameraReady] Iniciando FaceMesh...');
-    try {
-      const faceMesh = new FaceMesh({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-      });
+    if (isCameraReady || !video) return;
 
-      faceMesh.setOptions({
-        maxNumFaces: 1,
-        refineLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
+    video.addEventListener('loadeddata', async () => {
+      console.log('[handleCameraReady] Video cargado. Iniciando FaceMesh...');
+      try {
+        const faceMesh = new FaceMesh({
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+        });
 
-      faceMesh.onResults(onResults);
-      setIsCameraReady(true);
-      startCamera(faceMesh);
-    } catch (error) {
-      console.error('[handleCameraReady] Error al iniciar FaceMesh:', error);
-    }
+        faceMesh.setOptions({
+          maxNumFaces: 1,
+          refineLandmarks: true,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5,
+        });
+
+        faceMesh.onResults(onResults);
+
+        setIsCameraReady(true);
+        console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
+        startCamera(faceMesh);
+      } catch (error) {
+        console.error('[handleCameraReady] Error al iniciar FaceMesh:', error);
+      }
+    });
   };
 
   return (
@@ -202,6 +208,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
           ref={webcamRef}
           className={`preview-video ${isCameraReady ? 'fade-in' : 'hidden'}`}
           onUserMedia={handleCameraReady}
+          videoConstraints={{
+            width: 640,
+            height: 480,
+            facingMode: 'user',
+          }}
         />
 
         {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
