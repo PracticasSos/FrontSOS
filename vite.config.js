@@ -4,14 +4,16 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: [
-      '@mediapipe/face_mesh',
-      '@mediapipe/camera_utils',
-      '@mediapipe/drawing_utils'
-    ],
+    include: ['@mediapipe/face_mesh']
   },
   build: {
-    target: 'esnext',
-    minify: false, // opcional: evita errores por minificación
-  },
+    rollupOptions: {
+      external: [],
+      output: {
+        manualChunks: {
+          mediapipe: ['@mediapipe/face_mesh', '@mediapipe/drawing_utils', '@mediapipe/camera_utils']
+        }
+      }
+    }
+  }
 })

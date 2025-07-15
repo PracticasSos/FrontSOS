@@ -1,8 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
-import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
-import { Camera } from '@mediapipe/camera_utils';
-import { FaceMesh, FACEMESH_TESSELATION } from '@mediapipe/face_mesh';
 
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 import '../Questionnaire/questionsStyles.css';
@@ -17,15 +14,61 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   const [landmarkSnapshot, setLandmarkSnapshot] = useState(null);
   const [cameraInstance, setCameraInstance] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [isLibraryLoaded, setIsLibraryLoaded] = useState(false);
+
+  // Función para cargar los scripts de MediaPipe
+  const loadMediaPipeScripts = () => {
+    return new Promise((resolve, reject) => {
+      // Verificar si ya están cargados
+      if (window.FaceMesh && window.drawConnectors && window.drawLandmarks && window.Camera) {
+        console.log('[loadMediaPipeScripts] Scripts ya cargados');
+        setIsLibraryLoaded(true);
+        resolve();
+        return;
+      }
+
+      const scripts = [
+        'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
+        'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
+        'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js'
+      ];
+
+      let loadedScripts = 0;
+
+      scripts.forEach((src, index) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => {
+          loadedScripts++;
+          console.log(`[loadMediaPipeScripts] Script ${index + 1}/${scripts.length} cargado`);
+          
+          if (loadedScripts === scripts.length) {
+            console.log('[loadMediaPipeScripts] Todos los scripts cargados');
+            setIsLibraryLoaded(true);
+            resolve();
+          }
+        };
+        script.onerror = (error) => {
+          console.error(`[loadMediaPipeScripts] Error cargando script ${src}:`, error);
+          reject(error);
+        };
+        document.head.appendChild(script);
+      });
+    });
+  };
 
   useEffect(() => {
+    loadMediaPipeScripts().catch(error => {
+      console.error('[useEffect] Error cargando scripts de MediaPipe:', error);
+    });
+
     return () => {
       if (cameraInstance) {
         console.log('[cleanup] Deteniendo cámara...');
         cameraInstance.stop();
       }
     };
-  }, [cameraInstance]);
+  }, []);
 
   useEffect(() => {
     if (!isScanning && landmarkSnapshot) {
@@ -44,12 +87,8 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     }
 
     console.log('[startCamera] Iniciando cámara...');
-    const camera = new Camera(videoElement, {
+    const camera = new window.Camera(videoElement, {
       onFrame: async () => {
-        if (videoElement.videoWidth === 0 || videoElement.videoHeight === 0) {
-          console.warn('[startCamera] Video aún no tiene dimensiones válidas.');
-          return;
-        }
         await faceMesh.send({ image: videoElement });
       },
       width: 640,
@@ -88,11 +127,13 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
-      drawConnectors(ctx, landmarks, FACEMESH_TESSELATION || [], {
+      
+      // Usar las funciones globales de MediaPipe
+      window.drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
         color: '#00FFAA',
         lineWidth: 0.5,
       });
-      drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
+      window.drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
 
       if (!landmarkSnapshot) {
         console.log('[onResults] Guardando snapshot de landmarks...');
@@ -158,36 +199,62 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     setIsScanning(true);
   };
 
-  const handleCameraReady = () => {
-    const video = webcamRef.current?.video;
-
-    if (isCameraReady || !video) return;
-
-    video.addEventListener('loadeddata', async () => {
-      console.log('[handleCameraReady] Video cargado. Iniciando FaceMesh...');
-      try {
-        const faceMesh = new FaceMesh({
-          locateFile: (file) =>
-            `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-        });
-
-        faceMesh.setOptions({
-          maxNumFaces: 1,
-          refineLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-        });
-
-        faceMesh.onResults(onResults);
-
-        setIsCameraReady(true);
-        console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
-        startCamera(faceMesh);
-      } catch (error) {
-        console.error('[handleCameraReady] Error al iniciar FaceMesh:', error);
+  const initializeFaceMesh = async () => {
+    try {
+      console.log('[initializeFaceMesh] Inicializando FaceMesh con scripts globales...');
+      
+      if (!window.FaceMesh) {
+        throw new Error('FaceMesh no está disponible globalmente');
       }
-    });
+
+      const faceMesh = new window.FaceMesh({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+      });
+
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      faceMesh.onResults(onResults);
+
+      console.log('[initializeFaceMesh] FaceMesh inicializado correctamente');
+      return faceMesh;
+    } catch (error) {
+      console.error('[initializeFaceMesh] Error al inicializar FaceMesh:', error);
+      throw error;
+    }
   };
+
+  const handleCameraReady = async () => {
+    if (isCameraReady) return;
+
+    // Esperar a que las librerías estén cargadas
+    if (!isLibraryLoaded) {
+      console.log('[handleCameraReady] Esperando a que las librerías se carguen...');
+      return;
+    }
+
+    console.log('[handleCameraReady] Iniciando FaceMesh...');
+    try {
+      const faceMesh = await initializeFaceMesh();
+      setIsCameraReady(true);
+      console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
+      startCamera(faceMesh);
+    } catch (error) {
+      console.error('[handleCameraReady] Error al iniciar FaceMesh:', error);
+    }
+  };
+
+  // Reintentar la inicialización cuando las librerías estén cargadas
+  useEffect(() => {
+    if (isLibraryLoaded && !isCameraReady && webcamRef.current?.video) {
+      handleCameraReady();
+    }
+  }, [isLibraryLoaded, isCameraReady]);
 
   return (
     <div className="question-card FaceShapeQuestion--container">
@@ -198,7 +265,13 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       </p>
 
       <div className="camera-preview">
-        {!isCameraReady && (
+        {!isLibraryLoaded && (
+          <div className="loading-camera-text">
+            Cargando librerías de detección facial...
+          </div>
+        )}
+        
+        {isLibraryLoaded && !isCameraReady && (
           <div className="loading-camera-text">
             Iniciando cámara... por favor espera unos segundos hasta que tu rostro aparezca correctamente.
           </div>
@@ -208,11 +281,6 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
           ref={webcamRef}
           className={`preview-video ${isCameraReady ? 'fade-in' : 'hidden'}`}
           onUserMedia={handleCameraReady}
-          videoConstraints={{
-            width: 640,
-            height: 480,
-            facingMode: 'user',
-          }}
         />
 
         {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
