@@ -19,7 +19,10 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
   useEffect(() => {
     return () => {
-      if (cameraInstance) cameraInstance.stop();
+      if (cameraInstance) {
+        console.log('[Cleanup] Deteniendo cámara...');
+        cameraInstance.stop();
+      }
     };
   }, [cameraInstance]);
 
@@ -27,46 +30,63 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     if (!isScanning && landmarkSnapshot) {
       const shape = determineFaceShape(landmarkSnapshot);
       setFaceShape(shape);
+      console.log('[FaceShape] Forma detectada:', shape);
       onAnswer(shape);
     }
   }, [isScanning, landmarkSnapshot]);
 
-  // Fallback en caso de que onUserMedia no funcione en producción
   useEffect(() => {
-    const checkCameraReady = async () => {
-      if (webcamRef.current?.video && !isCameraReady) {
-        await handleCameraReady();
+    const checkVideo = setInterval(() => {
+      if (webcamRef.current?.video) {
+        console.log('[Video Check] Video cargado correctamente.');
+        clearInterval(checkVideo);
+      } else {
+        console.warn('[Video Check] Aún no se ha cargado el video.');
       }
-    };
-    checkCameraReady();
+    }, 1000);
+    return () => clearInterval(checkVideo);
   }, []);
 
   const startCamera = (faceMesh) => {
-    const videoElement = webcamRef.current.video;
+    try {
+      const videoElement = webcamRef.current?.video;
 
-    const camera = new cam.Camera(videoElement, {
-      onFrame: async () => {
-        await faceMesh.send({ image: videoElement });
-      },
-      width: 640,
-      height: 480,
-    });
+      if (!videoElement) {
+        console.error('[startCamera] No se encontró el elemento de video.');
+        return;
+      }
 
-    setCameraInstance(camera);
-    camera.start();
-
-    setIsScanning(true);
-    setProgress(0);
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsScanning(false);
-        }
-        return prev + 1.25;
+      console.log('[startCamera] Iniciando cámara...');
+      const camera = new cam.Camera(videoElement, {
+        onFrame: async () => {
+          try {
+            await faceMesh.send({ image: videoElement });
+          } catch (err) {
+            console.error('[onFrame] Error al enviar frame a FaceMesh:', err);
+          }
+        },
+        width: 640,
+        height: 480,
       });
-    }, 100);
+
+      setCameraInstance(camera);
+      camera.start();
+
+      setIsScanning(true);
+      setProgress(0);
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsScanning(false);
+          }
+          return prev + 1.25;
+        });
+      }, 100);
+    } catch (err) {
+      console.error('[startCamera] Error iniciando cámara:', err);
+    }
   };
 
   const onResults = (results) => {
@@ -80,8 +100,10 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
     if (results.multiFaceLandmarks?.length > 0) {
       const landmarks = results.multiFaceLandmarks[0];
+      console.log('[onResults] Rostro detectado. Landmarks:', landmarks);
+
       drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
-        color: '#6AB1CD',
+        color: '#00FFAA',
         lineWidth: 0.5,
       });
       drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
@@ -89,7 +111,10 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       if (!landmarkSnapshot) {
         setLandmarkSnapshot(landmarks);
       }
+    } else {
+      console.warn('[onResults] No se detectó ningún rostro.');
     }
+
     ctx.restore();
   };
 
@@ -111,6 +136,8 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     const cheekWidth = distance(leftCheek, rightCheek);
     const ratio = cheekWidth / faceHeight;
 
+    console.log('[ShapeCalc] Altura:', faceHeight, 'Mejillas:', cheekWidth, 'Mandíbula:', jawWidth, 'Frente:', foreheadWidth, 'Ratio:', ratio);
+
     if (
       Math.abs(jawWidth - cheekWidth) < 0.03 &&
       Math.abs(cheekWidth - foreheadWidth) < 0.03 &&
@@ -131,6 +158,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   };
 
   const handleRetry = () => {
+    console.log('[Retry] Reiniciando escaneo...');
     setFaceShape(null);
     setLandmarkSnapshot(null);
     setProgress(0);
@@ -138,31 +166,33 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
   };
 
   const handleCameraReady = async () => {
-    if (!isCameraReady) {
-      console.log('Cámara iniciada');
-      try {
-        const faceMeshModule = await import('@mediapipe/face_mesh');
-        const faceMesh = new faceMeshModule.FaceMesh({
-          locateFile: (file) =>
-            `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-        });
+    if (isCameraReady) return;
 
-        faceMesh.setOptions({
-          maxNumFaces: 1,
-          refineLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-        });
+    try {
+      console.log('[handleCameraReady] Cargando módulo FaceMesh...');
+      const faceMeshModule = await import('@mediapipe/face_mesh');
 
-        faceMesh.onResults(onResults);
+      const faceMesh = new faceMeshModule.FaceMesh({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+      });
 
-        window.FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
 
-        setIsCameraReady(true);
-        startCamera(faceMesh);
-      } catch (err) {
-        console.error('Error cargando FaceMesh o accediendo a la cámara:', err);
-      }
+      faceMesh.onResults(onResults);
+
+      window.FACEMESH_TESSELATION = faceMeshModule.FACEMESH_TESSELATION;
+
+      setIsCameraReady(true);
+      console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
+      startCamera(faceMesh);
+    } catch (error) {
+      console.error('[handleCameraReady] Error al cargar FaceMesh:', error);
     }
   };
 
@@ -184,19 +214,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         <Webcam
           ref={webcamRef}
           className={`preview-video ${isCameraReady ? 'fade-in' : 'hidden'}`}
-          onUserMedia={() => {
-            console.log('onUserMedia activado');
-            handleCameraReady();
-          }}
-          onUserMediaError={(err) =>
-            console.error('Error al acceder a la cámara:', err)
-          }
-          audio={false}
+          onUserMedia={handleCameraReady}
+          onUserMediaError={(err) => console.error('[Webcam] Error de acceso a cámara:', err)}
         />
 
-        {isCameraReady && (
-          <canvas ref={canvasRef} className="overlay-canvas fade-in" />
-        )}
+        {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
 
         {isCameraReady && isScanning && (
           <div className="scanning-text">Escaneando rostro... {Math.floor(progress)}%</div>
