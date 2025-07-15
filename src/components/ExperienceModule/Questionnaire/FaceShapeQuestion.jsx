@@ -151,11 +151,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     try {
       const module = await import('@mediapipe/face_mesh');
 
-      // ✅ En Vite producción FaceMesh viene por default
-      const FaceMesh = module.default;
+      // ✅ Compatibilidad para Vite (prod + dev)
+      const FaceMesh = module.FaceMesh || module.default?.FaceMesh || module.default;
 
       if (!FaceMesh) {
-        console.error('[handleCameraReady] No se pudo cargar la clase FaceMesh desde default.');
+        console.error('[handleCameraReady] No se pudo cargar la clase FaceMesh.');
         return;
       }
 
