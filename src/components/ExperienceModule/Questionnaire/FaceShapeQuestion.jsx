@@ -150,10 +150,12 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
     try {
       const module = await import('@mediapipe/face_mesh');
-      const FaceMesh = module.FaceMesh || module.default?.FaceMesh;
+
+      // ✅ En Vite producción FaceMesh viene por default
+      const FaceMesh = module.default;
 
       if (!FaceMesh) {
-        console.error('[handleCameraReady] No se pudo cargar la clase FaceMesh.');
+        console.error('[handleCameraReady] No se pudo cargar la clase FaceMesh desde default.');
         return;
       }
 
@@ -170,7 +172,9 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       });
 
       faceMesh.onResults(onResults);
-      window.FACEMESH_TESSELATION = module.FACEMESH_TESSELATION;
+
+      const { FACEMESH_TESSELATION } = module;
+      window.FACEMESH_TESSELATION = FACEMESH_TESSELATION;
 
       setIsCameraReady(true);
       console.log('[handleCameraReady] FaceMesh cargado. Iniciando cámara...');
