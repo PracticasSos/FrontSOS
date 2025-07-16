@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { Box,
   Flex,
   Text,
@@ -40,14 +40,13 @@ import iconoventa from "../../assets/iconoventa.png";
 import usuariofemenino from "../../assets/usuariofemenino.png";
 import usuariomasculino from "../../assets/usuariomasculino.png";
 import avataralgora from "../../assets/avataralgora.jpg";
-import { supabase } from '../../api/supabase';
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import ColorModeToggle from '../../Toggle';
-
+import { useAuth } from '../AuthContext';
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
@@ -76,33 +75,17 @@ const options = [
 
 const AdminDashBoard = () => {
   const [showAll, setShowAll] = useState(false);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
+  const { user, loading, logout } = useAuth();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session?.user) {
-        console.error('Error al obtener la sesión:', error);
-        navigate('/Login');
-      } else {
-        setUser(session.user);
-        localStorage.setItem('user', JSON.stringify(session.user));
-      }
-      setLoading(false);
-    };
-
-    const userFromStorage = JSON.parse(localStorage.getItem('user'));
-    if (userFromStorage) {
-      setUser(userFromStorage);
-      setLoading(false);
-    } else {
-      checkSession();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
     }
-  }, [navigate]);
-
+  };
   if (loading || !user) {
     return null; 
   }
@@ -368,6 +351,9 @@ const AdminDashBoard = () => {
                   <MenuItem onClick={() => navigate("/MessageManager")}>
                     Mensajes
                   </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    Cerrar Sesión
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
@@ -448,6 +434,9 @@ const AdminDashBoard = () => {
                       >
                         Mensajes
                       </MenuItem>
+                      <MenuItem onClick={handleLogout}>
+                    Cerrar Sesión
+                  </MenuItem>
                     </MenuList>
                   </Menu>
                 </Flex>
