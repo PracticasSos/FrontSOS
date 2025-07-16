@@ -298,7 +298,7 @@ const AdminDashBoard = () => {
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/egresos")}
+                onClick={() => navigate("/Egresos")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -482,7 +482,7 @@ const AdminDashBoard = () => {
                   cursor="pointer"
                   onClick={() => {
                     onToggle();
-                    navigate("/egresos");
+                    navigate("/Egresos");
                   }}
                   _hover={{ color: textHoverColor }}
                 >
