@@ -48,7 +48,7 @@ import ColorModeToggle from '../../Toggle';
 import { useAuth } from '../AuthContext';
 
 const options = [
-  { label: "Registar Paciente", icon: iconoregistrar },
+  { label: "Registrar Paciente", icon: iconoregistrar },
   { label: "Venta", icon: iconoventa },
   { label: "Orden de Laboratorio", icon: iconoordenlaboratorio },
   { label: "Retiros", icon: iconoretiros },
@@ -161,61 +161,61 @@ const AdminDashBoard = () => {
       case "Registrar Paciente":
         navigate('/RegisterPatient');
         break;
-      case "REGISTRAR MEDIDAS":
+      case "Registrar Medidas":
         navigate('/MeasuresFinal');
         break;
-      case "VENTA/ CONTRATO DE SERVICIO":
+      case "Venta":
         navigate('/Sales');
         break;
-      case "RETIROS":
+      case "Retiros":
         navigate('/RetreatsPatients')
         break;
-      case "EXPERIENCIA":
+      case "Experiencia":
         navigate('/RegisterExperience');
         break;
-      case "USUARIOS":
+      case "Usuarios":
         navigate('/Register');
         break;
-      case "INVENTARIO":
+      case "Inventario":
         navigate('/Inventory');
         break;
-      case "SUCURSAL":
+      case "Sucursal":
         navigate('/Branch');
         break;
-      case "LABORATORIOS":
+      case "Laboratorios":
         navigate('/Labs');
         break;
-      case "CONSULTAR CIERRE":
+      case "Consultar Cierre":
         navigate('/CashClousure');
         break;
-      case "REGISTRAR LUNAS":
+      case "Registar Lunas":
         navigate('/RegisterLens');
         break;
-      case "CIERRE":
+      case "Cierre":
         navigate('/PatientRecords');
         break;
-      case "EGRESOS":
+      case "Egresos":
         navigate('/Egresos');
         break;
-      case "ORDEN DE LABORATORIO":
+      case "Orden de Laboratorio":
         navigate('/OrderLaboratoryList');
         break;
       case "Saldos":
         navigate('/BalancesPatient')
         break;
-      case "CREDITOS":
+      case "Créditos":
         navigate('/Balance')
         break;
-      case "HISTORIAL DE MEDIDAS":
+      case "Historial de Medidas":
         navigate('/HistoryMeasureList')
         break;
-      case "IMPRIMIR CERTIFICADO":
+      case "Imprimir certificado":
         navigate('/PrintCertificate')
       break;
-      case "HISTORIAL PACIENTE":
+      case "Historial Paciente":
         navigate('/HistoryClinic')
       break;
-      case "MENSAJES":
+      case "Mensajes":
         navigate('/MessageManager');
       break;
       default:
