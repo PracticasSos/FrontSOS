@@ -48,28 +48,28 @@ import ColorModeToggle from '../../Toggle';
 import { useAuth } from '../AuthContext';
 
 const options = [
-  { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
-  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
-  { label: "RETIROS", icon: iconoretiros },
-  { label: "EXPERIENCIA", icon: iconoexperienciausuario },
-  { label: "USUARIOS", icon: iconousuarios },
-  { label: "SALDOS", icon: iconossaldos },
-  { label: "MENSAJES", icon: iconomensajes },
-  { label: "CIERRE", icon: iconocierrediario },
-  { label: "EGRESOS", icon: iconoegresos },
-  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual },
+  { label: "Registar Paciente", icon: iconoregistrar },
+  { label: "Venta", icon: iconoventa },
+  { label: "Orden de Laboratorio", icon: iconoordenlaboratorio },
+  { label: "Retiros", icon: iconoretiros },
+  { label: "Experiencia", icon: iconoexperienciausuario },
+  { label: "Usuarios", icon: iconousuarios },
+  { label: "Saldos", icon: iconossaldos },
+  { label: "Mensajes", icon: iconomensajes },
+  { label: "Cierre", icon: iconocierrediario },
+  { label: "Egresos", icon: iconoegresos },
+  { label: "Imprimir certificado", icon: iconocertificadovisual },
 
-  { label: "HISTORIAL PACIENTE", icon:  iconohistorialventa },
-  { label: "REGISTRAR MEDIDAS", icon: iconomedidas },  
-  { label: "ENVIOS", icon: iconoenvios }, 
-  { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
-  { label: "INVENTARIO", icon: iconoinventario },
-  { label: "LABORATORIOS", icon: iconolaboratorios },
-  { label: "SUCURSAL", icon: iconosucursal },
-  { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre },
-  { label: "REGISTRAR LUNAS", icon: iconolunas },
-  { label: "CREDITOS", icon: iconocreditos }
+  { label: "Historial de Paciente", icon:  iconohistorialventa },
+  { label: "Registrar Medidas", icon: iconomedidas },  
+  { label: "Envios", icon: iconoenvios }, 
+  { label: "Historial de Medidas", icon: iconohistorialmedidas },
+  { label: "Inventario", icon: iconoinventario },
+  { label: "Laboratorio", icon: iconolaboratorios },
+  { label: "Sucursal", icon: iconosucursal },
+  { label: "Consultar Cierre", icon: iconoconsultarcierre },
+  { label: "Registar Lunas", icon: iconolunas },
+  { label: "Créditos", icon: iconocreditos }
 ];
 
 const AdminDashBoard = () => {
@@ -158,7 +158,7 @@ const AdminDashBoard = () => {
 
   const handleOptionClick = (label) => {
     switch (label) {
-      case "REGISTRAR PACIENTE":
+      case "Registrar Paciente":
         navigate('/RegisterPatient');
         break;
       case "REGISTRAR MEDIDAS":
@@ -200,7 +200,7 @@ const AdminDashBoard = () => {
       case "ORDEN DE LABORATORIO":
         navigate('/OrderLaboratoryList');
         break;
-      case "SALDOS":
+      case "Saldos":
         navigate('/BalancesPatient')
         break;
       case "CREDITOS":
@@ -231,10 +231,10 @@ const AdminDashBoard = () => {
   const bgCard = useColorModeValue('white', 'gray.700');
 
   const moreItems = [
-    { label: "CREDITOS", icon: iconocreditos },
-    { label: "SALDOS", icon: iconossaldos },
-    { label: "ENVIOS", icon: iconoenvios },
-    { label: "MENSAJES", icon: iconomensajes }
+    { label: "Créditos", icon: iconocreditos },
+    { label: "Saldos", icon: iconossaldos },
+    { label: "Envios", icon: iconoenvios },
+    { label: "Mensajes", icon: iconomensajes }
   ];
 
   return (
@@ -527,6 +527,8 @@ const AdminDashBoard = () => {
               transition="0.3s"
               _hover={{ transform: 'scale(1.15)', cursor: 'pointer' }}
               onClick={() => handleOptionClick(option.label)}
+              position="relative" // ← Para posicionamiento
+              flexDirection="column" // ← Cambiar a columna
             >
               <Image
                 src={option.icon}
@@ -535,6 +537,27 @@ const AdminDashBoard = () => {
                 h="60%"
                 objectFit="contain"
               />
+              <Text
+                fontSize={["xs", "sm", "md"]} // ← Responsivo
+                fontWeight="bold"
+                textAlign="center"
+                
+                color={useColorModeValue(
+                  '#2D3748', // Light: gris oscuro
+                  '#E2E8F0'  // Dark: gris claro
+                )}
+                px={2} // ← Padding horizontal
+                lineHeight="tight" // ← Espaciado de línea ajustado
+                noOfLines={2} // ← Máximo 2 líneas
+                sx={{
+                  // Estilo personalizado para texto responsivo
+                  fontSize: {
+                    base: '10px',
+                    sm: '11px',
+                    md: '12px'
+                  }
+                }}
+              >{option.label}</Text>
             </Box>
           ))}
         </Flex>
