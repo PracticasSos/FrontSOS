@@ -49,8 +49,8 @@ import { useAuth } from '../AuthContext';
 
 const options = [
   { label: "REGISTRAR PACIENTE", icon: iconoregistrar },
-  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
   { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa },
+  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio },
   { label: "RETIROS", icon: iconoretiros },
   { label: "EXPERIENCIA", icon: iconoexperienciausuario },
   { label: "USUARIOS", icon: iconousuarios },
@@ -448,7 +448,7 @@ const AdminDashBoard = () => {
                   <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
                     Historial de Medidas
                   </MenuItem>
-                      <MenuItem onClick={handleLogout}>
+                  <MenuItem onClick={handleLogout} color="red.500">
                     Cerrar Sesión
                   </MenuItem>
                     </MenuList>
