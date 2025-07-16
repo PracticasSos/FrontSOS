@@ -1,6 +1,33 @@
 import { useState, useEffect } from 'react';
 import  { supabase } from '../../api/supabase';
 
+// Mover la función isRouteAllowed fuera del hook para poder exportarla
+export const isRouteAllowed = (currentPath, allowedRoutes) => {
+  if (!allowedRoutes || !Array.isArray(allowedRoutes)) {
+    return false;
+  }
+  
+  // Verificación exacta
+  if (allowedRoutes.includes(currentPath)) {
+    return true;
+  }
+
+  // Verificación para rutas con parámetros
+  for (const route of allowedRoutes) {
+    // Casos específicos para rutas dinámicas
+    if (route === '/RetreatsPatients/Retreats' && currentPath.startsWith('/RetreatsPatients/Retreats/')) {
+      return true;
+    }
+    
+    // Verificación general
+    if (currentPath.startsWith(route + '/')) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export const useUserPermissions = (userData) => {
   const [allowedRoutes, setAllowedRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +46,7 @@ export const useUserPermissions = (userData) => {
           '/ListPatients', '/ListUsers', '/ListLens', '/ListInventory',
           '/ListBranch', '/ListLab','/cuestionario','/lens','/material',
           '/admin/modelos','/resultados','/RegisterExperience','/mensajeria',
+          '/RetreatsPatients/Retreats', '/Retreats', '/HistoryClinic/PatientHistory',  'PatientHistory',
         ];
       case 2: 
         return ['/optometra', '/registrar-paciente', '/medidas', '/historial-medidas', '/certificado', '/cuestionario',
@@ -31,7 +59,7 @@ export const useUserPermissions = (userData) => {
           '/PatientRecords', '/BalancesPatient', '/Egresos', 
           '/MeasuresFinal', '/Balance', '/Inventory', 
           '/HistoryMeasureList', '/RegisterLens','/cuestionario','/lens','/material',
-          '/admin/modelos','/resultados','/RegisterExperience',
+          '/admin/modelos','/resultados','/RegisterExperience', '/RetreatsPatients/Retreats',
         ];
       case 4: 
         return [
@@ -99,4 +127,5 @@ export const useUserPermissions = (userData) => {
 
   return { allowedRoutes, loading };
 };
+
 export default useUserPermissions;

@@ -4,7 +4,7 @@ import { Container, useColorModeValue } from "@chakra-ui/react";
 import AppRouter from "./routers";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "./api/supabase";
-import { useUserPermissions } from './components/optionsauth/UserPermissions';
+import { useUserPermissions,  isRouteAllowed } from './components/optionsauth/UserPermissions';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -51,21 +51,22 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (userData && !permissionsLoading && allowedRoutes.length > 0) {
-      const dashboardRoutes = {
-        1: '/admin',
-        2: '/optometra',
-        3: '/vendedor',
-        4: '/SuperAdmin'
-      };
+  if (userData && !permissionsLoading && allowedRoutes.length > 0) {
+    const dashboardRoutes = {
+      1: '/admin',
+      2: '/optometra', 
+      3: '/vendedor',
+      4: '/SuperAdmin'
+    };
 
-      const defaultRoute = dashboardRoutes[userData.role_id] || '/LoginForm';
-      
-      if (!allowedRoutes.includes(location.pathname) || location.pathname === '/') {
-        navigate(defaultRoute);
-      }
+    const defaultRoute = dashboardRoutes[userData.role_id] || '/LoginForm';
+    
+    // Usar la función isRouteAllowed en lugar de includes
+    if (!isRouteAllowed(location.pathname, allowedRoutes) || location.pathname === '/') {
+      navigate(defaultRoute);
     }
-  }, [userData, allowedRoutes, permissionsLoading, location.pathname, navigate]);
+  }
+}, [userData, allowedRoutes, permissionsLoading, location.pathname, navigate]);
 
   const handleWelcomeFinish = () => {
     setShowSplash(false);

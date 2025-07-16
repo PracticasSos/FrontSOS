@@ -1,4 +1,3 @@
-// context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../api/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +11,34 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-      if (session?.user) {
-        setUser(session.user);
-      } else {
+        if (session?.user) {
+          // Buscar datos adicionales del usuario en la tabla users
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('auth_id', session.user.id)
+            .single();
+
+          if (userData && !userError) {
+            // Combinar datos de sesión con datos de usuario
+            setUser({
+              ...session.user,
+              ...userData
+            });
+          } else {
+            console.error('Error fetching user data:', userError);
+            setUser(null);
+            navigate('/Login');
+          }
+        } else {
+          setUser(null);
+          navigate('/Login');
+        }
+      } catch (error) {
+        console.error('Session error:', error);
         setUser(null);
         navigate('/Login');
       }
@@ -26,9 +48,24 @@ export const AuthProvider = ({ children }) => {
 
     getSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        setUser(session.user);
+        // También buscar datos adicionales en el cambio de auth
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('auth_id', session.user.id)
+          .single();
+
+        if (userData && !userError) {
+          setUser({
+            ...session.user,
+            ...userData
+          });
+        } else {
+          setUser(null);
+          navigate('/Login');
+        }
       } else {
         setUser(null);
         navigate('/Login');
