@@ -285,9 +285,6 @@ return (
                   <MenuItem onClick={() => navigate("/MeasuresFinal")}>
                     Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("HistoryClinic")}>
-                    Historial de Venta
-                  </MenuItem>
                   <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
                     Historial de Medidas
                   </MenuItem>

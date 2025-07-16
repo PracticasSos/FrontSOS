@@ -231,16 +231,10 @@ const AdminDashBoard = () => {
   const bgCard = useColorModeValue('white', 'gray.700');
 
   const moreItems = [
-    { label: "HISTORIAL PACIENTE", icon: iconohistorialventa },
-    { label: "REGISTRAR MEDIDAS", icon: iconomedidas },
+    { label: "CREDITOS", icon: iconocreditos },
+    { label: "SALDOS", icon: iconossaldos },
     { label: "ENVIOS", icon: iconoenvios },
-    { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas },
-    { label: "INVENTARIO", icon: iconoinventario },
-    { label: "LABORATORIOS", icon: iconolaboratorios },
-    { label: "SUCURSAL", icon: iconosucursal },
-    { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre },
-    { label: "REGISTRAR LUNAS", icon: iconolunas },
-    { label: "CREDITOS", icon: iconocreditos }
+    { label: "MENSAJES", icon: iconomensajes }
   ];
 
   return (
@@ -341,14 +335,32 @@ const AdminDashBoard = () => {
                   />
                 </MenuButton>
                 <MenuList zIndex="99999">
+                  <MenuItem onClick={() => navigate("/Branch")}>
+                    Registrar Sucursal
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/Labs")}>
+                    Registrar Laboratorio
+                  </MenuItem>
                   <MenuItem onClick={() => navigate("/Register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/BalancesPatient")}>
-                    Saldos Pendientes
+                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                    Registrar Lentes
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/MessageManager")}>
-                    Mensajes
+                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
+                    Registrar Medidas 
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/Inventory")}>
+                    Inventario
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                    Consultar Cierre
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                    Historial de Venta
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                    Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>
                     Cerrar Sesión
@@ -409,30 +421,33 @@ const AdminDashBoard = () => {
                       />
                     </MenuButton>
                     <MenuList zIndex="99999">
-                      <MenuItem
-                        onClick={() => {
-                          onToggle();
-                          navigate("/Register");
-                        }}
-                      >
-                        Registrar Usuario
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          onToggle();
-                          navigate("/BalancesPatient");
-                        }}
-                      >
-                        Saldos Pendientes
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          onToggle();
-                          navigate("/MessageManager");
-                        }}
-                      >
-                        Mensajes
-                      </MenuItem>
+                  <MenuItem onClick={() => navigate("/Branch")}>
+                    Registrar Sucursal
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/Labs")}>
+                    Registrar Laboratorio
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/Register")}>
+                    Registrar Usuario
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                    Registrar Lentes
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
+                    Registrar Medidas 
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/Inventory")}>
+                    Inventario
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                    Consultar Cierre
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                    Historial de Venta
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                    Historial de Medidas
+                  </MenuItem>
                       <MenuItem onClick={handleLogout}>
                     Cerrar Sesión
                   </MenuItem>
