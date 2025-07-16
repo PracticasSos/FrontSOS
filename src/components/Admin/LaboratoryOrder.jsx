@@ -306,7 +306,7 @@ const LaboratoryOrder = () => {
       
                 <Box maxWidth="500px" mb={4}>
                     {['OD', 'OI'].map((eye) => (
-                        <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
+                        <Box key={eye} mb={6} p={3} borderWidth="1px" borderRadius="md">
                         <Heading size="md" mb={3}>
                             {eye === 'OD' ? 'Ojo Derecho (OD)' : 'Ojo Izquierdo (OI)'}
                         </Heading>
