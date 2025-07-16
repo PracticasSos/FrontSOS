@@ -11,7 +11,6 @@ import { Box,
   useColorModeValue,
   useDisclosure,
   IconButton,
-  Link,
   Stack,
   Collapse,
   } from '@chakra-ui/react';
