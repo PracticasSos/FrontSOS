@@ -49,7 +49,10 @@ export const useUserPermissions = (userData) => {
           '/RetreatsPatients/Retreats', '/Retreats', '/HistoryClinic/PatientHistory',  'PatientHistory',
         ];
       case 2: 
-        return ['/optometra', '/RegisterPatient', '/RetreatsPatients', '/RegisterExperience', '/certificado', '/cuestionario',
+        return ['/optometra', '/RegisterPatient', '/RetreatsPatients', '/RegisterExperience', '/RegisterPatient', '/Sales', 
+          '/OrderLaboratoryList', '/RetreatsPatients', '/RegisterExperience',
+          '/HistoryClinic', '/PatientRecords', '/BalancesPatient', '/Egresos', 
+          '/MeasuresFinal', '/Balance', '/Inventory','/certificado', '/cuestionario',
           '/lens','/material',
           '/admin/modelos','/resultados',];
       case 3: 

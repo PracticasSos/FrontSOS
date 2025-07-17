@@ -12,7 +12,8 @@ import { Box,
   useDisclosure,
   IconButton,
   Stack,
-  Collapse,} from '@chakra-ui/react';
+  Collapse,
+  Portal,} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useUserPermissions } from './UserPermissions';
@@ -50,27 +51,28 @@ import usuariomasculino from "../../assets/usuariomasculino.png";
 import avataralgora from "../../assets/avataralgora.jpg";
 
 const defaultOptions = [
-  { label: "REGISTRAR PACIENTE", icon: iconoregistrar, route: "/RegisterPatient" },
-  { label: "HISTORIAL DE VENTAS", icon: iconohistorialventa, route: "/HistoryClinic" },
-  { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
-  { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa, route: "/Sales" },
-  { label: "RETIROS", icon: iconoretiros, route: "/RetreatsPatients" },
-  { label: "CIERRE", icon: iconocierrediario, route: "/PatientRecords" },
-  { label: "SALDOS", icon: iconossaldos, route: "/BalancesPatient" },
-  { label: "EGRESOS", icon: iconoegresos, route: "/Egresos" },
-  { label: "REGISTRAR MEDIDAS", icon: iconomedidas, route: "/MeasuresFinal" },
-  { label: "CREDITOS", icon: iconocreditos, route: "/Balance" },
-  { label: "INVENTARIO", icon: iconoinventario, route: "/Inventory" },
-  { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
-  { label: "REGISTRAR LUNAS", icon: iconolunas, route: "/RegisterLens" },
+  { label: "Registrar Paciente", icon: iconoregistrar, route: "/RegisterPatient" },
+  { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/Sales" },
+  { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
+  { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
+  { label: "Experiencia", icon: iconoexperienciausuario, route: "/RegisterExperience" },
+  { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
+  { label: "Cierre", icon: iconocierrediario, route: "/PatientRecords" },
+  { label: "Saldos", icon: iconossaldos, route: "/BalancesPatient" },
+  { label: "Egresos", icon: iconoegresos, route: "/Egresos" },
+  { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
+  { label: "Créditos", icon: iconocreditos, route: "/Balance" },
+  { label: "Inventario", icon: iconoinventario, route: "/Inventory" },
+  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
+  { label: "Registrar Lunas", icon: iconolunas, route: "/RegisterLens" },
 ];
 
 const extraRouters = [
-  { label: "USUARIOS", icon: iconousuarios, route: "/Register" },
-  { label: "LABORATORIOS", icon: iconolaboratorios, route: "/Labs" },
-  { label: "SUCURSAL", icon: iconosucursal, route: "/Branch" },
-  { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre, route: "/CashClousure" },
-  { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual, route: "/PrintCertificate" },
+  { label: "Usuarios", icon: iconousuarios, route: "/Register" },
+  { label: "Laboratorios", icon: iconolaboratorios, route: "/Labs" },
+  { label: "Sucursal", icon: iconosucursal, route: "/Branch" },
+  { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/CashClousure" },
+  { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/PrintCertificate" },
 ];
 
 const VendedorDashBoard = () => {
@@ -96,7 +98,6 @@ const VendedorDashBoard = () => {
   const availableOptions = filteredOptions.length > 0 ? filteredOptions : allOptions;
 
   const carouselItems = availableOptions.slice(0, 5);
-  const moreItems = availableOptions.slice(5);
   
   const handleOptionClick = (label) => {
     // Buscar la opción por label y navegar a su ruta
@@ -181,8 +182,12 @@ const VendedorDashBoard = () => {
     'whiteAlpha.300' // Dark: hover transparente
   );
 
-
-  const bgCard = useColorModeValue('white', 'gray.700');
+  const moreItems = [
+      { label: "Créditos", icon: iconocreditos },
+      { label: "Saldos", icon: iconossaldos },
+      { label: "Envios", icon: iconoenvios },
+      { label: "Mensajes", icon: iconomensajes }
+    ];
 
 return (
     <Box
@@ -281,6 +286,7 @@ return (
                     _hover={{ opacity: 0.8 }}
                   />
                 </MenuButton>
+                <Portal>
                 <MenuList zIndex="99999">
                   <MenuItem onClick={() => navigate("/MeasuresFinal")}>
                     Registrar Medidas
@@ -292,6 +298,7 @@ return (
                     Cerrar Sesión
                   </MenuItem>
                 </MenuList>
+                </Portal>
               </Menu>
             </Flex>
 
@@ -346,6 +353,7 @@ return (
                         _hover={{ opacity: 0.8 }}
                       />
                     </MenuButton>
+                    <Portal>
                     <MenuList zIndex="99999">
                       <MenuItem
                         onClick={() => {
@@ -375,6 +383,7 @@ return (
                     Cerrar Sesión
                   </MenuItem>
                     </MenuList>
+                    </Portal>
                   </Menu>
                 </Flex>
                 
@@ -450,6 +459,8 @@ return (
               transition="0.3s"
               _hover={{ transform: 'scale(1.15)', cursor: 'pointer' }}
               onClick={() => handleOptionClick(option.label)}
+              position="relative" // ← Para posicionamiento
+              flexDirection="column" // ← Cambiar a columna
             >
               <Image
                 src={option.icon}
@@ -458,6 +469,27 @@ return (
                 h="60%"
                 objectFit="contain"
               />
+              <Text
+                fontSize={["xs", "sm", "md"]} // ← Responsivo
+                fontWeight="bold"
+                textAlign="center"
+                
+                color={useColorModeValue(
+                  '#2D3748', // Light: gris oscuro
+                  '#E2E8F0'  // Dark: gris claro
+                )}
+                px={2} // ← Padding horizontal
+                lineHeight="tight" // ← Espaciado de línea ajustado
+                noOfLines={2} // ← Máximo 2 líneas
+                sx={{
+                  // Estilo personalizado para texto responsivo
+                  fontSize: {
+                    base: '10px',
+                    sm: '11px',
+                    md: '12px'
+                  }
+                }}
+              >{option.label}</Text>
             </Box>
           ))}
         </Flex>

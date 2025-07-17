@@ -3,18 +3,21 @@ import { Box, Flex, Icon, Text, Spinner } from '@chakra-ui/react';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaFacebook, FaInstagram } from 'react-icons/fa';
 import { supabase } from '../../../api/supabase';
 
-const CertificateFooter = ({ tenantId }) => {
+const CertificateFooter = ({ currentUser }) => { // ← Cambiar de tenantId a currentUser
   const [branch, setBranch] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!tenantId) return;
+    if (!currentUser?.branch_id) {
+      setLoading(false);
+      return;
+    }
 
     const fetchBranch = async () => {
       const { data, error } = await supabase
         .from('branchs')
         .select('address, cell, name, email')
-        .eq('tenant_id', tenantId)
+        .eq('id', currentUser.branch_id) // ← Usar branch_id del usuario
         .single();
 
       if (error) {
@@ -26,7 +29,7 @@ const CertificateFooter = ({ tenantId }) => {
     };
 
     fetchBranch();
-  }, [tenantId]);
+  }, [currentUser?.branch_id]); // ← Cambiar dependencia
 
   if (loading) {
     return (

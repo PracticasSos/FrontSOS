@@ -50,27 +50,30 @@ import usuariomasculino from "../../assets/usuariomasculino.png";
 import avataralgora from "../../assets/avataralgora.jpg";
 
 const defaultOptions = [
-  { label: "REGISTRAR PACIENTE", icon: iconoregistrar, route: "/RegisterPatient" },
-  { label: "HISTORIAL DE VENTAS", icon: iconohistorialventa, route: "/HistoryClinic" },
-  { label: "REGISTRAR MEDIDAS", icon: iconomedidas, route: "/MeasuresFinal" },
-  { label: "HISTORIAL DE MEDIDAS", icon: iconohistorialmedidas, route: "/HistoryMeasureList" }
+  { label: "Registrar Paciente", icon: iconoregistrar, route: "/RegisterPatient" },
+  { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
+  { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
+  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
+  { label: "Experiencia", icon: iconoexperienciausuario, route: "/RegisterExperience" },
 ];
 
 const extraRouters = [
-    { label: "ORDEN DE LABORATORIO", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
-    { label: "VENTA/ CONTRATO DE SERVICIO", icon: iconoventa, route: "/Sales" },
-    { label: "RETIROS", icon: iconoretiros, route: "/RetreatsPatients" },
-    { label: "CIERRE", icon: iconocierrediario, route: "/PatientRecords" },
-    { label: "SALDOS", icon: iconossaldos, route: "/BalancesPatient" },
-    { label: "EGRESOS", icon: iconoegresos, route: "/Egresos" },
-    { label: "CREDITOS", icon: iconocreditos, route: "/Balance" },
-    { label: "INVENTARIO", icon: iconoinventario, route: "/Inventory" },
-    { label: "REGISTRAR LUNAS", icon: iconolunas, route: "/RegisterLens" },
-    { label: "USUARIOS", icon: iconousuarios, route: "/Register" },
-    { label: "LABORATORIOS", icon: iconolaboratorios, route: "/Labs" },
-    { label: "SUCURSAL", icon: iconosucursal, route: "/Branch" },
-    { label: "CONSULTAR CIERRE", icon: iconoconsultarcierre, route: "/CashClousure" },
-    { label: "IMPRIMIR CERTIFICADO", icon: iconocertificadovisual, route: "/VisualCertificate" },
+     { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
+
+    { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
+    { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/Sales" },
+    { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
+    { label: "Cierre", icon: iconocierrediario, route: "/PatientRecords" },
+    { label: "Saldos", icon: iconossaldos, route: "/BalancesPatient" },
+    { label: "Egresos", icon: iconoegresos, route: "/Egresos" },
+    { label: "Créditos", icon: iconocreditos, route: "/Balance" },
+    { label: "Inventario", icon: iconoinventario, route: "/Inventory" },
+    { label: "Registrar Lunas", icon: iconolunas, route: "/RegisterLens" },
+    { label: "Usuarios", icon: iconousuarios, route: "/Register" },
+    { label: "Laboratorios", icon: iconolaboratorios, route: "/Labs" },
+    { label: "Sucursal", icon: iconosucursal, route: "/Branch" },
+    { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/CashClousure" },
+    { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/VisualCertificate" },
 ];
 
 const OptometraDashBoard = () => {
@@ -96,7 +99,6 @@ const OptometraDashBoard = () => {
   const availableOptions = filteredOptions.length > 0 ? filteredOptions : allOptions;
 
   const carouselItems = availableOptions.slice(0, 5);
-  const moreItems = availableOptions.slice(5);
   
   const handleOptionClick = (label) => {
     // Buscar la opción por label y navegar a su ruta
@@ -181,8 +183,6 @@ const OptometraDashBoard = () => {
     'whiteAlpha.300' // Dark: hover transparente
   );
 
-
-  const bgCard = useColorModeValue('white', 'gray.700');
 
 return (
     <Box
@@ -285,13 +285,10 @@ return (
                   <MenuItem onClick={() => navigate("/MeasuresFinal")}>
                     Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("HistoryClinic")}>
-                    Historial de Venta
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/HistoryMeasureList")} >
                     Historial de Medidas
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>
+                  <MenuItem onClick={handleLogout} color="red.500">
                     Cerrar Sesión
                   </MenuItem>
                 </MenuList>
@@ -453,6 +450,8 @@ return (
               transition="0.3s"
               _hover={{ transform: 'scale(1.15)', cursor: 'pointer' }}
               onClick={() => handleOptionClick(option.label)}
+              position="relative" // ← Para posicionamiento
+              flexDirection="column"
             >
               <Image
                 src={option.icon}
@@ -461,11 +460,32 @@ return (
                 h="60%"
                 objectFit="contain"
               />
+              <Text
+                              fontSize={["xs", "sm", "md"]} // ← Responsivo
+                              fontWeight="bold"
+                              textAlign="center"
+                              
+                              color={useColorModeValue(
+                                '#2D3748', // Light: gris oscuro
+                                '#E2E8F0'  // Dark: gris claro
+                              )}
+                              px={2} // ← Padding horizontal
+                              lineHeight="tight" // ← Espaciado de línea ajustado
+                              noOfLines={2} // ← Máximo 2 líneas
+                              sx={{
+                                // Estilo personalizado para texto responsivo
+                                fontSize: {
+                                  base: '10px',
+                                  sm: '11px',
+                                  md: '12px'
+                                }
+                              }}
+                            >{option.label}</Text>
             </Box>
           ))}
         </Flex>
 
-        {/* Botón Ver más */}
+        {/* Botón Ver más 
         <Button
           bg={buttonBg}
           border={`2px solid ${buttonBorderColor}`}
@@ -480,8 +500,10 @@ return (
           }}
           fontWeight="medium"
         >
-         {showAll ? "Ver menos" : "Ver más"}
+         {showAll ?
+          "Ver menos" : "Ver más"}
         </Button>
+        */}
       </Flex>
     </Box>
   );

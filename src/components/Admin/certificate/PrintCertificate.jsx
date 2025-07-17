@@ -7,6 +7,7 @@ import CertificateLogo from "./CertificateLogo";
 import CertificateFooter from "./CertificateFooter";
 import SelloSelector from "./SelloSelector";
 import SignaturePadComponent from "../Sales/SignaturePadComponent";
+import { useAuth } from '../../AuthContext';
 
 const PrintCertificate = () => {
   const [patients, setPatients] = useState([]);
@@ -16,6 +17,8 @@ const PrintCertificate = () => {
   const [showColorIssuesInput, setShowColorIssuesInput] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const targetRef = useRef(null);
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     patient_id: "",
     sphere_right: "",
@@ -457,7 +460,7 @@ const PrintCertificate = () => {
     <SelloSelector />
   </Box>
 </Box>
-          <CertificateFooter tenantId={tenantId} />
+          <CertificateFooter currentUser={user} />
         </Box>
       </Box>
       <PdfMeasures
