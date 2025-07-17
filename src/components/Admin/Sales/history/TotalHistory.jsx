@@ -1,4 +1,4 @@
-import { Box, FormControl, FormLabel, Input, SimpleGrid, Select, useToast, Img, Text } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Input, SimpleGrid, useToast, Img, Text, useColorModeValue, } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../api/supabase";
 
@@ -81,6 +81,10 @@ const TotalHistory = ({ saleId, formData, setFormData }) => {
 
     const isSelected = (method) => formData.payment_in === method;
 
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
     return (
     <Box w="100vw" display="flex" justifyContent="center" alignItems="center">
       <Box
@@ -98,9 +102,9 @@ const TotalHistory = ({ saleId, formData, setFormData }) => {
         <Box display="flex" flexDirection="column" alignItems="center" p={4}>
           <SimpleGrid columns={[3, 3]} spacing={4} mb={6}>
             {[
-              { src: "/assets/efectivo.jpg",  value: "efectivo" },
-              { src: "/assets/transferencia.jpg", value: "transferencia" },
-              { src: "/assets/datafast.jpg", value: "datafast" },
+              { src: "/assets/iconometodoefectivo.png",  value: "efectivo" },
+              { src: "/assets/iconometodotargeta.png", value: "transferencia" },
+              { src: "/assets/iconometododatafast.png", value: "datafast" },
             ].map(({ src, alt, value }) => (
               <Box
                 key={value}
@@ -143,7 +147,16 @@ const TotalHistory = ({ saleId, formData, setFormData }) => {
                   borderRadius="full"
                   value={Number(formData.total || 0).toFixed(2)}
                   isReadOnly
-                  bg="white"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
 
@@ -151,13 +164,22 @@ const TotalHistory = ({ saleId, formData, setFormData }) => {
                 <FormLabel>Abono</FormLabel>
                 <Input
                   type="number"
-                  bg="white"
                   name="balance"
                   height="45px"
                   borderRadius="full"
                   value={formData.balance === 0 || formData.balance === '0' ? '' : formData.balance ?? ''}
                   onChange={handleCreditChange}
                   placeholder="Abono"
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
 
@@ -166,12 +188,21 @@ const TotalHistory = ({ saleId, formData, setFormData }) => {
                 <Input
                   type="number"
                   name="credit"
-                  bg="white"
                   placeholder="$20"
                   borderRadius="full"
                   height="45px"
                   value={(formData.credit ?? 0).toFixed(2)}
                   isReadOnly
+                  bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
                 />
               </FormControl>
             </SimpleGrid>

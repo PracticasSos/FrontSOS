@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SearchHistory from "./SearchHistory";
 import MeasuresHistory from "./MeausresHistory";
 import { supabase } from "../../../../api/supabase";
-import { Box, Heading, Button, Text, Grid } from "@chakra-ui/react";
+import { Box, Heading, Button, Text, Grid, useColorModeValue } from "@chakra-ui/react";
 import TotalHistory from "./TotalHistory";
 import Pdf from "../Pdf";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -390,6 +390,11 @@ const SalesHistory = () => {
     }
   };
 
+  const cardBg = useColorModeValue(
+      'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
+      'rgba(48, 44, 44, 0.2)' // Dark: tu fondo actual
+    );
+
   return (
     <Box ref={salesRef} w="full" px={4}>
       <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
@@ -411,7 +416,7 @@ const SalesHistory = () => {
             <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8} 
             >
@@ -430,7 +435,7 @@ const SalesHistory = () => {
             <Box
             width="100vw"
             position="relative"
-            bg="gray.100"
+            bg={cardBg}
             py={8}
             mt={8}
             >
@@ -458,7 +463,7 @@ const SalesHistory = () => {
               <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8}
             >
@@ -481,7 +486,7 @@ const SalesHistory = () => {
             <Box
               width="100vw"
               position="relative"
-              bg="gray.100"
+              bg={cardBg}
               py={8}
               mt={8}
             >
@@ -495,7 +500,7 @@ const SalesHistory = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
@@ -514,7 +519,7 @@ const SalesHistory = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
@@ -529,7 +534,7 @@ const SalesHistory = () => {
                 <Box
                   width="100vw"
                   position="relative"
-                  bg="gray.100"
+                  bg={cardBg}
                   py={8}
                   mt={8}
                 >
