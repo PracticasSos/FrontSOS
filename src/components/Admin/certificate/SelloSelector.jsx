@@ -93,42 +93,48 @@ const SelloSelector = ({ onSelect }) => {
   }
 
   return (
-    <Box my={4} maxW="200px" textAlign="left" ml={["5%", "10%", "30%", "50%"]}>
-      {selloData && selloData.users && selloData.sello_base64 && (
-        <>
-          <Image
-            src={selloData.sello_base64}
-            alt={`Sello de ${selloData.users.firstname} ${selloData.users.lastname}`}
-            boxSize="300px"
-            objectFit="contain"
-            mb={-20}
-          />
-          <Divider mb={1} />
-        </>
-      )}
+  <Box 
+    my={1} // ← Reducir margen vertical de 4 a 1
+    maxW="200px" 
+    textAlign="left" 
+    ml={["5%", "10%", "30%", "50%"]}
+    mt={{ base: -4, md: 1 }} // ← Margen negativo en móvil para acercar
+  >
+    {selloData && selloData.users && selloData.sello_base64 && (
+      <>
+        <Image
+          src={selloData.sello_base64}
+          alt={`Sello de ${selloData.users.firstname} ${selloData.users.lastname}`}
+          boxSize="300px"
+          objectFit="contain"
+          mb={-20} // ← Mantener margen negativo para acercar imagen al texto
+        />
+        <Divider mb={1} />
+      </>
+    )}
 
-      <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w="150%">
-          {selectedLabel}
-        </MenuButton>
-        <MenuList maxH="100px" overflowY="auto">
-          {sellos.map((sello) => (
-            <MenuItem key={sello.user_id} onClick={() => handleSelect(sello.user_id)}>
-              {sello.users
-                ? `${sello.users.firstname} ${sello.users.lastname}`
-                : 'Sin nombre'}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
+    <Menu>
+      <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w="150%">
+        {selectedLabel}
+      </MenuButton>
+      <MenuList maxH="100px" overflowY="auto">
+        {sellos.map((sello) => (
+          <MenuItem key={sello.user_id} onClick={() => handleSelect(sello.user_id)}>
+            {sello.users
+              ? `${sello.users.firstname} ${sello.users.lastname}`
+              : 'Sin nombre'}
+          </MenuItem>
+        ))}
+      </MenuList>
+    </Menu>
 
-      {selloData && selloData.users && (
-        <Text mt={1} color="gray.600">
-          Cédula: {selloData.users.ci}
-        </Text>
-      )}
-    </Box>
-  );
+    {selloData && selloData.users && (
+      <Text mt={1} color="gray.600">
+        Cédula: {selloData.users.ci}
+      </Text>
+    )}
+  </Box>
+);
 };
 
 export default SelloSelector;

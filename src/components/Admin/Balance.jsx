@@ -142,15 +142,15 @@ const Balance = () => {
             </Box>
             <Select placeholder="Seleccione una sucursal" value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)}
                 bg={inputBg}
-            borderColor={borderColor}
-            color={textColor}
-            _hover={{
-              borderColor: useColorModeValue('gray.300', 'gray.500')
-            }}
-            _focus={{
-              borderColor: useColorModeValue('blue.500', 'blue.300'),
-              boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
-            }}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                borderColor: useColorModeValue('blue.500', 'blue.300'),
+                boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
                 >
                 {branches.map((branch) => (
                     <option key={branch.id} value={branch.id}>{branch.name}</option>

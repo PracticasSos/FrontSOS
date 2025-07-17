@@ -181,6 +181,10 @@ const PrintCertificate = () => {
       }
     };
 
+      const textColor = useColorModeValue('gray.800', 'white');
+      const borderColor = useColorModeValue('gray.200', 'gray.600');
+      const inputBg = useColorModeValue('white', 'gray.700');
+
     return (
       <Box ref={targetRef} w="full" px={4}>
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
@@ -194,13 +198,29 @@ const PrintCertificate = () => {
 
         <Box as="form" onSubmit={(e) => { e.preventDefault() }} width="100%" maxWidth="1300px" boxShadow="lg" borderRadius="md" p={[2, 4, 6]}>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
-            <FormControl id="patient-search">
+            <FormControl id="patient-search" >
               <FormLabel>Buscar Paciente</FormLabel>
-              <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients} />
+              <Input type="text" placeholder="Buscar por nombre..." value={searchTermPatients} onChange={handleSearchPatients}/>
               {searchTermPatients && filteredPatients.length > 0 && !selectedPatient &&(
-                <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto" zIndex={1000} position="absolute" bg="white" width="100%">
+                <Box border="1px solid #ccc" borderRadius="md" mt={2} maxHeight="150px" overflowY="auto" zIndex={1000} position="absolute" width="100%"
+                  bg={inputBg}
+                borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
+                >
                   {filteredPatients.map((patient) => (
-                    <Box key={patient.id} p={2} _hover={{ bg: "teal.100", cursor: "pointer" }} onClick={() => handleSelectPatient(patient)}>
+                    <Box key={patient.id} p={2}  onClick={() => handleSelectPatient(patient)}
+                      _hover={{ 
+                        bg: useColorModeValue("gray.100", "gray.600"), 
+                        cursor: "pointer" 
+                      }}
+                    >
                       {patient.pt_firstname} {patient.pt_lastname}
                     </Box>
                   ))}
@@ -405,21 +425,38 @@ const PrintCertificate = () => {
               )}
             </Box>
           </Box>
-          <Box display="flex" gap={4} justifyContent="center" alignItems="flex-start" my={4}>
-            <Box flex="1" maxW="300px">
-              <SignaturePadComponent
-                onSave={(signatureDataUrl) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    signature: signatureDataUrl,
-                  }))
-                }
-              />
-            </Box>
-            <Box flex="1" maxW="400px">
-              <SelloSelector />
-            </Box>
-          </Box>
+          <Box 
+  display="flex" 
+  flexDirection={{ base: "column", md: "row" }} 
+  gap={{ base: 2, md: 4 }} // ← Reducir gap entre elementos
+  justifyContent="center" 
+  alignItems={{ base: "center", md: "flex-start" }} 
+  my={2} // ← Reducir margen vertical
+>
+  <Box 
+    flex="1" 
+    maxW={{ base: "100%", md: "300px" }} 
+    w={{ base: "100%", md: "auto" }} 
+    mb={{ base: 2, md: 0 }} // ← Reducir margen inferior
+  >
+    <SignaturePadComponent
+      onSave={(signatureDataUrl) =>
+        setFormData((prev) => ({
+          ...prev,
+          signature: signatureDataUrl,
+        }))
+      }
+    />
+  </Box>
+  <Box 
+    flex="1" 
+    maxW={{ base: "100%", md: "400px" }} 
+    w={{ base: "100%", md: "auto" }} 
+    mt={{ base: -2, md: 0 }} // ← Margen negativo para acercar más en móvil
+  >
+    <SelloSelector />
+  </Box>
+</Box>
           <CertificateFooter tenantId={tenantId} />
         </Box>
       </Box>

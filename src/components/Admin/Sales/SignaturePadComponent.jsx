@@ -59,33 +59,34 @@ const SignaturePadComponent = ({ onSave }) => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      p={4}
-      width={["90%", "80%", "400px"]}
-      mx="auto"
-    >
-      <canvas
-        ref={canvasRef}
-        width={510}
-        height={150}
-        style={{
-          border: `2px solid ${borderColor}`, 
-          borderRadius: "12px",    
-          background: canvasBg,    
-          boxShadow: boxShadow, 
-          display: "block"
-        }}
-      />
-      <Box display="flex" flexDirection="column" mt={4} width="full" maxWidth="200px">
-        <Button colorScheme="blue" onClick={clearSignature}>
-          Borrar Firma
-        </Button>
-      </Box>
+  <Box
+    display="flex"
+    flexDirection="column"
+    alignItems="center"
+    p={2} // ← Reducir padding de 4 a 2
+    width={["90%", "80%", "400px"]}
+    mx="auto"
+    mb={0} // ← Eliminar margen inferior
+  >
+    <canvas
+      ref={canvasRef}
+      width={510}
+      height={150}
+      style={{
+        border: `2px solid ${borderColor}`, 
+        borderRadius: "12px",    
+        background: canvasBg,    
+        boxShadow: boxShadow, 
+        display: "block"
+      }}
+    />
+    <Box display="flex" flexDirection="column" mt={2} width="full" maxWidth="200px"> {/* ← Reducir mt de 4 a 2 */}
+      <Button colorScheme="blue" onClick={clearSignature}>
+        Borrar Firma
+      </Button>
     </Box>
-  );
+  </Box>
+);
 };
 
 export default SignaturePadComponent;
