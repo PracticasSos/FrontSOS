@@ -13,6 +13,7 @@ import { Box,
   IconButton,
   Stack,
   Collapse,
+  Portal,
   } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import iconocertificadovisual from "../../assets/iconocertificadovisual.png";
@@ -334,7 +335,10 @@ const AdminDashBoard = () => {
                     _hover={{ opacity: 0.8 }}
                   />
                 </MenuButton>
-                <MenuList zIndex="99999">
+                <Portal>
+                <MenuList 
+                   zIndex="999999" 
+                >
                   <MenuItem onClick={() => navigate("/Branch")}>
                     Registrar Sucursal
                   </MenuItem>
@@ -362,10 +366,11 @@ const AdminDashBoard = () => {
                   <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
                     Historial de Medidas
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>
+                  <MenuItem onClick={handleLogout} color="red.500">
                     Cerrar Sesión
                   </MenuItem>
                 </MenuList>
+                </Portal>
               </Menu>
             </Flex>
 
@@ -420,6 +425,7 @@ const AdminDashBoard = () => {
                         _hover={{ opacity: 0.8 }}
                       />
                     </MenuButton>
+                    <Portal>
                     <MenuList zIndex="99999">
                   <MenuItem onClick={() => navigate("/Branch")}>
                     Registrar Sucursal
@@ -452,6 +458,7 @@ const AdminDashBoard = () => {
                     Cerrar Sesión
                   </MenuItem>
                     </MenuList>
+                    </Portal>
                   </Menu>
                 </Flex>
                 
