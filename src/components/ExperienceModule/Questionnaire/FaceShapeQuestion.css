@@ -1,182 +1,117 @@
-/* Corrección para box-sizing global */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* FaceShapeQuestion.css */
 
-/* Fondo general centrado */
-.app-wrapper {
+.question-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 0.75rem;
-  background-color: #f2f2f2;
-}
-
-/* Contenedor principal */
-.lens-container {
-  display: flex;
-  flex-direction: row;
-  background-color: #ffffff;
-  color: #fff;
   padding: 2rem;
-  border-radius: 3.5rem;
-  gap: 5rem;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.6);
-  max-width: 1200px;
+}
+
+.question-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.camera-preview {
+  aspect-ratio: 4 / 3;
   width: 100%;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-/* Vista del lente */
-.lens-preview {
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 300px;
-  flex: 1 1 300px;
-}
-
-canvas {
-  background: #ffffff;
-  border-radius: 1rem;
-  max-width: 100%;
-  height: auto;
-}
-
-/* Controles compartidos */
-.control-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 1rem;
-  padding: 1rem;
-  gap: 1rem;
-  flex: 1 1 150px;
-  min-width: 150px;
-  max-width: 200px;
-  height: 100%;
-  justify-content: center;
-}
-
-.section-title {
-  font-size: 1.1rem;
-  color: #000000;
-  text-align: center;
-  font-weight: 500;
-}
-
-/* Slider vertical */
-.opacity-slider-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.vertical-slider {
-  writing-mode: bt-lr;
-  -webkit-appearance: slider-vertical;
-  -moz-appearance: slider-vertical;
-  appearance: slider-vertical;
-  width: 12px;
-  height: 300px;
-  background: transparent;
-  margin: 1rem 0;
-}
-
-.opacity-label {
-  font-size: 1.25rem;
-  color: #000000;
-  font-weight: 700;
-}
-
-/* Botones de colores */
-.color-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
-.color-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: border 0.2s;
-  font-size: 0;
-}
-
-.color-button.selected {
-  border: 2px solid #fff;
-}
-
-/* Elemento para accesibilidad (lector de pantalla) */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  max-width: 640px;
+  position: relative;
+  background: black;
+  border-radius: 16px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
-/* Responsive para móviles */
+.preview-video,
+.overlay-canvas {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  z-index: 1;
+  background-color: transparent;
+}
+
+.overlay-canvas {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.loading-camera-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.scanning-text {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background-color: rgba(255, 255, 255, 0.92);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #333;
+  z-index: 4;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #222;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* .hidden {
+  display: none;
+} */
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* 🔧 Mejora visual exclusiva para móvil */
 @media (max-width: 768px) {
-  .lens-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .control-box {
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    max-width: none;
-    width: 100%;
-  }
-
-  .color-options {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .vertical-slider {
-    transform: rotate(0deg);
-    writing-mode: lr-tb;
-    -webkit-appearance: auto;
-    -moz-appearance: auto;
-    appearance: auto;
-    height: 12px;
-    width: 150px;
-  }
-
-  /* 🟦 Ajuste para vista de cámara y malla facial */
   .camera-preview {
-    position: relative;
+    aspect-ratio: 4 / 3;
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 4 / 3;
+    position: relative;
   }
 
   .preview-video,
   .overlay-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    border-radius: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 }
