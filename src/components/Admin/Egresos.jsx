@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate} from "react-router-dom";
-import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input, Grid} from "@chakra-ui/react";
+import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input, useColorModeValue } from "@chakra-ui/react";
 
 const Egresos = () => {
   const [records, setRecords] = useState([]);
@@ -140,8 +140,12 @@ const Egresos = () => {
     }
   };
 
+  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const selectBg = useColorModeValue('white', 'gray.700');
+
   return (
-    <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+    <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
       <Heading mb={4} textAlign="center" size="lg" color="teal.500">
         Egresos - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione Sucursal"}
       </Heading>
@@ -157,6 +161,16 @@ const Egresos = () => {
           placeholder="Seleccione una sucursal"
           value={selectedBranch}
           onChange={(e) => setSelectedBranch(e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           {branches.map((branch) => (
             <option key={branch.id} value={branch.id}>
@@ -166,7 +180,7 @@ const Egresos = () => {
         </Select>
       </Box>
 
-      <Table variant="striped" colorScheme="teal" mb={6}>
+      <Table variant="striped"  mb={6}>
         <Thead>
           <Tr>
             <Th>Orden</Th>
@@ -216,6 +230,16 @@ const Egresos = () => {
           placeholder="Seleccione Encargado"
           value={newEgreso.user_id}
           onChange={(e) => handleInputChange("user_id", e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           {users.map((user) => (
             <option key={user.id} value={user.id}>
@@ -228,6 +252,16 @@ const Egresos = () => {
           placeholder="Seleccione Laboratorio"
           value={newEgreso.lab_id}
           onChange={(e) => handleInputChange("lab_id", e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           {labs.map((lab) => (
             <option key={lab.id} value={lab.id}>
@@ -240,6 +274,16 @@ const Egresos = () => {
           placeholder="Seleccione una sucursal"
           value={newEgreso.branchs_id}
           onChange={(e) => handleInputChange("branchs_id", e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           {branches.map((branch) => (
             <option key={branch.id} value={branch.id}>
@@ -259,6 +303,16 @@ const Egresos = () => {
           placeholder="Método de Pago"
           value={newEgreso.payment_in}
           onChange={(e) => handleInputChange("payment_in", e.target.value)}
+          bg={selectBg}
+          borderColor={borderColor}
+          color={textColor}
+          _hover={{
+            borderColor: useColorModeValue('gray.300', 'gray.500')
+          }}
+          _focus={{
+            borderColor: useColorModeValue('blue.500', 'blue.300'),
+            boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+          }}
         >
           <option value="efectivo">Efectivo</option>
           <option value="datafast">Datafast</option>
