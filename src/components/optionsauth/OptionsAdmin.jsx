@@ -588,7 +588,7 @@ const AdminDashBoard = () => {
           }}
           fontWeight="medium"
         >
-         {showAll ? "Anterior" : "Siguientes"}
+         {showAll ? "Anterior" : "Siguiente"}
         </Button>
       </Flex>
     </Box>
