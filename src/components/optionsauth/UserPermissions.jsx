@@ -38,7 +38,7 @@ export const useUserPermissions = (userData) => {
         return [
           '/admin', '/RegisterPatient', '/MeasuresFinal', '/Sales', 
           '/RetreatsPatients', '/RegisterExperience', '/Register', 
-          '/Inventory', '/Branch', '/Labs', '/CashClousure', 
+          '/Inventory', '/Branch', '/Labs', '/CashClousure', '/ChangePassword',
           '/RegisterLens', '/PatientRecords', '/Egresos', 
           '/OrderLaboratoryList', '/BalancesPatient', '/Balance', 
           '/HistoryMeasureList', '/PrintCertificate', '/HistoryClinic', 

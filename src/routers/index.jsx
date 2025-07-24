@@ -50,6 +50,7 @@ import MessageManager from "../components/Admin/MensaageManager.jsx";
 import LensCustomizer from "../components/ExperienceModule/pages/LensCustomizer.jsx";
 import Loader from "../components/ExperienceModule/ExperienceUI/Loader.jsx";
 import MessageClients from "../components/ExperienceModule/pages/MessageClients.jsx";
+import ChangePassword from "../components/optionsauth/ChangePassword.jsx";
 
 
 const AppRouter = () => {
@@ -57,7 +58,7 @@ const AppRouter = () => {
         <Routes>
             <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
             <Route path="Register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
-        
+            <Route path="ChangePassword" element={<ChangePassword/>} />{/*Ruta para cambiar contraseña*/}
             <Route path="Tenants" element={<Tenants/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
             <Route path="Inventory" element={<Inventario/>}></Route>
             <Route path="LoginForm" element={<LoginForm/>} />

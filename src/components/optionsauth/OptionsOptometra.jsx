@@ -51,17 +51,15 @@ import avataralgora from "../../assets/avataralgora.jpg";
 
 const defaultOptions = [
   { label: "Registrar Paciente", icon: iconoregistrar, route: "/RegisterPatient" },
-  { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
-  { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
-  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
+  { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
   { label: "Experiencia", icon: iconoexperienciausuario, route: "/RegisterExperience" },
 ];
 
 const extraRouters = [
-     { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
-
     { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
     { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/Sales" },
+    { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
+  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
     { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
     { label: "Cierre", icon: iconocierrediario, route: "/PatientRecords" },
     { label: "Saldos", icon: iconossaldos, route: "/BalancesPatient" },
@@ -98,7 +96,7 @@ const OptometraDashBoard = () => {
   // ✅ Si no hay opciones filtradas, mostrar todas (fallback)
   const availableOptions = filteredOptions.length > 0 ? filteredOptions : allOptions;
 
-  const carouselItems = availableOptions.slice(0, 5);
+  const carouselItems = availableOptions.slice(0, 3);
   
   const handleOptionClick = (label) => {
     // Buscar la opción por label y navegar a su ruta

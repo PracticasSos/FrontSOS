@@ -50,6 +50,7 @@ import { useAuth } from '../AuthContext';
 
 const options = [
   { label: "Registrar Paciente", icon: iconoregistrar },
+  //{ label: "Cambiar Contraseña", icon: iconomedidas },
   { label: "Venta", icon: iconoventa },
   { label: "Orden de Laboratorio", icon: iconoordenlaboratorio },
   { label: "Retiros", icon: iconoretiros },
@@ -162,6 +163,9 @@ const AdminDashBoard = () => {
       case "Registrar Paciente":
         navigate('/RegisterPatient');
         break;
+      {/*case "Cambiar Contraseña":
+        navigate('/ChangePassword');
+        break;*/}
       case "Registrar Medidas":
         navigate('/MeasuresFinal');
         break;
@@ -584,7 +588,7 @@ const AdminDashBoard = () => {
           }}
           fontWeight="medium"
         >
-         {showAll ? "Ver menos" : "Ver más"}
+         {showAll ? "Anterior" : "Siguientes"}
         </Button>
       </Flex>
     </Box>
