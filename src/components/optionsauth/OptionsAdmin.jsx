@@ -119,7 +119,7 @@ const AdminDashBoard = () => {
 
   const cardBg = useColorModeValue(
     'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
-    'rgba(46, 46, 46, 0.5)' // Dark: tu fondo actual
+    'rgba(83, 81, 81, 0.5)' // Dark: tu fondo actual
   );
 
   const cardBorder = useColorModeValue(
