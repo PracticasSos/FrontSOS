@@ -203,13 +203,14 @@ const LoginForm = () => {
           p={8}
           borderRadius="lg"
           color="black"
+          maxW={{ base: "100%", md: "350px" }} 
         >
           <Text
             fontSize="2xl" 
             fontWeight="bold"
             mb={20}
             textAlign="center"
-            color="gray.400"
+            color="gray.300"
           >
             Iniciar Sesión
           </Text>
@@ -219,9 +220,9 @@ const LoginForm = () => {
             </Text>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} w="100px">
             <FormControl id="email" isRequired mb={4}>
-              <FormLabel color="gray.500">Usuario</FormLabel>
+              <FormLabel color="gray.200">Usuario</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <Icon as={FaEnvelope} color="gray.400" />
@@ -233,14 +234,14 @@ const LoginForm = () => {
                   placeholder="tú@correo.com"
                   value={formData.email}
                   onChange={handleChange}
-                  color="black"
+                  color="white"
                   _placeholder={{ color: "gray.400" }}
                 />
               </InputGroup>
             </FormControl>
 
             <FormControl id="password" isRequired mb={6}>
-              <FormLabel color="gray.500">Contraseña</FormLabel>
+              <FormLabel color="gray.200">Contraseña</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <Icon as={FaLock} color="gray.400" />
@@ -252,7 +253,7 @@ const LoginForm = () => {
                   placeholder="********"
                   value={formData.password}
                   onChange={handleChange}
-                  color="black"
+                  color="white"
                   _placeholder={{ color: "gray.400" }}
                 />
                 <InputRightElement>
