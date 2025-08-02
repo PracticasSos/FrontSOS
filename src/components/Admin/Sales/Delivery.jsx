@@ -1,13 +1,43 @@
-import { FormControl, FormLabel, Input, Box, Text, useColorModeValue } from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, Box, Text, useColorModeValue, useToast } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { useState } from "react";
 
 const Delivery = ({ saleData, setSaleData }) => {
   const [deliveryDays, setDeliveryDays] = useState(null);
   const [selectedDateText, setSelectedDateText] = useState("");
+  const [miniDateTime, setMinDateTime] = useState("");
+  const toast = useToast();
+
+
+  useEffect(() => {
+    const now = new Date();
+    const formatted = now.toISOString().slice(0, 16);
+    setMinDateTime(formatted);
+  }, []);
 
   const handleDateChange = (e) => {
     const selectedDateTime = new Date(e.target.value);
     const now = new Date();
+
+    if (selectedDateTime < now) {
+      toast ({
+        title: "Fecha inválida",
+        description: "No se puede seleccionar una fecha anterior a la actual.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
+      });
+      e.target.value="";
+      setDeliveryDays(null);
+      setSelectedDateText("");
+      setSaleData((prev) => ({
+        ...prev,
+        delivery_time: null,
+        delivery_datetime: null,
+      }));
+      return;
+    }
 
     const diffInMs = selectedDateTime - now;
     const diffInDaysRaw = diffInMs / (1000 * 60 * 60 * 24);
@@ -59,6 +89,7 @@ const Delivery = ({ saleData, setSaleData }) => {
         <Input
           type="datetime-local"
           name="delivery_date"
+          min={miniDateTime}
           onChange={handleDateChange}
           focusBorderColor="teal.500"
           borderRadius="full"
