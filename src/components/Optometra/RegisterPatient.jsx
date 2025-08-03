@@ -4,7 +4,9 @@ import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGri
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-
+import HeaderAdmin from '../header/HeaderAdmin';
+import { HStack, Text } from '@chakra-ui/react';
+import { FaEye } from 'react-icons/fa';
 
 const RegisterPatientForm = () => {
   const navigate = useNavigate();
@@ -122,24 +124,66 @@ const RegisterPatientForm = () => {
     }
   };
 
+  const moduleSpecificButton = (
+  <Button 
+    onClick={() => handleNavigate('/ListPatients')} 
+    bg={useColorModeValue(
+      'rgba(255, 255, 255, 0.8)', 
+      'rgba(255, 255, 255, 0.1)'
+    )}
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor={useColorModeValue(
+      'rgba(56, 178, 172, 0.3)', 
+      'rgba(56, 178, 172, 0.5)'
+    )}
+    color={useColorModeValue('teal.600', 'teal.300')}
+    size="sm"
+    borderRadius="15px"
+    px={4}
+    _hover={{
+      bg: useColorModeValue(
+        'rgba(56, 178, 172, 0.1)', 
+        'rgba(56, 178, 172, 0.2)'
+      ),
+      borderColor: 'teal.400',
+      transform: 'translateY(-1px)',
+    }}
+    transition="all 0.2s"
+  >
+    <HStack spacing={2} align="center" justify="center">
+      <FaEye size="14px" />
+      <Text fontWeight="600" lineHeight="1" m={0}>
+        Listar Pacientes
+      </Text>
+    </HStack>
+  </Button>
+);
+
   const { colorMode } = useColorMode();
-  const bgColor = useColorModeValue('white', 'gray.800');
-    const textColor = useColorModeValue('gray.800', 'white');
-    const borderColor = useColorModeValue('gray.200', 'gray.600');
-    const tableBg = useColorModeValue('white', 'gray.700');
-    const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
-    const inputBg = useColorModeValue('white', 'gray.700');
-    const selectBg = useColorModeValue('white', 'gray.700');
 
   return (
     <Box className="register-patient-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
-      <Heading mb={4} textAlign="center">Registrar Paciente</Heading>
-      <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="100%" maxWidth="800px" mb={4}>
-        <Button onClick={() => handleNavigate('/ListPatients')} colorScheme="teal">Listar Pacientes</Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-        <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
+      <Box width="100%" maxWidth="800px" mb={4}>
+        <Text 
+          fontSize="lg" 
+          fontWeight="600" 
+          color={useColorModeValue('gray.700', 'gray.300')}
+          textAlign="center"
+          mb={2}
+        >
+          Registro de Pacientes
+        </Text>
+        <Box 
+          height="1px" 
+          bg={useColorModeValue('gray.200', 'gray.600')} 
+          width="60px" 
+          mx="auto"
+        />
       </Box>
-
+      <HeaderAdmin
+        moduleSpecificButton={moduleSpecificButton}
+      />
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <Box 

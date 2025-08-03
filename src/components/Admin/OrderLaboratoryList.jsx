@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, FormControl, FormLabel, Select, Spinner, Grid, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import HeaderAdmin from '../header/HeaderAdmin';
+import SmartHeader from '../header/SmartHeader';
+import { mod } from '@tensorflow/tfjs';
 
 const OrderLaboratoryList = () => {
   const [patients, setPatients] = useState([]);
@@ -175,6 +178,8 @@ const OrderLaboratoryList = () => {
     }
   };
 
+  const moduleSpecificButton = null;
+
   const bgColor = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -195,15 +200,7 @@ const OrderLaboratoryList = () => {
       <Heading mb={4} textAlign="center" color={textColor}>
         Lista Pendiente de Órdenes de Laboratorio
       </Heading>
-      
-      <Box display="flex" justifyContent="center" gap={4} mb={4}>
-        <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">
-          Registrar Pacientes
-        </Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue">
-          Volver a Opciones
-        </Button>
-      </Box>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
       <FormControl mb={4}>
         <FormLabel color={textColor}>Sucursal</FormLabel>

@@ -11,6 +11,9 @@ import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, VStack, Textarea
 } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import HeaderAdmin from '../header/HeaderAdmin';
+import SmartHeader from '../header/SmartHeader';
+import { mod } from '@tensorflow/tfjs';
 
 const RetreatsPatients = () => {
   const [allPatients, setAllPatients] = useState([]); 
@@ -252,14 +255,7 @@ const RetreatsPatients = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
       <Heading mb={4} textAlign="center">Retiros</Heading>
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="400px" mb={4}>
-        <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal" width="auto" maxWidth="200px">
-          Consultas de Cierre
-        </Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue" width="auto" maxWidth="200px">
-          Volver a Opciones
-        </Button>
-      </Box>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
       <Box w="50%" mx="auto" display="block">
         <SearchBar
           searchPlaceholder="Buscar por nombre..."
