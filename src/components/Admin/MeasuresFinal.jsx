@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, Input, SimpleGrid, Heading, Alert, AlertIcon, Table, Thead, Tbody, Tr, Th, Td, Textarea, RadioGroup, Radio, Stack, Checkbox, Text, FormLabel} from "@chakra-ui/react";
+import { Box, Button, FormControl, Input, SimpleGrid, Heading, Alert, AlertIcon, Table, Thead, Tbody, Tr, Th, Td, Textarea, RadioGroup, Radio, Stack, Checkbox, Text, FormLabel, useColorModeValue, HStack} from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader";
 
 const MeasuresFinal = () => {
   const navigate = useNavigate();
@@ -165,6 +167,7 @@ const MeasuresFinal = () => {
                 navigate('/');
         }
     };
+    const moduleSpecificButton = null;
 
     return (
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
@@ -175,11 +178,7 @@ const MeasuresFinal = () => {
             {error}
           </Alert>
         )}
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} width="100%" maxWidth="800px" mb={4} justifyContent={{ base: "center", md: "center" }} alignItems="center"  mx="auto">
-          <Button onClick={() => handleNavigate("/NoExiste")} colorScheme="teal" size={["sm", "md"]}>Consultar Medidas</Button>
-          <Button onClick={() => handleNavigate()} colorScheme="blue" size={["sm", "md"]}>Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red" size={["sm", "md"]}>Cerrar Sesión</Button>
-        </Stack>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
         <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} width="100%" maxWidth="1300px" boxShadow="lg" borderRadius="md" p={[2, 4, 6]}>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
             <FormControl id="patient-search">

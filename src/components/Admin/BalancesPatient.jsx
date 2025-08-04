@@ -10,6 +10,7 @@ import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, Spinner, Text, T
     useColorModeValue
 } from "@chakra-ui/react";
 import SearchBar from "./SearchBar";
+import SmartHeader from "../header/SmartHeader";
 
 const BalancesPatient = () => {
     const [sales, setSales] = useState([]);
@@ -210,22 +211,20 @@ const BalancesPatient = () => {
         }
     };
 
-      const bgColor = useColorModeValue('white', 'gray.800');
+    const moduleSpecificButton = null;
+
+
       const textColor = useColorModeValue('gray.800', 'white');
       const borderColor = useColorModeValue('gray.200', 'gray.600');
       const tableBg = useColorModeValue('white', 'gray.700');
       const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
-      const inputBg = useColorModeValue('white', 'gray.700');
-      const selectBg = useColorModeValue('white', 'gray.700');
+
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
             <Heading mb={4} textAlign="center">Historial de Saldos</Heading>
 
-            <Box display="flex" justifyContent="space-between" width="100%" maxWidth="400px" mb={4}>
-                <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-                <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-            </Box>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             <Box w="50%" mx="auto" display="block">
                 <SearchBar

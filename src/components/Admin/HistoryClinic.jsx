@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from '../../api/supabase';
 import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, Select, useColorModeValue } from '@chakra-ui/react';
+import SmartHeader from "../header/SmartHeader";
 
 const HistoryClinic = () => {
     const [patients, setPatients] = useState([]);
@@ -115,6 +116,8 @@ const HistoryClinic = () => {
       }
     };
 
+    const moduleSpecificButton = null;
+
       const textColor = useColorModeValue('gray.800', 'white');
       const borderColor = useColorModeValue('gray.200', 'gray.600');
       const selectBg = useColorModeValue('white', 'gray.700');
@@ -123,10 +126,7 @@ const HistoryClinic = () => {
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
           <Heading mb={4} textAlign="center">Historial de Pacientes</Heading>
     
-          <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-            <Button onClick={() => handleNavigate('/RegisterPatient')} colorScheme="teal">Registrar Pacientes</Button>
-            <Button onClick={() => handleNavigate()} mr={2} colorScheme="blue">Volver a Opciones</Button>
-          </Box>
+          <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
         <Box as="form" width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md" >
           <Input 

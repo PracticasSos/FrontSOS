@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { 
-  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select, useColorModeValue 
+  Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, useToast, Flex, IconButton, Select, useColorModeValue, Text, HStack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { BiEdit, BiTrash, BiCheck, BiX, BiSearch, BiShow } from 'react-icons/bi';
 import ConfirmDialog from '../../components/UI/ConfirmDialog';
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from '../header/SmartHeader';
 
 const ListPatients = () => {
   const [patients, setPatients] = useState([]);
@@ -123,6 +125,42 @@ const ListPatients = () => {
     }
   };
 
+  const moduleSpecificButton = (
+    <Button 
+      onClick={() => handleNavigate('/RegisterPatient')} 
+      bg={useColorModeValue(
+        'rgba(255, 255, 255, 0.8)', 
+        'rgba(255, 255, 255, 0.1)'
+      )}
+      backdropFilter="blur(10px)"
+      border="1px solid"
+      borderColor={useColorModeValue(
+        'rgba(56, 178, 172, 0.3)', 
+        'rgba(56, 178, 172, 0.5)'
+      )}
+      color={useColorModeValue('teal.600', 'teal.300')}
+      size="sm"
+      borderRadius="15px"
+      px={4}
+      _hover={{
+        bg: useColorModeValue(
+          'rgba(56, 178, 172, 0.1)', 
+          'rgba(56, 178, 172, 0.2)'
+        ),
+        borderColor: 'teal.400',
+        transform: 'translateY(-1px)',
+      }}
+      transition="all 0.2s"
+    >
+      <HStack spacing={2} align="center" justify="center">
+        <FaEye size="14px" />
+        <Text fontWeight="600" lineHeight="1" m={0}>
+          Registrar Pacientes
+        </Text>
+      </HStack>
+    </Button>
+    );
+
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const tableBg = useColorModeValue('white', 'gray.700');
@@ -132,11 +170,7 @@ const ListPatients = () => {
   return (
     <Box p={5}>
       <Heading mb={4} textAlign="center">Lista de Pacientes</Heading>
-
-      <Flex mb={4} gap={3} justify="center">
-        <Button colorScheme="blue" onClick={() => handleNavigate('/RegisterPatient')}>Registrar Paciente</Button>
-        <Button bgColor="#00A8C8" color="white" onClick={() => handleNavigate()}>Volver a Opciones</Button>
-      </Flex>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
       <Input
         placeholder="Buscar paciente..."

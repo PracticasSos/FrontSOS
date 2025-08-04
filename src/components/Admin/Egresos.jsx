@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate} from "react-router-dom";
 import {Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Select, Button, Badge, SimpleGrid, Input, useColorModeValue } from "@chakra-ui/react";
+import SmartHeader from "../header/SmartHeader";
 
 const Egresos = () => {
   const [records, setRecords] = useState([]);
@@ -139,6 +140,7 @@ const Egresos = () => {
             navigate('/');
     }
   };
+  const moduleSpecificButton = null;
 
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -146,16 +148,10 @@ const Egresos = () => {
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
-      <Heading mb={4} textAlign="center" size="lg" color="teal.500">
+      <Heading mb={4} textAlign="center" size="lg" >
         Egresos - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione Sucursal"}
       </Heading>
-      <Box mb={6} display="flex" justifyContent="center" >
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-        <Button onClick={() => handleNavigate("/PatientRecords")} colorScheme="teal">Cierre Diario</Button>
-        <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-        <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
-      </Box>
-      </Box>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
       <Box mb={6}>
         <Select
           placeholder="Seleccione una sucursal"

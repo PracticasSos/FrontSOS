@@ -3,6 +3,8 @@ import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
 import PdfLaboratory from "./PdfLaboratory";
+import SmartHeader from "../header/SmartHeader";
+import { m } from "framer-motion";
 
 const LaboratoryOrder = () => {
     const { patientId } = useParams();
@@ -238,36 +240,7 @@ const LaboratoryOrder = () => {
         setIsGeneratingPDF(false); // Desactiva el estado después de generar el PDF
       };
     
-    
-    
-
-    const handleNavigate = (route = null) => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (route) {
-            navigate(route);
-            return;
-        }
-        if (!user || !user.role_id) {
-            navigate('/Login');
-            return;
-        }
-        switch (user.role_id) {
-            case 1:
-                navigate('/Admin');
-                break;
-            case 2:
-                navigate('/Optometra');
-                break;
-            case 3:
-                navigate('/Vendedor');
-                break;
-            case 4:
-                navigate('/SuperAdmin');
-                break;
-            default:
-                navigate('/');
-        }
-    };
+      const moduleSpecificButton = null;
 
     return (
         <Box ref={salesRef} w="full" px={4}>
@@ -275,17 +248,7 @@ const LaboratoryOrder = () => {
             <Heading as="h2" size="lg" mb={4}>
               Orden de Laboratorio
             </Heading>
-            <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-              <Button onClick={() => handleNavigate("/OrderLaboratoryList")} colorScheme="teal">
-                Lista de Laboratorio
-              </Button>
-              <Button onClick={() => handleNavigate()} colorScheme="blue">
-                Volver a Opciones
-              </Button>
-              <Button onClick={() => handleNavigate("/Login")} colorScheme="red">
-                Cerrar Sesión
-              </Button>
-            </Box>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
             <Box as="form" width="100%" maxWidth="500px" padding={6} boxShadow="lg" borderRadius="md">
               {patientData && (
                 <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../api/supabase';
-import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Text} from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Text, useColorModeValue, HStack} from '@chakra-ui/react';
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from '../header/SmartHeader';
 
 const PatientHistory = () => {
   const location = useLocation();
@@ -67,13 +69,46 @@ const PatientHistory = () => {
     }
   };
 
+  const moduleSpecificButton = (
+    <Button 
+      onClick={() => handleNavigate('/HistoryClinic')} 
+      bg={useColorModeValue(
+        'rgba(255, 255, 255, 0.8)', 
+        'rgba(255, 255, 255, 0.1)'
+      )}
+      backdropFilter="blur(10px)"
+      border="1px solid"
+      borderColor={useColorModeValue(
+        'rgba(56, 178, 172, 0.3)', 
+        'rgba(56, 178, 172, 0.5)'
+      )}
+      color={useColorModeValue('teal.600', 'teal.300')}
+      size="sm"
+      borderRadius="15px"
+      px={4}
+      _hover={{
+        bg: useColorModeValue(
+          'rgba(56, 178, 172, 0.1)', 
+          'rgba(56, 178, 172, 0.2)'
+        ),
+        borderColor: 'teal.400',
+        transform: 'translateY(-1px)',
+      }}
+      transition="all 0.2s"
+    >
+      <HStack spacing={2} align="center" justify="center">
+        <FaEye size="14px" />
+        <Text fontWeight="600" lineHeight="1" m={0}>
+          Listar Pacientes
+        </Text>
+      </HStack>
+    </Button>
+    );
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
       <Heading mb={4} textAlign="center">Historial de Ventas</Heading>
-      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-        <Button onClick={() => handleNavigate('/HistoryClinic')} colorScheme="teal" mb={4}>Lista de Pacientes</Button>
-        <Button onClick={() => handleNavigate()} mr={2} colorScheme="blue">Volver a Opciones</Button>
-      </Box>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
     <Box as="form" width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md" >
       {selectedPatient ? (
         <>

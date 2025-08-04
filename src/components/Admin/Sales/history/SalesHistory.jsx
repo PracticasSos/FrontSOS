@@ -14,6 +14,7 @@ import Delivery from "../Delivery";
 import MessageSection from "../MenssageSection";
 import ObservationSection from "../ObservationSection";
 import TermsCondition from "../TermsCondition";
+import SmartHeader from "../../../header/SmartHeader";
 
 const SalesHistory = () => {
   const [filteredMeasures, setFilteredMeasures] = useState([]);
@@ -390,6 +391,8 @@ const SalesHistory = () => {
     }
   };
 
+  const moduleSpecificButton = null;
+
   const cardBg = useColorModeValue(
       'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
       'rgba(48, 44, 44, 0.2)' // Dark: tu fondo actual
@@ -399,11 +402,7 @@ const SalesHistory = () => {
     <Box ref={salesRef} w="full" px={4}>
       <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
         <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
-        <Box display="flex" flexWrap="wrap" justifyContent="center" gap={2} width="full" maxWidth="900px" mb={4}>
-          <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">Consultas de Cierre</Button>
-          <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
-        </Box>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
   
         <Box >
           <SearchHistory onFormDataChange={handlePatientDataChange} initialFormData={{ ...formData, ...saleData, sale_id: saleParamId || saleId }} />

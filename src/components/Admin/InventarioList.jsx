@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase.js";
-import { Box, Button, Heading, Input, Table, Tbody, Text, Td, Th, Thead, Tr, Select, useToast, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Heading, Input, Table, Tbody, Text, Td, Th, Thead, Tr, Select, useToast, useColorModeValue, HStack } from "@chakra-ui/react";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader.jsx";
 
 const InventarioList = () => {
   const [inventoryList, setInventoryList] = useState([]);
@@ -119,6 +121,42 @@ const InventarioList = () => {
     }
   };
 
+  const moduleSpecificButton = (
+  <Button 
+    onClick={() => handleNavigate('/Inventory')} 
+    bg={useColorModeValue(
+      'rgba(255, 255, 255, 0.8)', 
+      'rgba(255, 255, 255, 0.1)'
+    )}
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor={useColorModeValue(
+      'rgba(56, 178, 172, 0.3)', 
+      'rgba(56, 178, 172, 0.5)'
+    )}
+    color={useColorModeValue('teal.600', 'teal.300')}
+    size="sm"
+    borderRadius="15px"
+    px={4}
+    _hover={{
+      bg: useColorModeValue(
+        'rgba(56, 178, 172, 0.1)', 
+        'rgba(56, 178, 172, 0.2)'
+      ),
+      borderColor: 'teal.400',
+      transform: 'translateY(-1px)',
+    }}
+    transition="all 0.2s"
+  >
+    <HStack spacing={2} align="center" justify="center">
+      <FaEye size="14px" />
+      <Text fontWeight="600" lineHeight="1" m={0}>
+        Registrar Inventario
+      </Text>
+    </HStack>
+  </Button>
+  );
+
   const bgColor = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -166,14 +204,7 @@ const InventarioList = () => {
       <Heading mb={4} textAlign="center">
         Lista de Inventario
       </Heading>
-      <Box display="flex" justifyContent="center" gap={4} mb={4}>
-      <Button colorScheme="blue" onClick={() => handleNavigate("/Inventory")} mr={2}>
-        Registrar Inventario
-      </Button>
-      <Button colorScheme="gray" onClick={() => handleNavigate()}>
-        Volver a Opciones
-      </Button>
-      </Box>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
       <Box w="50%" mx="auto" display="block">
       <Select placeholder="Filtrar por sucursal" onChange={(e) => setBranchFilter(parseInt(e.target.value))} mt={4} mb={4}>
         {branches.map((branch) => (

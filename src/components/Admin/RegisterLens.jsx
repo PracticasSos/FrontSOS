@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../../api/supabase";
-import { Box, Button, FormControl, FormLabel, Input, Heading, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Heading, SimpleGrid, useColorModeValue, Text, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader";
 
 const RegisterLens = () => {
     const navigate = useNavigate();
@@ -81,14 +83,46 @@ const RegisterLens = () => {
         }
     };
 
+    const moduleSpecificButton = (
+      <Button 
+        onClick={() => handleNavigate('/ListLens')} 
+        bg={useColorModeValue(
+          'rgba(255, 255, 255, 0.8)', 
+          'rgba(255, 255, 255, 0.1)'
+        )}
+        backdropFilter="blur(10px)"
+        border="1px solid"
+        borderColor={useColorModeValue(
+          'rgba(56, 178, 172, 0.3)', 
+          'rgba(56, 178, 172, 0.5)'
+        )}
+        color={useColorModeValue('teal.600', 'teal.300')}
+        size="sm"
+        borderRadius="15px"
+        px={4}
+        _hover={{
+          bg: useColorModeValue(
+            'rgba(56, 178, 172, 0.1)', 
+            'rgba(56, 178, 172, 0.2)'
+          ),
+          borderColor: 'teal.400',
+          transform: 'translateY(-1px)',
+        }}
+        transition="all 0.2s"
+      >
+        <HStack spacing={2} align="center" justify="center">
+          <FaEye size="14px" />
+          <Text fontWeight="600" lineHeight="1" m={0}>
+            Listar Lunas
+          </Text>
+        </HStack>
+      </Button>
+      );
+
     return (
         <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
             <Heading mb={4}>Registrar Lunas</Heading>
-            <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={4}>
-                <Button onClick={() => handleNavigate('/ListLens')} colorScheme="teal">Listar Lunas</Button>
-                <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-                <Button onClick={() => handleNavigate('/LoginForm')} colorScheme="red">Cerrar Sesión</Button>
-            </Box>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
                 <SimpleGrid columns={[1, 2]} spacing={4}>

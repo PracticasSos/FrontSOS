@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, Heading, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, useColorModeValue, useColorMode } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import HeaderAdmin from '../header/HeaderAdmin';
 import { HStack, Text } from '@chakra-ui/react';
 import { FaEye } from 'react-icons/fa';
+import SmartHeader from '../header/SmartHeader';
 
 const RegisterPatientForm = () => {
   const navigate = useNavigate();
@@ -158,7 +158,7 @@ const RegisterPatientForm = () => {
       </Text>
     </HStack>
   </Button>
-);
+  );
 
   const { colorMode } = useColorMode();
 
@@ -181,7 +181,7 @@ const RegisterPatientForm = () => {
           mx="auto"
         />
       </Box>
-      <HeaderAdmin
+      <SmartHeader
         moduleSpecificButton={moduleSpecificButton}
       />
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">

@@ -8,6 +8,7 @@ import CertificateFooter from "./CertificateFooter";
 import SelloSelector from "./SelloSelector";
 import SignaturePadComponent from "../Sales/SignaturePadComponent";
 import { useAuth } from '../../AuthContext';
+import SmartHeader from "../../header/SmartHeader";
 
 const PrintCertificate = () => {
   const [patients, setPatients] = useState([]);
@@ -184,6 +185,8 @@ const PrintCertificate = () => {
       }
     };
 
+    const moduleSpecificButton = null;
+
       const textColor = useColorModeValue('gray.800', 'white');
       const borderColor = useColorModeValue('gray.200', 'gray.600');
       const inputBg = useColorModeValue('white', 'gray.700');
@@ -193,11 +196,7 @@ const PrintCertificate = () => {
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
         <CertificateLogo tenantId={tenantId} />
         <Heading mb={4} textAlign="center" fontSize={["xl", "2xl", "3xl"]}>Certificado de Agudeza Visual</Heading>
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} width="100%" maxWidth="800px" mb={4} justifyContent={{ base: "center", md: "center" }} alignItems="center"  mx="auto">
-          <Button onClick={() => handleNavigate("/NoExiste")} colorScheme="teal" size={["sm", "md"]}>Consultar Medidas</Button>
-          <Button onClick={() => handleNavigate()} colorScheme="blue" size={["sm", "md"]}>Volver a Opciones</Button>
-          <Button onClick={() => handleNavigate("/Login")} colorScheme="red" size={["sm", "md"]}>Cerrar Sesión</Button>
-        </Stack>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
         <Box as="form" onSubmit={(e) => { e.preventDefault() }} width="100%" maxWidth="1300px" boxShadow="lg" borderRadius="md" p={[2, 4, 6]}>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>

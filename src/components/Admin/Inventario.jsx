@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import {Box, Button, FormControl, FormLabel, Input, Heading, VStack, HStack, useToast, Select} from "@chakra-ui/react";
+import {Box, Button, FormControl, FormLabel, Input, Heading, VStack, useToast, Select, useColorModeValue, Text, HStack} from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { supabase } from "../../api/supabase.js";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader.jsx";
 
 const Inventario = () => {
   const navigate = useNavigate();
@@ -88,36 +90,56 @@ const Inventario = () => {
             navigate('/');
     }
   };
+  const moduleSpecificButton = (
+  <Button 
+    onClick={() => handleNavigate('/ListInventory')} 
+    bg={useColorModeValue(
+      'rgba(255, 255, 255, 0.8)', 
+      'rgba(255, 255, 255, 0.1)'
+    )}
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor={useColorModeValue(
+      'rgba(56, 178, 172, 0.3)', 
+      'rgba(56, 178, 172, 0.5)'
+    )}
+    color={useColorModeValue('teal.600', 'teal.300')}
+    size="sm"
+    borderRadius="15px"
+    px={4}
+    _hover={{
+      bg: useColorModeValue(
+        'rgba(56, 178, 172, 0.1)', 
+        'rgba(56, 178, 172, 0.2)'
+      ),
+      borderColor: 'teal.400',
+      transform: 'translateY(-1px)',
+    }}
+    transition="all 0.2s"
+  >
+    <HStack spacing={2} align="center" justify="center">
+      <FaEye size="14px" />
+      <Text fontWeight="600" lineHeight="1" m={0}>
+        Listar Inventario
+      </Text>
+    </HStack>
+  </Button>
+  );
 
   return (
     <Box
-      minHeight="100vh"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      px={4}
+      className="signup-form"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+        minHeight="100vh"
     >
-      <Box
-        p={8}
-        borderRadius="lg"
-        shadow="md"
-        width="100%"
-        maxWidth="500px"
-      >
+      
         <Heading as="h2" size="lg" textAlign="center" mb={6}>
           Registro de Inventario
         </Heading>
-        <HStack justifyContent="space-between" mb={4}>
-          <Button colorScheme="blue" onClick={() => handleNavigate("/ListInventory")}>
-            Listar Inventario
-          </Button>
-          <Button colorScheme="gray" onClick={() => handleNavigate()}>
-            Opciones
-          </Button>
-          <Button colorScheme="red" onClick={() => handleNavigate("/LoginForm")}>
-            Cerrar Sesión
-          </Button>
-        </HStack>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
         <VStack as="form" spacing={4} onSubmit={handleSubmit}>
           <FormControl isRequired>
             <FormLabel>Marca</FormLabel>
@@ -168,7 +190,6 @@ const Inventario = () => {
             Registrar
           </Button>
         </VStack>
-      </Box>
     </Box>
   );
 };

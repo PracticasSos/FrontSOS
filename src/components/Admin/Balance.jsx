@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { Box, Heading, Select, Table, Thead, Tbody, Tr, Th, Td, Button, Input, useColorModeValue} from "@chakra-ui/react";
+import { Box, Heading, Select, Table, Thead, Tbody, Tr, Th, Td, Button, Input, useColorModeValue, HStack, Text} from "@chakra-ui/react";
 import { supabase } from "../../api/supabase";
 import { useNavigate } from "react-router-dom";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader";
 
 const Balance = () => {
     const [records, setRecords] = useState([]);
@@ -119,27 +121,55 @@ const Balance = () => {
                 navigate('/');
         }
     };
-    
 
-    const bgColor = useColorModeValue('white', 'gray.800');
+    const moduleSpecificButton = (
+  <Button 
+    onClick={() => handleNavigate('/ListBalance')} 
+    bg={useColorModeValue(
+      'rgba(255, 255, 255, 0.8)', 
+      'rgba(255, 255, 255, 0.1)'
+    )}
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor={useColorModeValue(
+      'rgba(56, 178, 172, 0.3)', 
+      'rgba(56, 178, 172, 0.5)'
+    )}
+    color={useColorModeValue('teal.600', 'teal.300')}
+    size="sm"
+    borderRadius="15px"
+    px={4}
+    _hover={{
+      bg: useColorModeValue(
+        'rgba(56, 178, 172, 0.1)', 
+        'rgba(56, 178, 172, 0.2)'
+      ),
+      borderColor: 'teal.400',
+      transform: 'translateY(-1px)',
+    }}
+    transition="all 0.2s"
+  >
+    <HStack spacing={2} align="center" justify="center">
+      <FaEye size="14px" />
+      <Text fontWeight="600" lineHeight="1" m={0}>
+        Listar Abonos
+      </Text>
+    </HStack>
+  </Button>
+  );
+
   const textColor = useColorModeValue('gray.800', 'white');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const tableBg = useColorModeValue('white', 'gray.700');
   const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
   const inputBg = useColorModeValue('white', 'gray.700');
-  const selectBg = useColorModeValue('white', 'gray.700');
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" >
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
                 Gestión de Abonos
             </Heading>
-            <Box mb={6} display="flex" justifyContent="center">
-                <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-                    <Button onClick={() => handleNavigate("/ListBalance")} colorScheme="teal">Listar Abonos</Button>
-                    <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-                </Box>
-            </Box>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
             <Select placeholder="Seleccione una sucursal" value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)}
                 bg={inputBg}
                 borderColor={borderColor}

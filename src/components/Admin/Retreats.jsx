@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, HStack, Select, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
+import SmartHeader from "../header/SmartHeader";
+import { FaEye } from 'react-icons/fa';
 
 const Retreats = () => {
     const { saleId } = useParams();
@@ -82,7 +84,6 @@ const Retreats = () => {
         }
     };
     
-
     const fetchSalesData = async () => {
         try {
             const { data, error } = await supabase
@@ -225,14 +226,46 @@ const Retreats = () => {
         return fullName.toLowerCase().includes(searchTerm.toLowerCase()); 
     });
 
+    const moduleSpecificButton = (
+      <Button 
+        onClick={() => handleNavigate('/RetreatsPatients')} 
+        bg={useColorModeValue(
+          'rgba(255, 255, 255, 0.8)', 
+          'rgba(255, 255, 255, 0.1)'
+        )}
+        backdropFilter="blur(10px)"
+        border="1px solid"
+        borderColor={useColorModeValue(
+          'rgba(56, 178, 172, 0.3)', 
+          'rgba(56, 178, 172, 0.5)'
+        )}
+        color={useColorModeValue('teal.600', 'teal.300')}
+        size="sm"
+        borderRadius="15px"
+        px={4}
+        _hover={{
+          bg: useColorModeValue(
+            'rgba(56, 178, 172, 0.1)', 
+            'rgba(56, 178, 172, 0.2)'
+          ),
+          borderColor: 'teal.400',
+          transform: 'translateY(-1px)',
+        }}
+        transition="all 0.2s"
+      >
+        <HStack spacing={2} align="center" justify="center">
+          <FaEye size="14px" />
+          <Text fontWeight="600" lineHeight="1" m={0}>
+            Lista de Retiros
+          </Text>
+        </HStack>
+      </Button>
+      );
+
     return (
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
         <Heading as="h2" size="lg" mb={4}>Retiros</Heading>
-        <Box display="flex" justifyContent="space-between" width="100%" maxWidth="900px" mb={4}>
-            <Button onClick={() => handleNavigate("/RetreatsPatients")} colorScheme="teal">Lista de Retiros</Button>
-            <Button onClick={() => handleNavigate()} colorScheme="blue">Volver a Opciones</Button>
-            <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">Cerrar Sesión</Button>
-        </Box>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
         <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
            
         {patientData && (

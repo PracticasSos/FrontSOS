@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import SmartHeader from "../header/SmartHeader";
 
 const HistoryMeasures = () => {
     const { patientId } = useParams();
@@ -58,15 +59,16 @@ const HistoryMeasures = () => {
         }
     };
 
+    const moduleSpecificButton = null;
+
     return (
-        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg="gray.50">
+        <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
             <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
-            <Button colorScheme="blue" onClick={() => handleNavigate("/SalesForm")} mr={2}>Registrar Medidas</Button>
-            <Button colorScheme="gray" onClick={() => handleNavigate()}>Volver a Opciones</Button>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
             {loading ? (
                 <Spinner size="xl" mt={4} />
             ) : (
-                <Box overflowX="auto" bg="white" p={4} borderRadius="lg" shadow="md">
+                <Box overflowX="auto"  p={4} borderRadius="lg" shadow="md">
                     <Table variant="simple">
                         <Thead>
                             <Tr>

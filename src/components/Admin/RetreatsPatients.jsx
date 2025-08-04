@@ -245,6 +245,8 @@ const RetreatsPatients = () => {
       }
   };
 
+  const moduleSpecificButton = null;
+
     const textColor = useColorModeValue('gray.800', 'white');
     const borderColor = useColorModeValue('gray.200', 'gray.600');
     const tableBg = useColorModeValue('white', 'gray.700');

@@ -1,7 +1,9 @@
-import { Box, Button, FormControl, FormLabel, Input, Heading, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Heading, SimpleGrid, useColorModeValue, Text, HStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "../../api/supabase.js";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader.jsx";
 
 const Lab = () => {
     const navigate = useNavigate();
@@ -73,12 +75,49 @@ const Lab = () => {
         }
     };
 
+    const moduleSpecificButton = (
+  <Button 
+    onClick={() => handleNavigate('/ListLabs')} 
+    bg={useColorModeValue(
+      'rgba(255, 255, 255, 0.8)', 
+      'rgba(255, 255, 255, 0.1)'
+    )}
+    backdropFilter="blur(10px)"
+    border="1px solid"
+    borderColor={useColorModeValue(
+      'rgba(56, 178, 172, 0.3)', 
+      'rgba(56, 178, 172, 0.5)'
+    )}
+    color={useColorModeValue('teal.600', 'teal.300')}
+    size="sm"
+    borderRadius="15px"
+    px={4}
+    _hover={{
+      bg: useColorModeValue(
+        'rgba(56, 178, 172, 0.1)', 
+        'rgba(56, 178, 172, 0.2)'
+      ),
+      borderColor: 'teal.400',
+      transform: 'translateY(-1px)',
+    }}
+    transition="all 0.2s"
+  >
+    <HStack spacing={2} align="center" justify="center">
+      <FaEye size="14px" />
+      <Text fontWeight="600" lineHeight="1" m={0}>
+        Listar Laboratorios
+      </Text>
+    </HStack>
+  </Button>
+  );
+
     return (
         <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh" >
+            <Heading as="h2" size="lg" textAlign="center" mb={4} >
+                Laboratorio
+            </Heading>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
             <Box width="100%" maxWidth="900px" borderRadius="8px" boxShadow="md" padding="20px">
-                <Heading as="h2" size="lg" textAlign="center" mb={4} >
-                    Laboratorio
-                </Heading>
                 {message && (
                     <Box 
                         bgColor={message.type === 'success' ? "green.200" : "red.200"} 
@@ -91,34 +130,6 @@ const Lab = () => {
                         {message.text}
                     </Box>
                 )}
-
-                <Box display="flex" justifyContent="space-between" mb={4}>
-                    <Button 
-                        onClick={() => handleNavigate('/ListLabs')} 
-                        bgColor="#00A8C8" 
-                        color="white" 
-                        _hover={{ bgColor: "#008B94" }}
-                    >
-                        Listar Laboratorios
-                    </Button>
-                    <Button 
-                        onClick={() => handleNavigate()} 
-                        bgColor="#00A8C8" 
-                        color="white" 
-                        _hover={{ bgColor: "#008B94" }}
-                    >
-                        Volver a Opciones
-                    </Button>
-                    <Button 
-                        onClick={() => handleNavigate('/LoginForm')} 
-                        bgColor="#00A8C8" 
-                        color="white" 
-                        _hover={{ bgColor: "#008B94" }}
-                    >
-                        Cerrar Sesión
-                    </Button>
-                </Box>
-
                 <form onSubmit={handleSubmit}>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <FormControl id="name" isRequired>

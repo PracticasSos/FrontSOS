@@ -2,6 +2,8 @@ import { Box, Button, FormControl, FormLabel, Input, Select, Table, Tr, Td, Th, 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase.js";
+import { FaEye } from 'react-icons/fa';
+import SmartHeader from "../header/SmartHeader.jsx";
 
 const CashClosure = () => {
     const navigate = useNavigate();
@@ -399,6 +401,8 @@ const CashClosure = () => {
         return null;
     };
 
+    const moduleSpecificButton = null;
+
     const handleNavigate = (route = null) => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (route) {
@@ -441,18 +445,8 @@ const CashClosure = () => {
             <Heading mb={4} textAlign="center" size="lg" color="teal.500">
                 Consultar Cierre - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
             </Heading>
-            
-            <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={6} justifyItems="center">
-                <Button onClick={() => handleNavigate("/PatientRecords")} colorScheme="teal" width="auto" maxWidth="200px">
-                    Consultar Cierre Diario
-                </Button>
-                <Button onClick={() => handleNavigate()} colorScheme="blue" width="auto" maxWidth="200px">
-                    Volver a Opciones
-                </Button>
-                <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red" width="auto" maxWidth="200px">
-                    Cerrar Sesión
-                </Button>
-            </Grid>
+
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             <Box as="form" onSubmit={handleSubmit}>
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6}>

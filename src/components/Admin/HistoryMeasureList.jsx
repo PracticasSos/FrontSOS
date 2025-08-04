@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
 import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, Divider, useColorModeValue } from "@chakra-ui/react";
 import SearchBar from "./SearchBar";
+import SmartHeader from "../header/SmartHeader";
 
 const HistoryMeasureList = () => {
     const [patients, setPatients] = useState([]);
@@ -125,6 +126,9 @@ const HistoryMeasureList = () => {
                 navigate('/');
         }
     };
+
+    const moduleSpecificButton = null;
+
     const bgColor = useColorModeValue('white', 'gray.800');
       const textColor = useColorModeValue('gray.800', 'white');
       const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -136,12 +140,7 @@ const HistoryMeasureList = () => {
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
             <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
-            <Box display="flex" justifyContent="center" width="100%" mb={4}>
-                <Box display="flex" gap={6} justifyContent="center">
-                    <Button colorScheme="blue" onClick={() => handleNavigate("/SalesForm")}>Registrar Medidas</Button>
-                    <Button colorScheme="gray" onClick={() => handleNavigate()}>Volver a Opciones</Button>
-                </Box>
-            </Box>
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             {loading ? (
                 <Spinner size="xl" mt={4} />
