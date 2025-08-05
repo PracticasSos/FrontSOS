@@ -57,49 +57,49 @@ const AppRouter = () => {
     return(
         <Routes>
             <Route path="/" element={<Welcome />} /> {/*Cada route sera una ruta de acceso a la pagina */}
-            <Route path="Register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
-            <Route path="ChangePassword" element={<ChangePassword/>} />{/*Ruta para cambiar contraseña*/}
-            <Route path="Tenants" element={<Tenants/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
-            <Route path="Inventory" element={<Inventario/>}></Route>
-            <Route path="LoginForm" element={<LoginForm/>} />
-            <Route path="Admin" element={<AdminDashBoard/>} />
-            <Route path="SuperAdmin" element={<SuperAdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
-            <Route path="ListUsers" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
-            <Route path="RegisterPatient" element={<RegisterPatientForm />} />
-            <Route path="Vendedor" element={<VendedorDashBoard />} />
-            <Route path="Optometra" element={<OptometraDashBoard />} />
-            <Route path="ListPatients" element={<ListPatients />} />
-            <Route path={"ListInventory"} element={<InventarioList/>}></Route>
-            <Route path={"Branch"} element={<Branch/>}></Route>
-            <Route path={"ListBranch"} element={<ListBranch/>}></Route>
-            <Route path={"Labs"} element={<Lab/>}></Route>
-            <Route path={"ListLabs"} element={<ListLab/>}></Route>
-            <Route path="CashClousure" element={<CashClousure />} ></Route>
-            <Route path="Sales" element= {<Sales/>}></Route>
-            <Route path="/Sales/:id" element= {<Sales/>}></Route>
-            <Route path="RegisterLens" element={<RegisterLens/>}></Route>
-            <Route path="PatientRecords" element={<PatientRecords />}> </Route>
-            <Route path="MeasuresFinal" element={<MeasuresFinal />}></Route>
-            <Route path="/MeasuresFinal/:id" element={<MeasuresFinal />} />
-            <Route path="/OrderLaboratoryList" element={<OrderLaboratoryList/>}> </Route>
-            <Route path="/OrderLaboratoryList/LaboratoryOrder/:patientId" element={<LaboratoryOrder />}></Route>
-            <Route path="/HistoryMeasureList" element={<HistoryMeasureList/>}> </Route>
-            <Route path="/HistoryMeasureList/HistoryMeasures/:patientId" element={<HistoryMeasures/>}></Route>
-            <Route path="Egresos" element={<Egresos />}> </Route>
-            <Route path="BalancesPatient" element={<BalancesPatient/>}></Route>
-            <Route path="/RetreatsPatients" element={<RetreatsPatients/>}></Route>
-            <Route path="/RetreatsPatients/Retreats/:saleId" element={<Retreats/>}></Route>
-            <Route path="/Balance" element={<Balance/>}></Route>
-            <Route path="/ListLens" element={<ListLens/>}></Route>
-            <Route path="/ListBalance" element={<ListBalance/>}></Route>
-            <Route path="/ListSales" element={<ListSales/>}></Route>
-            <Route path="/HistoryClinic" element={<HistoryClinic />} />
-            <Route path="/HistoryClinic/PatientHistory/:patientId" element={<PatientHistory />} />
-            <Route path="/HistoryClinic/PatientHistory/:patientId/SalesHistory/:saleId" element={<SalesHistory />} />
-            <Route path="/PrintCertificate" element={<PrintCertificate/>}></Route>
+            <Route path="/register" element={<Register/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
+            <Route path="/change-password" element={<ChangePassword/>} />{/*Ruta para cambiar contraseña*/}
+            <Route path="/tenants" element={<Tenants/>} />{/*Ruta para registrar usuarios (solo admin accede)*/}
+            <Route path="/inventory" element={<Inventario/>}></Route>
+            <Route path="/login-form" element={<LoginForm/>} />
+            <Route path="/admin" element={<AdminDashBoard/>} />
+            <Route path="/super-admin" element={<SuperAdminDashBoard/>} />{/*Ruta de las opciones de rol admin*/}
+            <Route path="/list-users" element={<ListUsers />} />{/*Ruta para listar usuarios (empleados) (solo admin puede)*/}
+            <Route path="/register-patient" element={<RegisterPatientForm />} />
+            <Route path="/vendedor" element={<VendedorDashBoard />} />
+            <Route path="/optometra" element={<OptometraDashBoard />} />
+            <Route path="/list-patients" element={<ListPatients />} />
+            <Route path="/list-inventory" element={<InventarioList/>}></Route>
+            <Route path="/branch" element={<Branch/>}></Route>
+            <Route path="/list-branch" element={<ListBranch/>}></Route>
+            <Route path="/labs" element={<Lab/>}></Route>
+            <Route path="/list-labs" element={<ListLab/>}></Route>
+            <Route path="/cash-closure" element={<CashClousure />} ></Route>
+            <Route path="/sales" element= {<Sales/>}></Route>
+            <Route path="/sales/:id" element= {<Sales/>}></Route>
+            <Route path="/register-lens" element={<RegisterLens/>}></Route>
+            <Route path="/patient-records" element={<PatientRecords />}> </Route>
+            <Route path="/measures-final" element={<MeasuresFinal />}></Route>
+            <Route path="/measures-final/:id" element={<MeasuresFinal />} />
+            <Route path="/order-laboratory-list" element={<OrderLaboratoryList/>}> </Route>
+            <Route path="/order-laboratory-list/laboratory-order/:patientId" element={<LaboratoryOrder />}></Route>
+            <Route path="/history-measure-list" element={<HistoryMeasureList/>}> </Route>
+            <Route path="/history-measure-list/history-measures/:patientId" element={<HistoryMeasures/>}></Route>
+            <Route path="/egresos" element={<Egresos />}> </Route>
+            <Route path="/balances-patient" element={<BalancesPatient/>}></Route>
+            <Route path="/retreats-patients" element={<RetreatsPatients/>}></Route>
+            <Route path="/retreats-patients/retreats/:saleId" element={<Retreats/>}></Route>
+            <Route path="/balance" element={<Balance/>}></Route>
+            <Route path="/list-lens" element={<ListLens/>}></Route>
+            <Route path="/list-balance" element={<ListBalance/>}></Route>
+            <Route path="/list-sales" element={<ListSales/>}></Route>
+            <Route path="/history-clinic" element={<HistoryClinic />} />
+            <Route path="/history-clinic/patient-history/:patientId" element={<PatientHistory />} />
+            <Route path="/history-clinic/patient-history/:patientId/sales-history/:saleId" element={<SalesHistory />} />
+            <Route path="/print-certificate" element={<PrintCertificate/>}></Route>
             <Route path="/Tenant" element={<Tenant/>}></Route>
             <Route path="/UploadLogo" element={<UploadLogo/>}></Route>
-            <Route path="/MessageManager" element={<MessageManager/>}></Route>
+            <Route path="/message-manager" element={<MessageManager/>}></Route>
             <Route path="/RegisterExperience" element={<FormInitial />}> </Route>
             <Route path="/cuestionario" element={<QuestionnairePage />}> </Route>
             <Route path="/resultados" element={<Results />} > </Route>

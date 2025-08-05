@@ -51,28 +51,28 @@ import usuariomasculino from "../../assets/usuariomasculino.png";
 import avataralgora from "../../assets/avataralgora.jpg";
 
 const defaultOptions = [
-  { label: "Registrar Paciente", icon: iconoregistrar, route: "/RegisterPatient" },
-  { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/Sales" },
-  { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
-  { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
-  { label: "Experiencia", icon: iconoexperienciausuario, route: "/RegisterExperience" },
-  { label: "Historial de Ventas", icon: iconohistorialventa, route: "/HistoryClinic" },
-  { label: "Cierre", icon: iconocierrediario, route: "/PatientRecords" },
-  { label: "Saldos", icon: iconossaldos, route: "/BalancesPatient" },
-  { label: "Egresos", icon: iconoegresos, route: "/Egresos" },
-  { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
-  { label: "Créditos", icon: iconocreditos, route: "/Balance" },
-  { label: "Inventario", icon: iconoinventario, route: "/Inventory" },
-  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
-  { label: "Registrar Lunas", icon: iconolunas, route: "/RegisterLens" },
+  { label: "Registrar Paciente", icon: iconoregistrar, route: "/register-patient" },
+  { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/sales" },
+  { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/order-laboratory-list" },
+  { label: "Retiros", icon: iconoretiros, route: "/retreats-patients" },
+  { label: "Experiencia", icon: iconoexperienciausuario, route: "/register-experience" },
+  { label: "Historial de Ventas", icon: iconohistorialventa, route: "/history-clinic" },
+  { label: "Cierre", icon: iconocierrediario, route: "/patient-records" },
+  { label: "Saldos", icon: iconossaldos, route: "/balances-patient" },
+  { label: "Egresos", icon: iconoegresos, route: "/egresos" },
+  { label: "Registrar Medidas", icon: iconomedidas, route: "/measures-final" },
+  { label: "Créditos", icon: iconocreditos, route: "/balance" },
+  { label: "Inventario", icon: iconoinventario, route: "/inventory" },
+  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/history-measure-list" },
+  { label: "Registrar Lunas", icon: iconolunas, route: "/register-lens" },
 ];
 
 const extraRouters = [
-  { label: "Usuarios", icon: iconousuarios, route: "/Register" },
-  { label: "Laboratorios", icon: iconolaboratorios, route: "/Labs" },
-  { label: "Sucursal", icon: iconosucursal, route: "/Branch" },
-  { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/CashClousure" },
-  { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/PrintCertificate" },
+  { label: "Usuarios", icon: iconousuarios, route: "/register" },
+  { label: "Laboratorios", icon: iconolaboratorios, route: "/labs" },
+  { label: "Sucursal", icon: iconosucursal, route: "/branch" },
+  { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/cash-closure" },
+  { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/print-certificate" },
 ];
 
 const VendedorDashBoard = () => {
@@ -227,7 +227,7 @@ return (
             >
               ALGORA
             </Text>
-
+            <Box width="40px" />
             <Flex gap={24} align="center" display={{ base: "none", md: "flex" }}>
               <Text
                 color={textColor}
@@ -241,7 +241,7 @@ return (
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/PrintCertificate")}
+                onClick={() => navigate("/print-certificate")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -271,7 +271,7 @@ return (
                 objectPosition="bottom"
                 borderRadius="full"
                 cursor="pointer"
-                onClick={() => navigate("/PatientRecords")}
+                onClick={() => navigate("/patient-records")}
                 border="2px solid #50bcd8"
               />
               <Menu>
@@ -288,10 +288,10 @@ return (
                 </MenuButton>
                 <Portal>
                 <MenuList zIndex="99999">
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
+                  <MenuItem onClick={() => navigate("/measures-final")}>
                     Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>
@@ -336,7 +336,7 @@ return (
                     cursor="pointer"
                     onClick={() => {
                       onToggle();
-                      navigate("/PatientRecords");
+                      navigate("/patient-records");
                     }}
                     border="2px solid #50bcd8"
                   />
@@ -358,7 +358,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("/MeasuresFinal");
+                          navigate("/measures-final");
                         }}
                       >
                         Registrar Medidas
@@ -366,7 +366,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("/HistoryClinic");
+                          navigate("/history-clinic");
                         }}
                       >
                         Historial de Venta
@@ -374,7 +374,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("HistoryMeasureList");
+                          navigate("/history-measure-list");
                         }}
                       >
                         Historial de Medidas
@@ -403,7 +403,7 @@ return (
                   cursor="pointer"
                   onClick={() => {
                     onToggle();
-                    navigate("/PrintCertificate");
+                    navigate("/print-certificate");
                   }}
                   _hover={{ color: textHoverColor }}
                 >

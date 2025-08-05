@@ -98,6 +98,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
 
           {/* Centro - Menú de navegación (específico para Optometra) */}
           <Flex gap={6} align="center" display={{ base: "none", md: "flex" }}>
+            <Box width="40px" />
             <Text
               color={textColor}
               cursor="pointer"
@@ -107,6 +108,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
             >
               Inicio
             </Text>
+            <Box width="40px" />
             <Text
               color={textColor}
               cursor="pointer"
@@ -116,6 +118,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
             >
               Certificado
             </Text>
+            <Box width="40px" />
             <Text
               color={textColor}
               cursor="pointer"

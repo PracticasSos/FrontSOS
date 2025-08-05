@@ -95,9 +95,10 @@ const HeaderVendedor = ({ moduleSpecificButton = null }) => {
               </Text>
             )}
           </Box>
-
+           
           {/* Centro - Menú de navegación (limitado para Vendedor) */}
           <Flex gap={6} align="center" display={{ base: "none", md: "flex" }}>
+            <Box width="40px" />
             <Text
               color={textColor}
               cursor="pointer"
@@ -107,6 +108,7 @@ const HeaderVendedor = ({ moduleSpecificButton = null }) => {
             >
               Inicio
             </Text>
+            <Box width="40px" />
             <Text
             color={textColor}
             cursor="pointer"
@@ -116,6 +118,7 @@ const HeaderVendedor = ({ moduleSpecificButton = null }) => {
             >
                 Certificado
             </Text>
+            <Box width="40px" />
             <Text
               color={textColor}
               cursor="pointer"
@@ -125,6 +128,7 @@ const HeaderVendedor = ({ moduleSpecificButton = null }) => {
             >
               Egresos
             </Text>
+            
           </Flex>
 
           {/* Lado derecho - Íconos */}
@@ -160,8 +164,8 @@ const HeaderVendedor = ({ moduleSpecificButton = null }) => {
                   <MenuItem onClick={() => navigate("/HistoryClinic")}>
                     Historial de Ventas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Inventory")}>
-                    Inventario
+                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                    Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
                     Cerrar Sesión

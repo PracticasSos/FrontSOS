@@ -36,44 +36,49 @@ export const useUserPermissions = (userData) => {
     switch (roleId) {
       case 1: 
         return [
-          '/admin', '/RegisterPatient', '/MeasuresFinal', '/Sales', 
-          '/RetreatsPatients', '/RegisterExperience', '/Register', 
-          '/Inventory', '/Branch', '/Labs', '/CashClousure', '/ChangePassword',
-          '/RegisterLens', '/PatientRecords', '/Egresos', 
-          '/OrderLaboratoryList', '/BalancesPatient', '/Balance', 
-          '/HistoryMeasureList', '/PrintCertificate', '/HistoryClinic', 
-          '/MessageManager', '/ListBalance', '/ListSales',
-          '/ListPatients', '/ListUsers', '/ListLens', '/ListInventory',
-          '/ListBranch', '/ListLab','/cuestionario','/lens','/material',
-          '/admin/modelos','/resultados','/RegisterExperience','/mensajeria',
-          '/RetreatsPatients/Retreats', '/Retreats', '/HistoryClinic/PatientHistory',  'PatientHistory',
+          '/admin', '/register-patient', '/measures-final', '/sales', 
+          '/retreats-patients', '/register-experience', '/register', 
+          '/inventory', '/branch', '/labs', '/cash-closure', '/change-password',
+          '/register-lens', '/patient-records', '/egresos', 
+          '/order-laboratory-list', '/balances-patient', '/balance', 
+          '/history-measure-list', '/print-certificate', '/history-clinic', 
+          '/message-manager', '/list-balance', '/list-sales',
+          '/list-patients', '/list-users', '/list-lens', '/list-inventory',
+          '/list-branch', '/list-lab','/cuestionario','/lens','/material',
+          '/admin/modelos','/resultados','/register-experience','/mensajeria',
+          '/retreats-patients/retreats', '/retreats', '/history-clinic/patient-history',  'patient-history',
         ];
       case 2: 
-        return ['/optometra', '/RegisterPatient', '/RetreatsPatients', '/RegisterExperience', '/RegisterPatient', '/Sales', 
-          '/OrderLaboratoryList', '/RetreatsPatients', '/RegisterExperience',
-          '/HistoryClinic', '/PatientRecords', '/BalancesPatient', '/Egresos', 
-          '/MeasuresFinal', '/Balance', '/Inventory','/certificado', '/cuestionario',
+        return ['/optometra', '/register-patient', '/retreats-patients', '/register-experience', '/register-patient', '/sales', 
+          '/order-laboratory-list', '/retreats-patients', '/register-experience',
+          '/history-clinic', '/patient-records', '/balances-patient', '/egresos', 
+          '/measures-final', '/balance', '/inventory','/certificado', '/cuestionario',
           '/lens','/material',
           '/admin/modelos','/resultados',];
       case 3: 
         return [
-          '/vendedor', '/RegisterPatient', '/Sales', 
-          '/OrderLaboratoryList', '/RetreatsPatients', '/RegisterExperience',
-          '/HistoryClinic', '/PatientRecords', '/BalancesPatient', '/Egresos', 
-          '/MeasuresFinal', '/Balance', '/Inventory', 
-          '/HistoryMeasureList', '/RegisterLens','/cuestionario','/lens','/material',
-          '/admin/modelos','/resultados', '/RetreatsPatients/Retreats',
+          '/vendedor', '/register-patient', '/sales', 
+          '/order-laboratory-list', '/register-experience', '/retreats-patients', 
+          '/history-clinic', '/patient-records', '/balances-patient', '/egresos', 
+          '/measures-final', '/balance', '/inventory', 
+          '/history-measure-list', '/register-lens','/cuestionario','/lens','/material',
+          '/admin/modelos','/resultados', '/retreats-patients/retreats',
         ];
       case 4: 
         return [
-          '/SuperAdmin', '/admin', '/optometra', '/vendedor', 
-          '/usuarios', '/inventario', '/venta', '/orden-laboratorio', 
-          '/registrar-paciente', '/retiros', '/saldos', '/mensajes', 
-          '/cierre', '/Egresos', '/certificado', '/historial-paciente', 
-          '/medidas', '/envios', '/historial-medidas', '/laboratorios', 
-          '/sucursal', '/consultar-cierre', '/lunas', '/creditos','/cuestionario',
+          '/admin', '/register-patient', '/measures-final', '/sales', 
+          '/retreats-patients', '/register-experience', '/register', 
+          '/inventory', '/branch', '/labs', '/cash-closure', '/change-password',
+          '/register-lens', '/patient-records', '/egresos', 
+          '/order-laboratory-list', '/balances-patient', '/balance', 
+          '/history-measure-list', '/print-certificate', '/history-clinic', 
+          '/message-manager', '/list-balance', '/list-sales',
+          '/list-patients', '/list-users', '/list-lens', '/list-inventory',
+          '/list-branch', '/list-lab','/cuestionario','/lens','/material',
+          '/admin/modelos','/resultados','/register-experience','/mensajeria',
+          '/retreats-patients/retreats', '/retreats', '/history-clinic/patient-history',  'patient-history','/cuestionario',
           '/lens','/material',
-          '/admin/modelos','/resultados','/RegisterExperience',
+          '/admin/modelos','/resultados','/register-experience',
         ];
       default: 
         return ['/LoginForm'];

@@ -161,67 +161,67 @@ const AdminDashBoard = () => {
   const handleOptionClick = (label) => {
     switch (label) {
       case "Registrar Paciente":
-        navigate('/RegisterPatient');
+        navigate('/register-patient');
         break;
       {/*case "Cambiar Contraseña":
         navigate('/ChangePassword');
         break;*/}
       case "Registrar Medidas":
-        navigate('/MeasuresFinal');
+        navigate('/measures-final');
         break;
       case "Venta":
-        navigate('/Sales');
+        navigate('/sales');
         break;
       case "Retiros":
-        navigate('/RetreatsPatients')
+        navigate('/retreats-patients')
         break;
       case "Experiencia":
         navigate('/RegisterExperience');
         break;
       case "Usuarios":
-        navigate('/Register');
+        navigate('/register');
         break;
       case "Inventario":
-        navigate('/Inventory');
+        navigate('/inventory');
         break;
       case "Sucursal":
-        navigate('/Branch');
+        navigate('/branch');
         break;
       case "Laboratorios":
-        navigate('/Labs');
+        navigate('/labs');
         break;
       case "Consultar Cierre":
-        navigate('/CashClousure');
+        navigate('/cash-closure');
         break;
       case "Registar Lunas":
-        navigate('/RegisterLens');
+        navigate('/register-lens');
         break;
       case "Cierre":
-        navigate('/PatientRecords');
+        navigate('/patient-records');
         break;
       case "Egresos":
-        navigate('/Egresos');
+        navigate('/egresos');
         break;
       case "Orden de Laboratorio":
-        navigate('/OrderLaboratoryList');
+        navigate('/order-laboratory-list');
         break;
       case "Saldos":
-        navigate('/BalancesPatient')
+        navigate('/balances-patient')
         break;
       case "Créditos":
-        navigate('/Balance')
+        navigate('/balance')
         break;
       case "Historial de Medidas":
-        navigate('/HistoryMeasureList')
+        navigate('/history-measure-list');
         break;
       case "Imprimir certificado":
-        navigate('/PrintCertificate')
+        navigate('/print-certificate');
       break;
       case "Historial Paciente":
-        navigate('/HistoryClinic')
+        navigate('/history-clinic');
       break;
       case "Mensajes":
-        navigate('/MessageManager');
+        navigate('/message-manager');
       break;
       default:
     }
@@ -294,7 +294,7 @@ const AdminDashBoard = () => {
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/PrintCertificate")}
+                onClick={() => navigate("/print-certificate")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -303,7 +303,7 @@ const AdminDashBoard = () => {
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/Egresos")}
+                onClick={() => navigate("/egresos")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -324,7 +324,7 @@ const AdminDashBoard = () => {
                 objectPosition="bottom"
                 borderRadius="full"
                 cursor="pointer"
-                onClick={() => navigate("/PatientRecords")}
+                onClick={() => navigate("/patient-records")}
                 border="2px solid #50bcd8"
               />
               <Menu>
@@ -343,31 +343,31 @@ const AdminDashBoard = () => {
                 <MenuList 
                    zIndex="999999" 
                 >
-                  <MenuItem onClick={() => navigate("/Branch")}>
+                  <MenuItem onClick={() => navigate("/branch")}>
                     Registrar Sucursal
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Labs")}>
+                  <MenuItem onClick={() => navigate("/labs")}>
                     Registrar Laboratorio
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Register")}>
+                  <MenuItem onClick={() => navigate("/register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                  <MenuItem onClick={() => navigate("/register-lens")}>
                     Registrar Lentes
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
-                    Registrar Medidas 
+                  <MenuItem onClick={() => navigate("/measures-final")}>
+                    Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Inventory")}>
+                  <MenuItem onClick={() => navigate("/inventory")}>
                     Inventario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                  <MenuItem onClick={() => navigate("/cash-closure")}>
                     Consultar Cierre
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                  <MenuItem onClick={() => navigate("/history-clinic")}>
                     Historial de Venta
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
@@ -412,7 +412,7 @@ const AdminDashBoard = () => {
                     cursor="pointer"
                     onClick={() => {
                       onToggle();
-                      navigate("/PatientRecords");
+                      navigate("/patient-records");
                     }}
                     border="2px solid #50bcd8"
                   />
@@ -431,31 +431,31 @@ const AdminDashBoard = () => {
                     </MenuButton>
                     <Portal>
                     <MenuList zIndex="99999">
-                  <MenuItem onClick={() => navigate("/Branch")}>
+                  <MenuItem onClick={() => navigate("/branch")}>
                     Registrar Sucursal
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Labs")}>
+                  <MenuItem onClick={() => navigate("/labs")}>
                     Registrar Laboratorio
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Register")}>
+                  <MenuItem onClick={() => navigate("/register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                  <MenuItem onClick={() => navigate("/register-lens")}>
                     Registrar Lentes
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
-                    Registrar Medidas 
+                  <MenuItem onClick={() => navigate("/measures-final")}>
+                    Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Inventory")}>
+                  <MenuItem onClick={() => navigate("/inventory")}>
                     Inventario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                  <MenuItem onClick={() => navigate("/cash-closure")}>
                     Consultar Cierre
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                  <MenuItem onClick={() => navigate("/history-clinic")}>
                     Historial de Venta
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
@@ -493,7 +493,7 @@ const AdminDashBoard = () => {
                   cursor="pointer"
                   onClick={() => {
                     onToggle();
-                    navigate("/Egresos");
+                    navigate("/egresos");
                   }}
                   _hover={{ color: textHoverColor }}
                 >

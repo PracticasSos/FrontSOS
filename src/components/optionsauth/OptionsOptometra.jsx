@@ -50,28 +50,28 @@ import usuariomasculino from "../../assets/usuariomasculino.png";
 import avataralgora from "../../assets/avataralgora.jpg";
 
 const defaultOptions = [
-  { label: "Registrar Paciente", icon: iconoregistrar, route: "/RegisterPatient" },
-  { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
-  { label: "Experiencia", icon: iconoexperienciausuario, route: "/RegisterExperience" },
+  { label: "Registrar Paciente", icon: iconoregistrar, route: "/register-patient" },
+  { label: "Retiros", icon: iconoretiros, route: "/retreats-patients" },
+  { label: "Experiencia", icon: iconoexperienciausuario, route: "/register-experience" },
 ];
 
 const extraRouters = [
-    { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/OrderLaboratoryList" },
-    { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/Sales" },
-    { label: "Registrar Medidas", icon: iconomedidas, route: "/MeasuresFinal" },
-  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/HistoryMeasureList" },
-    { label: "Retiros", icon: iconoretiros, route: "/RetreatsPatients" },
-    { label: "Cierre", icon: iconocierrediario, route: "/PatientRecords" },
-    { label: "Saldos", icon: iconossaldos, route: "/BalancesPatient" },
-    { label: "Egresos", icon: iconoegresos, route: "/Egresos" },
-    { label: "Créditos", icon: iconocreditos, route: "/Balance" },
-    { label: "Inventario", icon: iconoinventario, route: "/Inventory" },
-    { label: "Registrar Lunas", icon: iconolunas, route: "/RegisterLens" },
-    { label: "Usuarios", icon: iconousuarios, route: "/Register" },
-    { label: "Laboratorios", icon: iconolaboratorios, route: "/Labs" },
-    { label: "Sucursal", icon: iconosucursal, route: "/Branch" },
-    { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/CashClousure" },
-    { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/VisualCertificate" },
+    { label: "Orden de Laboratorio", icon: iconoordenlaboratorio, route: "/order-laboratory-list" },
+    { label: "Venta/ Contrato de Servicio", icon: iconoventa, route: "/sales" },
+    { label: "Registrar Medidas", icon: iconomedidas, route: "/measures-final" },
+  { label: "Historial de Medidas", icon: iconohistorialmedidas, route: "/history-measure-list" },
+    { label: "Retiros", icon: iconoretiros, route: "/retreats-patients" },
+    { label: "Cierre", icon: iconocierrediario, route: "/patient-records" },
+    { label: "Saldos", icon: iconossaldos, route: "/balances-patient" },
+    { label: "Egresos", icon: iconoegresos, route: "/egresos" },
+    { label: "Créditos", icon: iconocreditos, route: "/creditos" },
+    { label: "Inventario", icon: iconoinventario, route: "/inventario" },
+    { label: "Registrar Lunas", icon: iconolunas, route: "/registrar-lunas" },
+    { label: "Usuarios", icon: iconousuarios, route: "/usuarios" },
+    { label: "Laboratorios", icon: iconolaboratorios, route: "/laboratorios" },
+    { label: "Sucursal", icon: iconosucursal, route: "/sucursal" },
+    { label: "Consultar Cierre", icon: iconoconsultarcierre, route: "/consultar-cierre" },
+    { label: "Imprimir Certificado", icon: iconocertificadovisual, route: "/imprimir-certificado" },
 ];
 
 const OptometraDashBoard = () => {
@@ -234,7 +234,7 @@ return (
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/PrintCertificate")}
+                onClick={() => navigate("/print-certificate")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -264,7 +264,7 @@ return (
                 objectPosition="bottom"
                 borderRadius="full"
                 cursor="pointer"
-                onClick={() => navigate("/PatientRecords")}
+                onClick={() => navigate("/patient-records")}
                 border="2px solid #50bcd8"
               />
               <Menu>
@@ -280,10 +280,10 @@ return (
                   />
                 </MenuButton>
                 <MenuList zIndex="99999">
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
+                  <MenuItem onClick={() => navigate("/measures-final")}>
                     Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")} >
+                  <MenuItem onClick={() => navigate("/history-measure-list")} >
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
@@ -348,7 +348,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("/MeasuresFinal");
+                          navigate("/measures-final");
                         }}
                       >
                         Registrar Medidas
@@ -356,7 +356,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("/HistoryClinic");
+                          navigate("/history-clinic");
                         }}
                       >
                         Historial de Venta
@@ -364,7 +364,7 @@ return (
                       <MenuItem
                         onClick={() => {
                           onToggle();
-                          navigate("HistoryMeasureList");
+                          navigate("/history-measure-list");
                         }}
                       >
                         Historial de Medidas
@@ -392,7 +392,7 @@ return (
                   cursor="pointer"
                   onClick={() => {
                     onToggle();
-                    navigate("/PrintCertificate");
+                    navigate("/print-certificate");
                   }}
                   _hover={{ color: textHoverColor }}
                 >
