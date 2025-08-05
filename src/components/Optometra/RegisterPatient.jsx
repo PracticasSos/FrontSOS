@@ -126,7 +126,7 @@ const RegisterPatientForm = () => {
 
   const moduleSpecificButton = (
   <Button 
-    onClick={() => handleNavigate('/ListPatients')} 
+    onClick={() => handleNavigate('/list-patients')} 
     bg={useColorModeValue(
       'rgba(255, 255, 255, 0.8)', 
       'rgba(255, 255, 255, 0.1)'

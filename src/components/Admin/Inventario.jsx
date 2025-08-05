@@ -92,7 +92,7 @@ const Inventario = () => {
   };
   const moduleSpecificButton = (
   <Button 
-    onClick={() => handleNavigate('/ListInventory')} 
+    onClick={() => handleNavigate('/list-inventory')} 
     bg={useColorModeValue(
       'rgba(255, 255, 255, 0.8)', 
       'rgba(255, 255, 255, 0.1)'

@@ -85,7 +85,7 @@ const RegisterLens = () => {
 
     const moduleSpecificButton = (
       <Button 
-        onClick={() => handleNavigate('/ListLens')} 
+        onClick={() => handleNavigate('/list-lens')} 
         bg={useColorModeValue(
           'rgba(255, 255, 255, 0.8)', 
           'rgba(255, 255, 255, 0.1)'

@@ -228,7 +228,7 @@ const Retreats = () => {
 
     const moduleSpecificButton = (
       <Button 
-        onClick={() => handleNavigate('/RetreatsPatients')} 
+        onClick={() => handleNavigate('/retreats-patients')} 
         bg={useColorModeValue(
           'rgba(255, 255, 255, 0.8)', 
           'rgba(255, 255, 255, 0.1)'

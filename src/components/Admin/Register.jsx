@@ -47,26 +47,26 @@ const Register = () => {
   const navigate = useNavigate();
 
   const availableRoutes = [
-    { path: "/Register", label: "Registrar Usuarios" },
-    { path: "/Inventory", label: "Inventario" },
-    { path: "/RegisterPatient", label: "Registrar Paciente" },
-    { path: "/Branch", label: "Registrar Sucursal" },
-    { path: "/Labs", label: "Registrar Laboratorio" },
-    { path: "/CashClousure", label: "Cierre de Caja" },
-    { path: "/Sales", label: "Registrar Venta" },
-    { path: "/RegisterLens", label: "Registrar Lunas" },
-    { path: "/PatientRecords", label: "Historial del Paciente" },
-    { path: "/MeasuresFinal", label: "Medidas Finales" },
-    { path: "/OrderLaboratoryList", label: "Órdenes a Laboratorio" },
-    { path: "/HistoryMeasureList", label: "Historial de Medidas" },
-    { path: "/Egresos", label: "Egresos" },
-    { path: "/BalancesPatient", label: "Saldos del Paciente" },
-    { path: "/RetreatsPatients", label: "Abonos del Paciente" },
-    { path: "/Balance", label: "Balance General" },
-    { path: "/ListLens", label: "Listar Lunas" },
-    { path: "/ListBalance", label: "Listar Balances" },
-    { path: "/ListSales", label: "Historial de Ventas" },
-    { path: "/HistoryClinic", label: "Historial Clínico" },
+    { path: "/register", label: "Registrar Usuarios" },
+    { path: "/inventory", label: "Inventario" },
+    { path: "/register-patient", label: "Registrar Paciente" },
+    { path: "/branch", label: "Registrar Sucursal" },
+    { path: "/labs", label: "Registrar Laboratorio" },
+    { path: "/cash-closure", label: "Cierre de Caja" },
+    { path: "/sales", label: "Registrar Venta" },
+    { path: "/register-lens", label: "Registrar Lunas" },
+    { path: "/patient-records", label: "Historial del Paciente" },
+    { path: "/measures-final", label: "Medidas Finales" },
+    { path: "/order-laboratory-list", label: "Órdenes a Laboratorio" },
+    { path: "/history-measure-list", label: "Historial de Medidas" },
+    { path: "/egresos", label: "Egresos" },
+    { path: "/balances-patient", label: "Saldos del Paciente" },
+    { path: "/retreats-patients", label: "Abonos del Paciente" },
+    { path: "/balance", label: "Balance General" },
+    { path: "/list-lens", label: "Listar Lunas" },
+    { path: "/list-balance", label: "Listar Balances" },
+    { path: "/list-sales", label: "Historial de Ventas" },
+    { path: "/history-clinic", label: "Historial Clínico" },
   ];
 
   // Load roles and branches
@@ -265,7 +265,7 @@ const Register = () => {
 
   const moduleSpecificButton = (
     <Button 
-      onClick={() => handleNavigate('/ListUsers')} 
+      onClick={() => handleNavigate('/list-users')} 
       bg={useColorModeValue(
         'rgba(255, 255, 255, 0.8)', 
         'rgba(255, 255, 255, 0.1)'

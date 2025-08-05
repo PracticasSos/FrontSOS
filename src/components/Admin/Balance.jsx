@@ -124,7 +124,7 @@ const Balance = () => {
 
     const moduleSpecificButton = (
   <Button 
-    onClick={() => handleNavigate('/ListBalance')} 
+    onClick={() => handleNavigate('/list-balance')} 
     bg={useColorModeValue(
       'rgba(255, 255, 255, 0.8)', 
       'rgba(255, 255, 255, 0.1)'

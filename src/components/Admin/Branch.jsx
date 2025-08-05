@@ -78,7 +78,7 @@ const Branch = () => {
 
     const moduleSpecificButton = (
   <Button 
-    onClick={() => handleNavigate('/ListBranch')} 
+    onClick={() => handleNavigate('/list-branch')} 
     bg={useColorModeValue(
       'rgba(255, 255, 255, 0.8)', 
       'rgba(255, 255, 255, 0.1)'

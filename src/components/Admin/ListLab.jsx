@@ -112,7 +112,7 @@ const ListLab = () => {
 
     const moduleSpecificButton = (
       <Button 
-        onClick={() => handleNavigate('/Labs')} 
+        onClick={() => handleNavigate('/labs')} 
         bg={useColorModeValue(
           'rgba(255, 255, 255, 0.8)', 
           'rgba(255, 255, 255, 0.1)'
