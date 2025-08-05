@@ -442,8 +442,8 @@ const CashClosure = () => {
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
              <Box position="sticky" top={0} bg={bgColor} zIndex={10} pb={4}>
-            <Heading mb={4} textAlign="center" size="lg" color="teal.500">
-                Consultar Cierre - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
+            <Heading mb={4} textAlign="center" size="lg" >
+                Consultar Cierres 
             </Heading>
 
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />

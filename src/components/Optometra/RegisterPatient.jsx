@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
-import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, useColorModeValue, useColorMode } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, SimpleGrid, useColorModeValue, useColorMode, Heading } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -164,23 +164,7 @@ const RegisterPatientForm = () => {
 
   return (
     <Box className="register-patient-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
-      <Box width="100%" maxWidth="800px" mb={4}>
-        <Text 
-          fontSize="lg" 
-          fontWeight="600" 
-          color={useColorModeValue('gray.700', 'gray.300')}
-          textAlign="center"
-          mb={2}
-        >
-          Registro de Pacientes
-        </Text>
-        <Box 
-          height="1px" 
-          bg={useColorModeValue('gray.200', 'gray.600')} 
-          width="60px" 
-          mx="auto"
-        />
-      </Box>
+      <Heading mb={4} textAlign="center">Registro de Pacientes</Heading>
       <SmartHeader
         moduleSpecificButton={moduleSpecificButton}
       />

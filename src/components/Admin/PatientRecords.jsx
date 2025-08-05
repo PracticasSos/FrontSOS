@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate } from "react-router-dom";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Heading, Text, HStack, VStack, Divider, Badge, Button, Select,Grid, FormControl, FormLabel, Input, useColorModeValue } from "@chakra-ui/react";
+import SmartHeader from "../header/SmartHeader";
 
 const PatientRecords = () => {
     const [records, setRecords] = useState([]);
@@ -364,6 +365,8 @@ const PatientRecords = () => {
         }
     };
 
+    const moduleSpecificButton = null;
+
     const bgColor = useColorModeValue('white', 'gray.800');
       const textColor = useColorModeValue('gray.800', 'white');
       const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -374,20 +377,12 @@ const PatientRecords = () => {
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" bg={bgColor} color={textColor}>
-            <Heading mb={4} textAlign="center" size="lg" color="teal.500">
-                Cierre Diario - {branches.find(b => b.id === selectedBranch)?.name || "Seleccione una Sucursal"}
+            <Heading mb={4} textAlign="center" size="lg" >
+                Cierre Diario 
             </Heading>
-            <Box display="flex" justifyContent="space-evenly" alignItems="center" width="100%" mb={4}>
-                <Button onClick={() => handleNavigate("/CashClousure")} colorScheme="teal">
-                    Consultas de Cierre
-                </Button>
-                <Button onClick={() => handleNavigate()} colorScheme="blue">
-                    Volver a Opciones
-                </Button>
-                <Button onClick={() => handleNavigate("/LoginForm")} colorScheme="red">
-                    Cerrar Sesión
-                </Button>
-            </Box>
+            <SmartHeader
+                moduleSpecificButton={moduleSpecificButton}
+            />
             <Box mb={6}>
                 <Select
                     placeholder="Seleccione una sucursal"

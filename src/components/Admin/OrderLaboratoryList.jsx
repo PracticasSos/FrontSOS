@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../api/supabase';
 import { Box, Button, Heading, Table, Thead, Tbody, Tr, Th, Td, Input, FormControl, FormLabel, Select, Spinner, Grid, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
-import HeaderAdmin from '../header/HeaderAdmin';
 import SmartHeader from '../header/SmartHeader';
-import { mod } from '@tensorflow/tfjs';
 
 const OrderLaboratoryList = () => {
   const [patients, setPatients] = useState([]);
@@ -42,7 +40,11 @@ const OrderLaboratoryList = () => {
     if (!selectedBranch) return;
     setLoading(true);
     try {
-      const today = new Date().toLocaleDateString("en-CA");
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayString = `${year}-${month}-${day}`;
       const { data, error } = await supabase
         .from('sales')
         .select(`
@@ -56,8 +58,8 @@ const OrderLaboratoryList = () => {
             pt_ci
           )
         `)
-        .gte('date', `${today}T00:00:00`)
-        .lte('date', `${today}T23:59:59`)
+        .gte('date', `${todayString}T00:00:00`)
+        .lte('date', `${todayString}T23:59:59`)
         .eq('branchs_id', selectedBranch);
 
       if (error) throw error;
@@ -312,7 +314,11 @@ const OrderLaboratoryList = () => {
                   <Td color={textColor} borderColor={borderColor}>{patient.pt_lastname}</Td>
                   <Td color={textColor} borderColor={borderColor}>{patient.pt_ci}</Td>
                   <Td color={textColor} borderColor={borderColor}>
-                    {new Date(patient.date).toLocaleDateString()}
+                    {new Date(patient.date + 'T00:00:00').toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    })}
                   </Td>
                 </Tr>
               ))}
