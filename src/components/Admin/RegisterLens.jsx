@@ -120,8 +120,8 @@ const RegisterLens = () => {
       );
 
     return (
-        <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-            <Heading mb={4}>Registrar Lunas</Heading>
+        <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" pt={6}>
+            <Heading   mb={4}>Registrar Lunas</Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">

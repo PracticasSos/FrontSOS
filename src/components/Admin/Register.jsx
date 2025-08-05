@@ -303,7 +303,13 @@ const Register = () => {
     <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} >
       <Heading mb={6} textAlign="center">Registrar Usuario</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-      <Card w="100%" maxW="900px" boxShadow="lg" borderRadius="xl">
+            <Card 
+        w="100%" 
+        maxW="900px" 
+        boxShadow="lg" 
+        borderRadius="xl"
+        bg={useColorModeValue('white', 'gray.800')}
+      >
         <CardBody as="form" onSubmit={e => { e.preventDefault(); handleCreate(); }}>
           <SimpleGrid columns={[1,2]} spacing={4}>
             {renderInputField('Correo','email','email')}
@@ -319,40 +325,42 @@ const Register = () => {
             {renderInputField('C.I.','ci','text')}
             {renderSelectField('Sucursal','branch_id',branchs)}
             <FormControl>
-  <FormLabel color="teal.700" fontWeight="semibold">
-    Sello Digital (imagen)
-  </FormLabel>
-  <Box
-    border="2px dashed #CBD5E0"
-    borderRadius="lg"
-    p={4}
-    textAlign="center"
-    position="relative"
-    bg="gray.50"
-    _hover={{ bg: "gray.100", cursor: "pointer" }}
-    onClick={() => document.getElementById('selloInput').click()}
-  >
-    <Text color="gray.600" fontSize="sm">
-      Haz clic o arrastra una imagen aquí para subir el sello
-    </Text>
-    <Input
-      id="selloInput"
-      type="file"
-      accept="image/*"
-      onChange={(e) => setSelloFile(e.target.files[0])}
-      display="none"
-    />
-    {selloFile && (
-      <Box mt={4}>
-        <Text fontSize="sm" color="gray.700" fontWeight="medium">
-          Archivo seleccionado: {selloFile.name}
-        </Text>
-      </Box>
-    )}
-  </Box>
-</FormControl>
-
-
+              <FormLabel color={useColorModeValue("teal.700", "teal.300")} fontWeight="semibold">
+                Sello Digital (imagen)
+              </FormLabel>
+              <Box
+                border="2px dashed"
+                borderColor={useColorModeValue("#CBD5E0", "gray.600")}
+                borderRadius="lg"
+                p={4}
+                textAlign="center"
+                position="relative"
+                bg={useColorModeValue("gray.50", "gray.700")}
+                _hover={{ 
+                  bg: useColorModeValue("gray.100", "gray.600"), 
+                  cursor: "pointer" 
+                }}
+                onClick={() => document.getElementById('selloInput').click()}
+              >
+                <Text color={useColorModeValue("gray.600", "gray.300")} fontSize="sm">
+                  Haz clic o arrastra una imagen aquí para subir el sello
+                </Text>
+                <Input
+                  id="selloInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSelloFile(e.target.files[0])}
+                  display="none"
+                />
+                {selloFile && (
+                  <Box mt={4}>
+                    <Text fontSize="sm" color={useColorModeValue("gray.700", "gray.200")} fontWeight="medium">
+                      Archivo seleccionado: {selloFile.name}
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+            </FormControl>
           </SimpleGrid>
           <Box display="flex" justifyContent="space-between" mt={8}>
             <Button type="submit" colorScheme="teal">Crear Usuario</Button>
@@ -361,9 +369,20 @@ const Register = () => {
         </CardBody>
       </Card>
 
-      <Card w="100%" maxW="900px" mt={8} boxShadow="lg" borderRadius="xl">
-        <CardHeader><Heading size="md">Permisos Adicionales</Heading></CardHeader>
-        <Divider />
+      <Card 
+        w="100%" 
+        maxW="900px" 
+        mt={8} 
+        boxShadow="lg" 
+        borderRadius="xl"
+        borderColor={useColorModeValue('gray.200', 'gray.600')}
+      >
+        <CardHeader>
+          <Heading size="md" color={useColorModeValue('gray.800', 'white')}>
+            Permisos Adicionales
+          </Heading>
+        </CardHeader>
+        <Divider borderColor={useColorModeValue('gray.200', 'gray.600')} />
         <CardBody>
           <SimpleGrid columns={[1,2]} spacing={3}>
             {availableRoutes.map(({ path, label }) => (
@@ -373,7 +392,9 @@ const Register = () => {
                   onChange={() => handleRouteToggle(path)}
                   colorScheme="teal"
                 >
-                  {label}
+                  <Text color={useColorModeValue('gray.700', 'gray.200')}>
+                    {label}
+                  </Text>
                 </Checkbox>
               </FormControl>
             ))}

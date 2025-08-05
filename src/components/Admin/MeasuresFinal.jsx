@@ -171,7 +171,7 @@ const MeasuresFinal = () => {
 
     return (
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
-        <Heading mb={4} textAlign="center" fontSize={["xl", "2xl", "3xl"]}>Registrar Medidas Finales</Heading>
+        <Heading mb={4} textAlign="center" >Registrar Medidas Finales</Heading>
         {error && (
           <Alert status="error" mb={4}>
             <AlertIcon />

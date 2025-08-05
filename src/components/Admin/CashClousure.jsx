@@ -442,7 +442,7 @@ const CashClosure = () => {
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
              <Box position="sticky" top={0} bg={bgColor} zIndex={10} pb={4}>
-            <Heading mb={4} textAlign="center" size="lg" >
+            <Heading mb={4} textAlign="center">
                 Consultar Cierres 
             </Heading>
 
@@ -545,12 +545,12 @@ const CashClosure = () => {
                     </FormControl>
                 </Grid>
                 </Box>
-                <Box maxH="70vh" overflowY="auto" overflowX="auto">
+                <Box  >
                 <Divider my={10} />
-                <Heading size="md" textAlign="center" color="cyan.900">
+                <Heading size="md" textAlign="center">
                     Cierre Diario
                 </Heading>
-                <Table colorScheme="teal"  overflow="hidden">
+                <Table colorScheme="teal"  overflow="hidden" overflowX="auto">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Orden</Th>
@@ -622,8 +622,8 @@ const CashClosure = () => {
                     </Heading>
                 <Box>
                 <Divider my={6} />
-                <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
-                <Table  overflow="hidden" colorScheme="teal">
+                <Heading size="md" textAlign="center" >Ajustes en Abonos</Heading>
+                <Table  overflow="hidden" colorScheme="teal" overflowX="auto">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Fecha</Th>
@@ -691,10 +691,10 @@ const CashClosure = () => {
                 </Heading>
                 <Divider my={10} />
                 </Box>
-                <Heading size="md" textAlign="center" color="cyan.900">
+                <Heading size="md" textAlign="center" >
                     Egresos
                 </Heading>
-                <Table  overflow="hidden" colorScheme="teal" mb={6}>
+                <Table  overflow="hidden" colorScheme="teal" mb={6} overflowX="auto">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
                             <Th color={textColor} borderColor={borderColor}>Orden</Th>

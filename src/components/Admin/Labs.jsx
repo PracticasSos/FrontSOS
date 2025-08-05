@@ -112,8 +112,8 @@ const Lab = () => {
   );
 
     return (
-        <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" minHeight="100vh" >
-            <Heading as="h2" size="lg" textAlign="center" mb={4} >
+        <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" pt={6} >
+            <Heading  textAlign="center" mb={4} >
                 Laboratorio
             </Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
@@ -139,7 +139,6 @@ const Lab = () => {
                                 name="name" 
                                 value={formData.name} 
                                 onChange={handleChange} 
-                                borderColor="#00A8C8" 
                                 _focus={{ borderColor: "#008B94" }}
                             />
                         </FormControl>
@@ -151,7 +150,6 @@ const Lab = () => {
                                 name="address" 
                                 value={formData.address} 
                                 onChange={handleChange} 
-                                borderColor="#00A8C8" 
                                 _focus={{ borderColor: "#008B94" }}
                             />
                         </FormControl>
@@ -163,7 +161,6 @@ const Lab = () => {
                                 name="email" 
                                 value={formData.email} 
                                 onChange={handleChange} 
-                                borderColor="#00A8C8" 
                                 _focus={{ borderColor: "#008B94" }}
                             />
                         </FormControl>
@@ -175,7 +172,6 @@ const Lab = () => {
                                 name="cell" 
                                 value={formData.cell} 
                                 onChange={handleChange} 
-                                borderColor="#00A8C8" 
                                 _focus={{ borderColor: "#008B94" }}
                             />
                         </FormControl>
@@ -187,22 +183,26 @@ const Lab = () => {
                                 name="ruc" 
                                 value={formData.ruc} 
                                 onChange={handleChange} 
-                                borderColor="#00A8C8" 
                                 _focus={{ borderColor: "#008B94" }}
                             />
                         </FormControl>
                     </SimpleGrid>
 
+                    <Box display="flex" justifyContent="center" mt={4}>
                     <Button 
                         type="submit" 
                         mt={6} 
-                        width="100%" 
-                        bgColor="#00A8C8" 
-                        color="white" 
-                        _hover={{ bgColor: "#008B94" }}
+                        width="40%" 
+                        bg={useColorModeValue("teal.500", "teal.600")}
+                        color="white"
+                        _hover={{ 
+                            bg: useColorModeValue("teal.600", "teal.500")
+                        }}
+                        borderRadius="8px"
                     >
                         Registrar
                     </Button>
+                    </Box>
                 </form>
             </Box>
         </Box>

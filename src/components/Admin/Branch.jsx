@@ -119,9 +119,9 @@ const Branch = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            minHeight="100vh"
+            pt={6}
         >
-            <Heading as="h3" size="lg" textAlign="center" mb={6} >
+            <Heading textAlign="center" mb={6} >
                 Sucursal
             </Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
@@ -147,7 +147,6 @@ const Branch = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
@@ -158,7 +157,6 @@ const Branch = () => {
                             name="address"
                             value={formData.address}
                             onChange={handleChange}
-                            borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
@@ -169,7 +167,6 @@ const Branch = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
@@ -179,7 +176,6 @@ const Branch = () => {
                             type="text"
                             name="cell"
                             value={formData.cell}
-                            borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
@@ -189,23 +185,25 @@ const Branch = () => {
                             type="text"
                             name="ruc"
                             value={formData.ruc}
-                            borderColor="#00A8C8"
                             _focus={{ borderColor: "#008B94" }}
                         />
                     </FormControl>
                 </Box>
 
-                <Button
-                    type="submit"
-                    mt={4}
-                    width="100%"
-                    bgColor="#00A8C8"
-                    color="white"
-                    _hover={{ bgColor: "#008B94" }}
-                    onClick={handleSubmit}
-                >
-                    Registrar
-                </Button>
+                <Box display="flex" justifyContent="center" mt={4}>
+                    <Button
+                        bg={useColorModeValue("teal.500", "teal.600")}
+                        color="white"
+                         width="40%"
+                        _hover={{ 
+                            bg: useColorModeValue("teal.600", "teal.500")
+                        }}
+                        borderRadius="8px"
+                        onClick={handleSubmit}
+                    >
+                        Registrar
+                    </Button>
+                </Box>
             </Box>
         </Box>
     );

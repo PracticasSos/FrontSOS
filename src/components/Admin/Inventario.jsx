@@ -126,70 +126,139 @@ const Inventario = () => {
   </Button>
   );
 
-  return (
+  const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+    const selectBg = useColorModeValue('white', 'gray.700');
+
+    return (
     <Box
       className="signup-form"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-        minHeight="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="flex-start"
+      alignItems="center"
+      minHeight="100vh"
+      pt={8}
     >
-      
-        <Heading as="h2" size="lg" textAlign="center" mb={6}>
+        <Heading mb={4} textAlign="center" color={useColorModeValue('gray.800', 'white')}>
           Registro de Inventario
         </Heading>
+        
         <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-        <VStack as="form" spacing={4} onSubmit={handleSubmit}>
-          <FormControl isRequired>
-            <FormLabel>Marca</FormLabel>
-            <Input
-              type="text"
-              name="brand"
-              value={formData.brand}
-              onChange={handleChange}
-              placeholder="Ingrese la marca"
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Cantidad</FormLabel>
-            <Input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              placeholder="Ingrese la cantidad"
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Precio</FormLabel>
-            <Input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              placeholder="Ingrese el precio"
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>Sucursal</FormLabel>
-            <Select
-              name="branchs_id"
-              value={formData.branchs_id}
-              onChange={handleChange}
-              placeholder="Seleccione una sucursal"
+        
+        <Box 
+          width="100%" 
+          maxWidth="800px" 
+          p={6} 
+          borderRadius="lg" 
+          boxShadow="lg"
+          bg={useColorModeValue('white', 'gray.800')}
+        >
+          <Box 
+            as="form" 
+            onSubmit={handleSubmit}
+            display="grid" 
+            gridTemplateColumns="1fr 1fr" 
+            gap={4}
+          >
+            <FormControl isRequired>
+              <FormLabel color={useColorModeValue('gray.700', 'gray.200')}>Marca</FormLabel>
+              <Input
+                type="text"
+                name="brand"
+                value={formData.brand}
+                onChange={handleChange}
+                placeholder="Ingrese la marca"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                _focus={{ borderColor: "#008B94" }}
+                _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+              />
+            </FormControl>
+            
+            <FormControl isRequired>
+              <FormLabel color={useColorModeValue('gray.700', 'gray.200')}>Cantidad</FormLabel>
+              <Input
+                type="number"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                placeholder="Ingrese la cantidad"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                _focus={{ borderColor: "#008B94" }}
+                _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+              />
+            </FormControl>
+            
+            <FormControl isRequired>
+              <FormLabel color={useColorModeValue('gray.700', 'gray.200')}>Precio</FormLabel>
+              <Input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="Ingrese el precio"
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                _focus={{ borderColor: "#008B94" }}
+                _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+              />
+            </FormControl>
+            
+            <FormControl isRequired>
+              <FormLabel color={useColorModeValue('gray.700', 'gray.200')}>Sucursal</FormLabel>
+              <Select
+                name="branchs_id"
+                value={formData.branchs_id}
+                onChange={handleChange}
+                placeholder="Seleccione una sucursal"
+                bg={selectBg}
+                borderColor={borderColor}
+                color={textColor}
+                _hover={{
+                  borderColor: useColorModeValue('gray.300', 'gray.500')
+                }}
+                _focus={{
+                  borderColor: useColorModeValue('blue.500', 'blue.300'),
+                  boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                }}
+              >
+                {branches.map((branch) => (
+                  <option 
+                    key={branch.id} 
+                    value={branch.id}
+                    style={{
+                      backgroundColor: useColorModeValue('white', '#2D3748'),
+                      color: useColorModeValue('black', 'white')
+                    }}
+                  >
+                    {branch.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          
+           <Box display="flex" justifyContent="center" mt={6}>
+            <Button 
+              type="submit" 
+              width="80%"
+              bg={useColorModeValue("teal.500", "teal.600")}
+              color="white"
+              _hover={{ 
+                bg: useColorModeValue("teal.600", "teal.500")
+              }}
+              borderRadius="8px"
+              onClick={handleSubmit}
             >
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-          <Button type="submit" colorScheme="teal" width="full">
-            Registrar
-          </Button>
-        </VStack>
+              Registrar
+            </Button>
+          </Box>
+        </Box>
     </Box>
   );
 };

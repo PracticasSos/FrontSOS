@@ -406,7 +406,7 @@ const PatientRecords = () => {
                     ))}
                 </Select>
             </Box>
-            <Heading size="md" textAlign="center" color="cyan.900">Ingresos</Heading>
+            <Heading size="md" textAlign="center" >Ingresos</Heading>
             <Table bg={tableBg} borderRadius="md" overflow="hidden" overflowX="auto">
                 <Thead>
                     <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
@@ -480,7 +480,7 @@ const PatientRecords = () => {
             </Heading>
             <Box>
                 <Divider my={6} />
-                <Heading size="md" textAlign="center" color="cyan.900">Ajustes en Abonos</Heading>
+                <Heading size="md" textAlign="center" >Ajustes en Abonos</Heading>
                 <Table bg={tableBg} borderRadius="md" overflow="hidden">
                     <Thead>
                         <Tr bg={useColorModeValue('gray.50', 'gray.600')}>
@@ -550,7 +550,7 @@ const PatientRecords = () => {
             </Box>
             <Box>
                 <Divider my={10} />
-                <Heading size="md" textAlign="center" color="cyan.900">
+                <Heading size="md" textAlign="center" >
                     Egresos
                 </Heading>
                 <Table  bg={tableBg} borderRadius="md" overflow="hidden" mb={6}>
