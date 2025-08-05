@@ -176,7 +176,7 @@ const AdminDashBoard = () => {
         navigate('/retreats-patients')
         break;
       case "Experiencia":
-        navigate('/RegisterExperience');
+        navigate('/register-experience');
         break;
       case "Usuarios":
         navigate('/register');

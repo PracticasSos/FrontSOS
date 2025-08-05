@@ -97,10 +97,10 @@ const AppRouter = () => {
             <Route path="/history-clinic/patient-history/:patientId" element={<PatientHistory />} />
             <Route path="/history-clinic/patient-history/:patientId/sales-history/:saleId" element={<SalesHistory />} />
             <Route path="/print-certificate" element={<PrintCertificate/>}></Route>
-            <Route path="/Tenant" element={<Tenant/>}></Route>
-            <Route path="/UploadLogo" element={<UploadLogo/>}></Route>
+            <Route path="/tenant" element={<Tenant/>}></Route>
+            <Route path="/upload-logo" element={<UploadLogo/>}></Route>
             <Route path="/message-manager" element={<MessageManager/>}></Route>
-            <Route path="/RegisterExperience" element={<FormInitial />}> </Route>
+            <Route path="/register-experience" element={<FormInitial />}> </Route>
             <Route path="/cuestionario" element={<QuestionnairePage />}> </Route>
             <Route path="/resultados" element={<Results />} > </Route>
             <Route path="/tryon" element={<VirtualTryOn3D />} > </Route>
