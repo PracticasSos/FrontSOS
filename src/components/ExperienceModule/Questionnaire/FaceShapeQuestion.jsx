@@ -248,9 +248,9 @@ export default function FaceShapeQuestion({ step, total, onAnswer, onPrev, answe
                 Anterior
               </button>
             )}
-            <button className="btn-secondary" onClick={handleRetry}>
+            {/* <button className="btn-secondary" onClick={handleRetry}>
               Volver a intentar
-            </button>
+            </button> */}
             <button className="btn-primary" onClick={() => onAnswer(faceShape)}>
               Siguiente
             </button>
