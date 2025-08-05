@@ -6,7 +6,7 @@ import ProgressFlow from '../ExperienceUI/ProgressFlow'
 import astigmatismoImg from '../../../assets/astigmatismo.png'
 import normalImg from '../../../assets/normal.png'
 
-export default function Question4({ step, total, onAnswer, answer }) {
+export default function Question4({ step, total, onAnswer, answer, onPrev }) {
   const options = [
     { label: '1', src: astigmatismoImg },
     { label: '2', src: normalImg }
@@ -40,6 +40,12 @@ export default function Question4({ step, total, onAnswer, answer }) {
         ))}
       </div>
       <div className="actions">
+        {step > 0 && (
+  <button className="btn-secondary" onClick={onPrev}>
+    Anterior
+  </button>
+)}
+
         <button
           className="btn-primary"
           onClick={() => onAnswer(selected)}

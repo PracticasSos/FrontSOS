@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useQuestionnaire from '../hooks/useQuestionnaire'
 import Loader from '../../../components/ExperienceModule/ExperienceUI/Loader.jsx'
 import Question1 from '../../../components/ExperienceModule/Questionnaire/Question1.jsx'
@@ -38,28 +38,37 @@ export default function QuestionnairePage() {
     QuestionBudget
   ]
 
-  const { step, total, current: CurrentQuestion, next, answers } =
-    useQuestionnaire(questions)
+  const {
+    step,
+    total,
+    current: CurrentQuestion,
+    next,
+    prev, // ✅ lo sacamos del hook
+    answers,
+    resetProgress
+  } = useQuestionnaire(questions)
 
   const handleNext = answer => {
     next(answer)
-    try {
-      const stored = JSON.parse(localStorage.getItem('answers') || '{}')
-      stored[step] = answer
-      localStorage.setItem('answers', JSON.stringify(stored))
-    } catch (err) {
-      console.error('Error guardando respuestas en localStorage:', err)
-    }
-
     if (step + 1 === total) {
-      setShowLoader(true) // ← Mostramos el loader si es la última
-      return
+      setShowLoader(true)
     }
   }
 
   const handleLoaderFinish = () => {
+    resetProgress()
     navigate('/resultados')
   }
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Esto evita limpieza al recargar
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
 
   return (
     <div className="questionnaire-container">
@@ -81,6 +90,7 @@ export default function QuestionnairePage() {
                 step={step}
                 total={total}
                 onAnswer={handleNext}
+                onPrev={prev} // ✅ pasamos la función para el botón "Anterior"
                 answer={answers[step]}
               />
             </motion.div>

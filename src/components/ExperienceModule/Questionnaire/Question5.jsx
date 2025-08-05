@@ -4,7 +4,7 @@ import '../Questionnaire/questionsStyles.css'
 import ProgressFlow from '../ExperienceUI/ProgressFlow'
 
 
-export default function Question5({ step, total, onAnswer, answer }) {
+export default function Question5({ step, total, onAnswer, answer, onPrev }) {
   const [value, setValue] = useState(answer || 5)
 
   useEffect(() => {
@@ -26,6 +26,12 @@ export default function Question5({ step, total, onAnswer, answer }) {
       />
       <div className="range-value">{value}</div>
       <div className="actions">
+        {step > 0 && (
+  <button className="btn-secondary" onClick={onPrev}>
+    Anterior
+  </button>
+)}
+
         <button
           className="btn-primary"
           onClick={() => onAnswer(value)}

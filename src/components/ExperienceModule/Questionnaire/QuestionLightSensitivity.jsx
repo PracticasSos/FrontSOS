@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../Questionnaire/questionsStyles.css';
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 
-export default function QuestionLightSensitivity({ step, total, onAnswer, answer }) {
+export default function QuestionLightSensitivity({ step, total, onAnswer, answer, onPrev }) {
   const options = ['Sí', 'No'];
   const [selected, setSelected] = useState(answer || '');
 
@@ -35,6 +35,12 @@ export default function QuestionLightSensitivity({ step, total, onAnswer, answer
         ))}
       </ul>
       <div className="actions">
+        {step > 0 && (
+  <button className="btn-secondary" onClick={onPrev}>
+    Anterior
+  </button>
+)}
+
         <button
           className="btn-primary"
           onClick={handleSubmit}

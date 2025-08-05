@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../api/supabase';
 import PhoneInput from 'react-phone-input-2';
@@ -13,6 +13,12 @@ export default function FormInitial() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+
+  // ✅ Limpiar progreso del cuestionario al montar
+  useEffect(() => {
+    localStorage.removeItem('questionnaire_step');
+    localStorage.removeItem('questionnaire_answers');
+  }, []);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -44,13 +50,22 @@ export default function FormInitial() {
       return;
     }
 
+    // ✅ Guardar datos del usuario
     localStorage.setItem('userInfo', JSON.stringify(form));
+
+    // ✅ Limpiar progreso antes de continuar (por si acaso)
+    localStorage.removeItem('questionnaire_step');
+    localStorage.removeItem('questionnaire_answers');
 
     setLoading(false);
     navigate('/cuestionario');
   };
 
   const handleAlreadyRegistered = () => {
+    // ✅ Limpiar también si ya estaba registrado
+    localStorage.removeItem('questionnaire_step');
+    localStorage.removeItem('questionnaire_answers');
+
     navigate('/cuestionario');
   };
 
@@ -65,27 +80,24 @@ export default function FormInitial() {
 
   return (
     <div className="form-container">
-      {/* Ícono de configuración */}
-<div className="settings-icon-wrapper">
-  <div className="settings-icon" onClick={toggleSettingsMenu}>
-    <FiSettings size={32} />
-  </div>
-  {showSettingsMenu && (
-    <div className="settings-dropdown">
-      <button onClick={() => goToRoute('/admin/modelos')}>Modelos 3D</button>
-      <button onClick={() => goToRoute('/mensajeria')}>Mensajería</button>
-    </div>
-  )}
-</div>
+      <div className="settings-icon-wrapper">
+        <div className="settings-icon" onClick={toggleSettingsMenu}>
+          <FiSettings size={32} />
+        </div>
+        {showSettingsMenu && (
+          <div className="settings-dropdown">
+            <button onClick={() => goToRoute('/admin/modelos')}>Modelos 3D</button>
+            <button onClick={() => goToRoute('/mensajeria')}>Mensajería</button>
+          </div>
+        )}
+      </div>
 
       <form className="form-card" onSubmit={handleSubmit}>
         <h2 className="form-title">Tus datos</h2>
 
         {error && <p className="form-error">{error}</p>}
 
-        <label className="form-label" htmlFor="name">
-          Nombre completo
-        </label>
+        <label className="form-label" htmlFor="name">Nombre completo</label>
         <input
           id="name"
           name="name"
@@ -97,9 +109,7 @@ export default function FormInitial() {
           placeholder="Ej. Ana Pérez"
         />
 
-        <label className="form-label" htmlFor="phone">
-          Teléfono
-        </label>
+        <label className="form-label" htmlFor="phone">Teléfono</label>
         <PhoneInput
           country={'ec'}
           value={form.phone}

@@ -4,7 +4,7 @@ import '../Questionnaire/questionsStyles.css';
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 import { AnimatePresence, motion } from 'framer-motion';
 
-export default function QuestionGraduation({ step, total, onAnswer, answer }) {
+export default function QuestionGraduation({ step, total, onAnswer, answer, onPrev }) {
   const [knows, setKnows] = useState(answer?.knows || '');
   const [sphLeft, setSphLeft] = useState(answer?.sphLeft || '');
   const [sphRight, setSphRight] = useState(answer?.sphRight || '');
@@ -81,6 +81,12 @@ export default function QuestionGraduation({ step, total, onAnswer, answer }) {
       </AnimatePresence>
 
       <div className="actions">
+        {step > 0 && (
+  <button className="btn-secondary" onClick={onPrev}>
+    Anterior
+  </button>
+)}
+
         <button
           className="btn-primary"
           onClick={handleSubmit}

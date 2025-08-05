@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../Questionnaire/questionsStyles.css';
 import ProgressFlow from '../ExperienceUI/ProgressFlow';
 
-export default function QuestionScreenHours({ step, total, onAnswer, answer }) {
+export default function QuestionScreenHours({ step, total, onAnswer, answer, onPrev }) {
   const [hours, setHours] = useState(answer || 0);
 
   useEffect(() => {
@@ -28,6 +28,12 @@ export default function QuestionScreenHours({ step, total, onAnswer, answer }) {
         className="range-slider"
       />
       <div className="actions">
+        {step > 0 && (
+  <button className="btn-secondary" onClick={onPrev}>
+    Anterior
+  </button>
+)}
+
         <button
           className="btn-primary"
           onClick={handleSubmit}

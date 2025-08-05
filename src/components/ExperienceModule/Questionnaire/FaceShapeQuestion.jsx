@@ -5,18 +5,20 @@ import ProgressFlow from '../ExperienceUI/ProgressFlow';
 import '../Questionnaire/questionsStyles.css';
 import './FaceShapeQuestion.css';
 
-export default function FaceShapeQuestion({ step, total, onAnswer }) {
+export default function FaceShapeQuestion({ step, total, onAnswer, onPrev, answer }) {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-  const hasAnsweredRef = useRef(false); // ← NUEVO
+  const faceDetectedRef = useRef(false);
+  const latestLandmarksRef = useRef(null);
 
   const [faceShape, setFaceShape] = useState(null);
   const [progress, setProgress] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
-  const [landmarkSnapshot, setLandmarkSnapshot] = useState(null);
+  const [faceDetected, setFaceDetected] = useState(false);
   const [cameraInstance, setCameraInstance] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isLibraryLoaded, setIsLibraryLoaded] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
 
   const loadMediaPipeScripts = () => {
     return new Promise((resolve, reject) => {
@@ -37,14 +39,13 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js',
       ];
 
-      let loadedScripts = 0;
-
-      scripts.forEach((src, index) => {
+      let loaded = 0;
+      scripts.forEach((src) => {
         const script = document.createElement('script');
         script.src = src;
         script.onload = () => {
-          loadedScripts++;
-          if (loadedScripts === scripts.length) {
+          loaded++;
+          if (loaded === scripts.length) {
             setIsLibraryLoaded(true);
             resolve();
           }
@@ -59,70 +60,9 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     loadMediaPipeScripts().catch(console.error);
     return () => {
       if (cameraInstance) cameraInstance.stop();
+      if (intervalId) clearInterval(intervalId);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isScanning && landmarkSnapshot && !hasAnsweredRef.current) {
-      const shape = determineFaceShape(landmarkSnapshot);
-      setFaceShape(shape);
-      onAnswer(shape); // ← solo se llama una vez
-      hasAnsweredRef.current = true;
-    }
-  }, [isScanning, landmarkSnapshot]);
-
-  const startCamera = (faceMesh) => {
-    const videoElement = webcamRef.current?.video;
-    if (!videoElement) return;
-
-    const camera = new window.Camera(videoElement, {
-      onFrame: async () => {
-        await faceMesh.send({ image: videoElement });
-      },
-      width: 640,
-      height: 480,
-    });
-
-    setCameraInstance(camera);
-    camera.start();
-
-    setIsScanning(true);
-    setProgress(0);
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsScanning(false);
-        }
-        return prev + 1.25;
-      });
-    }, 100);
-  };
-
-  const onResults = (results) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
-
-    canvas.width = 640;
-    canvas.height = 480;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (results.multiFaceLandmarks?.length > 0) {
-      const landmarks = results.multiFaceLandmarks[0];
-
-      window.drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
-        color: '#6AB1CD',
-        lineWidth: 0.5,
-      });
-      window.drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
-
-      if (!landmarkSnapshot) {
-        setLandmarkSnapshot(landmarks);
-      }
-    }
-  };
 
   const distance = (a, b) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
@@ -159,12 +99,30 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     }
   };
 
-  const handleRetry = () => {
-    hasAnsweredRef.current = false; // ← reset para reintentar
-    setFaceShape(null);
-    setLandmarkSnapshot(null);
-    setProgress(0);
-    setIsScanning(true);
+  const onResults = (results) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = 640;
+    canvas.height = 480;
+
+    if (results.multiFaceLandmarks?.length > 0) {
+      const landmarks = results.multiFaceLandmarks[0];
+      faceDetectedRef.current = true;
+      setFaceDetected(true);
+      latestLandmarksRef.current = landmarks;
+
+      window.drawConnectors(ctx, landmarks, window.FACEMESH_TESSELATION || [], {
+        color: '#6AB1CD',
+        lineWidth: 0.5,
+      });
+      window.drawLandmarks(ctx, landmarks, { color: '#6AB1CD', radius: 1 });
+    } else {
+      faceDetectedRef.current = false;
+      setFaceDetected(false);
+    }
   };
 
   const initializeFaceMesh = async () => {
@@ -184,6 +142,44 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
     return faceMesh;
   };
 
+  const startCamera = (faceMesh) => {
+    const videoElement = webcamRef.current?.video;
+    if (!videoElement) return;
+
+    const camera = new window.Camera(videoElement, {
+      onFrame: async () => {
+        await faceMesh.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480,
+    });
+
+    setCameraInstance(camera);
+    camera.start();
+    setIsScanning(true);
+    setProgress(0);
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsScanning(false);
+
+          if (!faceShape && latestLandmarksRef.current) {
+            const shape = determineFaceShape(latestLandmarksRef.current);
+            setFaceShape(shape);
+          }
+
+          return 100;
+        }
+
+        return faceDetectedRef.current ? prev + 1.25 : prev;
+      });
+    }, 100);
+
+    setIntervalId(interval);
+  };
+
   const handleCameraReady = async () => {
     if (isCameraReady || !isLibraryLoaded) return;
 
@@ -192,15 +188,15 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
       setIsCameraReady(true);
       startCamera(faceMesh);
     } catch (error) {
-      console.error('Error inicializando FaceMesh:', error);
+      console.error('Error al iniciar FaceMesh:', error);
     }
   };
 
-  useEffect(() => {
-    if (isLibraryLoaded && !isCameraReady && webcamRef.current?.video) {
-      handleCameraReady();
-    }
-  }, [isLibraryLoaded, isCameraReady]);
+  const handleRetry = () => {
+    setFaceShape(null);
+    setProgress(0);
+    setIsScanning(true);
+  };
 
   return (
     <div className="question-card FaceShapeQuestion--container">
@@ -219,7 +215,7 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
 
         {isLibraryLoaded && !isCameraReady && (
           <div className="loading-camera-text">
-            Iniciando cámara... por favor espera unos segundos hasta que tu rostro aparezca correctamente.
+            Iniciando cámara... por favor espera unos segundos.
           </div>
         )}
 
@@ -232,7 +228,11 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
         {isCameraReady && <canvas ref={canvasRef} className="overlay-canvas fade-in" />}
 
         {isCameraReady && isScanning && (
-          <div className="scanning-text">Escaneando rostro... {Math.floor(progress)}%</div>
+          <div className="scanning-text">
+            {faceDetected
+              ? `Escaneando rostro... ${Math.floor(progress)}%`
+              : 'No se detecta rostro'}
+          </div>
         )}
       </div>
 
@@ -241,9 +241,18 @@ export default function FaceShapeQuestion({ step, total, onAnswer }) {
           <p className="question-subtitle">
             Forma detectada: <strong>{faceShape}</strong>
           </p>
+
           <div className="actions">
+            {step > 0 && (
+              <button className="btn-secondary" onClick={onPrev}>
+                Anterior
+              </button>
+            )}
             <button className="btn-secondary" onClick={handleRetry}>
               Volver a intentar
+            </button>
+            <button className="btn-primary" onClick={() => onAnswer(faceShape)}>
+              Siguiente
             </button>
           </div>
         </div>

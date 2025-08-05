@@ -4,7 +4,7 @@ import '../Questionnaire/questionsStyles.css'
 import ProgressFlow from '../ExperienceUI/ProgressFlow'
 
 
-export default function Question2({ step, total, onAnswer, answer }) {
+export default function Question2({ step, total, onAnswer, answer, onPrev }) {
   const options = [
     'Oficina / Trabajo de escritorio',
     'Actividades deportivas o al aire libre',
@@ -36,6 +36,11 @@ export default function Question2({ step, total, onAnswer, answer }) {
         ))}
       </ul>
       <div className="actions">
+        {step > 0 && (
+          <button className="btn-secondary" onClick={onPrev}>
+            Anterior
+          </button>
+        )}
         <button
           className="btn-primary"
           onClick={() => onAnswer(selected)}
