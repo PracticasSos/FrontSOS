@@ -13,30 +13,27 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await supabase.auth.signOut();
-      localStorage.clear(); // Limpiar todo
+      localStorage.clear();
       setUser(null);
-      navigate('/LoginForm');
-      window.location.reload(); // Forzar recarga completa
+      navigate('/login-form');
     } catch (error) {
       console.error('Logout error:', error);
       localStorage.clear();
       setUser(null);
-      navigate('/LoginForm');
-      window.location.reload();
+      navigate('/login-form');
     }
   };
 
   useEffect(() => {
-    let isMounted = true; // Flag para evitar setState en componente desmontado
+    let isMounted = true;
 
     const getSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (!isMounted) return; // Salir si el componente se desmontó
+        if (!isMounted) return;
 
         if (session?.user) {
-          // Buscar datos adicionales del usuario
           const { data: userData, error: userError } = await supabase
             .from('users')
             .select('*')
@@ -46,10 +43,11 @@ export const AuthProvider = ({ children }) => {
           if (!isMounted) return;
 
           if (userData && !userError) {
-            setUser({
+            const fullUser = {
               ...session.user,
               ...userData
-            });
+            };
+            setUser(fullUser);
           } else {
             console.error('Error fetching user data:', userError);
             setUser(null);
@@ -71,17 +69,16 @@ export const AuthProvider = ({ children }) => {
 
     getSession();
 
-    // Listener más simple
+    // ✅ CAMBIO PRINCIPAL: Solo escuchar eventos específicos de logout
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
 
-      if (event === 'SIGNED_OUT' || !session) {
+      // Solo redirigir en eventos explícitos de logout
+      if (event === 'SIGNED_OUT') {
         setUser(null);
-        navigate('/LoginForm');
-      } else if (event === 'SIGNED_IN' && session?.user) {
-        // Solo actualizar user básico, sin fetch adicional aquí
-        setUser(session.user);
-      }
+        navigate('/login-form');
+      } 
+      // NO manejar SIGNED_IN aquí para evitar conflictos de navegación
     });
 
     return () => {

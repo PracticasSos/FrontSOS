@@ -4,7 +4,12 @@ import HeaderVendedor from './HeaderVendedor';
 import HeaderOptometra from './HeaderOptometra';
 
 const SmartHeader = ({ moduleSpecificButton = null }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Si está cargando, no mostrar header
+  if (loading) {
+    return null;
+  }
 
   // Si no hay usuario, no mostrar header
   if (!user || !user.role_id) {
@@ -24,7 +29,6 @@ const SmartHeader = ({ moduleSpecificButton = null }) => {
       return <HeaderVendedor moduleSpecificButton={moduleSpecificButton} />;
     
     default:
-      // Fallback al header de admin si no se reconoce el rol
       return <HeaderAdmin moduleSpecificButton={moduleSpecificButton} />;
   }
 };

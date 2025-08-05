@@ -117,7 +117,7 @@ const HeaderAdmin = ({
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/PrintCertificate")}
+                onClick={() => navigate("/print-certificate")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -127,7 +127,7 @@ const HeaderAdmin = ({
               <Text
                 color={textColor}
                 cursor="pointer"
-                onClick={() => navigate("/Egresos")}
+                onClick={() => navigate("/egresos")}
                 _hover={{ color: textHoverColor }}
                 fontWeight="medium"
               >
@@ -148,7 +148,7 @@ const HeaderAdmin = ({
                 objectPosition="bottom"
                 borderRadius="full"
                 cursor="pointer"
-                onClick={() => navigate("/PatientRecords")}
+                onClick={() => navigate("/patient-records")}
                 border="2px solid #50bcd8"
               />
               <Menu>
@@ -167,31 +167,31 @@ const HeaderAdmin = ({
                 <MenuList 
                    zIndex="999999" 
                 >
-                  <MenuItem onClick={() => navigate("/Branch")}>
+                  <MenuItem onClick={() => navigate("/branch")}>
                     Registrar Sucursal
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Labs")}>
+                  <MenuItem onClick={() => navigate("/labs")}>
                     Registrar Laboratorio
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Register")}>
+                  <MenuItem onClick={() => navigate("/register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                  <MenuItem onClick={() => navigate("/register-lens")}>
                     Registrar Lentes
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
-                    Registrar Medidas 
+                  <MenuItem onClick={() => navigate("/measures-final")}>
+                    Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Inventory")}>
+                  <MenuItem onClick={() => navigate("/inventory")}>
                     Inventario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                  <MenuItem onClick={() => navigate("/cash-closure")}>
                     Consultar Cierre
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                  <MenuItem onClick={() => navigate("/history-clinic")}>
                     Historial de Venta
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
@@ -236,7 +236,7 @@ const HeaderAdmin = ({
                     cursor="pointer"
                     onClick={() => {
                       onToggle();
-                      navigate("/PatientRecords");
+                      navigate("/patient-records");
                     }}
                     border="2px solid #50bcd8"
                   />
@@ -255,31 +255,31 @@ const HeaderAdmin = ({
                     </MenuButton>
                     <Portal>
                     <MenuList zIndex="99999">
-                  <MenuItem onClick={() => navigate("/Branch")}>
+                  <MenuItem onClick={() => navigate("/branch")}>
                     Registrar Sucursal
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Labs")}>
+                  <MenuItem onClick={() => navigate("/labs")}>
                     Registrar Laboratorio
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Register")}>
+                  <MenuItem onClick={() => navigate("/register")}>
                     Registrar Usuario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/RegisterLens")}>
+                  <MenuItem onClick={() => navigate("/register-lens")}>
                     Registrar Lentes
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
-                    Registrar Medidas 
+                  <MenuItem onClick={() => navigate("/measures-final")}>
+                    Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/Inventory")}>
+                  <MenuItem onClick={() => navigate("/inventory")}>
                     Inventario
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/CashClousure")}>
+                  <MenuItem onClick={() => navigate("/cash-closure")}>
                     Consultar Cierre
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryClinic")}>
+                  <MenuItem onClick={() => navigate("/history-clinic")}>
                     Historial de Venta
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">

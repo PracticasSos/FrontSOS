@@ -112,7 +112,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
             <Text
               color={textColor}
               cursor="pointer"
-              onClick={() => navigate("/PrintCertificate")}
+              onClick={() => navigate("/print-certificate")}
               _hover={{ color: textHoverColor }}
               fontWeight="medium"
             >
@@ -142,7 +142,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
               objectPosition="bottom"
               borderRadius="full"
               cursor="pointer"
-              onClick={() => navigate("/PatientRecords")}
+              onClick={() => navigate("/patient-records")}
               border="2px solid #50bcd8"
             />
             
@@ -160,10 +160,10 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
               </MenuButton>
               <Portal>
                 <MenuList zIndex="999999">
-                  <MenuItem onClick={() => navigate("/MeasuresFinal")}>
+                  <MenuItem onClick={() => navigate("/measures-final")}>
                     Registrar Medidas
                   </MenuItem>
-                  <MenuItem onClick={() => navigate("/HistoryMeasureList")}>
+                  <MenuItem onClick={() => navigate("/history-measure-list")}>
                     Historial de Medidas
                   </MenuItem>
                   <MenuItem onClick={handleLogout} color="red.500">
@@ -208,7 +208,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
                                 cursor="pointer"
                                 onClick={() => {
                                   onToggle();
-                                  navigate("/PatientRecords");
+                                  navigate("/patient-records");
                                 }}
                                 border="2px solid #50bcd8"
                               />
@@ -229,7 +229,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
                                   <MenuItem
                                     onClick={() => {
                                       onToggle();
-                                      navigate("/MeasuresFinal");
+                                      navigate("/measures-final");
                                     }}
                                   >
                                     Registrar Medidas
@@ -237,7 +237,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
                                   <MenuItem
                                     onClick={() => {
                                       onToggle();
-                                      navigate("/HistoryClinic");
+                                      navigate("/history-clinic");
                                     }}
                                   >
                                     Historial de Venta
@@ -245,7 +245,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
                                   <MenuItem
                                     onClick={() => {
                                       onToggle();
-                                      navigate("HistoryMeasureList");
+                                      navigate("/history-measure-list");
                                     }}
                                   >
                                     Historial de Medidas
@@ -273,7 +273,7 @@ const HeaderOptometra = ({ moduleSpecificButton = null }) => {
                               cursor="pointer"
                               onClick={() => {
                                 onToggle();
-                                navigate("/PrintCertificate");
+                                navigate("/print-certificate");
                               }}
                               _hover={{ color: textHoverColor }}
                             >
