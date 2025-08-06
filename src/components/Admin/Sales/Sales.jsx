@@ -14,7 +14,6 @@ import TotalUI from "./TotalUI";
 import MessageSection from "./MenssageSection";
 import ObservationSection from "./ObservationSection";
 import TermsCondition from "./TermsCondition";
-import HeaderAdmin from "../../header/HeaderAdmin";
 import SmartHeader from "../../header/SmartHeader";
 
 
@@ -62,6 +61,9 @@ const Sales = () => {
   const [branchName, setBranchName] = useState("");
   const { id } = useParams();
   const toast = useToast();
+  // Nuevo estado para controlar las páginas
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 8; 
 
   const handleFormDataChange = (newFormData) => {
   setFormData((prevFormData) => ({
@@ -87,7 +89,23 @@ const Sales = () => {
   }
 };
 
- // ...existing code...
+ // Función para navegar entre pasos
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (step) => {
+    setCurrentStep(step);
+  };
+
  useEffect(() => {
     if (id) {
       setSaleData((prev) => ({
@@ -320,6 +338,7 @@ const Sales = () => {
   }));
 };
 
+
   const handleNavigate = (route = null) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (route) {
@@ -351,175 +370,184 @@ const Sales = () => {
     'rgba(48, 44, 44, 0.2)' // Dark: tu fondo actual
   );
 
-  return (
-    <Box ref={salesRef} w="full" px={4}>
-      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
-        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
-        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
-        <Box >
-          <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
-          <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
-        </Box>
-          <Box p={5} >
+  // Función para renderizar el contenido según el paso actual
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Box>
+            <SearchPatient onFormDataChange={handlePatientDataChange} initialFormData={saleData} />
+            <Measures initialFormData={saleData} filteredMeasures={filteredMeasures} />
+          </Box>
+        );
+      case 2:
+        return (
+          <Box p={5}>
             <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
               Detalles de Venta
             </Text>
-            <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8} 
-            >
-              <Grid  gap={4} alignItems="start">
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <Grid gap={4} alignItems="start">
                 <SalesDetails
                   formData={formData}
                   setFormData={setFormData}
                   onTotalsChange={handleTotalsChange}
                 />
               </Grid>
-              </Box>
+            </Box>
           </Box>
-
+        );
+      case 3:
+        return (
           <Box mb={[4, 6]}>
-            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600" >
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
               Total
             </Text>
-            <Box
-            width="100vw"
-            position="relative"
-            bg={cardBg}
-            py={8}
-            mt={8}
-            >
-            <TotalUI
-              frameName={totals.frameName}
-              lensName={totals.lensName}
-              total_p_frame={totals.total_p_frame}
-              total_p_lens={totals.total_p_lens}
-              initialFormData={formData}
-              onFormDataChange={handleFormDataChange}
-            />
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <TotalUI
+                frameName={totals.frameName}
+                lensName={totals.lensName}
+                total_p_frame={totals.total_p_frame}
+                total_p_lens={totals.total_p_lens}
+                initialFormData={formData}
+                onFormDataChange={handleFormDataChange}
+              />
             </Box>
           </Box>
-
+        );
+      case 4:
+        return (
           <Box mt={6}>
-            <Text
-                fontSize="xl"
-                fontWeight="bold"
-                mb={6}
-                textAlign="center"
-                color="gray.600"
-              >
-                Metodo de Pago
-              </Text>
-              <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8}
-            >
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Método de Pago
+            </Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
               <Total
                 formData={formData}
-              setFormData={handleFormDataChange}
+                setFormData={handleFormDataChange}
                 saleData={saleData}
                 setSaleData={setSaleData}
-              />  
-              </Box>
+              />
             </Box>
-          
+          </Box>
+        );
+      case 5:
+        return (
           <Box mt={8}>
-            <Text
-                fontSize="xl"
-                fontWeight="bold"
-                mb={6}
-                textAlign="center"
-                color="gray.600"
-              >
-                Tiempo de Entrega
-              </Text>
-            <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8}
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Tiempo de Entrega
+            </Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <Delivery saleData={saleData} setSaleData={setSaleData} />
+            </Box>
+          </Box>
+        );
+      case 6:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Mensaje
+            </Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <MessageSection
+                selectedBranch={branchName}
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </Box>
+          </Box>
+        );
+      case 7:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Observación
+            </Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <ObservationSection setFormData={setFormData} />
+            </Box>
+          </Box>
+        );
+      case 8:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
+              Términos y Condiciones
+            </Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <TermsCondition
+                selectedBranch={branchName}
+                formData={formData}
+                setFormData={setFormData}
+              />
+              <SignaturePadComponent
+                onSave={(signatureDataUrl) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    signature: signatureDataUrl,
+                  }))
+                }
+              />
+            </Box>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
+  
+  
+
+  return (
+    <Box ref={salesRef} w="full" px={4}>
+      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
+        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+
+        {/* Indicador de pasos */}
+        <Box mb={6} display="flex" justifyContent="center" flexWrap="wrap" gap={2}>
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+            <Button
+              key={step}
+              size="sm"
+              colorScheme={currentStep === step ? "teal" : "gray"}
+              variant={currentStep === step ? "solid" : "outline"}
+              onClick={() => goToStep(step)}
             >
-            <Delivery saleData={saleData} setSaleData={setSaleData} />
-          </Box> 
-          </Box> 
-              <Box  mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Mensaje
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <MessageSection
-                    selectedBranch={branchName}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                </Box>
-              </Box>
-              
-              <Box  mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Observación
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <ObservationSection setFormData={setFormData} />
-                </Box>
-              </Box>
+              {step}
+            </Button>
+          ))}
+        </Box>
 
-              <Box mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Terminos y Condiciones
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <TermsCondition
-                    selectedBranch={branchName}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
+        {/* Contenido del paso actual */}
+        {renderStepContent()}
 
-                <SignaturePadComponent
-                    onSave={(signatureDataUrl) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        signature: signatureDataUrl,
-                      }))
-                    }
-                  />
-                </Box>
-              </Box>
-              
-          <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
-            Registrar Venta
+        {/* Botones de navegación */}
+        <Box mt={6} display="flex" justifyContent="space-between" width="100%" maxWidth="400px" gap={4}>
+          <Button
+            onClick={prevStep}
+            isDisabled={currentStep === 1}
+            colorScheme="gray"
+          >
+            Anterior
           </Button>
-          {saleId && <Pdf 
+          
+          {currentStep === totalSteps ? (
+            <Button colorScheme="teal" onClick={handleSubmit}>
+              Registrar Venta
+            </Button>
+          ) : (
+            <Button onClick={nextStep} colorScheme="teal">
+              Siguiente
+            </Button>
+          )}
+        </Box>
+
+        {saleId && <Pdf 
           formData={pdfData} 
           targetRef={salesRef} 
           onPdfUploaded={async (pdfUrl) => {
-            // Actualiza la fila en sales con la URL del PDF
             const { error } = await supabase
               .from('sales')
               .update({ pdf_url: pdfUrl })
@@ -529,11 +557,11 @@ const Sales = () => {
             } else {
               console.log('PDF URL actualizado correctamente');
             }
-        }}
-          />}
+          }}
+        />}
       </Box>
     </Box>
-  );  
+  );
 };
 
 export default Sales;
