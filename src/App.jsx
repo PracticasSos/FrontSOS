@@ -80,7 +80,7 @@ function App() {
   return showSplash ? (
     <Welcome onFinish={handleWelcomeFinish} />
   ) : (
-    <Container maxW="100%" padding="0px" bg={bgColor} minH="100vh">
+    <Container maxW="100%" padding="0px" bg={bgColor} minH="100vh" fontFamily="'Satoshi', sans-serif"  >
       <AppRouter />
     </Container>
   );

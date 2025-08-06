@@ -1,6 +1,5 @@
 @charset "utf-8";
 
-/* Carga de fuentes */
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/Satoshi/Satoshi-Regular.woff2') format('woff2');
@@ -32,7 +31,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   font-family: 'Satoshi', sans-serif;
   background-color: #f2f2f2;
   color: #000;
