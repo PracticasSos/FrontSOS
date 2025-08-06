@@ -27,8 +27,9 @@ const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = 
     discount_lens: "",
   });
 
-  const roundUpToNearestTenCents = (num) => Math.ceil(num * 10) / 10;
-
+  const formatMoney = (amount) => {
+    return Math.round(parseFloat(amount));
+  };
 
   useEffect(() => {
     fetchData("lens", setLenses);
@@ -116,20 +117,22 @@ const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = 
   setDiscountInput((prev) => ({ ...prev, [name]: value }));
 
   const discount = parseFloat(value);
-  if (!isNaN(discount) && discount > 0) {
+  
+  if (!isNaN(discount) && discount >= 0 && discount <= 100) {
     if (name === "discount_frame") {
-      const total_p_frame = roundUpToNearestTenCents(
-        calculatedData.p_frame - (calculatedData.p_frame * discount) / 100
-      );
+      // Cálculo: 150 * (1 - 55.33/100) = 150 * 0.4467 = 67.005 → 67 (redondeado)
+      const total_p_frame = formatMoney(calculatedData.p_frame * (1 - discount / 100));
+      
+      console.log(`Frame calculation: ${calculatedData.p_frame} × (1 - ${discount}/100) = ${total_p_frame}`);
+      
       setCalculatedData((prev) => ({
         ...prev,
         discount_frame: discount,
         total_p_frame,
       }));
     } else if (name === "discount_lens") {
-      const total_p_lens = roundUpToNearestTenCents(
-        calculatedData.p_lens - (calculatedData.p_lens * discount) / 100
-      );
+      const total_p_lens = formatMoney(calculatedData.p_lens * (1 - discount / 100));
+      
       setCalculatedData((prev) => ({
         ...prev,
         discount_lens: discount,
@@ -139,8 +142,9 @@ const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = 
   } else {
     setCalculatedData((prev) => ({
       ...prev,
-      [name]: null,
-      [name === "discount_frame" ? "total_p_frame" : "total_p_lens"]: null,
+      [name]: 0,
+      [name === "discount_frame" ? "total_p_frame" : "total_p_lens"]: 
+        name === "discount_frame" ? prev.p_frame : prev.p_lens,
     }));
   }
 };
@@ -159,74 +163,72 @@ const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = 
 }, [calculatedData.discount_frame, calculatedData.discount_lens]);
 
   const handleTotalChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
 
-    if (name === "total_p_frame" || name === "total_p_lens") {
-      if (value === "") {
+  if (name === "total_p_frame" || name === "total_p_lens") {
+    if (value === "") {
+      setCalculatedData((prev) => ({
+        ...prev,
+        [name]: null,
+        [`discount_${name === "total_p_frame" ? "frame" : "lens"}`]: 0,
+      }));
+      return;
+    }
+
+    const totalValue = formatMoney(value); // Redondea a entero
+    if (!isNaN(totalValue)) {
+      if (name === "total_p_frame") {
+        const discount_frame = calculatedData.p_frame > 0
+          ? parseFloat((100 - (totalValue / calculatedData.p_frame) * 100).toFixed(2))
+          : 0;
+          
         setCalculatedData((prev) => ({
           ...prev,
-          [name]: "",
-          [`discount_${name === "total_p_frame" ? "frame" : "lens"}`]: 0,
+          total_p_frame: totalValue,
+          discount_frame: discount_frame,
         }));
-        return;
-      }
-
-      const totalValue = parseFloat(value);
-      if (!isNaN(totalValue)) {
-        if (name === "total_p_frame") {
-          const discount_frame =
-            calculatedData.p_frame > 0
-              ? 100 - (totalValue / calculatedData.p_frame) * 100
-              : 0;
-          setCalculatedData((prev) => ({
-            ...prev,
-            total_p_frame: roundUpToNearestTenCents(totalValue),
-            discount_frame: parseFloat(discount_frame.toFixed(2)),
-          }));
-        } else {
-          const discount_lens =
-            calculatedData.p_lens > 0
-              ? 100 - (totalValue / calculatedData.p_lens) * 100
-              : 0;
-          setCalculatedData((prev) => ({
-            ...prev,
-            total_p_lens: roundUpToNearestTenCents(totalValue),
-            discount_lens: parseFloat(discount_lens.toFixed(2)),
-          }));
-        }
+      } else {
+        const discount_lens = calculatedData.p_lens > 0
+          ? parseFloat((100 - (totalValue / calculatedData.p_lens) * 100).toFixed(2))
+          : 0;
+          
+        setCalculatedData((prev) => ({
+          ...prev,
+          total_p_lens: totalValue,
+          discount_lens: discount_lens,
+        }));
       }
     }
-  };
+  }
+};
 
   useEffect(() => {
   const totalFrame = calculatedData.total_p_frame !== null && calculatedData.total_p_frame !== undefined
-    ? Number(calculatedData.total_p_frame)
-    : Number(calculatedData.p_frame);
+    ? formatMoney(calculatedData.total_p_frame)
+    : formatMoney(calculatedData.p_frame);
 
   const totalLens = calculatedData.total_p_lens !== null && calculatedData.total_p_lens !== undefined
-    ? Number(calculatedData.total_p_lens)
-    : Number(calculatedData.p_lens);
+    ? formatMoney(calculatedData.total_p_lens)
+    : formatMoney(calculatedData.p_lens);
 
   const totalP = totalFrame + totalLens;
 
   setCalculatedData((prev) => ({
     ...prev,
-    totalP: totalP.toFixed(2),
+    totalP: totalP.toString(), // Sin decimales
   }));
 
   setFormData((prev) => ({
-  ...prev,
-  // Solo actualiza estos campos, deja balance y otros intactos
-  p_frame: calculatedData.p_frame,
-  p_lens: calculatedData.p_lens,
-  discount_frame: calculatedData.discount_frame,
-  discount_lens: calculatedData.discount_lens,
-  total_p_frame: calculatedData.total_p_frame,
-  total_p_lens: calculatedData.total_p_lens,
-  total: parseFloat(totalP),
-  price: calculatedData.price.toFixed(2),
-  // NO pongas balance aquí, ni credit, ni payment_in, etc.
-}));
+    ...prev,
+    p_frame: formatMoney(calculatedData.p_frame),
+    p_lens: formatMoney(calculatedData.p_lens),
+    discount_frame: calculatedData.discount_frame,
+    discount_lens: calculatedData.discount_lens,
+    total_p_frame: formatMoney(calculatedData.total_p_frame || calculatedData.p_frame),
+    total_p_lens: formatMoney(calculatedData.total_p_lens || calculatedData.p_lens),
+    total: totalP,
+    price: formatMoney(calculatedData.price),
+  }));
 }, [
   calculatedData.total_p_frame,
   calculatedData.total_p_lens,
@@ -234,19 +236,22 @@ const SalesDetails = ({ formData = {}, setFormData = () => {}, onTotalsChange = 
   calculatedData.p_lens,
 ]);
 
+
 useEffect(() => {
   if (onTotalsChange) {
     onTotalsChange({
       frameName: formData.brand || "",
       lensName: formData.lens_type_name || "",
-      total_p_frame:
+      total_p_frame: formatMoney(
         calculatedData.discount_frame && calculatedData.discount_frame > 0
           ? calculatedData.total_p_frame
-          : calculatedData.p_frame,
-      total_p_lens:
+          : calculatedData.p_frame
+      ),
+      total_p_lens: formatMoney(
         calculatedData.discount_lens && calculatedData.discount_lens > 0
           ? calculatedData.total_p_lens
-          : calculatedData.p_lens,
+          : calculatedData.p_lens
+      ),
     });
   }
 }, [
@@ -338,7 +343,7 @@ return (
                   type="number"
                   height="40px"
                   borderRadius="full"
-                  value={calculatedData.p_frame.toFixed(2)}
+                  value={formatMoney(calculatedData.p_frame)}
                   readOnly
                   fontSize="sm"
                   bg={selectBg}
@@ -463,7 +468,7 @@ return (
                 <Input
                   name="p_lens"
                   type="number"
-                  value={calculatedData.p_lens.toFixed(2)}
+                  value={formatMoney(calculatedData.p_lens)}
                   readOnly
                   fontSize="sm"
                   h="40px"
