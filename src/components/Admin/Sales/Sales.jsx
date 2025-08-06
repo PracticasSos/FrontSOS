@@ -301,7 +301,7 @@ const Sales = () => {
   const pdfData = {
     ...saleData,
     ...formData,
-    sale_id: saleId,
+    id: saleId,
   };
 
   const handleSaveSignature = (signatureDataUrl) => {
@@ -516,7 +516,7 @@ const Sales = () => {
             Registrar Venta
           </Button>
           {saleId && <Pdf 
-          formData={{ ...saleData, ...formData, sale_id: saleId }}
+          formData={pdfData} 
           targetRef={salesRef} 
           onPdfUploaded={async (pdfUrl) => {
             // Actualiza la fila en sales con la URL del PDF

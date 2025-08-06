@@ -8,27 +8,16 @@ const Delivery = ({ saleData, setSaleData }) => {
   const [miniDateTime, setMinDateTime] = useState("");
   const toast = useToast();
 
-
   useEffect(() => {
     const now = new Date();
-    const formatted = now.toISOString().slice(0, 16);
+    // Ajustar a zona horaria local
+    const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    const formatted = localNow.toISOString().slice(0, 16);
     setMinDateTime(formatted);
   }, []);
 
   const handleDateChange = (e) => {
-    const selectedDateTime = new Date(e.target.value);
-    const now = new Date();
-
-    if (selectedDateTime < now) {
-      toast ({
-        title: "Fecha inválida",
-        description: "No se puede seleccionar una fecha anterior a la actual.",
-        status: "error",
-        duration: 4000,
-        isClosable: true,
-        position: "top",
-      });
-      e.target.value="";
+    if (!e.target.value) {
       setDeliveryDays(null);
       setSelectedDateText("");
       setSaleData((prev) => ({
@@ -39,12 +28,39 @@ const Delivery = ({ saleData, setSaleData }) => {
       return;
     }
 
-    const diffInMs = selectedDateTime - now;
-    const diffInDaysRaw = diffInMs / (1000 * 60 * 60 * 24);
-    const diffInDays = diffInDaysRaw > 0 ? Math.round(diffInDaysRaw) : 0;
+    // Crear fecha desde el input (ya está en zona horaria local)
+    const selectedDateTime = new Date(e.target.value);
+    const now = new Date();
+
+    // Verificar si es fecha pasada
+    if (selectedDateTime < now) {
+      toast({
+        title: "Fecha inválida",
+        description: "No se puede seleccionar una fecha anterior a la actual.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
+      });
+      e.target.value = "";
+      setDeliveryDays(null);
+      setSelectedDateText("");
+      setSaleData((prev) => ({
+        ...prev,
+        delivery_time: null,
+        delivery_datetime: null,
+      }));
+      return;
+    }
+
+    // Calcular diferencia en días (más preciso)
+    const diffInMs = selectedDateTime.getTime() - now.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+    const diffInDays = Math.ceil(diffInHours / 24); // Redondear hacia arriba
 
     setDeliveryDays(diffInDays);
 
+    // Formatear fecha para mostrar
     const formatted = selectedDateTime.toLocaleString("es-ES", {
       weekday: "long",
       year: "numeric",
@@ -52,14 +68,17 @@ const Delivery = ({ saleData, setSaleData }) => {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false // Formato 24h
     });
 
     setSelectedDateText(formatted);
 
+    // Guardar en saleData con la fecha exacta seleccionada
     setSaleData((prev) => ({
       ...prev,
-      delivery_time: diffInDays,
+      delivery_time: `${diffInDays} día${diffInDays !== 1 ? "s" : ""}`,
       delivery_datetime: selectedDateTime.toISOString(),
+      delivery_formatted: formatted
     }));
   };
 
@@ -84,7 +103,7 @@ const Delivery = ({ saleData, setSaleData }) => {
     >
       <FormControl w="100%" maxW="500px" mx="auto">
         <FormLabel fontSize="md" color={labelColor}>
-          Fecha y hora
+          Fecha y hora de entrega
         </FormLabel>
         <Input
           type="datetime-local"

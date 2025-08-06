@@ -1,158 +1,156 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
-  SimpleGrid,
   useToast,
   Spinner,
   Text,
+  VStack,
+  HStack,
+  Icon,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+import { FaWhatsapp, FaDownload, FaCheck } from "react-icons/fa";
 import { supabase } from "../../../api/supabase";
+import { generateContractPDF } from "./pdf/pdfGenerator.js";
 
-  const Pdf = ({ formData, targetRef, onPdfUploaded }) => {
-    const toast = useToast();
-    const [generating, setGenerating] = useState(false);
+const Pdf = ({ formData, onPdfUploaded }) => {
+  const toast = useToast();
+  const [generating, setGenerating] = useState(false);
+  const [pdfGenerated, setPdfGenerated] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [patientPhone, setPatientPhone] = useState("");
 
-    const handleDownloadPdf = async () => {
-    if (!targetRef?.current) {
-      toast({
-        title: "Error",
-        description: "No se encontró el contenido para generar el PDF.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+  const boxBg = useColorModeValue('white', 'gray.700');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-    setGenerating(true);
-
+  const fetchMeasureData = async (measureId) => {
+    if (!measureId) return null;
+    
     try {
-      const content = targetRef.current;
+      const { data, error } = await supabase
+        .from("rx_final")
+        .select("*")
+        .eq("id", measureId)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching measure data:", error);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error("Error in fetchMeasureData:", error);
+      return null;
+    }
+  };
 
-      // Ocultar elementos no deseados
-      const buttons = content.querySelectorAll("button");
-      buttons.forEach((b) => (b.style.display = "none"));
-      const icons = content.querySelectorAll(".chakra-select__icon");
-      icons.forEach((icon) => (icon.style.display = "none"));
-      const fileInputs = content.querySelectorAll('input[type="file"]');
-      fileInputs.forEach((input) => input.remove());
+  const fetchPatientData = async (patientId) => {
+    if (!patientId) return null;
+    
+    try {
+      const { data, error } = await supabase
+        .from("patients")
+        .select("pt_firstname, pt_lastname, pt_phone")
+        .eq("id", patientId)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching patient data:", error);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error("Error in fetchPatientData:", error);
+      return null;
+    }
+  };
 
-      // Capturar canvas
-      const canvas = await html2canvas(content, {
-        scale: 1.2,
-        backgroundColor: "#fff",
-        ignoreElements: (el) => el.classList?.contains("no-pdf"),
-      });
+  const fetchBranchData = async (branchId) => {
+    if (!branchId) return null;
+    
+    try {
+      const { data, error } = await supabase
+        .from("branchs")
+        .select("name")
+        .eq("id", branchId)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching branch data:", error);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error("Error in fetchBranchData:", error);
+      return null;
+    }
+  };
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.7);
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-      const imgProps = {
-        width: pdfWidth - 20,
-        height: (canvas.height / canvas.width) * (pdfWidth - 20),
-      };
-
-      let y = 10;
-      const pageHeight = pdfHeight - 20;
-      let position = 0;
-
-      if (imgProps.height < pageHeight) {
-        pdf.addImage(imgData, "JPEG", 10, y, imgProps.width, imgProps.height);
-      } else {
-        while (position < imgProps.height) {
-          const sourceCanvas = document.createElement("canvas");
-          sourceCanvas.width = canvas.width;
-          sourceCanvas.height = (pageHeight * canvas.width) / imgProps.width;
-
-          const ctx = sourceCanvas.getContext("2d");
-          ctx.drawImage(
-            canvas,
-            0,
-            (position * canvas.width) / imgProps.width,
-            canvas.width,
-            sourceCanvas.height,
-            0,
-            0,
-            canvas.width,
-            sourceCanvas.height
-          );
-
-          const segmentImgData = sourceCanvas.toDataURL("image/jpeg", 0.7);
-          if (position !== 0) pdf.addPage();
-          pdf.addImage(segmentImgData, "JPEG", 10, y, imgProps.width, pageHeight);
-          position += pageHeight;
-        }
+  const handleGeneratePdf = async () => {
+    setGenerating(true);
+    try {
+      // Verificar términos aceptados
+      if (!formData?.termsAccepted) {
+        throw new Error('Debe aceptar los términos y condiciones antes de generar el PDF');
       }
 
-      const pdfBlob = pdf.output("blob");
-      const patientId = formData?.patient_id || "desconocido";
-      const saleId = formData?.sale_id;
-
-      if (!saleId) {
-        throw new Error("No se encontró el ID de la venta.");
+      // Verificar que existe el ID de la venta
+      if (!formData?.id) {
+        throw new Error('No se encontró el ID de la venta para actualizar la URL del PDF');
       }
 
-      const fileName = `venta-${patientId}-${Date.now()}.pdf`;
+      // Obtener todos los datos necesarios
+      const measureData = await fetchMeasureData(formData?.measure_id);
+      const patientData = await fetchPatientData(formData?.patient_id);
+      const branchData = await fetchBranchData(formData?.branchs_id);
 
-      const { error: uploadError } = await supabase.storage
-        .from("sales")
-        .upload(fileName, pdfBlob, {
-          contentType: "application/pdf",
-        });
+      console.log("Datos obtenidos:", { measureData, patientData, branchData });
 
-      if (uploadError) throw uploadError;
+      // Guardar teléfono del paciente
+      setPatientPhone(patientData?.pt_phone || formData?.pt_phone || "");
 
-      const { data: urlData, error: urlError } = supabase.storage
-        .from("sales")
-        .getPublicUrl(fileName);
+      // Generar, subir PDF y actualizar URL en BD
+      const result = await generateContractPDF(formData, measureData, patientData, branchData);
 
-      if (urlError) throw urlError;
+      setPdfUrl(result.pdfUrl);
+      setPdfGenerated(true);
 
-      const publicUrl = urlData.publicUrl;
-
-      // Notificar al padre
+      // Llamar callback si existe
       if (onPdfUploaded) {
-        await onPdfUploaded(publicUrl);
+        onPdfUploaded(result);
       }
 
       toast({
-        title: "PDF generado y guardado",
-        description: "El documento fue subido correctamente.",
+        title: "¡PDF generado exitosamente!",
+        description: "El contrato fue generado, subido y guardado en la base de datos.",
         status: "success",
-        duration: 3000,
+        duration: 4000,
         isClosable: true,
       });
 
-      return publicUrl;
     } catch (error) {
-      console.error("Error generando o subiendo el PDF:", error);
+      console.error("Error generando PDF:", error);
       toast({
         title: "Error",
-        description: error.message || "No se pudo generar o subir el PDF.",
+        description: error.message || "No se pudo generar el PDF.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     } finally {
-      // Restaurar visibilidad de botones
-      const buttons = targetRef.current?.querySelectorAll("button");
-      buttons?.forEach((b) => (b.style.display = "inline-block"));
-      const icons = targetRef.current?.querySelectorAll(".chakra-select__icon");
-      icons?.forEach((i) => (i.style.display = "inline-block"));
       setGenerating(false);
     }
   };
 
-
-  const sendWhatsAppMessage = async () => {
-    if (!formData || !formData.pt_phone) {
+    const handleSendWhatsApp = () => {
+    if (!pdfUrl || !patientPhone) {
       toast({
         title: "Error",
-        description: "No hay datos para generar el PDF.",
+        description: pdfUrl ? "Falta el teléfono del paciente." : "No hay PDF generado.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -160,68 +158,119 @@ import { supabase } from "../../../api/supabase";
       return;
     }
 
-    setGenerating(true);
-    try {
-      const buttons = targetRef?.current?.querySelectorAll("button");
-      buttons?.forEach((b) => (b.style.display = "none"));
-
-      const pdfUrl = await handleDownloadPdf();
-
-      if (pdfUrl) {
-        const message = formData.message || "Aquí tienes el documento de tu venta.";
-        const cleanPhone = formData.pt_phone.replace(/\D/g, "");
-
-        if (!cleanPhone || cleanPhone.length < 8)
-          throw new Error("Formato de número telefónico inválido");
-
-        const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-          `${message}\n\nPuedes descargar tu documento aquí: ${pdfUrl}`
-        )}`;
-
-        window.location.href = whatsappUrl;
-
-        toast({
-          title: "WhatsApp Enviado",
-          description: "El PDF ha sido enviado correctamente.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        throw new Error("No se pudo generar el PDF");
-      }
-    } catch (error) {
+    // Limpiar número de teléfono (solo números)
+    const cleanPhone = patientPhone.replace(/\D/g, '');
+    
+    // Verificar que tenga al menos 10 dígitos
+    if (cleanPhone.length < 10) {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Teléfono inválido",
+        description: "El número de teléfono debe tener al menos 10 dígitos.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    } finally {
-      const buttons = targetRef?.current?.querySelectorAll("button");
-      buttons?.forEach((b) => (b.style.display = "inline-block"));
-      setGenerating(false);
+      return;
     }
+
+    // USAR EL MENSAJE DESDE MessageSection (formData.message)
+    const messageFromSection = formData?.message || "";
+    
+    // Si no hay mensaje personalizado, usar uno por defecto
+    const fallbackMessage = "¡Hola! 👋 Muchas gracias por confiar en nosotros. Te adjuntamos el contrato de servicio.";
+    
+    // Usar el mensaje del MessageSection o el fallback si está vacío
+    const customMessage = messageFromSection.trim() || fallbackMessage;
+    
+    // Crear mensaje completo para WhatsApp
+    const fullMessage = `${customMessage}\n\n📄 *Contrato de Servicio:*\n${pdfUrl}`;
+    
+    // Crear URL de WhatsApp
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(fullMessage)}`;
+    
+    // Abrir WhatsApp
+    window.open(whatsappUrl, '_blank');
+
+    toast({
+      title: "WhatsApp abierto ✅",
+      description: "Se envió el mensaje personalizado del MessageSection.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
   return (
-    <SimpleGrid>
-      <Box p={5}>
-        <Button onClick={handleDownloadPdf} isLoading={generating}>
-          Generar PDF
+    <Box 
+      bg={boxBg} 
+      border="1px solid" 
+      borderColor={borderColor} 
+      borderRadius="xl" 
+      p={10}
+      maxW="600px"
+      mx="auto"
+    >
+      <VStack spacing={4}>
+        {/* Botón Generar PDF */}
+        <Button 
+          onClick={handleGeneratePdf} 
+          isLoading={generating}
+          colorScheme="blue"
+          size="lg"
+          width="100%"
+          leftIcon={<Icon as={pdfGenerated ? FaCheck : FaDownload} />}
+          isDisabled={pdfGenerated}
+        >
+          {generating ? "Generando PDF..." : pdfGenerated ? "PDF Generado ✓" : "Generar PDF"}
         </Button>
-        <Button onClick={sendWhatsAppMessage} isLoading={generating} ml={3}>
-          Enviar por WhatsApp
-        </Button>
+
+        {/* Loading indicator */}
         {generating && (
-          <Box mt={4} display="flex" alignItems="center">
-            <Spinner size="sm" mr={2} />
-            <Text>Cargando, por favor espera...</Text>
+          <HStack>
+            <Spinner size="sm" color="blue.500" />
+            <Text fontSize="sm" color="gray.600">
+              Generando PDF y guardando en base de datos...
+            </Text>
+          </HStack>
+        )}
+
+        {/* Botón WhatsApp */}
+        {pdfGenerated && pdfUrl && (
+          <Button
+            onClick={handleSendWhatsApp}
+            colorScheme="green"
+            size="lg"
+            width="100%"
+            leftIcon={<Icon as={FaWhatsapp} />}
+          >
+            Enviar por WhatsApp
+          </Button>
+        )}
+
+        {/* Info del teléfono */}
+        {pdfGenerated && patientPhone && (
+          <Text fontSize="sm" color="gray.600" textAlign="center">
+            📱 Enviar a: {patientPhone}
+          </Text>
+        )}
+
+        {/* URL guardada en BD */}
+        {pdfGenerated && pdfUrl && (
+          <Box 
+            p={3} 
+            bg="green.50" 
+            borderRadius="md" 
+            width="100%"
+            border="1px solid"
+            borderColor="green.200"
+          >
+            <Text fontSize="xs" color="green.700" wordBreak="break-all">
+              ✅ PDF guardado en BD: {pdfUrl}
+            </Text>
           </Box>
         )}
-      </Box>
-    </SimpleGrid>
+      </VStack>
+    </Box>
   );
 };
 
