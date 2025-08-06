@@ -59,8 +59,8 @@ function App() {
       4: '/SuperAdmin'
     };
 
-    const defaultRoute = dashboardRoutes[userData.role_id] || '/LoginForm';
-    
+    const defaultRoute = dashboardRoutes[userData.role_id] || '/login-form';
+
     // Usar la función isRouteAllowed en lugar de includes
     if (!isRouteAllowed(location.pathname, allowedRoutes) || location.pathname === '/') {
       navigate(defaultRoute);
@@ -70,7 +70,7 @@ function App() {
 
   const handleWelcomeFinish = () => {
     setShowSplash(false);
-    navigate("/LoginForm"); 
+    navigate("/login-form"); 
   };
 
   if (isChecking || permissionsLoading) {

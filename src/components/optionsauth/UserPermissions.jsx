@@ -81,7 +81,7 @@ export const useUserPermissions = (userData) => {
           '/admin/modelos','/resultados','/register-experience',
         ];
       default: 
-        return ['/LoginForm'];
+        return ['/login-form'];
     }
   };
 

@@ -95,7 +95,7 @@ const HistoryClinic = () => {
           return;
       }
       if (!user || !user.role_id) {
-          navigate('/LoginForm');
+          navigate('/login-form');
           return;
       }
       switch (user.role_id) {
