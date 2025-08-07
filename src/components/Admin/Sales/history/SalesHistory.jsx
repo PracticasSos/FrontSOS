@@ -30,6 +30,10 @@ const SalesHistory = () => {
   const toast = useToast();
   const { patientId, saleId: saleParamId } = useParams();
   const isEditing = Boolean(saleParamId);
+    // Nuevo estado para controlar las páginas
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 8; 
+
   const [saleData, setSaleData] = useState({
     patient_id: "",
     branchs_id: "",
@@ -71,6 +75,23 @@ const SalesHistory = () => {
     }
   }, [saleData.patient_id]);  
   
+
+  // Función para navegar entre pasos
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (step) => {
+    setCurrentStep(step);
+  };
 
   const fetchPatient = async (patientId) => {
     if (!patientId) return;
@@ -396,171 +417,126 @@ const SalesHistory = () => {
   const cardBg = useColorModeValue(
       'rgba(207, 202, 202, 0.5)', // Light: tarjetas blancas
       'rgba(48, 44, 44, 0.2)' // Dark: tu fondo actual
-    );
+  );
 
-  return (
-    <Box ref={salesRef} w="full" px={4}>
-      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh"  p={4}>
-        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
-        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-  
-        <Box >
-          <SearchHistory onFormDataChange={handlePatientDataChange} initialFormData={{ ...formData, ...saleData, sale_id: saleParamId || saleId }} />
-          <MeasuresHistory onFormDataChange={handlePatientDataChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId} />
-        </Box>
-          <Box p={5} >
+  // Función para renderizar contenido por paso
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Box>
+            <SearchHistory onFormDataChange={handlePatientDataChange} initialFormData={{ ...formData, ...saleData, sale_id: saleParamId || saleId }} />
+            <MeasuresHistory onFormDataChange={handlePatientDataChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId} />
+          </Box>
+        );
+      case 2:
+        return (
+          <Box p={5}>
             <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
               Detalles de Venta
             </Text>
-            <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8} 
-            >
-              <Grid  gap={4} alignItems="start">
-                <DetailsHistory
-                  onFormDataChange={handleFormDataChange} onTotalsChange={handleTotalsChange} initialFormData={{...formData, ...saleData} }  saleId={saleParamId || saleId}
-                />
-              </Grid>
-              </Box>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <DetailsHistory onFormDataChange={handleFormDataChange} onTotalsChange={handleTotalsChange} initialFormData={{...formData, ...saleData} } saleId={saleParamId || saleId} />
+            </Box>
           </Box>
-
+        );
+      case 3:
+        return (
           <Box mb={[4, 6]}>
-            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600" >
-              Total
-            </Text>
-            <Box
-            width="100vw"
-            position="relative"
-            bg={cardBg}
-            py={8}
-            mt={8}
-            >
-            <HistoryUI
-              frameName={formData.frameName}
-              lensName={formData.lensName}
-              total_p_frame={totals.total_p_frame}
-              total_p_lens={totals.total_p_lens}
-              initialFormData={formData}
-              onFormDataChange={handleFormDataChange}
-            />
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Total</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <HistoryUI frameName={formData.frameName} lensName={formData.lensName} total_p_frame={totals.total_p_frame} total_p_lens={totals.total_p_lens} initialFormData={formData} onFormDataChange={handleFormDataChange} />
             </Box>
           </Box>
-
+        );
+      case 4:
+        return (
           <Box mt={6}>
-            <Text
-                fontSize="xl"
-                fontWeight="bold"
-                mb={6}
-                textAlign="center"
-                color="gray.600"
-              >
-                Metodo de Pago
-              </Text>
-              <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8}
-            >
-              <TotalHistory
-                saleId={saleId}  formData={formData} setFormData={setFormData}
-              />  
-              </Box>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Método de Pago</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <TotalHistory saleId={saleId} formData={formData} setFormData={setFormData} />
             </Box>
-          
+          </Box>
+        );
+      case 5:
+        return (
           <Box mt={8}>
-            <Text
-                fontSize="xl"
-                fontWeight="bold"
-                mb={6}
-                textAlign="center"
-                color="gray.600"
-              >
-                Tiempo de Entrega
-              </Text>
-            <Box
-              width="100vw"
-              position="relative"
-              bg={cardBg}
-              py={8}
-              mt={8}
-            >
-            <Delivery saleData={saleData} setSaleData={setSaleData} />
-          </Box> 
-          </Box> 
-              <Box  mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Mensaje
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <MessageSection
-                    selectedBranch={branchName}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                </Box>
-              </Box>
-              
-              <Box  mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Observación
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <ObservationSection setFormData={setFormData} />
-                </Box>
-              </Box>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Tiempo de Entrega</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <Delivery saleData={saleData} setSaleData={setSaleData} />
+            </Box>
+          </Box>
+        );
+      case 6:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Mensaje</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <MessageSection selectedBranch={branchName} formData={formData} setFormData={setFormData} />
+            </Box>
+          </Box>
+        );
+      case 7:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Observación</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <ObservationSection setFormData={setFormData} />
+            </Box>
+          </Box>
+        );
+      case 8:
+        return (
+          <Box mt={8}>
+            <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">Términos y Condiciones</Text>
+            <Box width="100vw" position="relative" bg={cardBg} py={8} mt={8}>
+              <TermsCondition selectedBranch={branchName} formData={formData} setFormData={setFormData} />
+              <SignaturePadComponent onSave={(signatureDataUrl) => setFormData((prev) => ({ ...prev, signature: signatureDataUrl }))} />
+            </Box>
+          </Box>
+        );
+        default:
+        return null;
+    }
+  };
 
-              <Box mt={8}>
-                <Text fontSize="xl" fontWeight="bold" mb={6} textAlign="center" color="gray.600">
-                Terminos y Condiciones
-                </Text>
-                <Box
-                  width="100vw"
-                  position="relative"
-                  bg={cardBg}
-                  py={8}
-                  mt={8}
-                >
-                  <TermsCondition
-                    selectedBranch={branchName}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
+  return (
+    <Box ref={salesRef} w="full" px={4}>
+      <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
+        <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+        
+        {/* Heading alineado a la izquierda */}
+        <Box w="100%" maxW="800px" mb={4}>
+          <Heading textAlign="left" size="md" fontWeight="700" color={useColorModeValue('teal.600', 'teal.300')} borderBottom="2px solid" borderColor={useColorModeValue('teal.200', 'teal.700')} pb={2}>
+            Contrato de Servicio
+          </Heading>
+        </Box>
 
-                <SignaturePadComponent
-                    onSave={(signatureDataUrl) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        signature: signatureDataUrl,
-                      }))
-                    }
-                  />
-                </Box>
-              </Box>
-              
-          <Button colorScheme="teal" width="full"  maxWidth="200px" mt={4} onClick={handleSubmit}>
-            Registrar Venta
-          </Button>
-          {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
+        {/* Indicador de pasos */}
+        <Box mb={6} display="flex" justifyContent="center" flexWrap="wrap" gap={2}>
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+            <Button key={step} size="sm" colorScheme={currentStep === step ? "teal" : "gray"} variant={currentStep === step ? "solid" : "outline"} onClick={() => goToStep(step)}>
+              {step}
+            </Button>
+          ))}
+        </Box>
+        {/* Contenido del paso actual */}
+        {renderStepContent()}
+
+        {/* Botones de navegación */}
+        <Box mt={6} display="flex" justifyContent="space-between" width="100%" maxWidth="400px" gap={4}>
+          <Button onClick={prevStep} isDisabled={currentStep === 1} colorScheme="gray">Anterior</Button>
+          {currentStep === totalSteps ? (
+            <Button colorScheme="teal" onClick={handleSubmit}>Actualizar Venta</Button>
+          ) : (
+            <Button onClick={nextStep} colorScheme="teal">Siguiente</Button>
+          )}
+        </Box>
+
+        {saleId && <Pdf formData={pdfData} targetRef={salesRef} />}
       </Box>
     </Box>
-  );  
+  );
 };
 
 export default SalesHistory;
