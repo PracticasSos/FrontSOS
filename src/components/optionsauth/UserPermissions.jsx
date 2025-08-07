@@ -15,7 +15,7 @@ export const isRouteAllowed = (currentPath, allowedRoutes) => {
   // Verificación para rutas con parámetros
   for (const route of allowedRoutes) {
     // Casos específicos para rutas dinámicas
-    if (route === '/RetreatsPatients/Retreats' && currentPath.startsWith('/RetreatsPatients/Retreats/')) {
+    if (route === '/retreats-patients/retreats' && currentPath.startsWith('/retreats-patients/Retreats/')) {
       return true;
     }
     
@@ -44,7 +44,7 @@ export const useUserPermissions = (userData) => {
           '/history-measure-list', '/print-certificate', '/history-clinic', 
           '/message-manager', '/list-balance', '/list-sales',
           '/list-patients', '/list-users', '/list-lens', '/list-inventory',
-          '/list-branch', '/list-lab','/cuestionario','/lens','/material',
+          '/list-branch', '/list-labs','/cuestionario','/lens','/material',
           '/admin/modelos','/resultados','/register-experience','/mensajeria',
           '/retreats-patients/retreats', '/retreats', '/history-clinic/patient-history',  'patient-history',
         ];
