@@ -126,7 +126,7 @@ const RetreatsPatients = () => {
 
   const handlePatientSelect = (sale) => {
     if (sale && sale.sale_id) {  
-      navigate(`/RetreatsPatients/Retreats/${sale.sale_id}`, { 
+      navigate(`/retreats-patients/retreats/${sale.sale_id}`, { 
         state: { patientData: sale, selectedDate: sale.date } 
       });
     }
