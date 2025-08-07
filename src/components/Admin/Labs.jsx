@@ -113,10 +113,19 @@ const Lab = () => {
 
     return (
         <Box className="signup-form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" pt={6} >
-            <Heading  textAlign="center" mb={4} >
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "900px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
                 Laboratorio
             </Heading>
-            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            </Box>
             <Box width="100%" maxWidth="900px" borderRadius="8px" boxShadow="md" padding="20px">
                 {message && (
                     <Box 

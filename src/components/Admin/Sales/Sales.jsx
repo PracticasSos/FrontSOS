@@ -373,6 +373,7 @@ const Sales = () => {
 
   // Función para renderizar el contenido según el paso actual
   const renderStepContent = () => {
+    
     switch (currentStep) {
       case 1:
         return (
@@ -502,9 +503,18 @@ const Sales = () => {
   return (
     <Box ref={salesRef} w="full" px={4}>
       <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
-        <Heading mb={4} textAlign="center">Contrato de Servicio</Heading>
         <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-
+          <Box w="100%" maxW="800px" mb={4}>
+        <Heading 
+          textAlign="left" 
+          size="md"
+          fontWeight="700"
+          color={useColorModeValue('teal.600', 'teal.300')}
+          pb={2}
+        >
+          Contrato de Servicio
+        </Heading>
+      </Box>
         {/* Indicador de pasos */}
         <Box mb={6} display="flex" justifyContent="center" flexWrap="wrap" gap={2}>
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
@@ -519,7 +529,7 @@ const Sales = () => {
             </Button>
           ))}
         </Box>
-
+          
         {/* Contenido del paso actual */}
         {renderStepContent()}
 
@@ -543,7 +553,6 @@ const Sales = () => {
             </Button>
           )}
         </Box>
-
         {saleId && <Pdf 
           formData={pdfData} 
           targetRef={salesRef} 

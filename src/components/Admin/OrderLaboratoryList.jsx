@@ -137,8 +137,8 @@ const OrderLaboratoryList = () => {
 
     // Asegurar consistencia de estado
     localStorage.setItem('user', JSON.stringify(user));
-    
-    navigate(`/OrderLaboratoryList/LaboratoryOrder/${patient.patient_id}`, {
+
+    navigate(`/order-laboratory-list/laboratory-order/${patient.patient_id}`, {
         state: { patientData: patient, user }
     });
 };
@@ -199,11 +199,17 @@ const OrderLaboratoryList = () => {
       color={textColor}
       minH="100vh"
     >
-      <Heading mb={4} textAlign="center" color={textColor}>
+      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+      <Heading 
+        mb={4} 
+        textAlign="left" 
+        size="md"
+        fontWeight="700"
+        color={useColorModeValue('teal.600', 'teal.300')}
+        pb={2}
+      >
         Lista Pendiente de Órdenes de Laboratorio
       </Heading>
-      <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-
       <FormControl mb={4}>
         <FormLabel color={textColor}>Sucursal</FormLabel>
         <Select 
@@ -235,7 +241,6 @@ const OrderLaboratoryList = () => {
           ))}
         </Select>
       </FormControl>
-
       <Grid templateColumns="repeat(3, 1fr)" gap={4} mb={6}>
         <FormControl>
           <FormLabel color={textColor}>Desde</FormLabel>

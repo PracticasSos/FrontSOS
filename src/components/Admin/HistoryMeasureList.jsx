@@ -56,7 +56,7 @@ const HistoryMeasureList = () => {
 
     const handlePatientSelect = (patient) => {
         if (patient && patient.patient_id) {
-            navigate(`/HistoryMeasureList/HistoryMeasures/${patient.patient_id}`,{ state: { patientData: patient }});
+            navigate(`/history-measure-list/history-measures/${patient.patient_id}`,{ state: { patientData: patient }});
         } else {
             console.error("ID de paciente no válido o no definido");
         }
@@ -134,14 +134,23 @@ const HistoryMeasureList = () => {
       const borderColor = useColorModeValue('gray.200', 'gray.600');
       const tableBg = useColorModeValue('white', 'gray.700');
       const tableHoverBg = useColorModeValue('gray.100', 'gray.600');
-      const inputBg = useColorModeValue('white', 'gray.700');
-      const selectBg = useColorModeValue('white', 'gray.700');
+
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
-            <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-
+            <Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+                Historial de Medidas
+            </Heading>
+            </Box>
             {loading ? (
                 <Spinner size="xl" mt={4} />
             ) : (

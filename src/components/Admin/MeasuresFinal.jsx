@@ -171,7 +171,6 @@ const MeasuresFinal = () => {
 
     return (
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100dvh" p={[2, 4, 6]}>
-        <Heading mb={4} textAlign="center" >Registrar Medidas Finales</Heading>
         {error && (
           <Alert status="error" mb={4}>
             <AlertIcon />
@@ -179,6 +178,18 @@ const MeasuresFinal = () => {
           </Alert>
         )}
         <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+        <Box w="100%" pt={5} mb={4}>
+      <Heading 
+          mb={4} 
+          textAlign="left" 
+          size="md"
+          fontWeight="700"
+          color={useColorModeValue('teal.600', 'teal.300')}
+          pb={2}
+      >
+          Registrar Medidas Finales 
+      </Heading>
+      </Box>
         <Box as="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} width="100%" maxWidth="1300px" boxShadow="lg" borderRadius="md" p={[2, 4, 6]}>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
             <FormControl id="patient-search">

@@ -168,8 +168,19 @@ const ListUsers = () => {
       bg={bgColor}
       color={textColor}
       minH="100vh">
-      <Heading mb={4} textAlign="center">Lista de Usuarios</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+      <Box w="100%" maxW= "800px" mb={4}>
+      <Heading 
+          mb={4} 
+          textAlign="left" 
+          size="md"
+          fontWeight="700"
+          color={useColorModeValue('teal.600', 'teal.300')}
+          pb={2}
+      >
+          Registrar Usuario
+      </Heading>
+      </Box>
       <Input
         placeholder="Buscar por nombre, apellido o username"
         value={search}

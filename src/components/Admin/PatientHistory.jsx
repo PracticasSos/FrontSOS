@@ -36,7 +36,7 @@ const PatientHistory = () => {
       console.error('No patient selected');
       return;
     }
-    navigate(`/HistoryClinic/PatientHistory/${patientId}/SalesHistory/${sale.id}`, {
+    navigate(`/history-clinic/patient-history/${patientId}/sales-history/${sale.id}`, {
       state: { saleData: sale },
     });
   };
@@ -107,8 +107,19 @@ const PatientHistory = () => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-      <Heading mb={4} textAlign="center">Historial de Ventas</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+      <Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+                Historial de Venta
+            </Heading>
+            </Box>
     <Box as="form" width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md" >
       {selectedPatient ? (
         <>

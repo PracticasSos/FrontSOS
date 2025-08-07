@@ -85,7 +85,7 @@ const HistoryClinic = () => {
     };
 
     const handlePatientSelect = (patient) => {
-        navigate(`/HistoryClinic/PatientHistory/${patient.id}`, { state: { patientData: patient } });
+        navigate(`/history-clinic/patient-history/${patient.id}`, { state: { patientData: patient } });
     };
 
     const handleNavigate = (route = null) => {
@@ -124,10 +124,20 @@ const HistoryClinic = () => {
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-          <Heading mb={4} textAlign="center">Historial de Pacientes</Heading>
     
           <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-
+<Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+                Historial del Paciente
+            </Heading>
+            </Box>
         <Box as="form" width="100%" maxWidth="850px" padding={6} boxShadow="lg" borderRadius="md" >
           <Input 
             placeholder="Buscar por nombre, apellido o cédula" 

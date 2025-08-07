@@ -1,7 +1,7 @@
 import  React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../../api/supabase";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Box, Heading, Button, FormControl, FormLabel, Input, Table, Thead, Tbody, Tr, Th, Td, Textarea, Select, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Heading, Button, FormControl, FormLabel, Input,  Textarea, Select, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
 import PdfLaboratory from "./PdfLaboratory";
 import SmartHeader from "../header/SmartHeader";
 import { m } from "framer-motion";
@@ -245,10 +245,19 @@ const LaboratoryOrder = () => {
     return (
         <Box ref={salesRef} w="full" px={4}>
           <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-            <Heading as="h2" size="lg" mb={4}>
-              Orden de Laboratorio
-            </Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "800px" mb={4}>
+                        <Heading 
+                            mb={4} 
+                            textAlign="left" 
+                            size="md"
+                            fontWeight="700"
+                            color={useColorModeValue('teal.600', 'teal.300')}
+                            pb={2}
+                        >
+                            Orden de Laboratorio
+                        </Heading>
+                        </Box>
             <Box as="form" width="100%" maxWidth="500px" padding={6} boxShadow="lg" borderRadius="md">
               {patientData && (
                 <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">

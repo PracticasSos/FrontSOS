@@ -301,7 +301,6 @@ const Register = () => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minH="100vh" p={6} >
-      <Heading mb={6} textAlign="center">Registrar Usuario</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
             <Card 
         w="100%" 
@@ -311,6 +310,18 @@ const Register = () => {
         bg={useColorModeValue('white', 'gray.800')}
       >
         <CardBody as="form" onSubmit={e => { e.preventDefault(); handleCreate(); }}>
+          <Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+              Registrar Usuario
+            </Heading>
+            </Box>
           <SimpleGrid columns={[1,2]} spacing={4}>
             {renderInputField('Correo','email','email')}
             {renderInputField('Contraseña','password','password')}

@@ -162,9 +162,6 @@ const ListLab = () => {
             color={textColor}
             minH="100vh"
         >
-                <Heading mb={4} textAlign="center">
-                    Lista de Laboratorios
-                </Heading>
                 <SmartHeader moduleSpecificButton={moduleSpecificButton} />
                 <Input placeholder='Buscar Laboratorio...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4}  w="50%" mx="auto" display="block" 
                     bg={selectBg}

@@ -264,9 +264,20 @@ const Retreats = () => {
 
     return (
         <Box className="sales-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh">
-        <Heading as="h2" size="lg" mb={4}>Retiros</Heading>
         <SmartHeader moduleSpecificButton={moduleSpecificButton} />
-        <Box as="form" width="100%" maxWidth="1000px" padding={6} boxShadow="lg" borderRadius="md">
+        <Box w="100%" maxW= "1000px" mb={4}>
+                    <Heading 
+                        mb={4} 
+                        textAlign="left" 
+                        size="md"
+                        fontWeight="700"
+                        color={useColorModeValue('teal.600', 'teal.300')}
+                        pb={2}
+                    >
+                        Retiros
+                    </Heading>
+                    </Box>
+        <Box as="form" width="100%" maxWidth="1000px" padding={4} boxShadow="lg" borderRadius="md">
            
         {patientData && (
         <Box mb={6} p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">

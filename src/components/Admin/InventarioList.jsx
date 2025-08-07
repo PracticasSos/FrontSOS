@@ -201,12 +201,32 @@ const InventarioList = () => {
       color={textColor}
       minH="100vh"
     >
-      <Heading mb={4} textAlign="center">
-        Lista de Inventario
-      </Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+      <Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+                Listar Inventario
+            </Heading>
+            </Box>
       <Box w="50%" mx="auto" display="block">
-      <Select placeholder="Filtrar por sucursal" onChange={(e) => setBranchFilter(parseInt(e.target.value))} mt={4} mb={4}>
+      <Select placeholder="Filtrar por sucursal" onChange={(e) => setBranchFilter(parseInt(e.target.value))} mt={4} mb={4}
+        bg={selectBg}
+                  borderColor={borderColor}
+                  color={textColor}
+                  _hover={{
+                    borderColor: useColorModeValue('gray.300', 'gray.500')
+                  }}
+                  _focus={{
+                    borderColor: useColorModeValue('blue.500', 'blue.300'),
+                    boxShadow: useColorModeValue('0 0 0 1px blue.500', '0 0 0 1px blue.300')
+                  }}
+        >
         {branches.map((branch) => (
           <option key={branch.id} value={branch.id}>{branch.name}</option>
         ))}

@@ -169,7 +169,6 @@ const ListPatients = () => {
 
   return (
     <Box p={5}>
-      <Heading mb={4} textAlign="center">Lista de Pacientes</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
       <Input
@@ -193,6 +192,16 @@ const ListPatients = () => {
       />
 
       <Box overflowX="auto" p={4} borderRadius="lg" shadow="md">
+        <Heading 
+          mb={4} 
+          textAlign="left" 
+          size="md"
+          fontWeight="700"
+          color={useColorModeValue('teal.600', 'teal.300')}
+          pb={2}
+      >
+        Lista de Pacientes
+      </Heading>
         <Table bg={tableBg}  borderRadius="md" overflow="hidden">
           <Thead >
             <Tr  bg={useColorModeValue('gray.50', 'gray.600')}>

@@ -47,7 +47,6 @@ const Branch = () => {
             });
         }
     };
-
     const handleNavigate = (route = null) => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (route) {
@@ -121,10 +120,19 @@ const Branch = () => {
             alignItems="center"
             pt={6}
         >
-            <Heading textAlign="center" mb={6} >
+            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "800px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
                 Sucursal
             </Heading>
-            <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            </Box>
             <Box width="100%" maxWidth="800px" p={6} borderRadius="lg" boxShadow="lg">
                 {message && (
                     <Box
@@ -138,7 +146,6 @@ const Branch = () => {
                         {message.text}
                     </Box>
                 )}
-
                 <Box display="grid" gridTemplateColumns="1fr 1fr" gap={4}>
                     <FormControl id="name" isRequired>
                         <FormLabel >Nombre</FormLabel>

@@ -442,11 +442,20 @@ const CashClosure = () => {
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg" bg={bgColor} color={textColor}>
              <Box position="sticky" top={0} bg={bgColor} zIndex={10} pb={4}>
-            <Heading mb={4} textAlign="center">
-                Consultar Cierres 
-            </Heading>
 
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "800px" mb={4}>
+                        <Heading 
+                            mb={4} 
+                            textAlign="left" 
+                            size="md"
+                            fontWeight="700"
+                            color={useColorModeValue('teal.600', 'teal.300')}
+                            pb={2}
+                        >
+                            Consultar Cierre
+                        </Heading>
+                        </Box>
 
             <Box as="form" onSubmit={handleSubmit}>
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4} mb={6}>

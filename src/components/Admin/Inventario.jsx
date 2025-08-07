@@ -140,10 +140,6 @@ const Inventario = () => {
       minHeight="100vh"
       pt={8}
     >
-        <Heading mb={4} textAlign="center" color={useColorModeValue('gray.800', 'white')}>
-          Registro de Inventario
-        </Heading>
-        
         <SmartHeader moduleSpecificButton={moduleSpecificButton} />
         
         <Box 
@@ -154,6 +150,16 @@ const Inventario = () => {
           boxShadow="lg"
           bg={useColorModeValue('white', 'gray.800')}
         >
+          <Heading 
+            mb={4} 
+            textAlign="left" 
+            size="md"
+            fontWeight="700"
+            color={useColorModeValue('teal.600', 'teal.300')}
+            pb={2}
+          >
+            Registrar Usuario
+          </Heading>
           <Box 
             as="form" 
             onSubmit={handleSubmit}

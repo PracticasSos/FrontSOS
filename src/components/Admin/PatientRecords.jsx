@@ -77,7 +77,6 @@ const PatientRecords = () => {
             resetData();
         }
     };
-
     const resetData = () => {
         setSalesRecords([]);
         setWithdrawalsRecords([]);
@@ -138,7 +137,6 @@ const PatientRecords = () => {
             resetData();
         }
     };
-
     const fetchDailyWithdrawals = async (branchId) => {
         const today = new Date().toLocaleDateString("en-CA");  
         try {
@@ -177,15 +175,13 @@ const PatientRecords = () => {
                 const relatedSale = salesToday.find(sale => sale.id === withdrawal.sale_id);
                 const abonoDelDia = withdrawal.difference ? Number(withdrawal.difference) : 0;
                 const paymentMethod = relatedSale?.payment_balance || "Sin método";
-    
                 if (paymentMethod === "efectivo") {
                     totalAbonosDelDia.EFEC += abonoDelDia;
                 } else if (paymentMethod === "transferencia") {
                     totalAbonosDelDia.TRANS += abonoDelDia;
                 } else if (paymentMethod === "datafast") {
                     totalAbonosDelDia.DATAF += abonoDelDia;
-                }
-                
+                }                
                 return {
                     ...withdrawal,
                     firstName: relatedSale?.patients?.pt_firstname || "Sin nombre",
@@ -377,13 +373,20 @@ const PatientRecords = () => {
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" bg={bgColor} color={textColor}>
-            <Heading mb={4} textAlign="center" size="lg" >
-                Cierre Diario 
-            </Heading>
             <SmartHeader
                 moduleSpecificButton={moduleSpecificButton}
             />
             <Box mb={6}>
+                <Heading 
+                    mb={4} 
+                    textAlign="left" 
+                    size="md"
+                    fontWeight="700"
+                    color={useColorModeValue('teal.600', 'teal.300')}
+                    pb={2}
+                >
+                    Cierre Diario
+                </Heading>
                 <Select
                     placeholder="Seleccione una sucursal"
                     value={selectedBranch}

@@ -164,11 +164,22 @@ const RegisterPatientForm = () => {
 
   return (
     <Box className="register-patient-form" display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={4}>
-      <Heading mb={4} textAlign="center">Registro de Pacientes</Heading>
+     
       <SmartHeader
         moduleSpecificButton={moduleSpecificButton}
       />
+       
       <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
+      <Heading 
+        mb={4} 
+        textAlign="left" 
+        size="md"
+        fontWeight="700"
+        color={useColorModeValue('teal.600', 'teal.300')}
+        pb={2}
+      >
+        Registro de Pacientes
+      </Heading>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <Box 
           >

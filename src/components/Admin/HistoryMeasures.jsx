@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../api/supabase";
-import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Box, Button, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, useColorModeValue } from "@chakra-ui/react";
 import SmartHeader from "../header/SmartHeader";
 
 const HistoryMeasures = () => {
@@ -63,8 +63,19 @@ const HistoryMeasures = () => {
 
     return (
         <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
-            <Heading mb={6} textAlign="center">Historial de Medidas</Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "800px" mb={4}>
+                        <Heading 
+                            mb={4} 
+                            textAlign="left" 
+                            size="md"
+                            fontWeight="700"
+                            color={useColorModeValue('teal.600', 'teal.300')}
+                            pb={2}
+                        >
+                            Historial de Medidas
+                        </Heading>
+                        </Box>
             {loading ? (
                 <Spinner size="xl" mt={4} />
             ) : (

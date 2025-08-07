@@ -121,10 +121,19 @@ const RegisterLens = () => {
 
     return (
         <Box className="register-lens-form" display="flex" flexDirection="column" alignItems="center" pt={6}>
-            <Heading   mb={4}>Registrar Lunas</Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
 
             <Box as="form" onSubmit={handleSubmit} width="100%" maxWidth="800px" padding={6} boxShadow="lg" borderRadius="md">
+                <Heading 
+                    mb={4} 
+                    textAlign="left" 
+                    size="md"
+                    fontWeight="700"
+                    color={useColorModeValue('teal.600', 'teal.300')}
+                    pb={2}
+                >
+                    Registrar Lunas
+                </Heading>
                 <SimpleGrid columns={[1, 2]} spacing={4}>
                     {renderInputField('Lunas', 'lens_type', 'text', true)}
                     {renderInputField('Precio', 'lens_price', 'number', true)}

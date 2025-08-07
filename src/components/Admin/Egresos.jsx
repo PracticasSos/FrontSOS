@@ -148,11 +148,18 @@ const Egresos = () => {
 
   return (
     <Box p={6} maxW="1300px" mx="auto" boxShadow="md" borderRadius="lg">
-      <Heading mb={4} textAlign="center" size="lg" >
-        Egresos - {branches.find((b) => b.id === selectedBranch)?.name || "Seleccione Sucursal"}
-      </Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
       <Box mb={6}>
+        <Heading 
+          mb={4} 
+          textAlign="left" 
+          size="md"
+          fontWeight="700"
+          color={useColorModeValue('teal.600', 'teal.300')}
+          pb={2}
+        >
+          Egresos
+        </Heading>
         <Select
           placeholder="Seleccione una sucursal"
           value={selectedBranch}

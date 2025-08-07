@@ -256,8 +256,19 @@ const RetreatsPatients = () => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" p={6}>
-      <Heading mb={4} textAlign="center">Retiros</Heading>
       <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+      <Box w="100%" maxW= "1500px" mb={4}>
+            <Heading 
+                mb={4} 
+                textAlign="left" 
+                size="md"
+                fontWeight="700"
+                color={useColorModeValue('teal.600', 'teal.300')}
+                pb={2}
+            >
+                Retiros
+            </Heading>
+            </Box>
       <Box w="50%" mx="auto" display="block">
         <SearchBar
           searchPlaceholder="Buscar por nombre..."

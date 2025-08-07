@@ -159,8 +159,19 @@ const ListBalance = () => {
         color={textColor}
         minH="100vh"
       >
-            <Heading  mb={4} textAlign="center"> Listar Abonos</Heading>
             <SmartHeader moduleSpecificButton={moduleSpecificButton} />
+            <Box w="100%" maxW= "1500px" mb={4}>
+                        <Heading 
+                            mb={4} 
+                            textAlign="left" 
+                            size="md"
+                            fontWeight="700"
+                            color={useColorModeValue('teal.600', 'teal.300')}
+                            pb={2}
+                        >
+                            Lista de Abonos
+                        </Heading>
+                        </Box>
             <Input placeholder='Buscar Abono...' value={search} onChange={(e) => setSearch(e.target.value)} mb={4} w="50%" mx="auto" display="block" 
                 bg={selectBg}
                 borderColor={borderColor}
