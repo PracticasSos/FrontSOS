@@ -22,7 +22,7 @@ export default function Results() {
     if (tabValue === 'restart') {
       localStorage.removeItem('questionnaire_step')
       localStorage.removeItem('questionnaire_answers')
-      navigate('/RegisterExperience') 
+      navigate('/register-experience') 
     } else {
       setSelectedTab(tabValue)
     }
@@ -57,6 +57,7 @@ export default function Results() {
           {selectedTab === 'lens' && <LensCustomizer />}
           {selectedTab === 'material' && <MaterialSelector />}
           {selectedTab === 'tryon' && <VirtualTryOn3D />}
+          {selectedTab === 'restart' && <FormInitial />}
         </div>
       </div>
     </div>

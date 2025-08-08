@@ -21,7 +21,7 @@ export default function Question4({ step, total, onAnswer, answer, onPrev }) {
     <div className="question-card">
            <ProgressFlow currentStep={step} total={total} />
       <h2 className="question-title">¿Con qué imagen te identificas?</h2>
-      <p className="question-subtitle">Como vez las luces durante la noche</p>
+      <p className="question-subtitle">Como vez las luces durante la noche "Con Lentes"</p>
       <div className="images-grid">
         {options.map((opt, i) => (
           <div
