@@ -2,82 +2,92 @@
 
 /* Contenedor ocupa toda la pantalla, centra en iPad/mobile */
 .form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 1rem;
-    background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background: #f2f2f2;
+  position: relative; /* importante para posicionar íconos */
+}
+
+/* Nuevo wrapper que agrupa el mensaje y el formulario */
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
 }
 
 /* Tarjeta blanca con sombra */
 .form-card {
-    width: 100%;
-    max-width: 480px;
-    background: #fff;
-    padding: 4rem;
-    border-radius: 16px; /* Bordes más suaves */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Sombra más moderna */
-    display: grid;
-    gap: 1.5rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  background: #fff;
+  padding: 4rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: grid;
+  gap: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 /* Título centrado */
 .form-title {
-    text-align: center;
-    font-size: 3rem;
-    font-weight: bold;
-    color: #333;
-    letter-spacing: 1px;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 1px;
 }
 
 /* Etiquetas e inputs */
 .form-label {
-    font-size: 1rem;
-    color: #555;
-    font-weight: 500;
+  font-size: 1rem;
+  color: #555;
+  font-weight: 500;
 }
 
 .form-input {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-input:focus {
-    border-color: #6AB1CD;
-    box-shadow: 0 0 4px rgba(106, 177, 205, 0.5);
-    outline: none;
+  border-color: #6AB1CD;
+  box-shadow: 0 0 4px rgba(106, 177, 205, 0.5);
+  outline: none;
 }
 
 /* Botón con acento */
 .btn-primary-next {
-    font-family: 'Satoshi', sans-serif;
-    margin-top: 1rem;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: bold;
-    background-color: #6AB1CD;
-    color: #fff;
-    border: none;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+  font-family: 'Satoshi', sans-serif;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #6AB1CD;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-primary-next:hover {
-    background-color: #549AB3;
-    transform: scale(1.05);
+  background-color: #549AB3;
+  transform: scale(1.05);
 }
 
 .btn-secondary-initial {
@@ -97,13 +107,18 @@
   background-color: #d5d5d5;
   transform: scale(1.05);
 }
-.settings-icon {
+
+/* Ícono de configuración */
+.settings-icon-wrapper {
   position: absolute;
   top: 16px;
   right: 24px;
+  z-index: 1000;
+}
+
+.settings-icon {
   cursor: pointer;
   color: #444;
-  z-index: 1000;
   transition: transform 0.2s ease;
 }
 
@@ -112,20 +127,10 @@
   color: #549AB3;
 }
 
-.form-container {
-  position: relative; /* importante para posicionar el ícono */
-}
-
-.settings-icon-wrapper {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  z-index: 1000;
-}
-
+/* Menú desplegable de configuración */
 .settings-dropdown {
   position: absolute;
-  top: 40px; /* Justo debajo del ícono */
+  top: 40px;
   right: 0;
   background-color: white;
   border: 1px solid #e2e8f0;
@@ -152,14 +157,56 @@
   background-color: #f0f0f0;
 }
 
+/* Estilo para los elementos del teléfono */
+.country-name,
+.country-code,
+.form-control,
+.form-control input,
+.form-control select {
+  color: black;
+}
 
+/* Mensaje navegador recomendado */
+.browser-recommendation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #eaf4ff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #cce4ff;
+  margin: 0 auto;
+  font-size: 15px;
+  color: #1a3d6d;
+  max-width: 360px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  animation: fadeInDown 0.4s ease-in-out;
+}
+
+.chrome-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Animación suave de entrada */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
-    .form-card {
-        padding: 1.5rem;
-    }
-    .form-title {
-        font-size: 1.75rem;
-    }
+  .form-card {
+    padding: 1.5rem;
+  }
+  .form-title {
+    font-size: 1.75rem;
+  }
 }

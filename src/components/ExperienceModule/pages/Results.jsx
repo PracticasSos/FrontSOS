@@ -22,7 +22,7 @@ export default function Results() {
     if (tabValue === 'restart') {
       localStorage.removeItem('questionnaire_step')
       localStorage.removeItem('questionnaire_answers')
-      navigate('/RegisterExperience') // Asegúrate de que esta ruta exista en tu router
+      navigate('/RegisterExperience') 
     } else {
       setSelectedTab(tabValue)
     }

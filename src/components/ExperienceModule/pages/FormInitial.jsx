@@ -14,7 +14,6 @@ export default function FormInitial() {
   const [error, setError] = useState('');
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
-  // ✅ Limpiar progreso del cuestionario al montar
   useEffect(() => {
     localStorage.removeItem('questionnaire_step');
     localStorage.removeItem('questionnaire_answers');
@@ -50,10 +49,7 @@ export default function FormInitial() {
       return;
     }
 
-    // ✅ Guardar datos del usuario
     localStorage.setItem('userInfo', JSON.stringify(form));
-
-    // ✅ Limpiar progreso antes de continuar (por si acaso)
     localStorage.removeItem('questionnaire_step');
     localStorage.removeItem('questionnaire_answers');
 
@@ -62,10 +58,8 @@ export default function FormInitial() {
   };
 
   const handleAlreadyRegistered = () => {
-    // ✅ Limpiar también si ya estaba registrado
     localStorage.removeItem('questionnaire_step');
     localStorage.removeItem('questionnaire_answers');
-
     navigate('/cuestionario');
   };
 
@@ -92,60 +86,74 @@ export default function FormInitial() {
         )}
       </div>
 
-      <form className="form-card" onSubmit={handleSubmit}>
-        <h2 className="form-title">Tus datos</h2>
+      {/* ✅ NUEVO CONTENEDOR */}
+      <div className="form-wrapper">
+        <div className="browser-recommendation">
+          <img
+            src="https://www.google.com/chrome/static/images/chrome-logo-m100.svg"
+            alt="Google Chrome"
+            className="chrome-icon"
+          />
+          <span>
+            Para una mejor experiencia, usa <strong>Google Chrome</strong>.
+          </span>
+        </div>
 
-        {error && <p className="form-error">{error}</p>}
+        <form className="form-card" onSubmit={handleSubmit}>
+          <h2 className="form-title">Tus datos</h2>
 
-        <label className="form-label" htmlFor="name">Nombre completo</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="form-input"
-          placeholder="Ej. Ana Pérez"
-        />
+          {error && <p className="form-error">{error}</p>}
 
-        <label className="form-label" htmlFor="phone">Teléfono</label>
-        <PhoneInput
-          country={'ec'}
-          value={form.phone}
-          onChange={handlePhoneChange}
-          inputProps={{
-            required: true,
-            name: 'phone',
-            id: 'phone',
-          }}
-          inputStyle={{
-            width: '100%',
-            height: '40px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
-            paddingLeft: '48px',
-          }}
-          containerStyle={{ width: '100%' }}
-          dropdownStyle={{ zIndex: 9999 }}
-        />
+          <label className="form-label" htmlFor="name">Nombre completo</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="form-input"
+            placeholder="Ej. Ana Pérez"
+          />
 
-        <button
-          type="submit"
-          className="btn-primary-next"
-          disabled={loading}
-        >
-          {loading ? 'Guardando…' : 'Siguiente'}
-        </button>
+          <label className="form-label" htmlFor="phone">Teléfono</label>
+          <PhoneInput
+            country={'ec'}
+            value={form.phone}
+            onChange={handlePhoneChange}
+            inputProps={{
+              required: true,
+              name: 'phone',
+              id: 'phone',
+            }}
+            inputStyle={{
+              width: '100%',
+              height: '40px',
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              paddingLeft: '48px',
+            }}
+            containerStyle={{ width: '100%' }}
+            dropdownStyle={{ zIndex: 9999 }}
+          />
 
-        <button
-          type="button"
-          className="btn-secondary-initial"
-          onClick={handleAlreadyRegistered}
-        >
-          Ya me he registrado antes
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="btn-primary-next"
+            disabled={loading}
+          >
+            {loading ? 'Guardando…' : 'Siguiente'}
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary-initial"
+            onClick={handleAlreadyRegistered}
+          >
+            Ya me he registrado antes
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

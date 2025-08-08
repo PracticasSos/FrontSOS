@@ -2,39 +2,30 @@ import { useEffect, useState } from 'react'
 
 /**
  * Hook para manejar el cuestionario.
- * - Guarda el paso actual y respuestas en localStorage.
- * - Restaura el estado si el usuario recarga la página.
- * - Permite avanzar, retroceder y limpiar el progreso.
+ * - Administra el paso actual.
+ * - Usa respuestas externas (controlado desde el componente padre).
+ * - Guarda el paso en localStorage (opcional).
  */
 
-export default function useQuestionnaire(questions) {
+export default function useQuestionnaire(questions, answers, setAnswers) {
   const total = questions.length
 
-  // Leer desde localStorage (si existe)
+  // Leer paso actual desde localStorage (si existe)
   const savedStep = parseInt(localStorage.getItem('questionnaire_step'), 10)
-  const savedAnswers = localStorage.getItem('questionnaire_answers')
-
   const [step, setStep] = useState(!isNaN(savedStep) ? savedStep : 0)
-  const [answers, setAnswers] = useState(
-    savedAnswers ? JSON.parse(savedAnswers) : {}
-  )
 
   const current = questions[step]
 
-  // Guardar en localStorage cada vez que cambia el step
+  // Guardar paso actual en localStorage
   useEffect(() => {
     localStorage.setItem('questionnaire_step', step)
   }, [step])
 
-  // Guardar en localStorage cada vez que cambian las respuestas
-  useEffect(() => {
-    localStorage.setItem('questionnaire_answers', JSON.stringify(answers))
-  }, [answers])
-
-  // Avanzar una pregunta y guardar respuesta
+  // Avanzar al siguiente paso y guardar respuesta en el array externo
   function next(answer) {
     setAnswers(prev => {
-      const updated = { ...prev, [step]: answer }
+      const updated = [...prev]
+      updated[step] = answer
       return updated
     })
     setStep(prev => Math.min(prev + 1, total - 1))
@@ -45,13 +36,11 @@ export default function useQuestionnaire(questions) {
     setStep(prev => Math.max(prev - 1, 0))
   }
 
-  // Limpiar progreso (para usar al finalizar el cuestionario o reiniciar)
+  // Limpiar progreso (solo el paso, las respuestas ya se limpian arriba)
   function resetProgress() {
     localStorage.removeItem('questionnaire_step')
-    localStorage.removeItem('questionnaire_answers')
     setStep(0)
-    setAnswers({})
   }
 
-  return { step, total, current, answers, next, prev, resetProgress }
+  return { step, total, current, next, prev, resetProgress }
 }

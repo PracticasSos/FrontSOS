@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useQuestionnaire from '../hooks/useQuestionnaire'
 import Loader from '../../../components/ExperienceModule/ExperienceUI/Loader.jsx'
 import Question1 from '../../../components/ExperienceModule/Questionnaire/Question1.jsx'
@@ -25,28 +25,34 @@ export default function QuestionnairePage() {
   const navigate = useNavigate()
   const [showLoader, setShowLoader] = useState(false)
 
-  const questions = [
-    Question1,
-    Question2,
-    Question3,
-    Question4,
-    Question5,
-    FaceShapeQuestion,
-    QuestionGraduation,
-    QuestionScreenHours,
-    QuestionLightSensitivity,
-    QuestionBudget
-  ]
+  // Estado para respuestas globales
+  const [answers, setAnswers] = useState([])
 
+  // Define el flujo dinámico en base a answers[0]
+  const questionsFlow = useMemo(() => {
+    const usesGlasses = answers[0] === 'Sí'
+    return [
+      Question1, // Siempre
+      ...(usesGlasses ? [Question2] : []),
+      Question3,
+      ...(usesGlasses ? [Question4, Question5] : []),
+      FaceShapeQuestion,
+      ...(usesGlasses ? [QuestionGraduation] : []),
+      QuestionScreenHours,
+      QuestionLightSensitivity,
+      QuestionBudget
+    ]
+  }, [answers[0]])
+
+  // Hook personalizado adaptado al flujo actual
   const {
     step,
     total,
     current: CurrentQuestion,
     next,
-    prev, // ✅ lo sacamos del hook
-    answers,
+    prev,
     resetProgress
-  } = useQuestionnaire(questions)
+  } = useQuestionnaire(questionsFlow, answers, setAnswers)
 
   const handleNext = answer => {
     next(answer)
@@ -56,18 +62,39 @@ export default function QuestionnairePage() {
   }
 
   const handleLoaderFinish = () => {
+    // Completar respuestas faltantes con null para mantener estructura fija
+    const completedAnswers = Array(10).fill(null)
+    let flowIndex = 0
+    const fullQuestionMap = [
+      Question1,
+      Question2,
+      Question3,
+      Question4,
+      Question5,
+      FaceShapeQuestion,
+      QuestionGraduation,
+      QuestionScreenHours,
+      QuestionLightSensitivity,
+      QuestionBudget
+    ]
+
+    for (let i = 0; i < fullQuestionMap.length; i++) {
+      const q = fullQuestionMap[i]
+      if (questionsFlow.includes(q)) {
+        completedAnswers[i] = answers[flowIndex]
+        flowIndex++
+      }
+    }
+
+    localStorage.setItem('answers', JSON.stringify(completedAnswers))
     resetProgress()
     navigate('/resultados')
   }
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      // Esto evita limpieza al recargar
-    }
+    const handleBeforeUnload = () => {}
     window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
   }, [])
 
   return (
@@ -90,7 +117,7 @@ export default function QuestionnairePage() {
                 step={step}
                 total={total}
                 onAnswer={handleNext}
-                onPrev={prev} // ✅ pasamos la función para el botón "Anterior"
+                onPrev={prev}
                 answer={answers[step]}
               />
             </motion.div>

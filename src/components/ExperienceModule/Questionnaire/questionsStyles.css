@@ -195,3 +195,9 @@ li.selected .option-btn {
   margin: auto;
   display: block;
 }
+.p .form-input .option-text{
+  color: black;
+}
+.range-value{
+  color: black;
+}
